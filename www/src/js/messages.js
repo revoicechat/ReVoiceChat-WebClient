@@ -1,3 +1,9 @@
+document.getElementById("message-input").addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') {
+        sendMessage();
+    }
+});
+
 async function getMessages(roomId) {
     fetch(`${hostUrl}/room/${roomId}/message`, {
         cache: "no-store",
