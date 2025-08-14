@@ -1,8 +1,12 @@
 let hostUrl = "https://srv.revoicechat.fr";
 
 const currentState = {
-    serverId: null,
-    roomId: null,
+    server:{
+        id: null,
+    },
+    room: {
+        id: null,
+    }
 }
 
 // Ready state
@@ -61,15 +65,7 @@ function buildServerList(data) {
 }
 
 function selectServer(serverId) {
-    console.log(`Select server : ${serverId}`);
-    currentState.serverId = serverId;
+    console.log(`Selected server : ${serverId}`);
+    currentState.server.id = serverId;
     getRooms(serverId);
-}
-
-function buildRoomList(data) {
-    const roomList = document.getElementById("room-list");
-    roomList.innerHTML = "";
-    for (const neddle in data) {
-        roomList.appendChild(createRoom(data[neddle], () => selectRoom(data[neddle].id)));
-    }
 }

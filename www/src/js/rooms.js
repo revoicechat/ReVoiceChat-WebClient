@@ -1,0 +1,58 @@
+async function getRooms(serverId) {
+    fetch(`${hostUrl}/server/${serverId}/room`, {
+        cache: "no-store",
+        signal: AbortSignal.timeout(5000),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }).then((response) => {
+        return response.json();
+    }).then((body) => {
+        createRoomList(body);
+        selectRoom(body[0]);
+    }).catch((error) => {
+        console.log(error)
+    });
+}
+
+function createRoomList(data) {
+    const roomList = document.getElementById("room-list");
+    roomList.innerHTML = "";
+    for (const neddle in data) {
+        roomList.appendChild(createRoom(data[neddle], () => selectRoom(data[neddle])));
+    }
+}
+
+function createRoom(roomData, onclick) {
+    const DIV = document.createElement('div');
+    DIV.id = roomData.id;
+    DIV.className = "chat-hover p-4 border-b border-gray-700 cursor-pointer relative";
+
+    const ANCHOR = document.createElement('a');
+    ANCHOR.onclick = onclick;
+    ANCHOR.innerHTML = `
+        <div class="flex items-center space-x-3">
+            <div class="flex-1 min-w-0">
+                <div class="flex justify-between items-start">
+                    <h3 class="font-semibold text-white truncate">${roomData.name}</h3>
+                </div>
+            </div>
+        </div>`;
+
+    DIV.appendChild(ANCHOR);
+    return DIV;
+}
+
+function selectRoom(roomData) {
+    console.log(`Selected room : ${roomData.id}`);
+
+    if (currentState.room.id !== null) {
+        document.getElementById(currentState.room.id).classList.remove("bg-green-900", "bg-opacity-20", "border-l-4", "border-green-400");
+    }
+    currentState.room = roomData;
+    
+    document.getElementById(roomData.id).classList.add("bg-green-900", "bg-opacity-20", "border-l-4", "border-green-400");
+    document.getElementById("room-header-name").innerText = roomData.name;
+
+    getMessages(roomData.id);
+}
