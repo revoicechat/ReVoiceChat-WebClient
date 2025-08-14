@@ -43,9 +43,7 @@ async function getServers(loadingSwal) {
     }).then((response) => {
         return response.json();
     }).then((body) => {
-        console.log("Server list : ", body);
         loadingSwal.close();
-
         buildServerList(body);
         selectServer(body[0].id);
 
@@ -81,11 +79,8 @@ async function getRooms(serverId) {
     }).then((response) => {
         return response.json();
     }).then((body) => {
-        console.log("Room list : ", body);
-
         buildRoomList(body);
         selectRoom(body[0].id);
-
     }).catch((error) => {
         console.log(error)
     });
