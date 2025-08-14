@@ -28,3 +28,7 @@
     width: 80%;
     bottom: 25px;
 }
+
+a.rvc-active{
+    background-color:darkblue;
+}
