@@ -47,9 +47,17 @@ function createMessage(messageData) {
     return DIV;
 }
 
+function sanitizeString(str){
+    str = str.substring(0, 2000);
+    str = str.replace(/[^a-z0-9áéíóúñü \.,_-]/gim,"");
+    return str.trim();
+}
+
 function sendMessage() {
-    const data = {
-        text: document.getElementById('message-input').value
+    let textInput = sanitizeString(document.getElementById('message-input').value);
+
+    if(textInput == "" || textInput == null){
+        return;
     }
 
     fetch(`${hostUrl}/room/${currentState.room.id}/message`, {
@@ -57,7 +65,7 @@ function sendMessage() {
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(data)
+        body: JSON.stringify({text: textInput})
     }).then((response) => {
         if(response.ok){
             document.getElementById('message-input').value = "";
