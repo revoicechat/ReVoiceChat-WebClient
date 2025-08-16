@@ -11,8 +11,8 @@ const currentState = {
 }
 
 // Ready state
-document.addEventListener('DOMContentLoaded', async function () {
-    const { value: inputUrl } = await Swal.fire({
+document.addEventListener('DOMContentLoaded', function () {
+    Swal.fire({
         icon: "question",
         title: "Login",
         html: `<form id='swal-form'>
@@ -35,53 +35,72 @@ document.addEventListener('DOMContentLoaded', async function () {
         allowEscapeKey: false,
         confirmButtonText: "Connect",
         width: "40em",
-    });
-
-    if (inputUrl) {
-        const FORM = document.getElementById("swal-form");
-        const LOGIN = {
-            'username': FORM.username.value,
-            'password': FORM.password.value,
-        },
+    }).then((result) => {
+        if (result.value) {
+            const FORM = document.getElementById("swal-form");
+            const LOGIN = {
+                'username': FORM.username.value,
+                'password': FORM.password.value,
+            };
 
             hostUrl = FORM.host.value;
 
+            let connectingSwal = Swal.fire({
+                icon: "info",
+                title: `Connecting to\n ${hostUrl}`,
+                focusConfirm: false,
+                allowOutsideClick: false,
+                timerProgressBar: true,
+                animation: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                    login(LOGIN, connectingSwal);
+                }
+            })
+        }
+    })
+});
+
+function login(loginData, connectingSwal) {
+    fetch(`${hostUrl}/login`, {
+        cache: "no-store",
+        signal: AbortSignal.timeout(5000),
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        method: 'POST',
+        credentials: 'include',
+        body: JSON.stringify(loginData),
+    }).then((response) => {
+        if (!response.ok) {
+            console.error('Login failed');
+            return;
+        }
+        connectingSwal.close();
+
         let loadingSwal = Swal.fire({
             icon: "info",
-            title: `Connecting to \n ${hostUrl}`,
+            title: `Loading server list from host\n ${hostUrl}`,
             focusConfirm: false,
             allowOutsideClick: false,
             timerProgressBar: true,
+            animation: false,
             didOpen: () => {
                 Swal.showLoading();
-                fetch(`${hostUrl}/login`, {
-                    cache: "no-store",
-                    signal: AbortSignal.timeout(5000),
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    method: 'POST',
-                    credentials: 'include',
-                    body: JSON.stringify(LOGIN)
-                }).then((response) => {
-                    if (!response.ok) {
-                        console.error('Login failed');
-                        return;
-                    }
-                    getServers(loadingSwal);
-                })
+                getServers(loadingSwal);
             }
         })
-    }
-});
+    })
+}
 
 async function getServers(loadingSwal) {
     fetch(`${hostUrl}/server`, {
         cache: "no-store",
         signal: AbortSignal.timeout(5000),
+        credentials: 'include',
         headers: {
             'Content-Type': 'application/json'
-        }
+        },
     }).then((response) => {
         if (!response.ok) {
             return;
@@ -91,7 +110,6 @@ async function getServers(loadingSwal) {
         loadingSwal.close();
         buildServerList(body);
         selectServer(body[0]);
-
     })
 }
 
