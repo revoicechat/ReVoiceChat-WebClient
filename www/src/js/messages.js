@@ -20,14 +20,6 @@ async function getMessages(roomId) {
     }).then((body) => {
         createMessageList(body);
     });
-
-    currentState.room.sse = new EventSource(`${hostUrl}/room/${roomId}/sse`, { withCredentials: true });
-    currentState.room.sse.onmessage = (event) => {
-        eventData = JSON.parse(event.data);
-        if (eventData.roomId === currentState.room.id) {
-            document.getElementById("room-messages").appendChild(createMessage(eventData));
-        }
-    };
 }
 
 function createMessageList(data) {

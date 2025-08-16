@@ -1,12 +1,14 @@
 let hostUrl = "https://srv.revoicechat.fr";
 
 const currentState = {
+    global: {
+        sse: null,
+    },
     server: {
         id: null,
     },
     room: {
         id: null,
-        sse: null,
     }
 }
 
@@ -88,6 +90,7 @@ function login(loginData, connectingSwal) {
             didOpen: () => {
                 Swal.showLoading();
                 getServers(loadingSwal);
+                sseConnect();
             }
         })
     })
@@ -125,4 +128,30 @@ function selectServer(serverData) {
     currentState.server.id = serverData.id;
     document.getElementById("server-name").innerText = serverData.name;
     getRooms(serverData.id);
+}
+
+function sseConnect() {
+    console.log(`Connecting to "${hostUrl}/sse"`);
+
+    if (currentState.global.sse !== null) {
+        currentState.global.sse.close();
+        currentState.global.sse = null;
+    }
+
+    currentState.global.sse = new EventSource(`${hostUrl}/sse`, { withCredentials: true });
+
+    currentState.global.sse.onmessage = (event) => {
+        eventData = JSON.parse(event.data);
+        if (eventData.roomId === currentState.room.id) {
+            document.getElementById("room-messages").appendChild(createMessage(eventData));
+        }
+    };
+
+    currentState.global.sse.onerror = () => {
+        console.error(`An error occurred while attempting to connect to "${hostUrl}/sse".\nRetry in 10 seconds`);
+        setTimeout(() => {
+            sseConnect();
+            getMessages(currentState.room.id);
+        }, 10000);
+    }
 }
