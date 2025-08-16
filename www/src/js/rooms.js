@@ -2,6 +2,7 @@ async function getRooms(serverId) {
     fetch(`${hostUrl}/server/${serverId}/room`, {
         cache: "no-store",
         signal: AbortSignal.timeout(5000),
+        credentials: 'include',
         headers: {
             'Content-Type': 'application/json'
         }
