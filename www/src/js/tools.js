@@ -1,6 +1,6 @@
 function sanitizeString(str) {
     str = str.substring(0, 2000);
-    str = str.replace(/[^a-z0-9áéíóúñü \.,_-]/gim, "");
+    //str = str.replace(/[^a-z0-9áéíóúñü \.,_-]/gim, "");
     return str.trim();
 }
 
