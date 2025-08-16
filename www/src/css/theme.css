@@ -67,10 +67,6 @@
     background: linear-gradient(135deg, #25d366 0%, #128c7e 100%);
 }
 
-.online-indicator {
-    animation: pulse 2s infinite;
-}
-
 @keyframes pulse {
 
     0%,
