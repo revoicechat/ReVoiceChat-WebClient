@@ -53,16 +53,17 @@ function selectRoom(roomData) {
         console.error("roomData is null or undefined");
         return;
     }
- 
-    console.log(`Selected room : ${roomData.id}`);
 
-    if (currentState.room.id !== null) {
-        document.getElementById(currentState.room.id).classList.remove("bg-green-900", "bg-opacity-20", "border-l-4", "border-green-400");
+    if (roomData.type === "TEXT") {
+        console.log(`Selected room : ${roomData.id}`);
+        if (currentState.room.id !== null) {
+            document.getElementById(currentState.room.id).classList.remove("bg-green-900", "bg-opacity-20", "border-l-4", "border-green-400");
+        }
+        currentState.room = roomData;
+
+        document.getElementById(roomData.id).classList.add("bg-green-900", "bg-opacity-20", "border-l-4", "border-green-400");
+        document.getElementById("room-header-name").innerText = roomData.name;
+
+        getMessages(roomData.id);
     }
-    currentState.room = roomData;
-
-    document.getElementById(roomData.id).classList.add("bg-green-900", "bg-opacity-20", "border-l-4", "border-green-400");
-    document.getElementById("room-header-name").innerText = roomData.name;
-
-    getMessages(roomData.id);
 }
