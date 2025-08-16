@@ -1,6 +1,6 @@
 async function getRooms(serverId) {
     try {
-        const response = await fetch(`${hostUrl}/server/${serverId}/room`, {
+        const response = await fetch(`${currentState.hostUrl}/server/${serverId}/room`, {
             cache: "no-store",
             signal: AbortSignal.timeout(5000),
             credentials: 'include',

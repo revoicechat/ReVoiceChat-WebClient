@@ -1,6 +1,5 @@
-let hostUrl = "https://srv.revoicechat.fr";
-
 const currentState = {
+    hostUrl: null,
     global: {
         sse: null,
     },
@@ -14,95 +13,30 @@ const currentState = {
 
 // Ready state
 document.addEventListener('DOMContentLoaded', function () {
-    Swal.fire({
-        icon: "question",
-        title: "Login",
-        html: `<form id='swal-form'>
-            <label>Host</label>
-            <br/>
-            <input type='text' name='host' class='swal2-input' placeholder='https://srv.revoicechat.fr' value='${hostUrl}'>
+    currentState.hostUrl = getQueryVariable("host");
 
-            <br/>
-            <label>Username</label>
-            <br/>
-            <input type='text' name='username' class='swal2-input'>
+    if(currentState.hostUrl === false){
+        document.location.href = `index.html`;
+    }
 
-            <br/>
-            <label>Password</label>
-            <br/>
-            <input type='password' name='password' class='swal2-input'>
-
-            </form>`,
+    let loadingSwal = Swal.fire({
+        icon: "info",
+        title: `Loading server list from host\n ${currentState.hostUrl}`,
+        focusConfirm: false,
         allowOutsideClick: false,
-        allowEscapeKey: false,
-        confirmButtonText: "Connect",
-        width: "40em",
-    }).then((result) => {
-        if (result.value) {
-            const FORM = document.getElementById("swal-form");
-            const LOGIN = {
-                'username': FORM.username.value,
-                'password': FORM.password.value,
-            };
-
-            hostUrl = FORM.host.value;
-
-            let connectingSwal = Swal.fire({
-                icon: "info",
-                title: `Connecting to\n ${hostUrl}`,
-                focusConfirm: false,
-                allowOutsideClick: false,
-                timerProgressBar: true,
-                animation: false,
-                didOpen: () => {
-                    Swal.showLoading();
-                    login(LOGIN, connectingSwal);
-                }
-            })
+        timerProgressBar: true,
+        animation: false,
+        didOpen: () => {
+            Swal.showLoading();
+            getServers(loadingSwal);
+            sseConnect();
         }
     })
 });
 
-async function login(loginData, connectingSwal) {
-    try {
-        const response = await fetch(`${hostUrl}/login`, {
-            cache: "no-store",
-            signal: AbortSignal.timeout(5000),
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            method: 'POST',
-            credentials: 'include',
-            body: JSON.stringify(loginData),
-        });
-
-        const result = await response.ok;
-
-        connectingSwal.close();
-
-        let loadingSwal = Swal.fire({
-            icon: "info",
-            title: `Loading server list from host\n ${hostUrl}`,
-            focusConfirm: false,
-            allowOutsideClick: false,
-            timerProgressBar: true,
-            animation: false,
-            didOpen: () => {
-                Swal.showLoading();
-                getServers(loadingSwal);
-                sseConnect();
-            }
-        })
-    }
-    catch (error) {
-        connectingSwal.close();
-        console.error("Error while login : ", error);
-    }
-}
-
 async function getServers(loadingSwal) {
     try {
-        const response = await fetch(`${hostUrl}/server`, {
+        const response = await fetch(`${currentState.hostUrl}/server`, {
             cache: "no-store",
             signal: AbortSignal.timeout(5000),
             credentials: 'include',
@@ -131,7 +65,7 @@ function buildServerList(data) {
 }
 
 function selectServer(serverData) {
-    if(serverData === undefined || serverData === null){
+    if (serverData === undefined || serverData === null) {
         console.error("serverData is null or undefined");
         return;
     }
@@ -143,14 +77,14 @@ function selectServer(serverData) {
 }
 
 function sseConnect() {
-    console.log(`Connecting to "${hostUrl}/sse"`);
+    console.log(`Connecting to "${currentState.hostUrl}/sse"`);
 
     if (currentState.global.sse !== null) {
         currentState.global.sse.close();
         currentState.global.sse = null;
     }
 
-    currentState.global.sse = new EventSource(`${hostUrl}/sse`, { withCredentials: true });
+    currentState.global.sse = new EventSource(`${currentState.hostUrl}/sse`, { withCredentials: true });
 
     currentState.global.sse.onmessage = (event) => {
         eventData = JSON.parse(event.data);
@@ -162,7 +96,7 @@ function sseConnect() {
     };
 
     currentState.global.sse.onerror = () => {
-        console.error(`An error occurred while attempting to connect to "${hostUrl}/sse".\nRetry in 10 seconds`);
+        console.error(`An error occurred while attempting to connect to "${currentState.hostUrl}/sse".\nRetry in 10 seconds`);
         setTimeout(() => {
             sseConnect();
             getMessages(currentState.room.id);

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+    <link href="src/css/theme.css" rel="stylesheet">
+    <link rel="shortcut icon" type="image/png" href="src/img/favicon.png" />
+    <title>ReVoiceChat - App</title>
+</head>
+<body class="bg-gray-900 text-white min-h-screen overflow-hidden">
+    <!-- Background Pattern -->
+    <div class="fixed inset-0 opacity-5">
+        <div class="absolute inset-0" style="background-image: radial-gradient(circle at 2px 2px, white 1px, transparent 0); background-size: 40px 40px;"></div>
+    </div>
+    
+    <!-- Main Container -->
+    <div class="flex h-screen relative z-10">
+        
+        <!-- Sidebar -->
+        <div class="w-80 bg-gray-800 border-r border-gray-700 flex flex-col perspective-card">
+            <div class="card-3d h-full">
+                <!-- Header -->
+                <div class="p-4 border-b border-gray-700 glass-effect">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center space-x-3">
+                            <div class="relative">
+                                <img src="src/img/favicon.png" alt="Profile" class="w-10 h-10 rounded-full ring-2 ring-green-400">
+                            </div>
+                            <div>
+                                <h2 class="font-semibold text-white" id="server-name"></h2>
+                                <p class="text-xs text-gray-400">Proof of concept</p>
+                            </div>
+                        </div>
+                        <div class="flex space-x-2">
+                            <!--<button class="p-2 hover:bg-gray-700 rounded-full transition-colors">
+                                <i class="fas fa-ellipsis-v text-gray-400"></i>
+                            </button>-->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Room List -->
+                <div class="flex-1 overflow-y-auto custom-scrollbar" id="room-list">
+                    <!-- JS -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- Chat Area -->
+        <div class="flex-1 flex flex-col perspective-card">
+            <div class="card-3d flex flex-col h-full">
+                <!-- Chat Header -->
+                <div class="p-4 border-b border-gray-700 glass-effect">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <div>
+                                <h3 class="font-semibold text-white" id="room-header-name"></h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Messages Area -->
+                <div class="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar" id="room-messages">
+                    <!-- JS -->
+                </div>
+                
+                <!-- Message Input -->
+                <div class="p-4 border-t border-gray-700 glass-effect">
+                    <div class="flex items-center space-x-3">
+                        <!--<button class="p-2 hover:bg-gray-700 rounded-full transition-colors">
+                            <i class="fas fa-paperclip text-gray-400 hover:text-white"></i>
+                        </button>-->
+                        <div class="flex-1 relative">
+                            <input type="text" 
+                                   placeholder="Type a message..." 
+                                   class="w-full bg-gray-700 text-white placeholder-gray-400 rounded-full pl-4 pr-12 py-3 focus:outline-none focus:ring-2 focus:ring-green-400 transition-all"
+                                   id="message-input">
+                            <!--<button class="absolute right-2 top-1/2 transform -translate-y-1/2 p-2 hover:bg-gray-600 rounded-full transition-colors">
+                                <i class="fas fa-smile text-gray-400 hover:text-yellow-400"></i>
+                            </button>-->
+                        </div>
+                        <button class="p-3 chat-gradient rounded-full hover:scale-105 transition-transform shadow-lg" id="send-button" onclick="sendMessage()">
+                            <i class="fas fa-paper-plane text-white"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="src/js/tools.js"></script>
+    <script src="src/js/servers.js"></script>
+    <script src="src/js/rooms.js"></script>
+    <script src="src/js/messages.js"></script>
+</body>
+</html>

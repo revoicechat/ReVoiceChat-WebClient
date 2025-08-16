@@ -6,7 +6,7 @@ document.getElementById("message-input").addEventListener('keydown', function (e
 
 async function getMessages(roomId) {
     try {
-        const response = await fetch(`${hostUrl}/room/${roomId}/message`, {
+        const response = await fetch(`${currentState.hostUrl}/room/${roomId}/message`, {
             cache: "no-store",
             signal: AbortSignal.timeout(5000),
             credentials: 'include',
@@ -58,7 +58,7 @@ async function sendMessage() {
     }
 
     try {
-        const response = await fetch(`${hostUrl}/room/${currentState.room.id}/message`, {
+        const response = await fetch(`${currentState.hostUrl}/room/${currentState.room.id}/message`, {
             method: 'PUT',
             credentials: 'include',
             headers: {
