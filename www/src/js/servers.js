@@ -14,26 +14,62 @@ const currentState = {
 document.addEventListener('DOMContentLoaded', async function () {
     const { value: inputUrl } = await Swal.fire({
         icon: "question",
-        input: "text",
-        inputLabel: "Choose your host",
-        inputPlaceholder: "Enter the URL",
-        inputValue: hostUrl,
+        title: "Login",
+        html: `<form id='swal-form'>
+            <label>Host</label>
+            <br/>
+            <input type='text' name='host' class='swal2-input' placeholder='https://srv.revoicechat.fr' value='${hostUrl}'>
+
+            <br/>
+            <label>Username</label>
+            <br/>
+            <input type='text' name='username' class='swal2-input'>
+
+            <br/>
+            <label>Password</label>
+            <br/>
+            <input type='password' name='password' class='swal2-input'>
+
+            </form>`,
         allowOutsideClick: false,
         allowEscapeKey: false,
-        confirmButtonText: "Connect"
+        confirmButtonText: "Connect",
+        width: "40em",
     });
+
     if (inputUrl) {
-        hostUrl = inputUrl;
+        const FORM = document.getElementById("swal-form");
+        const LOGIN = {
+            'username': FORM.username.value,
+            'password': FORM.password.value,
+        },
+
+            hostUrl = FORM.host.value;
 
         let loadingSwal = Swal.fire({
             icon: "info",
-            title: `Connecting to \n ${inputUrl}`,
+            title: `Connecting to \n ${hostUrl}`,
             focusConfirm: false,
             allowOutsideClick: false,
             timerProgressBar: true,
             didOpen: () => {
                 Swal.showLoading();
-                getServers(loadingSwal);
+                fetch(`${hostUrl}/login`, {
+                    cache: "no-store",
+                    signal: AbortSignal.timeout(5000),
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    method: 'POST',
+                    credentials: 'include',
+                    body: JSON.stringify(LOGIN)
+                }).then((response) => {
+                    if (!response.ok) {
+                        console.error('Login failed');
+                        return;
+                    }
+                    getServers(loadingSwal);
+                })
             }
         })
     }
