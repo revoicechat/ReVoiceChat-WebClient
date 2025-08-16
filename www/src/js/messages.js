@@ -70,7 +70,6 @@ async function sendMessage() {
         const result = await response.ok;
     }
     catch (error) {
-        loadingSwal.close();
         console.error("Error while sending message : ", error);
     }
 }
