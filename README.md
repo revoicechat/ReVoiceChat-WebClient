@@ -12,7 +12,7 @@ sudo a2enmod headers
 ```
 ### Create VirtualHost
 
-Create new VirtualHost
+Create new **VirtualHost**
 ```sh
 sudo nano /etc/apache2/sites-available/rvc-client.conf
 ```
@@ -21,6 +21,8 @@ VirtualHost exemple
 ```apache
 <VirtualHost *:80>
     Header set Access-Control-Allow-Origin "*"
+    Header set Cache-Control "max-age=86400, must-revalidate"
+
     DocumentRoot /var/www/html/ReVoiceChat-WebClient/www/
     DirectoryIndex index.html
 
@@ -33,8 +35,9 @@ VirtualHost exemple
     LogLevel info
 </VirtualHost>
 ```
+**Cache-Control** can be set to **no-cache, must-revalidate**
 
-Enable VirtualHost
+Enable **VirtualHost**
 ```sh
 sudo a2ensite rvc-client.conf
 sudo systemctl reload apache2
