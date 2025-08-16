@@ -8,11 +8,12 @@ async function getMessages(roomId) {
     fetch(`${hostUrl}/room/${roomId}/message`, {
         cache: "no-store",
         signal: AbortSignal.timeout(5000),
+        credentials: 'include',
         headers: {
             'Content-Type': 'application/json'
         }
     }).then((response) => {
-        if(!response.ok){
+        if (!response.ok) {
             return;
         }
         return response.json();
@@ -20,8 +21,13 @@ async function getMessages(roomId) {
         createMessageList(body);
     });
 
-    currentState.room.sse = new EventSource(`${hostUrl}/room/${roomId}/sse`);
-    currentState.room.sse.onmessage = (data) => createMessage(data);
+    currentState.room.sse = new EventSource(`${hostUrl}/room/${roomId}/sse`, { withCredentials: true });
+    currentState.room.sse.onmessage = (event) => {
+        eventData = JSON.parse(event.data);
+        if (eventData.roomId === currentState.room.id) {
+            document.getElementById("room-messages").appendChild(createMessage(eventData));
+        }
+    };
 }
 
 function createMessageList(data) {
@@ -50,18 +56,19 @@ function createMessage(messageData) {
 function sendMessage() {
     let textInput = sanitizeString(document.getElementById('message-input').value);
 
-    if(textInput == "" || textInput == null){
+    if (textInput == "" || textInput == null) {
         return;
     }
 
     fetch(`${hostUrl}/room/${currentState.room.id}/message`, {
         method: 'PUT',
+        credentials: 'include',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({text: textInput})
+        body: JSON.stringify({ text: textInput })
     }).then((response) => {
-        if(response.ok){
+        if (response.ok) {
             document.getElementById('message-input').value = "";
             return;
         }
