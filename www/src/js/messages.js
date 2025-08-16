@@ -44,7 +44,7 @@ function createMessage(messageData) {
     DIV.className = "flex items-start space-x-2 message-bubble";
     DIV.innerHTML = `
         <div>
-            <h3 class="font-semibold text-white truncate">[OWNER NAME]</h3>
+            <h3 class="font-semibold text-white truncate">${messageData.user.username}</h3>
             <div class="bg-gray-700 rounded-2xl rounded-tl-sm p-3 shadow-lg">
                 <p class="text-white">${messageData.text}</p>
             </div>
