@@ -23,11 +23,13 @@ async function getMessages(roomId) {
 }
 
 function createMessageList(data) {
-    const roomList = document.getElementById("room-messages");
-    roomList.innerHTML = "";
+    const ROOM = document.getElementById("room-messages");
+    ROOM.innerHTML = "";
     for (const neddle in data) {
-        roomList.appendChild(createMessage(data[neddle]));
+        ROOM.appendChild(createMessage(data[neddle]));
     }
+
+    ROOM.scrollTop = ROOM.scrollHeight;
 }
 
 function createMessage(messageData) {

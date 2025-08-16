@@ -143,7 +143,9 @@ function sseConnect() {
     currentState.global.sse.onmessage = (event) => {
         eventData = JSON.parse(event.data);
         if (eventData.roomId === currentState.room.id) {
-            document.getElementById("room-messages").appendChild(createMessage(eventData));
+            const ROOM = document.getElementById("room-messages");
+            ROOM.appendChild(createMessage(eventData));
+            ROOM.scrollTop = ROOM.scrollHeight;
         }
     };
 
