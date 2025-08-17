@@ -26,7 +26,52 @@
     background: linear-gradient(135deg, #25d366 0%, #128c7e 100%);
 }
 
+/* MAIN */
+body {
+    min-height: 100vh;
+    overflow: hidden;
+}
+
+.main {
+    display: flex;
+    height: 100vh;
+    position: relative;
+    z-index: 10;
+}
+
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    border-right-width: 1px;
+    width: 20rem;
+    height: 100%;
+}
+
+.sidebar>.header {
+    padding: 0.75rem;
+}
+
+.sidebar>.header>.container {
+    display: flex;
+    align-items: center;
+}
+
+.sidebar>.header>.container>.icone {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 9999px;
+}
+
+.sidebar>.header>.container>.title {
+    margin-left: 0.75rem;
+}
+
 /* ROOM */
+.room-container {
+    flex: 1 1 0%;
+    overflow-y: auto;
+}
+
 .room {
     cursor: pointer;
     position: relative;
@@ -49,7 +94,7 @@
 }
 
 /* MESSAGE */
-.message-container{
+.message-container {
     align-items: flex-start;
     display: flex;
 }
@@ -70,6 +115,40 @@
     font-size: 0.75rem;
     line-height: 1rem;
 
+}
+
+/* STATUS */
+.status {
+    padding: 1rem;
+}
+
+.status>.container {
+    align-items: center;
+    display: flex;
+}
+
+.status>.container>.content {
+    height: 2.5rem;
+    display: flex;
+}
+
+.status>.container>.content .icone {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 9999px;
+}
+
+.status>.container>.content .user {
+    padding-left: 0.75rem;
+}
+
+.user>.name {
+    font-weight: 600;
+}
+
+.user>.user-status {
+    font-size: 0.75rem;
+    line-height: 1rem;
 }
 
 /* SCROLL */

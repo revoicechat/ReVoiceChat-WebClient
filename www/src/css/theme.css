@@ -1,3 +1,19 @@
+/* MAIN */
+body.theme{
+    color: rgb(255, 255, 255);
+    background-color: rgb(17, 24, 39);
+}
+
+.sidebar.theme{
+    background-color: rgb(31, 41, 55);
+    border-color: rgb(55, 65, 81);
+}
+
+.sidebar > .header.theme{
+    border-color: rgb(55, 65, 81);
+    background: rgba(255, 255, 255, 0.1);
+}
+
 /* ROOM THEME */
 .room.theme {
     border-color: rgb(55, 65, 81);
@@ -26,6 +42,19 @@
 }
 
 .message-timestamp.theme{
-    color: rgb(156, 163, 175)
+    color: rgb(156, 163, 175);
 }
 
+/* STATUS THEME */
+.status.theme{
+    border-color: rgb(55, 65, 81);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.user > .name.theme{
+    color: rgb(255 255 255);
+}
+
+.user > .user-status.theme{
+    color: rgb(156, 163, 175);
+}
