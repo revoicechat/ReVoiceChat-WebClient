@@ -31,20 +31,9 @@ function createRoomList(data) {
 function createRoom(roomData, onclick) {
     const DIV = document.createElement('div');
     DIV.id = roomData.id;
-    DIV.className = "room p-4 border-b border-gray-700 cursor-pointer relative";
-
-    const ANCHOR = document.createElement('a');
-    ANCHOR.onclick = onclick;
-    ANCHOR.innerHTML = `
-        <div class="flex items-center space-x-3">
-            <div class="flex-1 min-w-0">
-                <div class="flex justify-between items-start">
-                    <h3 class="font-semibold text-white truncate">${roomData.name}</h3>
-                </div>
-            </div>
-        </div>`;
-
-    DIV.appendChild(ANCHOR);
+    DIV.className = "room theme";
+    DIV.onclick = onclick;
+    DIV.innerHTML = `<h3 class="room-title">${roomData.name}</h3>`;
     return DIV;
 }
 
@@ -57,11 +46,11 @@ function selectRoom(roomData) {
     if (roomData.type === "TEXT") {
         console.log(`Selected room : ${roomData.id}`);
         if (currentState.room.id !== null) {
-            document.getElementById(currentState.room.id).classList.remove("bg-green-900", "bg-opacity-20", "border-l-4", "border-green-400");
+            document.getElementById(currentState.room.id).classList.remove("active");
         }
         currentState.room = roomData;
 
-        document.getElementById(roomData.id).classList.add("bg-green-900", "bg-opacity-20", "border-l-4", "border-green-400");
+        document.getElementById(roomData.id).classList.add("active");
         document.getElementById("room-header-name").innerText = roomData.name;
 
         getMessages(roomData.id);

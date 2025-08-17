@@ -1,119 +1,31 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-@layer components {
-    /* .btn-primary {
-      @apply py-1.5 px-3 text-center bg-blue-700 rounded-md text-white;
-  } */
+/* ROOM THEME */
+.room.theme {
+    border-color: rgb(55, 65, 81);
+    color: rgb(255, 255, 255);
 }
 
-* {
-    font-family: sans-serif;
+.room.theme:hover {
+    background-color: rgb(7, 89, 133);
 }
 
-.glass-effect {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+.room.theme.active {
+    background-color: rgba(12, 74, 110, 0.5);
 }
 
-.room {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+.room.theme.active:hover {
+    background-color: rgb(7, 89, 133);
 }
 
-.room:hover {
-    background: rgba(37, 211, 102, 0.1);
-    box-shadow: 0 10px 30px rgba(37, 211, 102, 0.2);
+/* MESSAGE THEME */
+.message-owner.theme{
+    color: white;
 }
 
-.message-bubble {
-    animation: messageSlide 0.4s ease-out;
+.message-content.theme{
+    color: white;
 }
 
-@keyframes messageSlide {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+.message-timestamp.theme{
+    color: rgb(156, 163, 175)
 }
 
-.floating {
-    animation: floating 3s ease-in-out infinite;
-}
-
-@keyframes floating {
-
-    0%,
-    100% {
-        transform: translateY(0px);
-    }
-
-    50% {
-        transform: translateY(-10px);
-    }
-}
-
-.gradient-bg {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-}
-
-.chat-gradient {
-    background: linear-gradient(135deg, #25d366 0%, #128c7e 100%);
-}
-
-@keyframes pulse {
-
-    0%,
-    100% {
-        opacity: 1;
-    }
-
-    50% {
-        opacity: 0.5;
-    }
-}
-
-.typing-indicator {
-    animation: typing 1.5s infinite;
-}
-
-@keyframes typing {
-
-    0%,
-    60%,
-    100% {
-        transform: translateY(0);
-    }
-
-    30% {
-        transform: translateY(-10px);
-    }
-}
-
-.scroll-smooth {
-    scroll-behavior: smooth;
-}
-
-.custom-scrollbar::-webkit-scrollbar {
-    width: 6px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 10px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb {
-    background: rgba(37, 211, 102, 0.5);
-    border-radius: 10px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: rgba(37, 211, 102, 0.7);
-}
