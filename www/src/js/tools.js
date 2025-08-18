@@ -51,3 +51,45 @@ function getQueryVariable(variable) {
     }
     return false;
 }
+
+async function getRequestToHost(path) {
+    try {
+        const response = await fetch(`${current.host}${path}`, {
+            cache: "no-store",
+            signal: AbortSignal.timeout(5000),
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error(`Response status: ${response.status}`);
+        }
+
+        return await response.json();
+    }
+    catch (error) {
+        console.error(`An error occurred while processing your request \n${error}\nHost : ${current.host}\nPath : ${path}`);
+        return null;
+    }
+}
+
+async function putRequestToHost(path, data) {
+    try {
+        const response = await fetch(`${current.host}${path}`, {
+            method: 'PUT',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+
+        return response.ok;
+    }
+    catch (error) {
+        console.error(`An error occurred while processing your request \n${error}\nHost : ${current.host}\nPath : ${path}`);
+        return null;
+    }
+}

@@ -1,19 +1,8 @@
 async function getUsername() {
-    try {
-        const response = await fetch(`${current.host}/user/me`, {
-            cache: "no-store",
-            signal: AbortSignal.timeout(5000),
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-        });
+    const result = getRequestToHost(`/user/me`);
 
-        const result = await response.json();
+    if (result !== null) {
         document.getElementById("user-name").innerText = result.username;
         document.getElementById("user-status").innerText = result.status;
-    }
-    catch (error) {
-        console.error("Error while retrieving username : ", error);
     }
 }

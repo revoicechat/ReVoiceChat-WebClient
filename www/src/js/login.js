@@ -28,7 +28,10 @@ async function login(loginData, host) {
             body: JSON.stringify(loginData),
         });
 
-        const result = await response.ok;
+        if(!response.ok){
+            throw "Not OK";
+        }
+
         sessionStorage.setItem('host', host);
         document.location.href = `app.html`;
     }

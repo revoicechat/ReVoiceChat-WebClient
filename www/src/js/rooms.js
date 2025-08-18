@@ -1,22 +1,9 @@
 async function getRooms(serverId) {
-    try {
-        const response = await fetch(`${current.host}/server/${serverId}/room`, {
-            cache: "no-store",
-            signal: AbortSignal.timeout(5000),
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
+    const result = await getRequestToHost(`/server/${serverId}/room`);
 
-        const result = await response.json();
-
+    if (result !== null) {
         createRoomList(result);
         selectRoom(result[0]);
-    }
-    catch (error) {
-        connectingSwal.close();
-        console.error("Error getting room : ", error);
     }
 }
 
@@ -54,7 +41,7 @@ function selectRoom(roomData) {
         document.getElementById("room-name").innerText = roomData.name;
         document.getElementById("chat-input").placeholder = `Send a message in ${roomData.name}`;
         document.getElementById("chat-input").focus();
-        
+
         getMessages(roomData.id);
     }
 }

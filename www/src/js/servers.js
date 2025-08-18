@@ -1,26 +1,13 @@
 async function getServers() {
-    try {
-        const response = await fetch(`${current.host}/server`, {
-            cache: "no-store",
-            signal: AbortSignal.timeout(5000),
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-        });
-        
-        if(!response.ok){
-            throw "Not OK";
-        }
+    const result = await getRequestToHost("/server");
 
-        const result = await response.json();
-        buildServerList(result);
-        selectServer(result[0]);
-    }
-    catch (error) {
-        console.error("Error while retrieving server list : ", error);
+    if(result === null){
         document.location.href = "index.html";
+        return;
     }
+
+    buildServerList(result);
+    selectServer(result[0]);
 }
 
 function buildServerList(data) {

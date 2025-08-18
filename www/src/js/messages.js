@@ -5,33 +5,18 @@ document.getElementById("chat-input").addEventListener('keydown', function (e) {
 });
 
 async function getMessages(roomId) {
-    try {
-        const response = await fetch(`${current.host}/room/${roomId}/message`, {
-            cache: "no-store",
-            signal: AbortSignal.timeout(5000),
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
+    const result = await getRequestToHost(`/room/${roomId}/message`);
 
-        const result = await response.json();
+    if (result !== null) {
+        const ROOM = document.getElementById("room-messages");
 
-        createMessageList(result);
+        ROOM.innerHTML = "";
+        for (const neddle in result) {
+            ROOM.appendChild(createMessage(result[neddle]));
+        }
+
+        ROOM.scrollTop = ROOM.scrollHeight;
     }
-    catch (error) {
-        console.error("Error while retrieving message : ", error);
-    }
-}
-
-function createMessageList(data) {
-    const ROOM = document.getElementById("room-messages");
-    ROOM.innerHTML = "";
-    for (const neddle in data) {
-        ROOM.appendChild(createMessage(data[neddle]));
-    }
-
-    ROOM.scrollTop = ROOM.scrollHeight;
 }
 
 function createMessage(messageData) {
@@ -54,20 +39,12 @@ async function sendMessage() {
         return;
     }
 
-    try {
-        const response = await fetch(`${current.host}/room/${current.room.id}/message`, {
-            method: 'PUT',
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ text: textInput })
-        });
+    const result = await putRequestToHost(`/room/${current.room.id}/message`, { text: textInput })
 
-        const result = await response.ok;
+    if(result){
         document.getElementById('chat-input').value = "";
+        return;
     }
-    catch (error) {
-        console.error("Error while sending message : ", error);
-    }
+    
+    console.error("Error while sending message");
 }
