@@ -1,5 +1,5 @@
 async function getUsername() {
-    const result = getRequestToHost(`/user/me`);
+    const result = await getRequestToHost(`/user/me`);
 
     if (result !== null) {
         document.getElementById("user-name").innerText = result.username;
