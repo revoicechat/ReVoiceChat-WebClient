@@ -31,11 +31,14 @@ VirtualHost exemple
             Require all granted
     </Directory>
 
-    ErrorLog /var/www/html/logs/rvcs_http_error.log
+    ErrorLog /var/log/rvcc/error.log
+    TransferLog /var/log/rvcc/access.log
     LogLevel info
 </VirtualHost>
 ```
 **Cache-Control** can be set to **no-cache, must-revalidate**
+
+Make sure **/var/log/rvcc/** exist and apache2 can write to it
 
 Enable **VirtualHost**
 ```sh
