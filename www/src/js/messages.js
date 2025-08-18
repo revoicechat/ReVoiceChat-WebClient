@@ -20,7 +20,6 @@ async function getMessages(roomId) {
         createMessageList(result);
     }
     catch (error) {
-        loadingSwal.close();
         console.error("Error while retrieving message : ", error);
     }
 }
