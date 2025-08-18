@@ -18,6 +18,9 @@ function changeTheme() {
         showCancelButton: true,
         confirmButtonText: `Select`,
         cancelButtonText: `Cancel`,
+        didOpen: () => {
+            document.getElementById("theme").value = localStorage.getItem("Theme");
+        }
     }).then((result) => {
         if (result.value) {
             const root = document.documentElement;
