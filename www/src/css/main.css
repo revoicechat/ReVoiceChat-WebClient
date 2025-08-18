@@ -146,10 +146,8 @@ body {
 }
 
 .chat-area {
-    padding: 1rem;
     overflow-y: auto;
     flex: 1 1 0%;
-
 }
 
 .chat-input-container {
@@ -170,25 +168,26 @@ body {
 }
 
 .message-container {
-    align-items: flex-start;
-    display: flex;
+    display: block;
+    padding-bottom: 0.5rem;
 }
 
 .message-owner {
+    padding-left: 1rem;
     font-weight: 600;
     overflow: hidden;
     text-overflow: ellipsis;
-    white-space: nowrap;
 }
 
 .message-content {
-    padding: 0.5rem;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
 }
 
 .message-timestamp {
+    font-weight: 400;
     font-size: 0.75rem;
     line-height: 1rem;
-
 }
 
 .status-container {

@@ -24,11 +24,10 @@ function createMessage(messageData) {
     DIV.id = messageData.id;
     DIV.className = "message-container";
     DIV.innerHTML = `
-        <div>
-            <h3 class="message-owner">${messageData.user.username}</h3>
-            <div class="message-content">${messageData.text}</div>
-            <p class="message-timestamp">${timestampToText(messageData.createdDate)}</p>
-        </div>`;
+        
+        <h3 class="message-owner">${messageData.user.username} <span class="message-timestamp">${timestampToText(messageData.createdDate)}</span></h3>
+        <div class="message-content">${messageData.text}</div>
+    `;
     return DIV;
 }
 

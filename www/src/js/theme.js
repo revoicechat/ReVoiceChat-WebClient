@@ -10,8 +10,7 @@ function changeTheme() {
             <form id='swal-form'>
                 <select name='theme' id='theme'>
                     <option value='default'>Default</option>
-                    <option value='oled'>Dark OLED</option>
-                    <option value='flatui'>Flat UI</option>
+                    <option value='dark'>Dark</option>
                 </select>
             </form>
         `,
