@@ -2,6 +2,11 @@
     font-family: sans-serif;
 }
 
+svg {
+    width: 1.5rem;
+    height: 1.5rem;
+}
+
 body {
     min-height: 100vh;
     overflow: hidden;
@@ -25,7 +30,7 @@ body {
     padding-left: 2.5rem;
     padding-right: 2.5rem;
     border-radius: 0.25rem;
-    margin-top: 2.5rem; 
+    margin-top: 2.5rem;
 }
 
 .login-form {
@@ -148,6 +153,7 @@ body {
 .chat-area {
     overflow-y: auto;
     flex: 1 1 0%;
+    padding-top: 0.75rem;
 }
 
 .chat-input-container {
@@ -221,8 +227,8 @@ body {
 }
 
 .status-bloc-2 {
-    position: relative;
-
+    margin-left: auto;
+    margin-right: 0px;
 }
 
 .status-bloc-2 .button {
