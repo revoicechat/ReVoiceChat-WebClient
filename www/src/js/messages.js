@@ -10,9 +10,13 @@ async function getMessages(roomId) {
     if (result !== null) {
         const ROOM = document.getElementById("room-messages");
 
+        const sortedResult = [...result].sort((a, b) => {
+            return new Date(a.createdDate) - new Date(b.createdDate);
+        });
+
         ROOM.innerHTML = "";
-        for (const neddle in result) {
-            ROOM.appendChild(createMessage(result[neddle]));
+        for (const neddle in sortedResult) {
+            ROOM.appendChild(createMessage(sortedResult[neddle]));
         }
 
         ROOM.scrollTop = ROOM.scrollHeight;
@@ -98,8 +102,8 @@ async function editMessage(id) {
     }
 }
 
-function chatMode(input){
-    if(input.value == ""){
+function chatMode(input) {
+    if (input.value == "") {
         current.chat.mode = "send";
         current.chat.editId = null;
         console.log("Switching to 'send' mode");
