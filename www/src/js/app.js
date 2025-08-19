@@ -4,12 +4,16 @@ const current = {
     sse: null,
     server: {
         id: null,
+        name: null,
     },
     room: {
         id: null,
+        name: null,
+        type: null,
     },
     user: {
         id: null,
+        displayName: null,
     },
     chat: {
         mode: "send",
@@ -19,17 +23,30 @@ const current = {
 
 // Ready state
 document.addEventListener('DOMContentLoaded', function () {
-    if (sessionStorage.getItem('host')) {
-        current.coreUrl = sessionStorage.getItem('host');
+    // Login
+    if (sessionStorage.getItem('coreUrl')) {
+        current.coreUrl = sessionStorage.getItem('coreUrl');
         getServers();
         sseOpen();
         getUsername();
     }
-    else {
+
+    // Last state (app wasn't closed)
+    if(sessionStorage.getItem('lastState')){
+        const lastState = JSON.parse(sessionStorage.getItem('lastState'));
+        current.coreUrl = lastState.coreUrl;
+        current.mediaUrl = lastState.mediaUrl;
+        current.server = lastState.server;
+        current.room = lastState.room;
+        current.user = lastState.user;
+    }
+
+    if(current.coreUrl === null){
         document.location.href = `index.html`;
     }
 });
 
 addEventListener("beforeunload", () => {
     current.sse.close();
+    sessionStorage.setItem('lastState', JSON.stringify(current));
 })

@@ -7,7 +7,13 @@ async function getServers() {
     }
 
     buildServerList(result);
-    selectServer(result[0]);
+
+    if(current.server.id !== null){
+        selectServer(current.server);
+    }
+    else{
+        selectServer(result[0]);
+    }
 }
 
 function buildServerList(data) {
@@ -24,8 +30,10 @@ function selectServer(serverData) {
     }
 
     console.log(`Selected server : ${serverData.id}`);
-    current.server.id = serverData.id;
+
+    current.server = serverData;
     document.getElementById("server-name").innerText = serverData.name;
+    
     getRooms(serverData.id);
 }
 

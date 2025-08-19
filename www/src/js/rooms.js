@@ -3,7 +3,13 @@ async function getRooms(serverId) {
 
     if (result !== null) {
         createRoomList(result);
-        selectRoom(result[0]);
+
+        if (current.room.id !== null) {
+            selectRoom(current.room);
+        }
+        else {
+            selectRoom(result[0]);
+        }
     }
 }
 
@@ -25,6 +31,7 @@ function createRoom(roomData, onclick) {
 }
 
 function selectRoom(roomData) {
+    console.log(roomData)
     if (roomData === undefined || roomData === null) {
         console.error("roomData is null or undefined");
         return;
