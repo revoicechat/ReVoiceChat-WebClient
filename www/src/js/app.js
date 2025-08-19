@@ -1,6 +1,6 @@
 const current = {
-    host: null,
-    mediaHost: "https://media.revoicechat.fr",
+    coreUrl: null,
+    mediaUrl: "https://media.revoicechat.fr",
     sse: null,
     server: {
         id: null,
@@ -16,7 +16,7 @@ const current = {
 // Ready state
 document.addEventListener('DOMContentLoaded', function () {
     if (sessionStorage.getItem('host')) {
-        current.host = sessionStorage.getItem('host');
+        current.coreUrl = sessionStorage.getItem('host');
         getServers();
         sseConnect();
         getUsername();

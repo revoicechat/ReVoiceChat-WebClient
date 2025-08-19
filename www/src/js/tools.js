@@ -63,9 +63,9 @@ function getQueryVariable(variable) {
     return false;
 }
 
-async function getRequestToHost(path) {
+async function getRequestOnCore(path) {
     try {
-        const response = await fetch(`${current.host}${path}`, {
+        const response = await fetch(`${current.coreUrl}${path}`, {
             cache: "no-store",
             signal: AbortSignal.timeout(5000),
             credentials: 'include',
@@ -81,14 +81,14 @@ async function getRequestToHost(path) {
         return await response.json();
     }
     catch (error) {
-        console.error(`An error occurred while processing your request \n${error}\nHost : ${current.host}\nPath : ${path}`);
+        console.error(`An error occurred while processing your request \n${error}\nHost : ${current.coreUrl}\nPath : ${path}`);
         return null;
     }
 }
 
-async function putRequestToHost(path, data) {
+async function putRequestOnCore(path, data) {
     try {
-        const response = await fetch(`${current.host}${path}`, {
+        const response = await fetch(`${current.coreUrl}${path}`, {
             method: 'PUT',
             credentials: 'include',
             signal: AbortSignal.timeout(5000),
@@ -101,14 +101,14 @@ async function putRequestToHost(path, data) {
         return response.ok;
     }
     catch (error) {
-        console.error(`An error occurred while processing your request \n${error}\nHost : ${current.host}\nPath : ${path}`);
+        console.error(`An error occurred while processing your request \n${error}\nHost : ${current.coreUrl}\nPath : ${path}`);
         return null;
     }
 }
 
-async function deleteRequestToHost(path){
+async function deleteRequestOnCore(path){
     try {
-        const response = await fetch(`${current.host}${path}`, {
+        const response = await fetch(`${current.coreUrl}${path}`, {
             method: 'DELETE',
             credentials: 'include',
             signal: AbortSignal.timeout(5000),
@@ -120,14 +120,14 @@ async function deleteRequestToHost(path){
         return response.ok;
     }
     catch (error) {
-        console.error(`An error occurred while processing your request \n${error}\nHost : ${current.host}\nPath : ${path}`);
+        console.error(`An error occurred while processing your request \n${error}\nHost : ${current.coreUrl}\nPath : ${path}`);
         return null;
     }
 }
 
 async function fileExistOnMedia(path){
     try {
-        const response = await fetch(`${current.mediaHost}${path}`, {
+        const response = await fetch(`${current.mediaUrl}${path}`, {
             method: 'OPTIONS',
             signal: AbortSignal.timeout(5000),
         });
@@ -135,7 +135,7 @@ async function fileExistOnMedia(path){
         return response.ok;
     }
     catch (error) {
-        console.error(`An error occurred while processing your request \n${error}\nHost : ${current.host}\nPath : ${path}`);
+        console.error(`An error occurred while processing your request \n${error}\nHost : ${current.coreUrl}\nPath : ${path}`);
         return null;
     }
 }

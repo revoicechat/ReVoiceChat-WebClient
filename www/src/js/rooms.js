@@ -1,5 +1,5 @@
 async function getRooms(serverId) {
-    const result = await getRequestToHost(`/server/${serverId}/room`);
+    const result = await getRequestOnCore(`/server/${serverId}/room`);
 
     if (result !== null) {
         createRoomList(result);

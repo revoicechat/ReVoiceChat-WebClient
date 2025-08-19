@@ -5,7 +5,7 @@ document.getElementById("chat-input").addEventListener('keydown', function (e) {
 });
 
 async function getMessages(roomId) {
-    const result = await getRequestToHost(`/room/${roomId}/message`);
+    const result = await getRequestOnCore(`/room/${roomId}/message`);
 
     if (result !== null) {
         const ROOM = document.getElementById("room-messages");
@@ -64,7 +64,7 @@ async function sendMessage() {
         return;
     }
 
-    const result = await putRequestToHost(`/room/${current.room.id}/message`, { text: textInput })
+    const result = await putRequestOnCore(`/room/${current.room.id}/message`, { text: textInput })
 
     if (result) {
         document.getElementById('chat-input').value = "";
@@ -75,7 +75,7 @@ async function sendMessage() {
 }
 
 async function deleteMessage(id) {
-    const result = await deleteRequestToHost(`/message/${id}`);
+    const result = await deleteRequestOnCore(`/message/${id}`);
 }
 
 async function editMessage(id){

@@ -1,5 +1,5 @@
 async function getUsername() {
-    const result = await getRequestToHost(`/user/me`);
+    const result = await getRequestOnCore(`/user/me`);
 
     if (result !== null) {
         current.user.id = result.id;
@@ -7,7 +7,7 @@ async function getUsername() {
         document.getElementById("user-status").innerText = result.status;
 
         if (await fileExistOnMedia(`/profiles/${result.id}`)) {
-            document.getElementById("user-picture").src = `${current.mediaHost}/profiles/${result.id}`;
+            document.getElementById("user-picture").src = `${current.mediaUrl}/profiles/${result.id}`;
         }
     }
 }

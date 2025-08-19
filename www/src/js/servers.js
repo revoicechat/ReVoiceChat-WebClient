@@ -1,5 +1,5 @@
 async function getServers() {
-    const result = await getRequestToHost("/server");
+    const result = await getRequestOnCore("/server");
 
     if (result === null) {
         document.location.href = "index.html";
@@ -30,14 +30,14 @@ function selectServer(serverData) {
 }
 
 function sseConnect() {
-    console.log(`Connecting to "${current.host}/sse"`);
+    console.log(`Connecting to "${current.coreUrl}/sse"`);
 
     if (current.sse !== null) {
         current.sse.close();
         current.sse = null;
     }
 
-    current.sse = new EventSource(`${current.host}/sse`, { withCredentials: true });
+    current.sse = new EventSource(`${current.coreUrl}/sse`, { withCredentials: true });
 
     current.sse.onmessage = (event) => {
         event = JSON.parse(event.data);
@@ -80,7 +80,7 @@ function sseConnect() {
     };
 
     current.sse.onerror = () => {
-        console.error(`An error occurred while attempting to connect to "${current.host}/sse".\nRetry in 10 seconds`);
+        console.error(`An error occurred while attempting to connect to "${current.coreUrl}/sse".\nRetry in 10 seconds`);
         setTimeout(() => {
             sseConnect();
             getMessages(current.room.id);
