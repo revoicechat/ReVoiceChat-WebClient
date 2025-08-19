@@ -91,6 +91,7 @@ async function putRequestToHost(path, data) {
         const response = await fetch(`${current.host}${path}`, {
             method: 'PUT',
             credentials: 'include',
+            signal: AbortSignal.timeout(5000),
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -106,13 +107,29 @@ async function putRequestToHost(path, data) {
 }
 
 async function deleteRequestToHost(path){
-        try {
+    try {
         const response = await fetch(`${current.host}${path}`, {
             method: 'DELETE',
             credentials: 'include',
+            signal: AbortSignal.timeout(5000),
             headers: {
                 'Content-Type': 'application/json'
             }
+        });
+
+        return response.ok;
+    }
+    catch (error) {
+        console.error(`An error occurred while processing your request \n${error}\nHost : ${current.host}\nPath : ${path}`);
+        return null;
+    }
+}
+
+async function fileExistOnMedia(path){
+    try {
+        const response = await fetch(`${current.mediaHost}${path}`, {
+            method: 'OPTIONS',
+            signal: AbortSignal.timeout(5000),
         });
 
         return response.ok;
