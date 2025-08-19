@@ -1,4 +1,5 @@
 [data-theme="default"] {
+
     /* Body */
     body {
         color: rgb(255, 255, 255);
@@ -85,6 +86,22 @@
         border-radius: 10px;
     }
 
+    .user-dot-online {
+        background-color: rgb(74, 222, 128);
+    }
+
+    .user-dot-away {
+        background-color: rgb(251, 146, 60);
+    }
+
+    .user-dot-dnd {
+        background-color: rgb(220, 38, 38)
+    }
+
+    .user-dot-offline {
+        background-color: rgb(113, 113, 122)
+    }
+
     /* Chat */
     .chat-container {
         border-color: rgb(55, 65, 81);
@@ -146,9 +163,16 @@
         background-color: rgb(7, 89, 133);
         border-radius: 10px;
     }
+
+    /* User profile */
+
+    .user-profile:hover {
+        background-color: rgb(55, 65, 81);
+    }
 }
 
 [data-theme="dark"] {
+
     /* Body */
     body {
         color: white;
@@ -230,6 +254,22 @@
     .status-bloc-2 .button:hover {
         background-color: #595959;
         border-radius: 10px;
+    }
+
+    .user-dot-online {
+        background-color: rgb(74, 222, 128);
+    }
+
+    .user-dot-away {
+        background-color: rgb(251, 146, 60);
+    }
+
+    .user-dot-dnd {
+        background-color: rgb(220, 38, 38)
+    }
+
+    .user-dot-offline {
+        background-color: rgb(113, 113, 122)
     }
 
     /* Chat */

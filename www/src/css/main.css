@@ -130,6 +130,10 @@ body {
     margin-right: 0.5rem;
 }
 
+.user-profile{
+    padding: 0.5rem;
+}
+
 /* ROOM */
 
 .room-container {
@@ -263,20 +267,24 @@ body {
     display: flex;
 }
 
+.sidebar-user-list .icon,
 .status-bloc-1 .icon {
     width: 2.5rem;
     height: 2.5rem;
     border-radius: 9999px;
 }
 
+.sidebar-user-list .user,
 .status-bloc-1 .user {
     padding-left: 0.75rem;
 }
 
+.sidebar-user-list .user .name,
 .status-bloc-1 .user .name {
     font-weight: 600;
 }
 
+.sidebar-user-list .user .status,
 .status-bloc-1 .user .status {
     font-size: 0.75rem;
     line-height: 1rem;
@@ -295,6 +303,25 @@ body {
     width: 1.5rem;
     height: 1.5rem;
 }
+
+.user-dot{
+    border-color: rgb(31 41 55);
+    border-width: 2px;
+    border-radius: 9999px;
+    width: 1rem;
+    height: 1rem;
+    right: -0.25rem;
+    bottom: -0.25rem;
+    position: absolute;
+}
+
+.user-profile{
+    height: 3.5rem;
+    display: flex;
+    cursor: pointer;
+}
+
+/* Scroll */
 
 .scroll-smooth {
     scroll-behavior: smooth;

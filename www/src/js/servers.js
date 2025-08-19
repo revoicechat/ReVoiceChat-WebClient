@@ -34,6 +34,7 @@ function selectServer(serverData) {
     current.server = serverData;
     document.getElementById("server-name").innerText = serverData.name;
     
+    getServerUsers(serverData.id);
     getRooms(serverData.id);
 }
 
