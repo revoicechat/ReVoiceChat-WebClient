@@ -152,7 +152,15 @@ async function fileExistOnMedia(path){
             signal: AbortSignal.timeout(5000),
         });
 
-        return response.ok;
+        if(response.status === 200){
+            return true;
+        }
+
+        if(response.status === 204){
+            return false;
+        }
+
+        throw new Error(`Invalid response status: ${response.status}`);
     }
     catch (error) {
         console.error(`An error occurred while processing your request \n${error}\nHost : ${current.coreUrl}\nPath : ${path}`);
