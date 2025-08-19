@@ -42,6 +42,8 @@ function sseConnect() {
     current.sse.onmessage = (event) => {
         event = JSON.parse(event.data);
 
+        console.log("New SSE event : ", event);
+
         switch (event.type) {
             case "PING":
                 console.log("Got pinged by server.");
@@ -50,9 +52,19 @@ function sseConnect() {
             case "ROOM_MESSAGE":
                 if (event.data.roomId === current.room.id) {
                     const ROOM = document.getElementById("room-messages");
-                    ROOM.appendChild(createMessage(event.data));
+
+                    switch (event.data.actionType) {
+                        case "ADD":
+                            ROOM.appendChild(createMessage(event.data));
+                            break;
+                        case "REMOVE":
+                            document.getElementById(event.data.id).remove();
+                            break;
+                    }
+
                     ROOM.scrollTop = ROOM.scrollHeight;
                 }
+
                 return;
 
             case "DIRECT_MESSAGE":

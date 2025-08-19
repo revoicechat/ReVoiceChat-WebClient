@@ -2,11 +2,6 @@
     font-family: sans-serif;
 }
 
-svg {
-    width: 1.5rem;
-    height: 1.5rem;
-}
-
 body {
     min-height: 100vh;
     overflow: hidden;
@@ -173,19 +168,49 @@ body {
     width: 100%;
 }
 
+/* MESSAGE */
+
 .message-container {
-    display: block;
     padding-bottom: 0.5rem;
+}
+
+.message-header {
+    display: flex;
+}
+
+.message-context-menu {
+    visibility: hidden;
+    padding-right: 1rem;
+    margin-left: auto;
+    margin-right: 0px;
+}
+
+.message-context-menu:hover,
+.message-container:hover .message-context-menu {
+    visibility: visible;
+}
+
+.message-context-menu .icon {
+    cursor: pointer;
+    display: inline;
+    padding: 0.5rem;
+}
+
+.message-context-menu .icon svg {
+    display: inline;
+    width: 1.25rem;
+    height: 1.25rem;
 }
 
 .message-owner {
     padding-left: 1rem;
     font-weight: 600;
-    overflow: hidden;
     text-overflow: ellipsis;
+    display: block;
 }
 
 .message-content {
+    display: block;
     padding-left: 1.5rem;
     padding-right: 1.5rem;
 }
@@ -195,6 +220,8 @@ body {
     font-size: 0.75rem;
     line-height: 1rem;
 }
+
+/* STATUS */
 
 .status-container {
     padding: 0.75rem;
@@ -207,7 +234,7 @@ body {
     display: flex;
 }
 
-.status-bloc-1 .icone {
+.status-bloc-1 .icon {
     width: 2.5rem;
     height: 2.5rem;
     border-radius: 9999px;
@@ -235,13 +262,9 @@ body {
     padding: 0.5rem;
 }
 
-.status-bloc-2 .button .icone {
-    font-style: normal;
-    font-variant: normal;
-    line-height: 1;
-    text-rendering: auto;
-    font-family: "Font Awesome 6 Free";
-    font-weight: 900;
+.status-bloc-2 .button .icon {
+    width: 1.5rem;
+    height: 1.5rem;
 }
 
 .scroll-smooth {

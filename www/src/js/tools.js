@@ -104,3 +104,21 @@ async function putRequestToHost(path, data) {
         return null;
     }
 }
+
+async function deleteRequestToHost(path){
+        try {
+        const response = await fetch(`${current.host}${path}`, {
+            method: 'DELETE',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        return response.ok;
+    }
+    catch (error) {
+        console.error(`An error occurred while processing your request \n${error}\nHost : ${current.host}\nPath : ${path}`);
+        return null;
+    }
+}

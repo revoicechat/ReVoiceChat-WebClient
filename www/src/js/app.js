@@ -6,6 +6,9 @@ const current = {
     },
     room: {
         id: null,
+    },
+    user:{
+        id: null,
     }
 }
 
