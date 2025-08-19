@@ -31,7 +31,6 @@ function createRoom(roomData, onclick) {
 }
 
 function selectRoom(roomData) {
-    console.log(roomData)
     if (roomData === undefined || roomData === null) {
         console.error("roomData is null or undefined");
         return;
