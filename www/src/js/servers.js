@@ -29,7 +29,7 @@ function selectServer(serverData) {
     getRooms(serverData.id);
 }
 
-function sseConnect() {
+function sseOpen() {
     console.log(`Connecting to "${current.coreUrl}/sse"`);
 
     if (current.sse !== null) {

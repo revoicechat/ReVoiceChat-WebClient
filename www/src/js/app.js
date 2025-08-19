@@ -8,10 +8,10 @@ const current = {
     room: {
         id: null,
     },
-    user:{
+    user: {
         id: null,
     },
-    chat:{
+    chat: {
         mode: "send",
         editId: null,
     }
@@ -22,10 +22,14 @@ document.addEventListener('DOMContentLoaded', function () {
     if (sessionStorage.getItem('host')) {
         current.coreUrl = sessionStorage.getItem('host');
         getServers();
-        sseConnect();
+        sseOpen();
         getUsername();
     }
     else {
         document.location.href = `index.html`;
     }
 });
+
+addEventListener("beforeunload", () => {
+    current.sse.close();
+})
