@@ -1,5 +1,6 @@
 const current = {
     host: null,
+    mediaHost: "https://media.revoicechat.fr",
     sse: null,
     server: {
         id: null,
