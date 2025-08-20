@@ -11,7 +11,7 @@ function isToday(date) {
 
 function timestampToText(timestamp) {
     // By default timestamp is UTC (shouldn't matter for this function)
-    timestamp = new Date(`${timestamp}Z`);
+    timestamp = new Date(`${timestamp}`);
 
     /*
     let current = new Date().getTime();
