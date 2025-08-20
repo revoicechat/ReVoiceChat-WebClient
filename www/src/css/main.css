@@ -125,7 +125,7 @@ svg {
 
 /* SIDEBAR USERS (right) */
 
-.sidebar-right{
+.sidebar-right {
     border-left-width: 1px;
 }
 
@@ -290,10 +290,15 @@ svg {
     display: flex;
 }
 
-.sidebar-user-list .icon,
 .status-bloc-1 .icon {
     width: 2.5rem;
     height: 2.5rem;
+    border-radius: 9999px;
+}
+
+.sidebar-user-list .icon{
+    width: 2rem;
+    height: 2rem;
     border-radius: 9999px;
 }
 
@@ -302,9 +307,13 @@ svg {
     padding-left: 0.75rem;
 }
 
-.sidebar-user-list .user .name,
+
 .status-bloc-1 .user .name {
     font-weight: 600;
+}
+
+.sidebar-user-list .user .name {
+    font-weight: 500;
 }
 
 .sidebar-user-list .user .status,
@@ -341,7 +350,7 @@ svg {
 }
 
 .user-profile {
-    height: 3.5rem;
+    height: 3rem;
     display: flex;
     cursor: pointer;
 }

@@ -62,7 +62,6 @@ async function createUser(data) {
         </div>
         <div class="user">
             <h2 class="name" id="user-name">${data.displayName}</h2>
-            <p class="status" id="user-status">${data.status}</p>
         </div>
     `;
 
