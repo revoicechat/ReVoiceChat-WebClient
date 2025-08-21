@@ -216,6 +216,11 @@ svg {
 .chat-header {
     padding: 1rem;
     height: 3.5rem;
+    display: flex;
+}
+
+.chat-header svg{
+    margin-right: 0.5rem;
 }
 
 .chat-area {
