@@ -181,6 +181,10 @@
     .config-item:hover {
         background-color: rgba(12, 74, 110, 0.7);
     }
+
+    .config-item .context-menu .icon:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
 }
 
 [data-theme="dark"] {

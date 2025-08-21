@@ -468,6 +468,8 @@ svg {
     font-weight: 800;
     font-size: 1.25rem;
     margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
 }
 
 .config h2 {
@@ -510,4 +512,28 @@ svg {
     width: 2rem;
     height: 2rem;
     border-radius: 9999px;
+}
+
+.config-item .context-menu {
+    visibility: hidden;
+    padding-right: 1rem;
+    margin-left: auto;
+    margin-right: 0px;
+}
+
+.config-item .context-menu:hover,
+.config-item:hover .context-menu {
+    visibility: visible;
+}
+
+.config-item .context-menu .icon {
+    cursor: pointer;
+    display: inline;
+    padding: 0.5rem;
+}
+
+.config-item .context-menu .icon svg {
+    display: inline;
+    width: 1.25rem;
+    height: 1.25rem;
 }

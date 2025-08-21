@@ -53,9 +53,11 @@ function selectRoom(roomData) {
 
     if (roomData.type === "TEXT") {
         console.log(`Selected room : ${roomData.id}`);
-        if (current.room.id !== null) {
+
+        if (current.room.id !== null && document.getElementById(current.room.id) !== undefined) {
             document.getElementById(current.room.id).classList.remove("active");
         }
+
         current.room = roomData;
 
         document.getElementById(roomData.id).classList.add("active");
