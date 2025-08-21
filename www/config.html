@@ -74,9 +74,9 @@
                 <!-- Overview -->
                 <div class="hidden" id="overview-config">
                     <h1>Overview</h1>
-                    <p id="config-server-uuid">[SERVER UUID]</p>
+                    <p>Server ID : <span id="config-server-uuid">[SERVER UUID]</span></p>
                     <h2>Server name</h2>
-                    <input type="text" id="config-server-name" value="[SERVER NAME]">
+                    <input type="text" id="config-server-name" value="[SERVER NAME]" onchange="updateServerName(this)">
                 </div>
 
                 <!-- Rooms -->

@@ -195,7 +195,7 @@ svg {
     display: flex;
 }
 
-.room-title svg{
+.room-title svg {
     margin-right: 0.5rem;
 }
 
@@ -218,7 +218,7 @@ svg {
     display: flex;
 }
 
-.chat-header svg{
+.chat-header svg {
     margin-right: 0.5rem;
 }
 
@@ -469,6 +469,7 @@ svg {
 .config h2 {
     font-weight: 800;
     font-size: 1rem;
+    margin-top: 1rem;
 }
 
 .config input {
@@ -496,6 +497,8 @@ svg {
 .config-item .name {
     padding-left: 0.5rem;
     padding-top: 0.25rem;
+    font-weight: 800;
+    font-size: 1rem;
 }
 
 .config-item .icon {

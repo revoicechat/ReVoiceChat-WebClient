@@ -3,6 +3,8 @@ const currentConfig = {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
+    document.getElementById('config-server-uuid').innerText = current.server.id;
+    document.getElementById('config-server-name').value = current.server.name;
     selectConfigItem("overview");
 });
 
@@ -54,7 +56,7 @@ async function createRoom(data) {
 
     DIV.innerHTML = `
         <div>
-            <h2 class="name">${data.name}</h2>
+            <div class="name">${data.name}</div>
         </div>
     `;
 
@@ -95,9 +97,12 @@ async function createUser(data) {
             <img src="${profilePicture}" alt="PFP" class="icon ring-2" />
         </div>
         <div class="user">
-            <h2 class="name" id="user-name">${data.displayName}</h2>
+            <div class="name" id="user-name">${data.displayName}<div>
         </div>
     `;
 
     return DIV;
+}
+
+function updateServerName(input){
 }
