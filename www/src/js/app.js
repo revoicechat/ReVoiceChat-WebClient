@@ -23,6 +23,8 @@ const current = {
 
 // Ready state
 document.addEventListener('DOMContentLoaded', function () {
+    document.body.classList.add("loaded");
+
     // Login
     if (sessionStorage.getItem('coreUrl')) {
         current.coreUrl = sessionStorage.getItem('coreUrl');

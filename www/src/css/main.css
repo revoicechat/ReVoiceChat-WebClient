@@ -8,6 +8,18 @@ body {
     overflow: hidden;
 }
 
+body.fadein {
+    opacity: 0;
+    -moz-transition: opacity 0.25s;
+    -webkit-transition: opacity 0.25s;
+    -o-transition: opacity 0.25s;
+    transition: opacity 0.25s;
+}
+
+body.loaded.fadein {
+    opacity: 1;
+}
+
 .main {
     display: flex;
     height: 100vh;
