@@ -126,14 +126,6 @@ const FORM_DATA = {
     type: null
 };
 
-function copyToName(value) {
-    FORM_DATA.name = value;
-}
-
-function copyToType(value) {
-    FORM_DATA.type = value;
-}
-
 async function configAddRoom() {
     FORM_DATA.name = 'New room';
     FORM_DATA.type = 'TEXT';
@@ -154,11 +146,11 @@ async function configAddRoom() {
         html: `
             <form class='config'>
                 <label>Room name</label>
-                <input type='text' oninput='copyToName(this.value)'>
+                <input type='text' oninput='FORM_DATA.name=value'>
                 <br/>
                 <br/>
                 <label>Room type</label>
-                <select oninput='copyToType(this.value)'>
+                <select oninput='FORM_DATA.type=value'>
                     <option value='TEXT'>Text</option>
                     <option value='WEBRTC'>Voice (WebRTC)</option>
                 </select>
@@ -191,7 +183,7 @@ async function configEditRoom(data) {
         html: `
             <form class='config'>
                 <label>Room name</label>
-                <input type='text' oninput='copyToName(this.value)' value='${data.name}'>
+                <input type='text' oninput='FORM_DATA.name=value' value='${data.name}'>
             </form>       
         `,
     }).then(async (result) => {
