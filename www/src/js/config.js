@@ -203,6 +203,23 @@ async function configEditRoom(data) {
 }
 
 async function configDeleteRoom(data) {
-    const result = await deleteRequestOnCore(`/room/${data.id}`);
-    loadRooms();
+    Swal.fire({
+        title: `Delete room '${data.name}'`,
+        animation: false,
+        customClass: {
+            title: "swalTitle",
+            popup: "swalPopup",
+            cancelButton: "swalConfirm",
+            confirmButton: "swalCancel", // Swapped on purpose !
+        },
+        showCancelButton: true,
+        focusCancel: true,
+        confirmButtonText: "Delete",
+        allowOutsideClick: false,
+    }).then(async (result) => {
+        if (result.value) {
+            const result = await deleteRequestOnCore(`/room/${data.id}`);
+            loadRooms();
+        }
+    });
 }
