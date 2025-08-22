@@ -103,7 +103,7 @@ async function createItemUser(data) {
 
     let profilePicture = "src/img/default-avatar.webp";
     if (await fileExistOnMedia(`/profiles/${data.id}`)) {
-        profilePicture = `${current.mediaUrl}/profiles/${data.id}`;
+        profilePicture = `${current.url.media}/profiles/${data.id}`;
     }
 
     DIV.innerHTML = `

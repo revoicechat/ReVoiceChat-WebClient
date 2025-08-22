@@ -9,7 +9,7 @@ async function getUsername() {
         document.getElementById("user-dot").className = `user-dot ${statusToDotClassName(result.status)}`;
 
         if (await fileExistOnMedia(`/profiles/${result.id}`)) {
-            document.getElementById("user-picture").src = `${current.mediaUrl}/profiles/${result.id}`;
+            document.getElementById("user-picture").src = `${current.url.media}/profiles/${result.id}`;
         }
     }
 }
@@ -52,7 +52,7 @@ async function createUser(data) {
 
     let profilePicture = "src/img/default-avatar.webp";
     if (await fileExistOnMedia(`/profiles/${data.id}`)) {
-        profilePicture = `${current.mediaUrl}/profiles/${data.id}`;
+        profilePicture = `${current.url.media}/profiles/${data.id}`;
     }
 
     DIV.innerHTML = `

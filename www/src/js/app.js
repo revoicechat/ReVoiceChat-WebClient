@@ -1,7 +1,10 @@
 const current = {
-    coreUrl: null,
-    mediaUrl: "https://media.revoicechat.fr",
     sse: null,
+    url:{
+        core: null,
+        media: "https://media.revoicechat.fr", // DEV ONLY
+        stun: "ws://srv.revoicechat.fr", // DEV ONLY
+    },
     server: {
         id: null,
         name: null,
@@ -27,22 +30,22 @@ document.addEventListener('DOMContentLoaded', function () {
     document.body.classList.add("loaded");
 
     // Login
-    if (sessionStorage.getItem('coreUrl')) {
-        current.coreUrl = sessionStorage.getItem('coreUrl');
+    if (sessionStorage.getItem('url.core')) {
+        current.url.core = sessionStorage.getItem('url.core');
     }
 
     // Last state (app wasn't closed)
     if (sessionStorage.getItem('lastState')) {
         const lastState = JSON.parse(sessionStorage.getItem('lastState'));
-        current.coreUrl = lastState.coreUrl;
-        current.mediaUrl = lastState.mediaUrl;
+        current.url.core = lastState.url.core;
+        current.url.media = lastState.url.media;
         current.server = lastState.server;
         current.room = lastState.room;
         current.user = lastState.user;
     }
 
     // No data
-    if (current.coreUrl === null) {
+    if (current.url.core === null) {
         document.location.href = `index.html`;
     }
 

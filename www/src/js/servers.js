@@ -39,14 +39,14 @@ function selectServer(serverData) {
 }
 
 function sseOpen() {
-    console.log(`Connecting to "${current.coreUrl}/sse"`);
+    console.log(`Connecting to "${current.url.core}/sse"`);
 
     if (current.sse !== null) {
         current.sse.close();
         current.sse = null;
     }
 
-    current.sse = new EventSource(`${current.coreUrl}/sse`, { withCredentials: true });
+    current.sse = new EventSource(`${current.url.core}/sse`, { withCredentials: true });
 
     current.sse.onmessage = (event) => {
         event = JSON.parse(event.data);
@@ -95,7 +95,7 @@ function sseOpen() {
     };
 
     current.sse.onerror = () => {
-        console.error(`An error occurred while attempting to connect to "${current.coreUrl}/sse".\nRetry in 10 seconds`);
+        console.error(`An error occurred while attempting to connect to "${current.url.core}/sse".\nRetry in 10 seconds`);
         setTimeout(() => {
             sseConnect();
             getMessages(current.room.id);

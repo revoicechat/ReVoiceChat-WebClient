@@ -46,7 +46,7 @@ async function login(loginData, host) {
             throw "Not OK";
         }
 
-        sessionStorage.setItem('coreUrl', host);
+        sessionStorage.setItem('url.core', host);
         document.location.href = `app.html`;
     }
     catch (error) {

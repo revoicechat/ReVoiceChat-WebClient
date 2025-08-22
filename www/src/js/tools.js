@@ -65,7 +65,7 @@ function getQueryVariable(variable) {
 
 async function getRequestOnCore(path) {
     try {
-        const response = await fetch(`${current.coreUrl}${path}`, {
+        const response = await fetch(`${current.url.core}${path}`, {
             cache: "no-store",
             signal: AbortSignal.timeout(5000),
             credentials: 'include',
@@ -81,14 +81,14 @@ async function getRequestOnCore(path) {
         return await response.json();
     }
     catch (error) {
-        console.error(`An error occurred while processing your request \n${error}\nHost : ${current.coreUrl}\nPath : ${path}`);
+        console.error(`An error occurred while processing your request \n${error}\nHost : ${current.url.core}\nPath : ${path}`);
         return null;
     }
 }
 
 async function putRequestOnCore(path, data) {
     try {
-        const response = await fetch(`${current.coreUrl}${path}`, {
+        const response = await fetch(`${current.url.core}${path}`, {
             method: 'PUT',
             credentials: 'include',
             signal: AbortSignal.timeout(5000),
@@ -101,14 +101,14 @@ async function putRequestOnCore(path, data) {
         return response.ok;
     }
     catch (error) {
-        console.error(`An error occurred while processing your request \n${error}\nHost : ${current.coreUrl}\nPath : ${path}`);
+        console.error(`An error occurred while processing your request \n${error}\nHost : ${current.url.core}\nPath : ${path}`);
         return null;
     }
 }
 
 async function patchRequestOnCore(path, data) {
     try {
-        const response = await fetch(`${current.coreUrl}${path}`, {
+        const response = await fetch(`${current.url.core}${path}`, {
             method: 'PATCH',
             credentials: 'include',
             signal: AbortSignal.timeout(5000),
@@ -121,14 +121,14 @@ async function patchRequestOnCore(path, data) {
         return response.ok;
     }
     catch (error) {
-        console.error(`An error occurred while processing your request \n${error}\nHost : ${current.coreUrl}\nPath : ${path}`);
+        console.error(`An error occurred while processing your request \n${error}\nHost : ${current.url.core}\nPath : ${path}`);
         return null;
     }
 }
 
 async function deleteRequestOnCore(path){
     try {
-        const response = await fetch(`${current.coreUrl}${path}`, {
+        const response = await fetch(`${current.url.core}${path}`, {
             method: 'DELETE',
             credentials: 'include',
             signal: AbortSignal.timeout(5000),
@@ -140,14 +140,14 @@ async function deleteRequestOnCore(path){
         return response.ok;
     }
     catch (error) {
-        console.error(`An error occurred while processing your request \n${error}\nHost : ${current.coreUrl}\nPath : ${path}`);
+        console.error(`An error occurred while processing your request \n${error}\nHost : ${current.url.core}\nPath : ${path}`);
         return null;
     }
 }
 
 async function fileExistOnMedia(path){
     try {
-        const response = await fetch(`${current.mediaUrl}${path}`, {
+        const response = await fetch(`${current.url.media}${path}`, {
             method: 'OPTIONS',
             signal: AbortSignal.timeout(5000),
         });
@@ -163,7 +163,7 @@ async function fileExistOnMedia(path){
         throw new Error(`Invalid response status: ${response.status}`);
     }
     catch (error) {
-        console.error(`An error occurred while processing your request \n${error}\nHost : ${current.mediaUrl}\nPath : ${path}`);
+        console.error(`An error occurred while processing your request \n${error}\nHost : ${current.url.media}\nPath : ${path}`);
         return null;
     }
 }
