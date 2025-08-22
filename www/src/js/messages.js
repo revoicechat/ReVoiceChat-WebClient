@@ -12,10 +12,12 @@ document.getElementById("chat-input").addEventListener('keydown', function (e) {
 async function getMessages(roomId) {
     const result = await getRequestOnCore(`/room/${roomId}/message`);
 
+    console.log(result);
+
     if (result !== null) {
         const ROOM = document.getElementById("room-messages");
 
-        const sortedResult = [...result].sort((a, b) => {
+        const sortedResult = [...result.content].sort((a, b) => {
             return new Date(a.createdDate) - new Date(b.createdDate);
         });
 
