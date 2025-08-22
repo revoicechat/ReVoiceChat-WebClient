@@ -1,9 +1,14 @@
 const current = {
     sse: null,
-    url:{
+    webrtc: {
+        socket: null,
+        p2p: null,
+    },
+    url: {
         core: null,
         media: "https://media.revoicechat.fr", // DEV ONLY
-        stun: "ws://srv.revoicechat.fr", // DEV ONLY
+        voiceSignal: "https://srv.revoicechat.fr/signal", // DEV ONLY
+        voiceStun: "stun.revoicechat.fr", // Test with : stun.l.google.com:19302
     },
     server: {
         id: null,
@@ -55,6 +60,7 @@ document.addEventListener('DOMContentLoaded', function () {
         getServers();
         sseOpen();
         getUsername();
+        initWebRTC();
     }
 });
 
