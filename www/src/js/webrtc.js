@@ -37,7 +37,7 @@ function initWebRTC() {
             // --- Self-monitoring audio ---
             const localAudio = document.createElement("audio");
             localAudio.autoplay = true;
-            localAudio.muted = true; // allow hearing yourself
+            localAudio.muted = false; // allow hearing yourself
             localAudio.srcObject = stream;
             document.body.appendChild(localAudio); // optional
 
