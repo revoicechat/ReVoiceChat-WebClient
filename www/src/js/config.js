@@ -35,6 +35,14 @@ function selectConfigItem(name) {
     }
 }
 
+function createContextMenuButton(className, innerHTML, onclick){
+    const DIV = document.createElement('div');
+    DIV.className = className;
+    DIV.innerHTML = innerHTML;
+    DIV.onclick = onclick;
+    return DIV;
+}
+
 async function loadRooms() {
     const result = await getRequestOnCore(`/server/${current.server.id}/room`);
 
@@ -53,21 +61,18 @@ async function createItemRoom(data) {
     DIV.id = data.id;
     DIV.className = "config-item";
 
-    DIV.innerHTML = `
-        <div class="name">${data.name}</div>
-        <div class="context-menu">
-            <div class="icon" onclick="configEditRoom('${data.id}')">
-                <svg data-slot="icon" aria-hidden="true" fill="currentColor" viewBox="0 0 16 16">
-                    <path clip-rule="evenodd" d="M11.013 2.513a1.75 1.75 0 0 1 2.475 2.474L6.226 12.25a2.751 2.751 0 0 1-.892.596l-2.047.848a.75.75 0 0 1-.98-.98l.848-2.047a2.75 2.75 0 0 1 .596-.892l7.262-7.261Z" fill-rule="evenodd"></path>
-                </svg>
-            </div>
-            <div class="icon" onclick="configDeleteRoom('${data.id}')">
-                <svg data-slot="icon" aria-hidden="true" fill="currentColor" viewBox="0 0 16 16">
-                    <path clip-rule="evenodd" d="M5 3.25V4H2.75a.75.75 0 0 0 0 1.5h.3l.815 8.15A1.5 1.5 0 0 0 5.357 15h5.285a1.5 1.5 0 0 0 1.493-1.35l.815-8.15h.3a.75.75 0 0 0 0-1.5H11v-.75A2.25 2.25 0 0 0 8.75 1h-1.5A2.25 2.25 0 0 0 5 3.25Zm2.25-.75a.75.75 0 0 0-.75.75V4h3v-.75a.75.75 0 0 0-.75-.75h-1.5ZM6.05 6a.75.75 0 0 1 .787.713l.275 5.5a.75.75 0 0 1-1.498.075l-.275-5.5A.75.75 0 0 1 6.05 6Zm3.9 0a.75.75 0 0 1 .712.787l-.275 5.5a.75.75 0 0 1-1.498-.075l.275-5.5a.75.75 0 0 1 .786-.711Z" fill-rule="evenodd"></path>
-                </svg>
-            </div>
-        </div>
-    `;
+    // Name
+    const DIV_NAME = document.createElement('div');
+    DIV_NAME.className = "name";
+    DIV_NAME.innerText = data.name;
+    DIV.appendChild(DIV_NAME);
+
+    // Context menu
+    const DIV_CM = document.createElement('div');
+    DIV_CM.className = "context-menu";
+    DIV_CM.appendChild(createContextMenuButton("icon", SVG_PENCIL, () => configEditRoom(data)));
+    DIV_CM.appendChild(createContextMenuButton("icon", SVG_TRASH, () => configDeleteRoom(data)));
+    DIV.appendChild(DIV_CM);
 
     return DIV;
 }
@@ -116,16 +121,88 @@ async function createItemUser(data) {
 function updateServerName(input) {
 }
 
+const FORM_DATA = {
+    name: null,
+    type: null
+};
+
+function copyToName(value) {
+    FORM_DATA.name = value;
+}
+
+function copyToType(value) {
+    FORM_DATA.type = value;
+}
+
 async function configAddRoom() {
-    const result = await putRequestOnCore(`/server/${current.server.id}/room`, { name: 'New room', type: 'TEXT' });
-    loadRooms();
+    FORM_DATA.name = 'New room';
+    FORM_DATA.type = 'TEXT';
+
+    Swal.fire({
+        title: 'Add a room',
+        animation: false,
+        customClass: {
+            title: "swalTitle",
+            popup: "swalPopup",
+            cancelButton: "swalCancel",
+            confirmButton: "swalConfirm",
+        },
+        showCancelButton: true,
+        focusConfirm: false,
+        confirmButtonText: "Add",
+        allowOutsideClick: false,
+        html: `
+            <form class='config'>
+                <label>Room name</label>
+                <input type='text' oninput='copyToName(this.value)'>
+                <br/>
+                <br/>
+                <label>Room type</label>
+                <select oninput='copyToType(this.value)'>
+                    <option value='TEXT'>Text</option>
+                    <option value='WEBRTC'>Voice (WebRTC)</option>
+                </select>
+            </form>       
+        `,
+    }).then(async (result) => {
+        if (result.value) {
+            const result = await putRequestOnCore(`/server/${current.server.id}/room`, { name: FORM_DATA.name, type: FORM_DATA.type });
+            loadRooms();
+        }
+    });
 }
 
-async function configEditRoom(data){
+async function configEditRoom(data) {
+    FORM_DATA.name = data.name;
 
+    Swal.fire({
+        title: `Edit room '${data.name}'`,
+        animation: false,
+        customClass: {
+            title: "swalTitle",
+            popup: "swalPopup",
+            cancelButton: "swalCancel",
+            confirmButton: "swalConfirm",
+        },
+        showCancelButton: true,
+        focusConfirm: false,
+        confirmButtonText: "Edit",
+        allowOutsideClick: false,
+        html: `
+            <form class='config'>
+                <label>Room name</label>
+                <input type='text' oninput='copyToName(this.value)' value='${data.name}'>
+            </form>       
+        `,
+    }).then(async (result) => {
+        if (result.value) {
+            const result = await patchRequestOnCore(`/room/${data.id}`, { name: FORM_DATA.name, type: FORM_DATA.type });
+            loadRooms();
+        }
+    });
 }
 
-async function configDeleteRoom(id){
-    const result = await deleteRequestOnCore(`/room/${id}`);
+async function configDeleteRoom(data) {
+    const result = await deleteRequestOnCore(`/room/${data.id}`);
     loadRooms();
 }
