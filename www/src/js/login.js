@@ -1,5 +1,9 @@
 document.addEventListener('DOMContentLoaded', function () {
+    // Set theme
     document.documentElement.setAttribute("data-theme", localStorage.getItem("Theme") || "default");
+
+    // Clear old session data
+    sessionStorage.removeItem('lastState');
 });
 
 document.getElementById("login-form").addEventListener('keydown', function (e) {
