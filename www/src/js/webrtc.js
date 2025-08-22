@@ -24,8 +24,6 @@ function initWebRTC() {
     current.webrtc.socket.onmessage = async (msg) => {
         const data = JSON.parse(msg.data);
 
-        console.log(data);
-
         if (data.offer) {
             await current.webrtc.p2p.setRemoteDescription(new RTCSessionDescription(data.offer));
 
@@ -34,12 +32,13 @@ function initWebRTC() {
             // Add mic to peer connection
             stream.getTracks().forEach(track => current.webrtc.p2p.addTrack(track, stream));
 
-            // --- Self-monitoring audio ---
+            // Remote audio
             const localAudio = document.createElement("audio");
             localAudio.autoplay = true;
             localAudio.muted = false; // allow hearing yourself
             localAudio.srcObject = stream;
-            document.body.appendChild(localAudio); // optional
+            localAudio.controls = true;
+            document.getElementById("remoteAudio").appendChild(localAudio); // optional
 
             const answer = await current.webrtc.p2p.createAnswer();
             await current.webrtc.p2p.setLocalDescription(answer);
@@ -70,9 +69,10 @@ async function startCall(initiator) {
     // --- Self-monitoring audio ---
     const localAudio = document.createElement("audio");
     localAudio.autoplay = true;
-    localAudio.muted = false; // allow hearing yourself
+    localAudio.muted = true; // allow hearing yourself
     localAudio.srcObject = stream;
-    document.body.appendChild(localAudio); // optional
+    localAudio.controls = true;
+    document.getElementById("localAudio").appendChild(localAudio); // optional
 
     const offer = await current.webrtc.p2p.createOffer();
     await current.webrtc.p2p.setLocalDescription(offer);
