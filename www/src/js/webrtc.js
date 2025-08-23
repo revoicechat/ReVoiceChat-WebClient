@@ -1,5 +1,5 @@
 function initWebRTC() {
-    console.log("Initializing WebRTC ...");
+    console.info("Initializing WebRTC ...");
 
     current.webrtc.socket = new WebSocket(current.url.voiceSignal);
     current.webrtc.p2p = new RTCPeerConnection({
@@ -27,52 +27,58 @@ function initWebRTC() {
 
     // Handle signaling messages
     current.webrtc.socket.onmessage = async (msg) => {
-        console.log("OnMessage");
         const data = JSON.parse(msg.data)
 
-        if (data.offer) {
-            await current.webrtc.p2p.setRemoteDescription(new RTCSessionDescription(data.offer));
+        console.log(data);
 
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        if (true || data.room === current.webrtc.activeRoom) {
+            if (data.offer) {
 
-            // Add mic to peer connection
-            stream.getTracks().forEach(track => current.webrtc.p2p.addTrack(track, stream));
+                await current.webrtc.p2p.setRemoteDescription(new RTCSessionDescription(data.offer));
 
-            const answer = await current.webrtc.p2p.createAnswer();
-            await current.webrtc.p2p.setLocalDescription(answer);
-            current.webrtc.socket.send(JSON.stringify({ answer: answer }));
-        }
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
 
-        if (data.answer) {
-            await current.webrtc.p2p.setRemoteDescription(new RTCSessionDescription(data.answer));
-        }
+                // Add mic to peer connection
+                stream.getTracks().forEach(track => current.webrtc.p2p.addTrack(track, stream));
 
-        if (data.candidate) {
-            try {
-                await current.webrtc.p2p.addIceCandidate(data.candidate);
-            } catch (e) {
-                console.error("Error adding ICE candidate", e);
+                const answer = await current.webrtc.p2p.createAnswer();
+                await current.webrtc.p2p.setLocalDescription(answer);
+                current.webrtc.socket.send(JSON.stringify({ answer: answer }));
+
+            }
+
+            if (data.answer) {
+                await current.webrtc.p2p.setRemoteDescription(new RTCSessionDescription(data.answer));
+            }
+
+            if (data.candidate) {
+                try {
+                    await current.webrtc.p2p.addIceCandidate(data.candidate);
+                } catch (e) {
+                    console.error("Error adding ICE candidate", e);
+                }
             }
         }
     };
 }
 
 // Start call (send offer)
-async function startCall(initiator) {
-    initiator.classList.add('active-voice');
+async function startCall(roomId) {
+    document.getElementById(roomId).classList.add('active-voice');
+    current.webrtc.activeRoom = roomId;
 
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     stream.getTracks().forEach(track => current.webrtc.p2p.addTrack(track, stream));
 
     // --- Self-monitoring audio ---
-    const localAudio = document.createElement("audio");
+    /*const localAudio = document.createElement("audio");
     localAudio.autoplay = true;
     localAudio.muted = true; // allow hearing yourself
     localAudio.srcObject = stream;
     localAudio.controls = true;
-    document.getElementById("localAudio").appendChild(localAudio); // optional
+    document.getElementById("localAudio").appendChild(localAudio); // optional*/
 
     const offer = await current.webrtc.p2p.createOffer();
     await current.webrtc.p2p.setLocalDescription(offer);
-    current.webrtc.socket.send(JSON.stringify({ offer: offer }));
+    current.webrtc.socket.send(JSON.stringify({ offer: offer, room: roomId }));
 };
