@@ -67,6 +67,7 @@ function autoHost(){
     const hostInput = document.getElementById('host');
 
     switch(document.location.origin){
+        case "http://localhost":
         case "https://app.dev.revoicechat.fr":
             hostInput.value = "https://core.dev.revoicechat.fr";
             break;
