@@ -74,12 +74,10 @@ function autoHost() {
         case "http://localhost":
         case "https://app.dev.revoicechat.fr":
             url.core = "https://core.dev.revoicechat.fr";
-            url.media = "https://media.dev.revoicechat.fr";
             break;
 
         case "https://app.revoicechat.fr":
             url.core = "https://core.revoicechat.fr";
-            url.media = "https://media.revoicechat.fr";
             break;
     }
 

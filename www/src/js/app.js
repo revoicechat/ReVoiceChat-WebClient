@@ -41,6 +41,7 @@ document.addEventListener('DOMContentLoaded', function () {
         current.url = storageUrl;
 
         const core = new URL(current.url.core);
+        current.url.media = `https://${core.host}/media`;
         current.url.voiceSignal = `https://${core.host}/signal`;
         current.url.voiceStun = `${core.host}/stun`;
     }
