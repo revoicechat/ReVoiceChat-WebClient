@@ -73,7 +73,7 @@ function autoHost(){
             break;
 
         case "https://app.revoicechat.fr":
-            hostInput.value = "https://srv.revoicechat.fr";
+            hostInput.value = "https://core.revoicechat.fr";
             break;
     }
 }
