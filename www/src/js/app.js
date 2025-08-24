@@ -37,10 +37,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Login
     if (sessionStorage.getItem('url')) {
-        const URL = JSON.parse(sessionStorage.getItem(('url')));
-        current.url = URL;
-        current.url.voiceSignal = `${current.url.core}/signal`;
-        current.url.voiceStun = `${current.url.core}/stun`;
+        const storageUrl = JSON.parse(sessionStorage.getItem(('url')));
+        current.url = storageUrl;
+
+        const core = new URL(current.url.core);
+        current.url.voiceSignal = `https://${core.host}/signal`;
+        current.url.voiceStun = `${core.host}/stun`;
     }
 
     // Last state (app wasn't closed)
