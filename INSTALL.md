@@ -60,31 +60,3 @@ sudo a2ensite rvc_client.conf
 ```sh
 sudo systemctl reload apache2
 ```
-
-## Configure Reverse Proxy (Nginx)
-
-We recommend using [Nginx Proxy Manager](https://nginxproxymanager.com/).
-
-Add a proxy host in Nginx Proxy Manager with the following :
-
-### Details
-
-Domain names : `app.yourdomain.me`
-
-Scheme : `http`
-
-Forward Hostname / IP : `Your IP`
-
-Forward Port : `80` (default for this virtual host config)
-
-### Custom locations
-
-None
-
-### SSL
-
-You may want to add SSL, if so, enable `Force SSL` and `HTTP/2 Support`
-
-### Advanced
-
-None
