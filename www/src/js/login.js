@@ -1,8 +1,6 @@
 const url = {
     core: null,
     media: null,
-    voiceSignal: null,
-    voiceStun: null,
 }
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -77,15 +75,11 @@ function autoHost() {
         case "https://app.dev.revoicechat.fr":
             url.core = "https://core.dev.revoicechat.fr";
             url.media = "https://media.dev.revoicechat.fr";
-            url.voiceSignal = `${url.core}/signal`;
-            url.voiceStun = "https://stun.dev.revoicechat.fr";
             break;
 
         case "https://app.revoicechat.fr":
             url.core = "https://core.revoicechat.fr";
             url.media = "https://media.revoicechat.fr";
-            url.voiceSignal = `${url.core}/signal`;
-            url.voiceStun = "https://stun.revoicechat.fr";
             break;
     }
 

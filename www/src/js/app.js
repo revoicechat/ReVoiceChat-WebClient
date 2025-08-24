@@ -39,6 +39,8 @@ document.addEventListener('DOMContentLoaded', function () {
     if (sessionStorage.getItem('url')) {
         const URL = JSON.parse(sessionStorage.getItem(('url')));
         current.url = URL;
+        current.url.voiceSignal = `${current.url.core}/signal`;
+        current.url.voiceStun = `${current.url.core}/stun`;
     }
 
     // Last state (app wasn't closed)
