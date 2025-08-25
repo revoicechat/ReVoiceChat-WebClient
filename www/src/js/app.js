@@ -36,11 +36,11 @@ document.addEventListener('DOMContentLoaded', function () {
     document.body.classList.add("loaded");
 
     // Login
-    if (sessionStorage.getItem('url')) {
-        const storageUrl = JSON.parse(sessionStorage.getItem(('url')));
-        current.url = storageUrl;
+    if (sessionStorage.getItem('url.core')) {
+        current.url.core = sessionStorage.getItem(('url.core'));
 
         const core = new URL(current.url.core);
+        
         current.url.media = `https://${core.host}/media`;
         current.url.voiceSignal = `https://${core.host}/signal`;
         current.url.voiceStun = `${core.host}/stun`;

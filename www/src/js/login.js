@@ -1,8 +1,3 @@
-const url = {
-    core: null,
-    media: null,
-}
-
 document.addEventListener('DOMContentLoaded', function () {
     // Set theme
     document.documentElement.setAttribute("data-theme", localStorage.getItem("Theme") || "default");
@@ -29,17 +24,16 @@ function userLogin() {
     // Validate URL
     try {
         inputHost = new URL(FORM.host.value);
-        url.core = inputHost.origin;
-        login(LOGIN);
+        login(LOGIN, inputHost.origin);
     }
     catch (e) {
         console.error(e);
     }
 }
 
-async function login(loginData) {
+async function login(loginData, host) {
     try {
-        const response = await fetch(`${url.core}/login`, {
+        const response = await fetch(`${host}/login`, {
             cache: "no-store",
             signal: AbortSignal.timeout(5000),
             headers: {
@@ -54,7 +48,7 @@ async function login(loginData) {
             throw "Not OK";
         }
 
-        sessionStorage.setItem('url', JSON.stringify(url));
+        sessionStorage.setItem('url.core', host);
         document.location.href = `app.html`;
     }
     catch (error) {
@@ -73,13 +67,11 @@ function autoHost() {
     switch (document.location.origin) {
         case "http://localhost":
         case "https://app.dev.revoicechat.fr":
-            url.core = "https://core.dev.revoicechat.fr";
+            document.getElementById("login-form").host.value = "https://core.dev.revoicechat.fr";
             break;
 
         case "https://app.revoicechat.fr":
-            url.core = "https://core.revoicechat.fr";
+            document.getElementById("login-form").host.value = "https://core.revoicechat.fr";
             break;
     }
-
-    document.getElementById('host').value = url.core;
 }
