@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const core = new URL(current.url.core);
         
         current.url.media = `https://${core.host}/media`;
-        current.url.voiceSignal = `https://${core.host}/signal`;
+        current.url.voiceSignal = `http://${core.host}/api/signal`;
         current.url.voiceStun = `${core.host}/stun`;
 
         current.jwtToken = getCookie("jwtToken");
