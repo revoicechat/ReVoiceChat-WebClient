@@ -51,7 +51,7 @@ function sseOpen() {
     // Close current if it exist before openning a new connection
     sseClose();
 
-    current.sse = new EventSource(`${current.url.core}/api/sse`, { withCredentials: true });
+    current.sse = new EventSource(`${current.url.core}/api/sse?jwt=${current.jwtToken}`);
 
     current.sse.onmessage = (event) => {
         event = JSON.parse(event.data);
