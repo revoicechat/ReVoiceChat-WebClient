@@ -184,6 +184,25 @@ async function fileExistMedia(path) {
     }
 }
 
+async function fileBulkExistMedia(path, files){
+    try {
+        const response = await fetch(`${current.url.media}${path}`, {
+            method: 'OPTIONS',
+            signal: AbortSignal.timeout(5000),
+        });
+
+        if(!response.ok){
+            throw "Not OK";
+        }
+
+        return await response.json();
+    }
+    catch (error) {
+        console.error(`An error occurred while processing your request \n${error}\nHost : ${current.url.media}\nPath : ${path}`);
+        return null;
+    }
+}
+
 // Save a cookie
 function setCookie(name, value, days) {
     let expires = "";

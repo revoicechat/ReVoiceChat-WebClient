@@ -39,19 +39,27 @@ async function getServerUsers(serverId) {
         const userList = document.getElementById("user-list");
         userList.innerHTML = "";
 
+        let tempList = [];
+
+        for (const neddle in sortedByStatus){
+            tempList.push(sortedByStatus[neddle].id); 
+        }
+
+        const usersPfpExist = await fileBulkExistMedia("/profiles/bulk", tempList);
+
         for (const neddle in sortedByStatus) {
-            userList.appendChild(await createUser(sortedByStatus[neddle]));
+            userList.appendChild(await createUser(sortedByStatus[neddle]), usersPfpExist[neddle]);
         }
     }
 }
 
-async function createUser(data) {
+async function createUser(data, userPfpExist) {
     const DIV = document.createElement('div');
     DIV.id = data.id;
     DIV.className = "user-profile";
 
     let profilePicture = "src/img/default-avatar.webp";
-    if (await fileExistMedia(`/profiles/${data.id}`)) {
+    if (userPfpExist) {
         profilePicture = `${current.url.media}/profiles/${data.id}`;
     }
 
