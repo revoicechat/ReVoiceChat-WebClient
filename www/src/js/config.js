@@ -124,7 +124,20 @@ async function createItemUser(data, userPfpExist) {
     return DIV;
 }
 
-function updateServerName(input) {
+async function updateServerName(input) {
+    const serverName = input.value;
+
+    if (!serverName) {
+        console.error("Display name is incorrect");
+        return;
+    }
+
+    const id = current.server.id;
+    const result = await patchCoreAPI(`server/${id}`, { name : serverName})
+    if (result) {
+        document.getElementById('config-server-name').value = result.name;
+        current.user.displayName = result.name
+    }
 }
 
 const FORM_DATA = {
