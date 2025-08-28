@@ -95,7 +95,7 @@ function sseOpen() {
     current.sse.onerror = () => {
         console.error(`An error occurred while attempting to connect to "${current.url.core}/api/sse".\nRetry in 10 seconds`);
         setTimeout(() => {
-            sseConnect();
+            sseOpen();
             getMessages(current.room.id);
         }, 10000);
     }
