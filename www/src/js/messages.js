@@ -147,8 +147,9 @@ function injectEmojis(inputText) {
         }
 
         // Emoji
-        if(current.chat.emojisGlobal.includes(element.substring(1, element.length - 1))){
-            result.push(`<img src="${current.url.media}/emojis/global/${element}" alt="${element}" title=":${element}:">`);
+        const emoji = element.substring(1, element.length - 1);
+        if(current.chat.emojisGlobal.includes(emoji)){
+            result.push(`<img src="${current.url.media}/emojis/global/${emoji}" alt="${emoji}" title=":${emoji}:">`);
             return;
         }
 
