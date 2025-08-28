@@ -28,6 +28,7 @@ const current = {
     chat: {
         mode: "send",
         editId: null,
+        emojisGlobal: []
     }
 }
 
@@ -69,6 +70,7 @@ document.addEventListener('DOMContentLoaded', function () {
         getServers();
         sseOpen();
         getUsername();
+        getEmojisGlobal();
     }
 });
 

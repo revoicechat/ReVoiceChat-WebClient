@@ -292,10 +292,15 @@ svg {
 }
 
 .message-content {
-    display: block;
+    display: flex;
     padding-left: 1.5rem;
     padding-right: 1.5rem;
     user-select: text;
+}
+
+.message-content img{
+    height: 1.5rem;
+    width: 1.5rem;
 }
 
 .message-timestamp {
