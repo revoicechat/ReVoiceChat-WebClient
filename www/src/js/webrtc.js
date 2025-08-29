@@ -72,9 +72,9 @@ async function initWebRTC() {
             if (data.candidate) {
                 try {
                     if (remoteDescSet) {
-                        await current.webrtc.p2p.addIceCandidate(new RTCIceCandidate(message.candidate));
+                        await current.webrtc.p2p.addIceCandidate(new RTCIceCandidate(data.candidate));
                     } else {
-                        remoteCandidates.push(message.candidate);
+                        remoteCandidates.push(data.candidate);
                     }
                 } catch (e) {
                     console.error("Error adding ICE candidate", e);
