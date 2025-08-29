@@ -6,6 +6,11 @@ async function initWebRTC() {
         iceServers: [
             {
                 urls: ["stun4.l.google.com:19302", "stun3.l.google.com:19302"]
+            },
+            {
+                url: 'turn:turn.anyfirewall.com:443?transport=tcp',
+                credential: 'webrtc',
+                username: 'webrtc'
             }
         ]
     });
