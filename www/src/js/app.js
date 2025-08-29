@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', function () {
         
         current.url.media = `https://${core.host}/media`;
         current.url.voiceSignal = `https://${core.host}/api/signal`;
-        current.url.voiceStun = `${core.host}/stun`;
+        current.url.voiceStun = `stun:stundev.revoicechat.fr:3480`;
 
         current.jwtToken = getCookie("jwtToken");
     }

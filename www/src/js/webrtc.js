@@ -3,7 +3,7 @@ async function initWebRTC() {
 
     current.webrtc.socket = new WebSocket(current.url.voiceSignal);
     current.webrtc.p2p = new RTCPeerConnection({
-        iceServers: [{ urls: `stun:${current.url.voiceStun}` }]
+        iceServers: [{ urls: current.url.voiceStun }]
     });
 
     // Handle remote audio from other peer
