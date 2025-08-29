@@ -5,10 +5,10 @@ async function initWebRTC() {
     current.webrtc.p2p = new RTCPeerConnection({
         iceServers: [
             {
-                urls: ["stun4.l.google.com:19302", "stun3.l.google.com:19302"]
+                urls: ["stun:stun4.l.google.com:19302", "stun:stun3.l.google.com:19302"]
             },
             {
-                url: 'turn:turn.anyfirewall.com:443?transport=tcp',
+                urls: 'turn:turn.anyfirewall.com:443?transport=tcp',
                 credential: 'webrtc',
                 username: 'webrtc'
             }
