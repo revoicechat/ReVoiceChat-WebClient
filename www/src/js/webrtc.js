@@ -4,16 +4,9 @@ async function initWebRTC() {
     current.webrtc.socket = new WebSocket(current.url.voiceSignal);
     current.webrtc.p2p = new RTCPeerConnection({
         iceServers: [
-            stun = {
-                urls: "stun:stundev.revoicechat.fr"
-            },
-            turn =
             {
-                urls: 'turn:stundev.revoicechat.fr',
-                credential: 'userdev',
-                username: 'passdev'
+                urls: ["stun4.l.google.com:19302", "stun3.l.google.com:19302"]
             }
-
         ]
     });
 
