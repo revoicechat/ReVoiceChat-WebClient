@@ -49,7 +49,7 @@ function sseOpen() {
     current.sse.onmessage = (event) => {
         event = JSON.parse(event.data);
 
-        console.log("New SSE event : ", event);
+        console.debug("SSE : ", event);
 
         switch (event.type) {
             case "PING":
