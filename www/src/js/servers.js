@@ -58,7 +58,7 @@ function sseOpen() {
 
             case "ROOM_MESSAGE":
                 if (event.data.roomId === current.room.id) {
-                    const ROOM = document.getElementById("room-messages");
+                    const ROOM = document.getElementById("text-content");
 
                     switch (event.data.actionType) {
                         case "ADD":

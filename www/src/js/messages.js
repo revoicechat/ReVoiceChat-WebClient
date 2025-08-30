@@ -66,7 +66,7 @@ function createMessageContextMenu(messageData) {
 
 async function sendMessage() {
     let result = null;
-    let textInput = sanitizeString(document.getElementById('chat-input').value);
+    let textInput = sanitizeString(document.getElementById('text-input').value);
 
     if (textInput == "" || textInput == null) {
         return;
@@ -90,7 +90,7 @@ async function sendMessage() {
     }
 
     if (result) {
-        document.getElementById('chat-input').value = "";
+        document.getElementById('text-input').value = "";
         return;
     }
 
