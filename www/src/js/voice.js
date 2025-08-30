@@ -1,7 +1,7 @@
 let socket = null;
 
 function voiceConnect() {
-    socket = io("https://core.dev.revoicechat.fr/voice/", {
+    socket = io("https://voice.dev.revoicechat.fr/", {
         transports: ['websocket'],
         upgrade: false
     });
