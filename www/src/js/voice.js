@@ -64,7 +64,7 @@ function voiceConnect() {
 
     // Only listen to your active room stream
     current.voice.socket.on(current.voice.activeRoom, (roomData) => {
-        console.log(`Data from user ${roomData.userId}`);
+        //console.log(`Data from user ${roomData.userId}`);
 
         let newData = roomData.audioData.split(";");
         newData[0] = "data:audio/ogg;";
