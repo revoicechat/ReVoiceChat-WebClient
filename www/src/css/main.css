@@ -240,11 +240,11 @@ svg {
     display: flex;
 }
 
-.chat-text {
+.text-control {
     flex: 1 1 0%;
 }
 
-.chat-text input {
+.text-control input {
     padding-left: 1rem;
     padding-right: 3rem;
     padding-top: 0.75rem;
