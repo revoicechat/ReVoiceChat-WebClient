@@ -192,6 +192,28 @@ svg {
 }
 
 /* ROOM */
+.room {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 0%;
+    user-select: auto;
+}
+
+.room-container {
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+}
+
+.room-header {
+    padding: 1rem;
+    height: 3.5rem;
+    display: flex;
+}
+
+.room-header svg {
+    margin-right: 0.5rem;
+}
 
 .room-title {
     font-weight: 600;
@@ -202,29 +224,6 @@ svg {
 }
 
 .room-title svg {
-    margin-right: 0.5rem;
-}
-
-.chat {
-    display: flex;
-    flex-direction: column;
-    flex: 1 1 0%;
-    user-select: auto;
-}
-
-.chat-container {
-    display: flex;
-    height: 100%;
-    flex-direction: column;
-}
-
-.chat-header {
-    padding: 1rem;
-    height: 3.5rem;
-    display: flex;
-}
-
-.chat-header svg {
     margin-right: 0.5rem;
 }
 

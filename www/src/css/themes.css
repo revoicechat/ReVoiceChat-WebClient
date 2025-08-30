@@ -84,15 +84,15 @@
     }
 
     /* Chat */
-    .chat-container {
+    .room-container {
         border-color: #111827;
     }
 
-    .chat-header {
+    .room-header {
         background: #292f3d;
     }
 
-    .chat-name {
+    .room-name {
         color: white;
         font-weight: 600;
     }
@@ -308,13 +308,13 @@
     }
 
     /* Chat */
-    .chat-header {
+    .room-header {
         border-color: beige;
         background: black;
         border-bottom-width: 1px;
     }
 
-    .chat-name {
+    .room-name {
         color: white;
         font-weight: 600;
     }
