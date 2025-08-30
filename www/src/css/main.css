@@ -235,8 +235,7 @@ svg {
     padding-top: 0.75rem;
 }
 
-.chat-control-container,
-.voice-control-container {
+.room-control-container{
     padding: 0.5rem;
     display: flex;
 }
