@@ -251,7 +251,7 @@ svg {
 
 .voice-control {
     height: 3rem;
-    width: 100%;
+    margin-right: 0.5rem;
 }
 
 .voice-control button {
@@ -261,6 +261,9 @@ svg {
     display: block;
     padding: 0.5rem;
     margin-top: 0.25rem;
+}
+
+.voice-control .join{
     width: 6rem;
 }
 

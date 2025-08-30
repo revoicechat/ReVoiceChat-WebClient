@@ -120,12 +120,12 @@ async function stopVoiceCall() {
 }
 
 function updateVoiceControl() {
-    const VOICE_ACTION = document.getElementById("voice-control-action");
+    const VOICE_ACTION = document.getElementById("voice-join-action");
 
     switch (current.voice.socketStatus) {
         case "waiting":
             // Set disconnect actions
-            VOICE_ACTION.className = "";
+            VOICE_ACTION.className = "join";
             VOICE_ACTION.classList.add('waiting');
             VOICE_ACTION.innerText = "Wait";
             VOICE_ACTION.onclick = () => stopVoiceCall();
@@ -133,14 +133,14 @@ function updateVoiceControl() {
 
         case "disconnected":
             // Set connect actions
-            VOICE_ACTION.className = "";
+            VOICE_ACTION.className = "join";
             VOICE_ACTION.classList.add('disconnected');
             VOICE_ACTION.innerText = "Join";
             VOICE_ACTION.onclick = () => startVoiceCall(current.room.id);
             break;
 
         case "connected":
-            VOICE_ACTION.className = "";
+            VOICE_ACTION.className = "join";
             VOICE_ACTION.classList.add('connected');
             VOICE_ACTION.innerText = "Leave";
             VOICE_ACTION.onclick = () => stopVoiceCall();
@@ -265,5 +265,26 @@ function voiceControlMute(userId) {
     else {
         audio.muted = true;
         muteButton.classList.add('active');
+    }
+}
+
+function voiceControlMuteSelf() {
+    const mute = document.getElementById("voice-self-mute");
+
+    if (mediaRecorder !== null) {
+        if (current.voice.selfMute) {
+            // Unmute
+            console.info("VOICE : Self unmute");
+            current.voice.selfMute = false;
+            mute.classList.remove('active');
+            mediaRecorder.resume();
+        }
+        else {
+            // Mute
+            console.info("VOICE : Self mute");
+            current.voice.selfMute = true;
+            mute.classList.add('active');
+            mediaRecorder.pause();
+        }
     }
 }

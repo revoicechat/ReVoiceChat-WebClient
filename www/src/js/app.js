@@ -35,7 +35,8 @@ const current = {
         socket: null,
         socketStatus: "disconnected",
         activeRoom: null,
-        delay : 50, // Set how many ms to wait before sending chunk
+        delay: 50, // Set how many ms to wait before sending chunk
+        selfMute: false,
     }
 }
 
