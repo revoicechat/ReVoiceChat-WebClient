@@ -70,6 +70,7 @@ function selectRoom(roomData) {
 
     if (roomData.type === "WEBRTC") {
         console.info(`ROOM : Selected webrtc room : ${roomData.id}`);
-        startCall(roomData.id);
+        //startWebRtcCall(roomData.id);
+        startVoiceCall(roomData.id);
     }
 }
