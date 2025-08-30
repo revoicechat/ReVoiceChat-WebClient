@@ -171,14 +171,14 @@ svg {
     padding: 0.5rem;
 }
 
-/* ROOM */
+/* ROOM LIST*/
 
-.room-container {
+.room-list-container {
     flex: 1 1 0%;
     overflow-y: auto;
 }
 
-.room {
+.room-list {
     cursor: pointer;
     position: relative;
     padding: 0.5rem;
@@ -190,6 +190,8 @@ svg {
     justify-content: space-between;
     align-items: flex-start;
 }
+
+/* ROOM */
 
 .room-title {
     font-weight: 600;

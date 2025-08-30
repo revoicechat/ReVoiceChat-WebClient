@@ -14,7 +14,7 @@ async function getRooms(serverId) {
 }
 
 function createRoomList(data) {
-    const roomList = document.getElementById("room-container");
+    const roomList = document.getElementById("room-list-container");
     roomList.innerHTML = "";
     for (const neddle in data) {
         roomList.appendChild(createRoom(data[neddle], () => selectRoom(data[neddle])));
@@ -35,7 +35,7 @@ function createRoom(roomData, onclick) {
     }
 
     DIV.id = roomData.id;
-    DIV.className = "room";
+    DIV.className = "room-list";
     DIV.onclick = onclick;
     DIV.innerHTML = `
         <h3 class="room-title">

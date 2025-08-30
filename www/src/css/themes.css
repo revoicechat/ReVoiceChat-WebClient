@@ -56,16 +56,16 @@
     }
 
     /* Room */
-    .room {
+    .room-list {
         border-color: rgb(55, 65, 81);
         color: white;
     }
 
-    .room:hover {
+    .room-list:hover {
         background-color: rgba(12, 74, 110, 0.7);
     }
 
-    .room.active {
+    .room-list.active {
         background-color: rgb(7, 89, 133);
     }
 
@@ -275,20 +275,20 @@
     }
 
     /* Room */
-    .room {
+    .room-list  {
         border-color: darkgrey;
         color: white;
     }
 
-    .room:hover {
+    .room-list:hover {
         background-color: #595959;
     }
 
-    .room.active {
+    .room-list.active {
         background-color: #2c2c2c;
     }
 
-    .room.active:hover {
+    .room-list.active:hover {
         background-color: #595959;
     }
 
