@@ -228,8 +228,8 @@ svg {
     flex-direction: column;
 }
 
-.text-area,
-.voice-area {
+.text-content,
+.voice-content {
     overflow-y: auto;
     flex: 1 1 0%;
     padding-top: 0.75rem;
