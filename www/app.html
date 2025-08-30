@@ -84,11 +84,7 @@
             <div class="chat-container">
                 <!-- Chat Header -->
                 <div class="chat-header">
-                    <svg data-slot="icon" aria-hidden="true" fill="currentColor" viewBox="0 0 24 24">
-                        <path clip-rule="evenodd"
-                            d="M4.804 21.644A6.707 6.707 0 0 0 6 21.75a6.721 6.721 0 0 0 3.583-1.029c.774.182 1.584.279 2.417.279 5.322 0 9.75-3.97 9.75-9 0-5.03-4.428-9-9.75-9s-9.75 3.97-9.75 9c0 2.409 1.025 4.587 2.674 6.192.232.226.277.428.254.543a3.73 3.73 0 0 1-.814 1.686.75.75 0 0 0 .44 1.223ZM8.25 10.875a1.125 1.125 0 1 0 0 2.25 1.125 1.125 0 0 0 0-2.25ZM10.875 12a1.125 1.125 0 1 1 2.25 0 1.125 1.125 0 0 1-2.25 0Zm4.875-1.125a1.125 1.125 0 1 0 0 2.25 1.125 1.125 0 0 0 0-2.25Z"
-                            fill-rule="evenodd"></path>
-                    </svg>
+                    <span id="room-icon"></span>
                     <h3 class="chat-name" id="room-name"></h3>
                 </div>
 
@@ -97,8 +93,8 @@
                     <!-- JS -->
                 </div>
 
-                <!-- Chat Input -->
-                <div class="chat-input-container">
+                <!-- Chat Control -->
+                <div class="chat-control-container" id="chat-control">
                     <!--
                     <button class="p-2 hover:bg-gray-700 rounded-full transition-colors">
                         <i class="fas fa-paperclip text-gray-400 hover:text-white"></i>
@@ -113,6 +109,14 @@
                         -->
                     </div>
                 </div>
+
+                <!-- Voice Control -->
+                <div class="voice-control-container hidden" id="voice-control">
+                    <div class="voice-control">
+                        <button id="voice-control-action" class="connect">Connect</button>
+                    </div>
+                </div>
+
             </div>
         </div>
 
@@ -150,7 +154,9 @@
 
 
     <!-- TEST VOICE -->
-    <script src="https://cdn.socket.io/4.8.1/socket.io.min.js" integrity="sha384-mkQ3/7FUtcGyoppY6bz/PORYoGqOl7/aSUMn2ymDOJcapfS6PHqxhRTMh1RR0Q6+" crossorigin="anonymous"></script>
+    <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"
+        integrity="sha384-mkQ3/7FUtcGyoppY6bz/PORYoGqOl7/aSUMn2ymDOJcapfS6PHqxhRTMh1RR0Q6+"
+        crossorigin="anonymous"></script>
     <script src="src/js/voice.js"></script>
 
 </body>

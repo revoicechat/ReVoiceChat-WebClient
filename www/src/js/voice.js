@@ -64,6 +64,8 @@ function voiceConnect() {
 
     // Only listen to your active room stream
     current.voice.socket.on(current.voice.activeRoom, (roomData) => {
+        console.log(`Data from user ${roomData.userId}`);
+
         let newData = roomData.audioData.split(";");
         newData[0] = "data:audio/ogg;";
         newData = newData[0] + newData[1];
@@ -91,25 +93,40 @@ function voiceDisconnect() {
 async function startVoiceCall(roomId) {
     console.info(`VOICE : Joining voice chat ${roomId}`);
 
-    // Now clicking on button stop the call (first so you can clear old objects)
-    document.getElementById(roomId).onclick = () => stopVoiceCall();
-
     document.getElementById(roomId).classList.add('active-voice');
     current.voice.activeRoom = roomId;
 
     voiceConnect();
+    updateVoiceControl();
 };
 
 async function stopVoiceCall() {
-    const roomId = current.voice.activeRoom;
+    if (current.voice.activeRoom !== null) {
+        const roomId = current.voice.activeRoom;
+        console.info(`VOICE : Leaving voice chat ${roomId}`);
+        document.getElementById(roomId).classList.remove('active-voice');
+    }
 
-    console.info(`VOICE : Leaving voice chat ${roomId}`);
-
-    document.getElementById(roomId).classList.remove('active-voice');
     current.voice.activeRoom = null;
-
     voiceDisconnect()
+    updateVoiceControl();
+}
 
-    // Now clicking on button start the call
-    document.getElementById(roomId).onclick = () => startVoiceCall(roomId);
+function updateVoiceControl() {
+    const VOICE_ACTION = document.getElementById("voice-control-action");
+
+    if (current.voice.activeRoom === null) {
+        // Set connect actions
+        VOICE_ACTION.classList.add('connect');
+        VOICE_ACTION.classList.remove('disconnect');
+        VOICE_ACTION.innerText = "Connect";
+        document.getElementById("voice-control-action").onclick = () => startVoiceCall(current.room.id);
+    }
+    else {
+        // Set disconnect actions
+        VOICE_ACTION.classList.remove('connect');
+        VOICE_ACTION.classList.add('disconnect');
+        VOICE_ACTION.innerText = "Disconnect";
+        VOICE_ACTION.onclick = () => stopVoiceCall();
+    }
 }

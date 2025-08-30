@@ -226,13 +226,15 @@ svg {
     margin-right: 0.5rem;
 }
 
-.chat-area {
+.chat-area,
+.voice-area {
     overflow-y: auto;
     flex: 1 1 0%;
     padding-top: 0.75rem;
 }
 
-.chat-input-container {
+.chat-control-container,
+.voice-control-container {
     padding: 0.5rem;
     display: flex;
 }
@@ -247,6 +249,20 @@ svg {
     padding-top: 0.75rem;
     padding-bottom: 0.75rem;
     width: 100%;
+}
+
+.voice-control{
+    height: 3rem;
+    width: 100%;
+}
+
+.voice-control button {
+    font-weight: 700;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    display: block;
+    padding: 0.5rem;
+    margin-top: 0.25rem;
 }
 
 /* MESSAGE */
