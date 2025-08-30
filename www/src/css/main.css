@@ -152,6 +152,7 @@ svg {
     flex-direction: column;
     width: 15rem;
     height: 100%;
+    padding-top: 0.5rem;
 }
 
 .sidebar-user-title {
@@ -165,10 +166,6 @@ svg {
     height: 1.5rem;
     width: 1.5rem;
     margin-right: 0.5rem;
-}
-
-.user-profile {
-    padding: 0.5rem;
 }
 
 /* ROOM LIST*/
@@ -228,11 +225,10 @@ svg {
     flex-direction: column;
 }
 
-.text-content,
-.voice-content {
+.room-content {
     overflow-y: auto;
     flex: 1 1 0%;
-    padding-top: 0.75rem;
+    padding-top: 0.5rem;
 }
 
 .room-control-container{
@@ -326,6 +322,39 @@ svg {
     line-height: 1rem;
 }
 
+/* VOICE */
+.voice-profile{
+    height: 3rem;
+    display: flex;
+    cursor: pointer;
+    padding: 0.5rem;
+}
+
+.voice-profile .block-user{
+    display: flex;
+    width: 50%;
+}
+
+.voice-profile .user{
+    font-weight: 500;
+    font-size: 1rem;
+}
+
+.voice-profile .block-action{
+    display: block;
+    margin-left: auto;
+    margin-right: 0;
+}
+
+.block-action .volume{
+    width: 60%;
+}
+
+.block-action .mute{
+    margin-left: 0.25rem;
+    padding: 0.25rem;
+}
+
 /* STATUS */
 
 .status-container {
@@ -345,22 +374,24 @@ svg {
     border-radius: 9999px;
 }
 
+.voice-profile .icon,
 .sidebar-user-list .icon {
     width: 2rem;
     height: 2rem;
     border-radius: 9999px;
 }
 
+.voice-profile .user,
 .sidebar-user-list .user,
 .status-bloc-1 .user {
     padding-left: 0.75rem;
 }
 
-
 .status-bloc-1 .user .name {
     font-weight: 600;
 }
 
+.voice-profile .user .name,
 .sidebar-user-list .user .name {
     font-weight: 500;
     padding-top: 0.25rem;
@@ -403,6 +434,7 @@ svg {
     height: 3rem;
     display: flex;
     cursor: pointer;
+    padding: 0.5rem;
 }
 
 /* Scroll */

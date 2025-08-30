@@ -126,6 +126,19 @@
         background-color: rgb(239 68 68);
     }
 
+    .voice-profile:hover {
+        background-color: rgb(55, 65, 81);
+    }
+
+    .voice-profile .mute:hover{
+        background-color: rgb(7, 89, 133);
+        border-radius: 10px;
+    }
+
+    .voice-profile .mute.active{
+        color: red;
+    }
+
     /* Message */
     .message-container:hover {
         background-color: rgb(55, 65, 81);

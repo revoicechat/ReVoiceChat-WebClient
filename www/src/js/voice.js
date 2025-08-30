@@ -130,3 +130,76 @@ function updateVoiceControl() {
         VOICE_ACTION.onclick = () => stopVoiceCall();
     }
 }
+
+function voiceCreateUser(data, userPfpExist) {
+    /*const DIV_CONTENT = document.createElement('div');
+    DIV_CONTENT.className = "voice-profile";
+    DIV_CONTENT.id = userData.id;
+    DIV_CONTENT.innerHTML = `<div class='user'>${userData.displayName}</div>`;
+    return DIV_CONTENT;*/
+
+    const DIV = document.createElement('div');
+    DIV.id = data.id;
+    DIV.className = "voice-profile";
+
+    let profilePicture = "src/img/default-avatar.webp";
+    if (userPfpExist) {
+        profilePicture = `${current.url.media}/profiles/${data.id}`;
+    }
+
+    DIV.innerHTML = `
+        <div class='block-user'>
+            <div class='relative'>
+                <img src='${profilePicture}' alt='PFP' class='icon ring-2' />
+            </div>
+            <div class='user'>
+                <h2 class='name'>${data.displayName}</h2>
+            </div>
+        </div>
+        <div class='block-action'>
+            <input class='volume' type='range' min='0' max='1' step='0.05' value='1' title='100%' id='volume-${data.id}'>
+            <button class='mute' id='mute-${data.id}' title='Mute'>${SVG_MICROPHONE}</button>
+        </div>
+    `;
+
+    return DIV;
+}
+
+async function voiceJoinedUsers() {
+    const result = await getCoreAPI(`/server/${current.server.id}/user`);
+
+    if (result !== null) {
+        const sortedByDisplayName = [...result].sort((a, b) => {
+            return a.displayName.localeCompare(b.displayName);
+        });
+
+        const sortedByStatus = [...sortedByDisplayName].sort((a, b) => {
+            if (a.status === b.status) {
+                return 0;
+            }
+            else {
+                if (a.status === "OFFLINE") {
+                    return 1;
+                }
+                if (b.status === "OFFLINE") {
+                    return -1;
+                }
+            }
+        });
+
+        const VOICE_CONTENT = document.getElementById("voice-content");
+        VOICE_CONTENT.innerHTML = "";
+
+        let tempList = [];
+
+        for (const neddle in sortedByStatus) {
+            tempList.push(sortedByStatus[neddle].id);
+        }
+
+        const usersPfpExist = await fileBulkExistMedia("/profiles/bulk", tempList);
+
+        for (const neddle in sortedByStatus) {
+            VOICE_CONTENT.appendChild(await voiceCreateUser(sortedByStatus[neddle], usersPfpExist ? [sortedByStatus[neddle].id] : false));
+        }
+    }
+}
