@@ -7,6 +7,9 @@ function voiceConnect() {
     });
 
     current.voice.socket.on('connect', () => {
+        current.voice.socketStatus = "connected";
+        updateVoiceControl();
+
         current.voice.socket.emit("clientConnect", {
             userId: current.user.id,
             roomId: current.voice.activeRoom,
@@ -59,6 +62,7 @@ function voiceConnect() {
     });
 
     current.voice.socket.on('disconnect', () => {
+        current.voice.socketStatus = "disconnected";
         console.log("VOICE : Socket disconnected");
     });
 
@@ -94,7 +98,9 @@ async function startVoiceCall(roomId) {
     console.info(`VOICE : Joining voice chat ${roomId}`);
 
     document.getElementById(roomId).classList.add('active-voice');
+
     current.voice.activeRoom = roomId;
+    current.voice.socketStatus = "waiting";
 
     voiceConnect();
     updateVoiceControl();
@@ -108,6 +114,8 @@ async function stopVoiceCall() {
     }
 
     current.voice.activeRoom = null;
+    current.voice.socketStatus = "disconnected";
+
     voiceDisconnect()
     updateVoiceControl();
 }
@@ -115,19 +123,29 @@ async function stopVoiceCall() {
 function updateVoiceControl() {
     const VOICE_ACTION = document.getElementById("voice-control-action");
 
-    if (current.voice.activeRoom === null) {
-        // Set connect actions
-        VOICE_ACTION.classList.add('connect');
-        VOICE_ACTION.classList.remove('disconnect');
-        VOICE_ACTION.innerText = "Connect";
-        VOICE_ACTION.onclick = () => startVoiceCall(current.room.id);
-    }
-    else {
-        // Set disconnect actions
-        VOICE_ACTION.classList.remove('connect');
-        VOICE_ACTION.classList.add('disconnect');
-        VOICE_ACTION.innerText = "Disconnect";
-        VOICE_ACTION.onclick = () => stopVoiceCall();
+    switch (current.voice.socketStatus) {
+        case "waiting":
+            // Set disconnect actions
+            VOICE_ACTION.className = "";
+            VOICE_ACTION.classList.add('waiting');
+            VOICE_ACTION.innerText = "Wait";
+            VOICE_ACTION.onclick = () => stopVoiceCall();
+            break;
+
+        case "disconnected":
+            // Set connect actions
+            VOICE_ACTION.className = "";
+            VOICE_ACTION.classList.add('disconnected');
+            VOICE_ACTION.innerText = "Join";
+            VOICE_ACTION.onclick = () => startVoiceCall(current.room.id);
+            break;
+
+        case "connected":
+            VOICE_ACTION.className = "";
+            VOICE_ACTION.classList.add('connected');
+            VOICE_ACTION.innerText = "Leave";
+            VOICE_ACTION.onclick = () => stopVoiceCall();
+            break;
     }
 }
 

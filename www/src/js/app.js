@@ -33,6 +33,7 @@ const current = {
     },
     voice:{
         socket: null,
+        socketStatus: "disconnected",
         activeRoom: null,
         delay : 250, // Set how many ms to wait before sending chunk
     }
