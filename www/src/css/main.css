@@ -219,10 +219,11 @@ svg {
     margin-right: 0.5rem;
 }
 
-.room-container{
+.room-container {
     display: flex;
-    height: 100%;
     flex-direction: column;
+    flex: 1 1 0%;
+    overflow-y: auto;
 }
 
 .room-content {
@@ -231,7 +232,7 @@ svg {
     padding-top: 0.5rem;
 }
 
-.room-control-container{
+.room-control-container {
     padding: 0.5rem;
     display: flex;
 }
@@ -248,7 +249,7 @@ svg {
     width: 100%;
 }
 
-.voice-control{
+.voice-control {
     height: 3rem;
     width: 100%;
 }
@@ -312,7 +313,7 @@ svg {
     user-select: text;
 }
 
-.message-content img{
+.message-content img {
     height: 1.5rem;
     width: 1.5rem;
 }
@@ -324,31 +325,31 @@ svg {
 }
 
 /* VOICE */
-.voice-profile{
+.voice-profile {
     height: 3rem;
     display: flex;
     cursor: pointer;
     padding: 0.5rem;
 }
 
-.voice-profile .block-user{
+.voice-profile .block-user {
     display: flex;
 }
 
-.voice-profile .user{
+.voice-profile .user {
     font-weight: 500;
     font-size: 1rem;
 }
 
-.voice-profile .block-action{
+.voice-profile .block-action {
     margin-left: auto;
 }
 
-.block-action .volume{
+.block-action .volume {
     width: 60%;
 }
 
-.block-action .mute{
+.block-action .mute {
     margin-left: 0.25rem;
     padding: 0.25rem;
 }
