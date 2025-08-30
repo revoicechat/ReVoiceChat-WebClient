@@ -154,7 +154,7 @@ function voiceCreateUser(userData, userPfpExist) {
     DIV.className = "voice-profile";
 
     let profilePicture = "src/img/default-avatar.webp";
-    if (userPfpExist) {
+    if (userPfpExist === true) {
         profilePicture = `${current.url.media}/profiles/${userData.id}`;
     }
 
