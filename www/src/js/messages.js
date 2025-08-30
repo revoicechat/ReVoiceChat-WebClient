@@ -112,7 +112,7 @@ async function editMessage(id) {
     }
 }
 
-function chatMode(input) {
+function textInputMode(input) {
     if (input.value == "") {
         current.chat.mode = "send";
         current.chat.editId = null;
