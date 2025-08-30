@@ -1,85 +1,84 @@
 let mediaRecorder = null;
+let userBuffer = [];
 
 function voiceConnect() {
-    current.voice.socket = io(current.url.voiceServer, {
-        transports: ['websocket'],
-        upgrade: false
-    });
+    current.voice.socket = new WebSocket(current.url.voiceServer);
+    current.voice.socket.binaryType = "arraybuffer";
 
-    current.voice.socket.on('connect', () => {
+    current.voice.socket.onopen = () => {
         current.voice.socketStatus = "connected";
         updateVoiceControl();
 
-        current.voice.socket.emit("clientConnect", {
-            userId: current.user.id,
-            roomId: current.voice.activeRoom,
-        });
-
-        // Send Audio
+        // Get microphone access
         navigator.mediaDevices.getUserMedia({ audio: true, video: false })
             .then((stream) => {
-                mediaRecorder = new MediaRecorder(stream);
-                let audioChunks = [];
+                // Set MIME type — must be supported by browser and receiver
+                const mimeType = "audio/webm; codecs=opus";
+                if (!MediaRecorder.isTypeSupported(mimeType)) {
+                    console.error("MIME type not supported");
+                    return;
+                }
 
-                // Add audio chunk to buffer
-                mediaRecorder.addEventListener("dataavailable", function (event) {
-                    audioChunks.push(event.data);
-                });
+                mediaRecorder = new MediaRecorder(stream, { mimeType });
 
-                // Send audio chunk when media stopped
-                mediaRecorder.addEventListener("stop", function () {
-                    let audioBlob = new Blob(audioChunks);
-                    audioChunks = [];
-                    let fileReader = new FileReader();
-                    fileReader.readAsDataURL(audioBlob);
-                    fileReader.onloadend = function () {
-                        const roomData = {
-                            audioData: fileReader.result,
-                            roomId: current.voice.activeRoom,
-                            userId: current.user.id
-                        }
-                        current.voice.socket.emit("roomStream", roomData);
-                    };
+                mediaRecorder.ondataavailable = async (event) => {
+                    if (event.data.size > 0) {
+                        // Audio buffer
+                        const audioBuffer = await event.data.arrayBuffer();
 
-                    // Make audio chunk
-                    mediaRecorder.start();
-                    setTimeout(function () {
-                        mediaRecorder.stop();
-                    }, current.voice.delay);
-                });
+                        // Header (roomId, userId, timestamp)
+                        const header = JSON.stringify({ roomId: current.voice.activeRoom, userId: current.user.id, timestamp: Date.now() });
+                        const headerBytes = new TextEncoder().encode(header);
+                        const totalLength = 2 + headerBytes.length + audioBuffer.byteLength;
+                        const combined = new Uint8Array(totalLength);
 
-                // Start buffering
-                mediaRecorder.start();
+                        // Frame / view
+                        const view = new DataView(combined.buffer);
+                        view.setUint16(0, headerBytes.length);
+                        combined.set(headerBytes, 2);
+                        combined.set(new Uint8Array(audioBuffer), 2 + headerBytes.length);
 
-                // Stop buffering
-                setTimeout(function () {
-                    mediaRecorder.stop();
-                }, current.voice.delay);
+                        current.voice.socket.send(combined);
+                    }
+                };
+
+                mediaRecorder.start(100);
             })
             .catch((error) => {
                 console.error('Error capturing audio.', error);
             });
-    });
-
-    current.voice.socket.on('disconnect', () => {
-        current.voice.socketStatus = "disconnected";
-        console.log("VOICE : Socket disconnected");
-    });
+    };
 
     // Only listen to your active room stream
-    current.voice.socket.on(current.voice.activeRoom, (roomData) => {
-        //console.log(`Data from user ${roomData.userId}`);
+    current.voice.socket.onmessage = (event) => {
+        const data = event.data;
+        const view = new DataView(data);
 
-        let newData = roomData.audioData.split(";");
-        newData[0] = "data:audio/ogg;";
-        newData = newData[0] + newData[1];
+        // Read and decode 2 bytes header
+        const headerLength = view.getUint16(0);
+        const headerStart = 2;
+        const headerEnd = headerStart + headerLength;
+        const headerBytes = new Uint8Array(data.slice(headerStart, headerEnd));
+        const headerJSON = new TextDecoder().decode(headerBytes);
+        const header = JSON.parse(headerJSON);
 
-        let audio = new Audio(newData);
-        if (!audio || document.hidden) {
-            return;
+        // Read audio
+        const audioBytes = data.slice(headerEnd);
+
+        if (header.roomId === current.voice.activeRoom) {
+            const chunk = new Uint8Array(audioBytes);
+
+            const tryAppend = () => {
+                if (!userBuffer[header.userId].sourceBuffer.updating) {
+                    userBuffer[header.userId].sourceBuffer.appendBuffer(chunk);
+                } else {
+                    userBuffer[header.userId].sourceBuffer.addEventListener('updateend', tryAppend, { once: true });
+                }
+            };
+
+            tryAppend();
         }
-        audio.play();
-    });
+    }
 }
 
 function voiceDisconnect() {
@@ -149,20 +148,14 @@ function updateVoiceControl() {
     }
 }
 
-function voiceCreateUser(data, userPfpExist) {
-    /*const DIV_CONTENT = document.createElement('div');
-    DIV_CONTENT.className = "voice-profile";
-    DIV_CONTENT.id = userData.id;
-    DIV_CONTENT.innerHTML = `<div class='user'>${userData.displayName}</div>`;
-    return DIV_CONTENT;*/
-
+function voiceCreateUser(userData, userPfpExist) {
     const DIV = document.createElement('div');
-    DIV.id = data.id;
+    DIV.id = userData.id;
     DIV.className = "voice-profile";
 
     let profilePicture = "src/img/default-avatar.webp";
     if (userPfpExist) {
-        profilePicture = `${current.url.media}/profiles/${data.id}`;
+        profilePicture = `${current.url.media}/profiles/${userData.id}`;
     }
 
     DIV.innerHTML = `
@@ -171,14 +164,63 @@ function voiceCreateUser(data, userPfpExist) {
                 <img src='${profilePicture}' alt='PFP' class='icon ring-2' />
             </div>
             <div class='user'>
-                <h2 class='name'>${data.displayName}</h2>
+                <h2 class='name'>${userData.displayName}</h2>
             </div>
         </div>
-        <div class='block-action'>
-            <input class='volume' type='range' min='0' max='1' step='0.05' value='1' title='100%' id='volume-${data.id}'>
-            <button class='mute' id='mute-${data.id}' title='Mute'>${SVG_MICROPHONE}</button>
-        </div>
     `;
+
+    // Action block
+    const INPUT_VOLUME = document.createElement('input');
+    INPUT_VOLUME.id = `volume-${userData.id}`;
+    INPUT_VOLUME.type = "range";
+    INPUT_VOLUME.className = "volume";
+    INPUT_VOLUME.min = "0";
+    INPUT_VOLUME.max = "1";
+    INPUT_VOLUME.step = "0.05";
+    INPUT_VOLUME.title = "100%";
+    INPUT_VOLUME.oninput = () => voiceControlVolume(userData.id, INPUT_VOLUME.value);
+
+    const BUTTON_MUTE = document.createElement('button');
+    BUTTON_MUTE.id = `mute-${userData.id}`;
+    BUTTON_MUTE.className = "mute";
+    BUTTON_MUTE.title = "Mute";
+    BUTTON_MUTE.onclick = () => voiceControlMute(userData.id);
+    BUTTON_MUTE.innerHTML = SVG_MICROPHONE;
+
+    const DIV_ACTION = document.createElement('div');
+    DIV_ACTION.className = "block-action";
+    DIV_ACTION.appendChild(INPUT_VOLUME);
+    DIV_ACTION.appendChild(BUTTON_MUTE);
+    DIV.appendChild(DIV_ACTION);
+
+    // Create audio element for user
+    const AUDIO = document.createElement("audio");
+    AUDIO.id = `audio-${userData.id}`;
+    AUDIO.controls = false;
+    DIV.appendChild(AUDIO);
+
+    // Create user MediaSource
+    userBuffer[userData.id] = { mediaSource: null, sourceBuffer: null, queue: [] };
+
+    userBuffer[userData.id].mediaSource = new MediaSource();
+
+    userBuffer[userData.id].mediaSource.onsourceopen = () => {
+        userBuffer[userData.id].sourceBuffer = userBuffer[userData.id].mediaSource.addSourceBuffer('audio/webm; codecs="opus"');
+
+        userBuffer[userData.id].sourceBuffer.addEventListener('updateend', () => {
+            if (userBuffer[userData.id].queue.length > 0 && !userBuffer[userData.id].sourceBuffer.updating) {
+                userBuffer[userData.id].sourceBuffer.appendBuffer(userBuffer[userData.id].queue.shift());
+            }
+        });
+
+        AUDIO.play().catch(function (error) {
+            if (error.name == "NotSupportedError") {
+                console.log("Stopping playback. No audio was received")
+            }
+        });
+    };
+
+    AUDIO.src = URL.createObjectURL(userBuffer[userData.id].mediaSource);
 
     return DIV;
 }
@@ -191,33 +233,37 @@ async function voiceJoinedUsers() {
             return a.displayName.localeCompare(b.displayName);
         });
 
-        const sortedByStatus = [...sortedByDisplayName].sort((a, b) => {
-            if (a.status === b.status) {
-                return 0;
-            }
-            else {
-                if (a.status === "OFFLINE") {
-                    return 1;
-                }
-                if (b.status === "OFFLINE") {
-                    return -1;
-                }
-            }
-        });
-
         const VOICE_CONTENT = document.getElementById("voice-content");
         VOICE_CONTENT.innerHTML = "";
 
         let tempList = [];
 
-        for (const neddle in sortedByStatus) {
-            tempList.push(sortedByStatus[neddle].id);
+        for (const neddle in sortedByDisplayName) {
+            tempList.push(sortedByDisplayName[neddle].id);
         }
 
         const usersPfpExist = await fileBulkExistMedia("/profiles/bulk", tempList);
 
-        for (const neddle in sortedByStatus) {
-            VOICE_CONTENT.appendChild(await voiceCreateUser(sortedByStatus[neddle], usersPfpExist ? [sortedByStatus[neddle].id] : false));
+        for (const neddle in sortedByDisplayName) {
+            VOICE_CONTENT.appendChild(await voiceCreateUser(sortedByDisplayName[neddle], usersPfpExist ? [sortedByDisplayName[neddle].id] : false));
         }
+    }
+}
+
+function voiceControlVolume(userId, volume) {
+    document.getElementById(`audio-${userId}`).volume = volume;
+    document.getElementById(`volume-${userId}`).title = volume * 100 + "%";
+}
+
+function voiceControlMute(userId) {
+    const audio = document.getElementById(`audio-${userId}`);
+    const muteButton = document.getElementById(`mute-${userId}`);
+    if (audio.muted) {
+        audio.muted = false;
+        muteButton.classList.remove('active');
+    }
+    else {
+        audio.muted = true;
+        muteButton.classList.add('active');
     }
 }
