@@ -332,7 +332,6 @@ svg {
 
 .voice-profile .block-user{
     display: flex;
-    width: 50%;
 }
 
 .voice-profile .user{
@@ -341,9 +340,7 @@ svg {
 }
 
 .voice-profile .block-action{
-    display: block;
     margin-left: auto;
-    margin-right: 0;
 }
 
 .block-action .volume{
