@@ -13,7 +13,7 @@ async function getMessages(roomId) {
     const result = await getCoreAPI(`/room/${roomId}/message`);
 
     if (result !== null) {
-        const ROOM = document.getElementById("room-messages");
+        const ROOM = document.getElementById("text-content");
 
         const sortedResult = [...result.content].sort((a, b) => {
             return new Date(a.createdDate) - new Date(b.createdDate);

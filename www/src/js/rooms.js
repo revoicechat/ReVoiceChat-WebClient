@@ -58,8 +58,8 @@ function selectTextRoom(roomData) {
     document.getElementById("room-icon").innerHTML = SVG_CHAT_BUBBLE;
     document.getElementById("room-name").innerText = roomData.name;
 
-    document.getElementById("voice-control").classList.add('hidden');
-    document.getElementById("chat-control").classList.remove('hidden');
+    document.getElementById("voice-container").classList.add('hidden');
+    document.getElementById("text-container").classList.remove('hidden');
 
     document.getElementById("chat-input").placeholder = `Send a message in ${roomData.name}`;
     document.getElementById("chat-input").focus();
@@ -85,12 +85,12 @@ function selectVoiceRoom(roomData) {
     document.getElementById("room-icon").innerHTML = SVG_PHONE;
     document.getElementById("room-name").innerText = roomData.name;
 
-    document.getElementById("chat-control").classList.add('hidden');
-    document.getElementById("voice-control").classList.remove('hidden');
+    document.getElementById("text-container").classList.add('hidden');
+    document.getElementById("voice-container").classList.remove('hidden');
 
     updateVoiceControl();
 
-    document.getElementById("room-messages").innerHTML = "";
+    document.getElementById("voice-content").innerHTML = "";
 }
 
 function selectRoom(roomData) {

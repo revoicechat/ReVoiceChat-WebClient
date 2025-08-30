@@ -120,7 +120,7 @@ function updateVoiceControl() {
         VOICE_ACTION.classList.add('connect');
         VOICE_ACTION.classList.remove('disconnect');
         VOICE_ACTION.innerText = "Connect";
-        document.getElementById("voice-control-action").onclick = () => startVoiceCall(current.room.id);
+        VOICE_ACTION.onclick = () => startVoiceCall(current.room.id);
     }
     else {
         // Set disconnect actions

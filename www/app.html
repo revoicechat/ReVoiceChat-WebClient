@@ -86,34 +86,44 @@
                     <h3 class="room-name" id="room-name"></h3>
                 </div>
 
-                <!-- Chat Area -->
-                <div class="chat-area scrollbar" id="room-messages">
-                    <!-- JS -->
-                </div>
+                <!-- Text Container -->
+                <div class="room-area" id="text-container">
+                    <div class="text-area scrollbar" id="text-content">
+                        <!-- JS -->
+                    </div>
 
-                <!-- Chat Control -->
-                <div class="chat-control-container" id="chat-control">
-                    <!--
+                    <!-- Chat Control -->
+                    <div class="chat-control-container">
+                        <!--
                     <button class="p-2 hover:bg-gray-700 rounded-full transition-colors">
                         <i class="fas fa-paperclip text-gray-400 hover:text-white"></i>
                     </button>
                     -->
-                    <div class="chat-text">
-                        <input type="text" id="chat-input" oninput="chatMode(this)" />
-                        <!--
+                        <div class="chat-text">
+                            <input type="text" id="chat-input" oninput="chatMode(this)" />
+                            <!--
                         <button class="absolute right-2 top-1/2 transform -translate-y-1/2 p-2 hover:bg-gray-600 rounded-full transition-colors">
                             <i class="fas fa-smile text-gray-400 hover:text-yellow-400"></i>
                         </button>
                         -->
+                        </div>
                     </div>
                 </div>
 
-                <!-- Voice Control -->
-                <div class="voice-control-container hidden" id="voice-control">
-                    <div class="voice-control">
-                        <button id="voice-control-action" class="connect">Connect</button>
+                <!-- Voice Container -->
+                <div class="room-area hidden" id="voice-container">
+                    <div class="voice-area scrollbar" id="voice-content">
+                        <!-- JS -->
+                    </div>
+
+                    <!-- Voice Control -->
+                    <div class="voice-control-container">
+                        <div class="voice-control">
+                            <button id="voice-control-action" class="connect">Connect</button>
+                        </div>
                     </div>
                 </div>
+
 
             </div>
         </div>

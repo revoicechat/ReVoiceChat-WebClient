@@ -227,7 +227,13 @@ svg {
     margin-right: 0.5rem;
 }
 
-.chat-area,
+.room-area{
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+}
+
+.text-area,
 .voice-area {
     overflow-y: auto;
     flex: 1 1 0%;
