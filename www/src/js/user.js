@@ -48,7 +48,7 @@ async function getServerUsers(serverId) {
         const usersPfpExist = await fileBulkExistMedia("/profiles/bulk", tempList);
 
         for (const neddle in sortedByStatus) {
-            userList.appendChild(await createUser(sortedByStatus[neddle], usersPfpExist?[sortedByStatus[neddle].id]:false));
+            userList.appendChild(await createUser(sortedByStatus[neddle], usersPfpExist[sortedByStatus[neddle].id]));
         }
     }
 }
@@ -59,7 +59,7 @@ async function createUser(data, userPfpExist) {
     DIV.className = "user-profile";
 
     let profilePicture = "src/img/default-avatar.webp";
-    if (userPfpExist) {
+    if (userPfpExist === true) {
         profilePicture = `${current.url.media}/profiles/${data.id}`;
     }
 
