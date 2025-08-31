@@ -1,17 +1,23 @@
 let mediaRecorder = null;
 let userBuffer = [];
 
-function voiceConnect() {
-    current.voice.socket = new WebSocket(`${current.url.voice}?token=${current.jwtToken}`);
+function voiceJoin(roomId) {
+    console.info(`VOICE : Joining voice chat ${roomId}`);
+    document.getElementById(roomId).classList.add('active-voice');
+    current.voice.activeRoom = roomId;
+    voiceUpdateControls();
+
+    current.voice.socket = new WebSocket(`${current.url.voice}`);
     current.voice.socket.binaryType = "arraybuffer";
 
     current.voice.socket.onopen = () => {
+        console.info("VOICE : WebSocket opened");
         voiceUpdateControls();
-        voiceCaptureSendAudio();
+        voiceSendAudio();
     };
 
     current.voice.socket.onmessage = (event) => {
-        voiceDecodePlayAudio(event.data);
+        voiceReceiveAudio(event.data);
     }
 
     current.voice.socket.onclose = () => {
@@ -20,7 +26,28 @@ function voiceConnect() {
     }
 }
 
-function voiceCaptureSendAudio() {
+function voiceLeave() {
+    if (current.voice.activeRoom !== null) {
+        const roomId = current.voice.activeRoom;
+        console.info(`VOICE : Leaving voice chat ${roomId}`);
+        document.getElementById(roomId).classList.remove('active-voice');
+    }
+
+    current.voice.activeRoom = null;
+    if (current.voice.socket !== null) {
+        current.voice.socket.close();
+        console.log("VOICE : Socket closed");
+    }
+
+    if (mediaRecorder !== null) {
+        mediaRecorder.stop();
+        console.log("VOICE : mediaRecorder stopped");
+    }
+
+    voiceUpdateControls();
+}
+
+function voiceSendAudio() {
     // Get microphone access
     navigator.mediaDevices.getUserMedia({ audio: true, video: false })
         .then((stream) => {
@@ -34,7 +61,7 @@ function voiceCaptureSendAudio() {
             mediaRecorder = new MediaRecorder(stream, { mimeType });
 
             mediaRecorder.ondataavailable = async (event) => {
-                if (event.data.size > 0) {
+                if (event.data.size > 0 && current.voice.socket.readyState === WebSocket.OPEN) {
                     // Audio buffer
                     const audioBuffer = await event.data.arrayBuffer();
 
@@ -61,7 +88,7 @@ function voiceCaptureSendAudio() {
         });
 }
 
-function voiceDecodePlayAudio(data) {
+function voiceReceiveAudio(data) {
     const view = new DataView(data);
 
     // Read and decode 2 bytes header
@@ -91,42 +118,6 @@ function voiceDecodePlayAudio(data) {
     }
 }
 
-function voiceDisconnect() {
-    if (current.voice.socket !== null) {
-        current.voice.socket.close();
-        console.log("VOICE : Socket closed");
-    }
-
-    if (mediaRecorder !== null) {
-        mediaRecorder.stop();
-        console.log("VOICE : mediaRecorder stopped");
-    }
-}
-
-async function startVoiceCall(roomId) {
-    console.info(`VOICE : Joining voice chat ${roomId}`);
-
-    document.getElementById(roomId).classList.add('active-voice');
-
-    current.voice.activeRoom = roomId;
-
-    voiceConnect();
-    voiceUpdateControls();
-};
-
-async function stopVoiceCall() {
-    if (current.voice.activeRoom !== null) {
-        const roomId = current.voice.activeRoom;
-        console.info(`VOICE : Leaving voice chat ${roomId}`);
-        document.getElementById(roomId).classList.remove('active-voice');
-    }
-
-    current.voice.activeRoom = null;
-
-    voiceDisconnect()
-    voiceUpdateControls();
-}
-
 function voiceUpdateControls() {
     const VOICE_ACTION = document.getElementById("voice-join-action");
     const readyState = current.voice.socket !== null ? current.voice.socket.readyState : WebSocket.CLOSED;
@@ -137,7 +128,7 @@ function voiceUpdateControls() {
             VOICE_ACTION.className = "join";
             VOICE_ACTION.classList.add('waiting');
             VOICE_ACTION.innerText = "Leave";
-            VOICE_ACTION.onclick = () => stopVoiceCall();
+            VOICE_ACTION.onclick = () => voiceLeave();
             break;
 
         case WebSocket.CLOSED:
@@ -145,14 +136,14 @@ function voiceUpdateControls() {
             VOICE_ACTION.className = "join";
             VOICE_ACTION.classList.add('disconnected');
             VOICE_ACTION.innerText = "Join";
-            VOICE_ACTION.onclick = () => startVoiceCall(current.room.id);
+            VOICE_ACTION.onclick = () => voiceJoin(current.room.id);
             break;
 
         case WebSocket.OPEN:
             VOICE_ACTION.className = "join";
             VOICE_ACTION.classList.add('connected');
             VOICE_ACTION.innerText = "Leave";
-            VOICE_ACTION.onclick = () => stopVoiceCall();
+            VOICE_ACTION.onclick = () => voiceLeave();
             break;
     }
 }
@@ -277,7 +268,7 @@ function voiceControlMute(userId) {
     }
 }
 
-function voiceControlMuteSelf() {
+function voiceControlSelfMute() {
     const mute = document.getElementById("voice-self-mute");
 
     if (mediaRecorder !== null) {
