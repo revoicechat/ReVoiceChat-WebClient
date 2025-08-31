@@ -2,17 +2,24 @@ const mediaCodec = 'audio/webm; codecs="opus"';
 let mediaRecorder = null;
 
 function voiceJoin(roomId) {
+    if(current.voice.roomId !== null){
+        console.info(`VOICE : Already connected in room ${current.voice.roomId}`);
+        voiceLeave();
+    }
+
     console.info(`VOICE : Joining voice chat ${roomId}`);
+
     document.getElementById(roomId).classList.add('active-voice');
     current.voice.roomId = roomId;
-    voiceUpdateControls();
+    voiceUpdateSelfControls();
 
     current.voice.socket = new WebSocket(`${current.url.voice}`);
     current.voice.socket.binaryType = "arraybuffer";
 
     current.voice.socket.onopen = () => {
         console.info("VOICE : WebSocket opened");
-        voiceUpdateControls();
+        voiceUpdateSelfControls();
+        voiceUpdateUsersControls();
         voiceSendAudio();
     };
 
@@ -22,7 +29,9 @@ function voiceJoin(roomId) {
 
     current.voice.socket.onclose = () => {
         console.info("VOICE : WebSocket closed");
-        voiceUpdateControls();
+        voiceUpdateSelfControls();
+        voiceUpdateUsersControls();
+        current.voice.users = [];
     }
 }
 
@@ -36,15 +45,17 @@ function voiceLeave() {
     current.voice.roomId = null;
     if (current.voice.socket !== null) {
         current.voice.socket.close();
-        console.log("VOICE : Socket closed");
+        console.info("VOICE : Socket closed");
     }
 
     if (mediaRecorder !== null) {
         mediaRecorder.stop();
-        console.log("VOICE : mediaRecorder stopped");
+        console.info("VOICE : mediaRecorder stopped");
     }
 
-    voiceUpdateControls();
+    voiceUpdateSelfControls();
+    voiceUpdateUsersControls();
+    current.voice.users = [];
 }
 
 function voiceSendAudio() {
@@ -114,9 +125,90 @@ function voiceReceiveAudio(data) {
     }
 }
 
-function voiceUpdateControls() {
+function voiceCreateUserSource(userId) {
+    // Create Audio
+    current.voice.users[userId].audio = new Audio();
+
+    // Create MediaSource
+    current.voice.users[userId].mediaSource = new MediaSource();
+    current.voice.users[userId].audio.src = URL.createObjectURL(current.voice.users[userId].mediaSource);
+
+    current.voice.users[userId].mediaSource.onsourceopen = () => {
+        current.voice.users[userId].buffer = current.voice.users[userId].mediaSource.addSourceBuffer(mediaCodec);
+
+        current.voice.users[userId].buffer.addEventListener('update', function () {
+            if (current.voice.users[userId].queue.length > 0 && !current.voice.users[userId].buffer.updating) {
+                current.voice.users[userId].buffer.appendBuffer(current.voice.users[userId].queue.shift());
+            }
+        });
+
+        current.voice.users[userId].audio.play();
+    };
+}
+
+/* Functions for UI */
+async function voiceJoinedUsers() {
+    const result = await getCoreAPI(`/server/${current.server.id}/user`); // TO DO : Replace with actual Endpoint
+
+    if (result === null) {
+        console.info("VOICE : No user in room");
+        return;
+    }
+
+    const sortedByDisplayName = [...result].sort((a, b) => {
+        return a.displayName.localeCompare(b.displayName);
+    });
+
+    const VOICE_CONTENT = document.getElementById("voice-content");
+    VOICE_CONTENT.innerHTML = "";
+
+    let tempList = [];
+
+    for (const i in sortedByDisplayName) {
+        tempList.push(sortedByDisplayName[i].id);
+    }
+
+    const usersPfpExist = await fileBulkExistMedia("/profiles/bulk", tempList);
+
+    for (const i in sortedByDisplayName) {
+        VOICE_CONTENT.appendChild(voiceCreateJoinedUser(sortedByDisplayName[i], usersPfpExist ? [sortedByDisplayName[i].id] : false));
+    }
+
+    // Room is currently active
+    if (current.voice.roomId === current.room.id) {
+        voiceUpdateUsersControls();
+    }
+}
+
+function voiceCreateJoinedUser(userData, userPfpExist) {
+    const DIV = document.createElement('div');
+    DIV.id = `voice-${userData.id}`;
+    DIV.className = "voice-profile";
+
+    let profilePicture = "src/img/default-avatar.webp";
+    if (userPfpExist === true) {
+        profilePicture = `${current.url.media}/profiles/${userData.id}`;
+    }
+
+    DIV.innerHTML = `
+        <div class='block-user'>
+            <div class='relative'>
+                <img src='${profilePicture}' alt='PFP' class='icon ring-2' />
+            </div>
+            <div class='user'>
+                <h2 class='name'>${userData.displayName}</h2>
+            </div>
+        </div>
+    `;
+
+    return DIV;
+}
+
+/* Functions for User controls  */
+
+function voiceUpdateSelfControls() {
     const VOICE_ACTION = document.getElementById("voice-join-action");
-    const readyState = current.voice.socket !== null ? current.voice.socket.readyState : WebSocket.CLOSED;
+    const readyState = (current.voice.socket !== null && current.voice.roomId === current.room.id) ? current.voice.socket.readyState : WebSocket.CLOSED;
 
     switch (readyState) {
         case WebSocket.CONNECTING:
@@ -144,109 +236,74 @@ function voiceUpdateControls() {
     }
 }
 
-function voiceCreateUser(userData, userPfpExist) {
-    const DIV = document.createElement('div');
-    DIV.id = userData.id;
-    DIV.className = "voice-profile";
+async function voiceUpdateUsersControls() {
+    const result = await getCoreAPI(`/server/${current.server.id}/user`); // TO DO : Replace with actual Endpoint
 
-    let profilePicture = "src/img/default-avatar.webp";
-    if (userPfpExist === true) {
-        profilePicture = `${current.url.media}/profiles/${userData.id}`;
+    if (result === null) {
+        console.info("VOICE : No user in room");
+        return;
     }
 
-    DIV.innerHTML = `
-        <div class='block-user'>
-            <div class='relative'>
-                <img src='${profilePicture}' alt='PFP' class='icon ring-2' />
-            </div>
-            <div class='user'>
-                <h2 class='name'>${userData.displayName}</h2>
-            </div>
-        </div>
-    `;
+    for (const i in result) {
+        voiceUpdateUser(result[i].id);
+    }
+}
 
-    // Action block
-    const INPUT_VOLUME = document.createElement('input');
-    INPUT_VOLUME.id = `volume-${userData.id}`;
-    INPUT_VOLUME.type = "range";
-    INPUT_VOLUME.className = "volume";
-    INPUT_VOLUME.min = "0";
-    INPUT_VOLUME.max = "1";
-    INPUT_VOLUME.step = "0.05";
-    INPUT_VOLUME.title = "100%";
-    INPUT_VOLUME.oninput = () => voiceControlVolume(userData.id, INPUT_VOLUME.value);
+function voiceUpdateUser(userId) {
+    const userDiv = document.getElementById(`voice-${userId}`);
+    const readyState = current.voice.socket !== null ? current.voice.socket.readyState : WebSocket.CLOSED;
 
-    const BUTTON_MUTE = document.createElement('button');
-    BUTTON_MUTE.id = `mute-${userData.id}`;
-    BUTTON_MUTE.className = "mute";
-    BUTTON_MUTE.title = "Mute";
-    BUTTON_MUTE.onclick = () => voiceControlMute(userData.id);
-    BUTTON_MUTE.innerHTML = SVG_MICROPHONE;
-
-    const DIV_ACTION = document.createElement('div');
-    DIV_ACTION.className = "block-action";
-    DIV_ACTION.appendChild(INPUT_VOLUME);
-    DIV_ACTION.appendChild(BUTTON_MUTE);
-    DIV.appendChild(DIV_ACTION);
-
-    // Reset user
-    current.voice.users[userData.id] = { mediaSource: null, buffer: null, queue: [], audio: null };
-
-    // Create audio element for user
-    current.voice.users[userData.id].audio = new Audio();
-    current.voice.users[userData.id].audio.id = `audio-${userData.id}`;
-
-    // Create user MediaSource
-    current.voice.users[userData.id].mediaSource = new MediaSource();
-    current.voice.users[userData.id].audio.src = URL.createObjectURL(current.voice.users[userData.id].mediaSource);
-
-    current.voice.users[userData.id].mediaSource.onsourceopen = () => {
-        current.voice.users[userData.id].buffer = current.voice.users[userData.id].mediaSource.addSourceBuffer(mediaCodec);
-
-        current.voice.users[userData.id].buffer.addEventListener('update', function () {
-            if (current.voice.users[userData.id].queue.length > 0 && !current.voice.users[userData.id].buffer.updating) {
-                current.voice.users[userData.id].buffer.appendBuffer(current.voice.users[userData.id].queue.shift());
+    switch (readyState) {
+        case WebSocket.CLOSED:
+            if (document.getElementById(`voice-controls-${userId}`) !== null) {
+                document.getElementById(`voice-controls-${userId}`).remove();
             }
-        });
+            break;
 
-        current.voice.users[userData.id].audio.play();
-    };
+        case WebSocket.OPEN:
+            if(document.getElementById(`voice-controls-${userId}`) !== null){
+                console.info('VOICE : There is already controls in this room');
+                break;
+            }
 
-    return DIV;
-}
+            // Add controls
+            const INPUT_VOLUME = document.createElement('input');
+            INPUT_VOLUME.type = "range";
+            INPUT_VOLUME.className = "volume";
+            INPUT_VOLUME.min = "0";
+            INPUT_VOLUME.max = "1";
+            INPUT_VOLUME.step = "0.05";
+            INPUT_VOLUME.title = "100%";
+            INPUT_VOLUME.oninput = () => voiceControlVolume(userId, INPUT_VOLUME);
 
-async function voiceJoinedUsers() {
-    const result = await getCoreAPI(`/server/${current.server.id}/user`);
+            const BUTTON_MUTE = document.createElement('button');
+            BUTTON_MUTE.className = "mute";
+            BUTTON_MUTE.title = "Mute";
+            BUTTON_MUTE.onclick = () => voiceControlMute(userId, BUTTON_MUTE);
+            BUTTON_MUTE.innerHTML = SVG_MICROPHONE;
 
-    if (result !== null) {
-        const sortedByDisplayName = [...result].sort((a, b) => {
-            return a.displayName.localeCompare(b.displayName);
-        });
+            const DIV_ACTION = document.createElement('div');
+            DIV_ACTION.id = `voice-controls-${userId}`;
+            DIV_ACTION.className = "block-action";
+            DIV_ACTION.appendChild(INPUT_VOLUME);
+            DIV_ACTION.appendChild(BUTTON_MUTE);
 
-        const VOICE_CONTENT = document.getElementById("voice-content");
-        VOICE_CONTENT.innerHTML = "";
+            userDiv.appendChild(DIV_ACTION);
 
-        let tempList = [];
-
-        for (const neddle in sortedByDisplayName) {
-            tempList.push(sortedByDisplayName[neddle].id);
-        }
-
-        const usersPfpExist = await fileBulkExistMedia("/profiles/bulk", tempList);
-
-        for (const neddle in sortedByDisplayName) {
-            VOICE_CONTENT.appendChild(await voiceCreateUser(sortedByDisplayName[neddle], usersPfpExist ? [sortedByDisplayName[neddle].id] : false));
-        }
+            // Create user structure
+            if (current.voice.users[userId] === null || current.voice.users[userId] === undefined) {
+                current.voice.users[userId] = { mediaSource: null, buffer: null, queue: [], audio: null };
+            }
+            break;
     }
 }
 
-function voiceControlVolume(userId, volume) {
-    current.voice.users[userId].audio.volume = volume;
-    document.getElementById(`volume-${userId}`).title = volume * 100 + "%";
+function voiceControlVolume(userId, volumeInput) {
+    current.voice.users[userId].audio.volume = volumeInput.value;
+    volumeInput.title = volume * 100 + "%";
 }
 
-function voiceControlMute(userId) {
-    const muteButton = document.getElementById(`mute-${userId}`);
+function voiceControlMute(userId, muteButton) {
     if (current.voice.users[userId].audio.muted) {
         current.voice.users[userId].audio.muted = false;
         muteButton.classList.remove('active');
