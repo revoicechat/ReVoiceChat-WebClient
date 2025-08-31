@@ -88,7 +88,7 @@ function selectVoiceRoom(roomData) {
     document.getElementById("text-container").classList.add('hidden');
     document.getElementById("voice-container").classList.remove('hidden');
 
-    updateVoiceControl();
+    voiceUpdateControls();
     voiceJoinedUsers();
 }
 

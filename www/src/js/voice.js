@@ -2,82 +2,92 @@ let mediaRecorder = null;
 let userBuffer = [];
 
 function voiceConnect() {
-    current.voice.socket = new WebSocket(current.url.voiceServer);
+    current.voice.socket = new WebSocket(`${current.url.voice}?token=${current.jwtToken}`);
     current.voice.socket.binaryType = "arraybuffer";
 
     current.voice.socket.onopen = () => {
-        current.voice.socketStatus = "connected";
-        updateVoiceControl();
-
-        // Get microphone access
-        navigator.mediaDevices.getUserMedia({ audio: true, video: false })
-            .then((stream) => {
-                // Set MIME type — must be supported by browser and receiver
-                const mimeType = "audio/webm; codecs=opus";
-                if (!MediaRecorder.isTypeSupported(mimeType)) {
-                    console.error("MIME type not supported");
-                    return;
-                }
-
-                mediaRecorder = new MediaRecorder(stream, { mimeType });
-
-                mediaRecorder.ondataavailable = async (event) => {
-                    if (event.data.size > 0) {
-                        // Audio buffer
-                        const audioBuffer = await event.data.arrayBuffer();
-
-                        // Header (roomId, userId, timestamp)
-                        const header = JSON.stringify({ roomId: current.voice.activeRoom, userId: current.user.id, timestamp: Date.now() });
-                        const headerBytes = new TextEncoder().encode(header);
-                        const totalLength = 2 + headerBytes.length + audioBuffer.byteLength;
-                        const combined = new Uint8Array(totalLength);
-
-                        // Frame / view
-                        const view = new DataView(combined.buffer);
-                        view.setUint16(0, headerBytes.length);
-                        combined.set(headerBytes, 2);
-                        combined.set(new Uint8Array(audioBuffer), 2 + headerBytes.length);
-
-                        current.voice.socket.send(combined);
-                    }
-                };
-
-                mediaRecorder.start(100);
-            })
-            .catch((error) => {
-                console.error('Error capturing audio.', error);
-            });
+        voiceUpdateControls();
+        voiceCaptureSendAudio();
     };
 
-    // Only listen to your active room stream
     current.voice.socket.onmessage = (event) => {
-        const data = event.data;
-        const view = new DataView(data);
+        voiceDecodePlayAudio(event.data);
+    }
 
-        // Read and decode 2 bytes header
-        const headerLength = view.getUint16(0);
-        const headerStart = 2;
-        const headerEnd = headerStart + headerLength;
-        const headerBytes = new Uint8Array(data.slice(headerStart, headerEnd));
-        const headerJSON = new TextDecoder().decode(headerBytes);
-        const header = JSON.parse(headerJSON);
+    current.voice.socket.onclose = () => {
+        console.info("VOICE : WebSocket closed");
+        voiceUpdateControls();
+    }
+}
 
-        // Read audio
-        const audioBytes = data.slice(headerEnd);
+function voiceCaptureSendAudio() {
+    // Get microphone access
+    navigator.mediaDevices.getUserMedia({ audio: true, video: false })
+        .then((stream) => {
+            // Set MIME type — must be supported by browser and receiver
+            const mimeType = "audio/webm; codecs=opus";
+            if (!MediaRecorder.isTypeSupported(mimeType)) {
+                console.error("MIME type not supported");
+                return;
+            }
 
-        if (header.roomId === current.voice.activeRoom) {
-            const chunk = new Uint8Array(audioBytes);
+            mediaRecorder = new MediaRecorder(stream, { mimeType });
 
-            const tryAppend = () => {
-                if (!userBuffer[header.userId].sourceBuffer.updating) {
-                    userBuffer[header.userId].sourceBuffer.appendBuffer(chunk);
-                } else {
-                    userBuffer[header.userId].sourceBuffer.addEventListener('updateend', tryAppend, { once: true });
+            mediaRecorder.ondataavailable = async (event) => {
+                if (event.data.size > 0) {
+                    // Audio buffer
+                    const audioBuffer = await event.data.arrayBuffer();
+
+                    // Header (roomId, userId, timestamp)
+                    const header = JSON.stringify({ roomId: current.voice.activeRoom, userId: current.user.id, timestamp: Date.now() });
+                    const headerBytes = new TextEncoder().encode(header);
+                    const totalLength = 2 + headerBytes.length + audioBuffer.byteLength;
+                    const combined = new Uint8Array(totalLength);
+
+                    // Frame / view
+                    const view = new DataView(combined.buffer);
+                    view.setUint16(0, headerBytes.length);
+                    combined.set(headerBytes, 2);
+                    combined.set(new Uint8Array(audioBuffer), 2 + headerBytes.length);
+
+                    current.voice.socket.send(combined);
                 }
             };
 
-            tryAppend();
-        }
+            mediaRecorder.start(100);
+        })
+        .catch((error) => {
+            console.error('Error capturing audio.', error);
+        });
+}
+
+function voiceDecodePlayAudio(data) {
+    const view = new DataView(data);
+
+    // Read and decode 2 bytes header
+    const headerLength = view.getUint16(0);
+    const headerStart = 2;
+    const headerEnd = headerStart + headerLength;
+    const headerBytes = new Uint8Array(data.slice(headerStart, headerEnd));
+    const headerJSON = new TextDecoder().decode(headerBytes);
+    const header = JSON.parse(headerJSON);
+
+    // Read audio
+    const audioBytes = data.slice(headerEnd);
+
+    // Only listen to your active room stream
+    if (header.roomId === current.voice.activeRoom) {
+        const chunk = new Uint8Array(audioBytes);
+
+        const tryAppend = () => {
+            if (!userBuffer[header.userId].sourceBuffer.updating) {
+                userBuffer[header.userId].sourceBuffer.appendBuffer(chunk);
+            } else {
+                userBuffer[header.userId].sourceBuffer.addEventListener('updateend', tryAppend, { once: true });
+            }
+        };
+
+        tryAppend();
     }
 }
 
@@ -99,10 +109,9 @@ async function startVoiceCall(roomId) {
     document.getElementById(roomId).classList.add('active-voice');
 
     current.voice.activeRoom = roomId;
-    current.voice.socketStatus = "waiting";
 
     voiceConnect();
-    updateVoiceControl();
+    voiceUpdateControls();
 };
 
 async function stopVoiceCall() {
@@ -113,25 +122,25 @@ async function stopVoiceCall() {
     }
 
     current.voice.activeRoom = null;
-    current.voice.socketStatus = "disconnected";
 
     voiceDisconnect()
-    updateVoiceControl();
+    voiceUpdateControls();
 }
 
-function updateVoiceControl() {
+function voiceUpdateControls() {
     const VOICE_ACTION = document.getElementById("voice-join-action");
+    const readyState = current.voice.socket !== null ? current.voice.socket.readyState : WebSocket.CLOSED;
 
-    switch (current.voice.socketStatus) {
-        case "waiting":
+    switch (readyState) {
+        case WebSocket.CONNECTING:
             // Set disconnect actions
             VOICE_ACTION.className = "join";
             VOICE_ACTION.classList.add('waiting');
-            VOICE_ACTION.innerText = "Wait";
+            VOICE_ACTION.innerText = "Leave";
             VOICE_ACTION.onclick = () => stopVoiceCall();
             break;
 
-        case "disconnected":
+        case WebSocket.CLOSED:
             // Set connect actions
             VOICE_ACTION.className = "join";
             VOICE_ACTION.classList.add('disconnected');
@@ -139,7 +148,7 @@ function updateVoiceControl() {
             VOICE_ACTION.onclick = () => startVoiceCall(current.room.id);
             break;
 
-        case "connected":
+        case WebSocket.OPEN:
             VOICE_ACTION.className = "join";
             VOICE_ACTION.classList.add('connected');
             VOICE_ACTION.innerText = "Leave";
@@ -245,7 +254,7 @@ async function voiceJoinedUsers() {
         const usersPfpExist = await fileBulkExistMedia("/profiles/bulk", tempList);
 
         for (const neddle in sortedByDisplayName) {
-            VOICE_CONTENT.appendChild(await voiceCreateUser(sortedByDisplayName[neddle], usersPfpExist[sortedByDisplayName[neddle].id]));
+            VOICE_CONTENT.appendChild(await voiceCreateUser(sortedByDisplayName[neddle], usersPfpExist ? [sortedByDisplayName[neddle].id] : false));
         }
     }
 }
