@@ -9,9 +9,9 @@ const current = {
     url: {
         core: null,
         media: null,
+        voice: null,
         voiceSignal: null,
         voiceStun: null,
-        voiceServer: null,
     },
     server: {
         id: null,
@@ -33,7 +33,6 @@ const current = {
     },
     voice:{
         socket: null,
-        socketStatus: "disconnected",
         activeRoom: null,
         delay: 50, // Set how many ms to wait before sending chunk
         selfMute: false,
@@ -53,9 +52,7 @@ document.addEventListener('DOMContentLoaded', function () {
         console.info(`CORE : ${core.host}`);
         
         current.url.media = `https://${core.host}/media`;
-        current.url.voiceSignal = `https://${core.host}/api/signal`;
-        current.url.voiceStun = `stun:stundev.revoicechat.fr:3480`;
-        current.url.voiceServer = `https://${core.host.replace('core.', 'voice.')}/`;
+        current.url.voice = `https://${core.host}/api/voice`;
 
         current.jwtToken = getCookie("jwtToken");
     }
