@@ -51,8 +51,8 @@ document.addEventListener('DOMContentLoaded', function () {
         const core = new URL(current.url.core);
         console.info(`CORE : ${core.host}`);
         
-        current.url.media = `https://${core.host}/media`;
-        current.url.voice = `https://${core.host}/api/voice`;
+        current.url.media = `${core.protocol}//${core.host}/media`;
+        current.url.voice = `${core.protocol}//${core.host}/api/voice`;
 
         current.jwtToken = getCookie("jwtToken");
     }
