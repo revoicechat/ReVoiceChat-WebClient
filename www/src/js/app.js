@@ -35,7 +35,6 @@ const current = {
         roomId: null,
         users: [],
         socket: null,
-        delay: 50, // Set how many ms to wait before sending chunk
         selfMute: false,
     }
 }
