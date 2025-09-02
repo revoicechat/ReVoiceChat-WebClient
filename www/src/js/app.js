@@ -34,7 +34,6 @@ const global = {
     voice:{
         roomId: null,
         users: {},
-        socket: null,
         selfMute: false,
     }
 }
