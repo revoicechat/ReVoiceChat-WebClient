@@ -94,7 +94,11 @@ async function voiceJoin(roomId) {
     }
     catch (error) {
         console.error(error);
+        
         global.voice.roomId = null;
+        if (voice.socket !== null) {
+            voice.socket.close();
+        }
     }
 }
 
