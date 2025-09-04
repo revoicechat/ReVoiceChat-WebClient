@@ -235,13 +235,13 @@ function voiceLeave() {
     }
 
     // Close all decoders
-    if (voice.users.length !== 0) {
-        voice.users.forEach(async (user) => {
+    voice.users.forEach(async (user) => {
+        if (user.decoder !== null) {
             await user.decoder.flush();
             await user.decoder.close();
-        });
-    }
-
+        }
+    });
+    
     voiceUpdateSelfControls();
     voice.users = {};
 }
