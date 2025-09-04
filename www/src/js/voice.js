@@ -27,7 +27,7 @@ const voiceCodecConfig = {
     },
 }
 
-// <user> call this function to start a call in a room
+// <user> call this function to join a call in a room
 async function voiceJoin(roomId) {
     console.info(`VOICE : Initiate join on room: ${roomId}`);
     global.voice.roomId = roomId;
@@ -188,6 +188,7 @@ async function voiceSendInit() {
     }
 }
 
+// Create a user audio decoder
 async function voiceCreateUserDecoder(userId) {
     const isSupported = await AudioDecoder.isConfigSupported(voiceCodecConfig);
     if (isSupported.supported) {
@@ -224,6 +225,7 @@ async function voiceCreateUserDecoder(userId) {
     }
 }
 
+// <user> call this function to leave a call in a room
 async function voiceLeave() {
     if (global.voice.roomId !== null) {
         const roomId = global.voice.roomId;
@@ -263,6 +265,7 @@ async function voiceLeave() {
     voice.users = {};
 }
 
+// Show to user who is connected in a room before joinning the call
 async function voiceShowConnnectedUsers() {
     const result = await getCoreAPI(`/room/${global.room.id}/user`);
 
@@ -289,7 +292,7 @@ async function voiceShowConnnectedUsers() {
     const usersPfpExist = await fileBulkExistMedia("/profiles/bulk", tempList);
 
     for (const i in sortedByDisplayName) {
-        voiceContent.appendChild(voiceCreateConnectedUser(sortedByDisplayName[i], usersPfpExist ? [sortedByDisplayName[i].id] : false));
+        voiceContent.appendChild(voiceCreateUserHTML(sortedByDisplayName[i], usersPfpExist ? [sortedByDisplayName[i].id] : false));
     }
 
     // Room is currently active
@@ -298,13 +301,11 @@ async function voiceShowConnnectedUsers() {
     }
 }
 
-/*  This function is called when a new user join the room
-    It add the user in the interface, the users descriptor, and create a decoder
-*/
+// Called when a new user join the room
 async function voiceUserJoining(userData) {
     const voiceContent = document.getElementById("voice-content");
     const userPfpExist = await fileExistMedia(`/profiles/${userData.id}`);
-    voiceContent.appendChild(voiceCreateConnectedUser(userData, userPfpExist));
+    voiceContent.appendChild(voiceCreateUserHTML(userData, userPfpExist));
 
     // User calling this is NOT self and current user is connected to voice room
     if (userData.id !== global.user.id && voice.socket.currentState === WebSocket.OPEN) {
@@ -312,7 +313,7 @@ async function voiceUserJoining(userData) {
     }
 }
 
-/* This function is called when a user left the room */
+// Called when a user leave the room
 async function voiceUserLeaving(userId) {
     // Remove user from UI
     document.getElementById(`voice-${userId}`).remove();
@@ -326,7 +327,8 @@ async function voiceUserLeaving(userId) {
     }
 }
 
-function voiceCreateConnectedUser(userData, userPfpExist) {
+// Create DOM Element / HTML for a give user
+function voiceCreateUserHTML(userData, userPfpExist) {
     const DIV = document.createElement('div');
     DIV.id = `voice-${userData.id}`;
     DIV.className = "voice-profile";
@@ -351,7 +353,7 @@ function voiceCreateConnectedUser(userData, userPfpExist) {
 }
 
 async function voiceUpdateUsersControls() {
-    const result = await getCoreAPI(`/room/${global.room.id}/user`); // TO DO : Replace with actual Endpoint
+    const result = await getCoreAPI(`/room/${global.room.id}/user`);
 
     if (result === null) {
         console.debug("VOICE : No user in room");
