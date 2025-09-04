@@ -101,7 +101,7 @@ function sseOpen() {
                 return;
 
             default:
-                console.error("SSE type not unknown: ", type);
+                console.error("SSE type unknowned: ", type);
                 return;
         }
     };
