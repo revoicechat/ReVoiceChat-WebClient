@@ -78,7 +78,10 @@ async function voiceJoin(roomId) {
                 });
 
                 // Feed encoder
-                voice.encoder.encode(audioData);
+                if (voice.encoder !== null) {
+                    voice.encoder.encode(audioData);
+                }
+                
                 audioData.close();
 
                 // Update audioTimestamp (add 20ms / 20000µs)
