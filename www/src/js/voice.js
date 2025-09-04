@@ -11,22 +11,20 @@ const voice = {
     audioContext: null,
 }
 
-const opusConfig = {
-    application: "voip",
-    complexity: 9,
-    signal: "voice",
-    usedtx: true,
-    frameDuration: voice.frameDuration, //20ms
-    useinbanddec: true,
-};
-
-const codecConfig = {
+const voiceCodecConfig = {
     codec: "opus",
     sampleRate: voice.sampleRate,
     numberOfChannels: 1,
     bitrate: voice.bitrate,
     bitrateMode: "variable",
-    opus: opusConfig,
+    opus: {
+        application: "voip",
+        complexity: 9,
+        signal: "voice",
+        usedtx: true,
+        frameDuration: voice.frameDuration, //20ms
+        useinbanddec: true,
+    },
 }
 
 // <user> call this function to start a call in a room
@@ -140,15 +138,15 @@ async function voiceJoin(roomId) {
 
 // <voiceJoin> call this function to setup encoder and send audio
 async function voiceSendInit() {
-    const supported = await AudioEncoder.isConfigSupported(codecConfig);
+    const supported = await AudioEncoder.isConfigSupported(voiceCodecConfig);
     if (supported.supported) {
         // Setup Encoder
         voice.encoder = new AudioEncoder({
             output: encoderCallback,
-            error: (error) => { throw Error(`Error during encoder setup:\n${error}\nCurrent codec :${codecConfig}`) },
+            error: (error) => { throw Error(`Error during encoder setup:\n${error}\nCurrent codec :${voiceCodecConfig}`) },
         });
 
-        voice.encoder.configure(codecConfig)
+        voice.encoder.configure(voiceCodecConfig)
         return true;
     }
 
@@ -187,16 +185,16 @@ async function voiceSendInit() {
 }
 
 async function voiceCreateUserDecoder(userId) {
-    const isSupported = await AudioDecoder.isConfigSupported(codecConfig);
+    const isSupported = await AudioDecoder.isConfigSupported(voiceCodecConfig);
     if (isSupported.supported) {
         voice.users[userId] = { decoder: null, playhead: 0 };
 
         voice.users[userId].decoder = new AudioDecoder({
             output: decoderCallback,
-            error: (error) => { throw Error(`Error during decoder setup:\n${error}\nCurrent codec :${codecConfig}`) },
+            error: (error) => { throw Error(`Error during decoder setup:\n${error}\nCurrent codec :${voiceCodecConfig}`) },
         });
 
-        voice.users[userId].decoder.configure(codecConfig)
+        voice.users[userId].decoder.configure(voiceCodecConfig)
         voice.users[userId].playhead = 0;
     }
 
@@ -282,7 +280,7 @@ async function voiceShowConnnectedUsers() {
 /*  This function is called when a new user join the room
     It add the user in the interface, the users descriptor, and create a decoder
 */
-async function voiceUserJoining(userData){
+async function voiceUserJoining(userData) {
     const voiceContent = document.getElementById("voice-content");
     const userPfpExist = await fileExistMedia(`/profiles/${userData.id}`);
 
@@ -291,7 +289,7 @@ async function voiceUserJoining(userData){
 }
 
 /* This function is called when a user left the room */
-async function voiceUserLeaving(userId){
+async function voiceUserLeaving(userId) {
     const user = voice.users[userId];
     await user.decoder.flush();
     await user.decoder.close();
