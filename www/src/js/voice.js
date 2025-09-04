@@ -246,7 +246,7 @@ function voiceLeave() {
     voice.users = {};
 }
 
-async function voiceShowConnnectedUsers(roomId) {
+async function voiceShowConnnectedUsers() {
     const result = await getCoreAPI(`/server/${global.server.id}/user`); // TO DO : Replace with actual Endpoint
 
     if (result === null) {
@@ -258,8 +258,8 @@ async function voiceShowConnnectedUsers(roomId) {
         return a.displayName.localeCompare(b.displayName);
     });
 
-    const VOICE_CONTENT = document.getElementById("voice-content");
-    VOICE_CONTENT.innerHTML = "";
+    const voiceContent = document.getElementById("voice-content");
+    voiceContent.innerHTML = "";
 
     let tempList = [];
 
@@ -270,13 +270,32 @@ async function voiceShowConnnectedUsers(roomId) {
     const usersPfpExist = await fileBulkExistMedia("/profiles/bulk", tempList);
 
     for (const i in sortedByDisplayName) {
-        VOICE_CONTENT.appendChild(voiceCreateConnectedUser(sortedByDisplayName[i], usersPfpExist ? [sortedByDisplayName[i].id] : false));
+        voiceContent.appendChild(voiceCreateConnectedUser(sortedByDisplayName[i], usersPfpExist ? [sortedByDisplayName[i].id] : false));
     }
 
     // Room is currently active
     if (global.voice.roomId === global.room.id) {
         voiceUpdateUsersControls();
     }
+}
+
+/*  This function is called when a new user join the room
+    It add the user in the interface, the users descriptor, and create a decoder
+*/
+async function voiceUserJoining(userData){
+    const voiceContent = document.getElementById("voice-content");
+    const userPfpExist = await fileExistMedia(`/profiles/${userData.id}`);
+
+    voiceContent.voiceCreateConnectedUser(userData, userPfpExist);
+    await voiceCreateUserDecoder(userData.id);
+}
+
+/* This function is called when a user left the room */
+async function voiceUserLeaving(userId){
+    const user = voice.users[userId];
+    await user.decoder.flush();
+    await user.decoder.close();
+    voice.users[userId] = null;
 }
 
 function voiceCreateConnectedUser(userData, userPfpExist) {

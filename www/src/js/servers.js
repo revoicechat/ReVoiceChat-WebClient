@@ -48,6 +48,8 @@ function sseOpen() {
 
     global.sse.onmessage = (event) => {
         event = JSON.parse(event.data);
+        const type = event.type;
+        const data = event.data;
 
         console.debug("SSE : ", event);
 
@@ -57,21 +59,21 @@ function sseOpen() {
                 return;
 
             case "ROOM_MESSAGE":
-                if (event.data.roomId === global.room.id) {
+                if (data.roomId === global.room.id) {
                     const ROOM = document.getElementById("text-content");
 
                     switch (event.data.actionType) {
                         case "ADD":
-                            ROOM.appendChild(createMessage(event.data));
+                            ROOM.appendChild(createMessage(data));
                             break;
                         case "MODIFY":
-                            document.getElementById(event.data.id).replaceWith(createMessageContent(event.data));
+                            document.getElementById(data.id).replaceWith(createMessageContent(data));
                             break;
                         case "REMOVE":
-                            document.getElementById(`container-${event.data.id}`).remove();
+                            document.getElementById(`container-${data.id}`).remove();
                             break;
                         default:
-                            console.error("Unsupported actionType : ", event.data.actionType);
+                            console.error("Unsupported actionType : ", data.actionType);
                             break;
                     }
 
@@ -86,8 +88,16 @@ function sseOpen() {
             case "USER_STATUS_CHANGE":
                 return;
 
+            case "VOICE_JOINING":
+                //voiceUserJoining(data.user);
+                return;
+
+            case "VOICE_LEAVING":
+                //voiceUserLeaving(data.user.id);
+                return;
+
             default:
-                console.error("SSE type not allowed.");
+                console.error("SSE type not unknown: ", type);
                 return;
         }
     };
