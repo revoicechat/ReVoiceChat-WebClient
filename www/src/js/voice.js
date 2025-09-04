@@ -283,19 +283,25 @@ async function voiceShowConnnectedUsers() {
     It add the user in the interface, the users descriptor, and create a decoder
 */
 async function voiceUserJoining(userData) {
-    const voiceContent = document.getElementById("voice-content");
-    const userPfpExist = await fileExistMedia(`/profiles/${userData.id}`);
+    // User calling this is NOT self
+    if (userId !== global.user.id) {
+        const voiceContent = document.getElementById("voice-content");
+        const userPfpExist = await fileExistMedia(`/profiles/${userData.id}`);
 
-    voiceContent.voiceCreateConnectedUser(userData, userPfpExist);
-    await voiceCreateUserDecoder(userData.id);
+        voiceContent.voiceCreateConnectedUser(userData, userPfpExist);
+        await voiceCreateUserDecoder(userData.id);
+    }
 }
 
 /* This function is called when a user left the room */
 async function voiceUserLeaving(userId) {
-    const user = voice.users[userId];
-    await user.decoder.flush();
-    await user.decoder.close();
-    voice.users[userId] = null;
+    // User calling this is NOT self
+    if (userId !== global.user.id) {
+        const user = voice.users[userId];
+        await user.decoder.flush();
+        await user.decoder.close();
+        voice.users[userId] = null;
+    }
 }
 
 function voiceCreateConnectedUser(userData, userPfpExist) {

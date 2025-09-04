@@ -89,11 +89,11 @@ function sseOpen() {
                 return;
 
             case "VOICE_JOINING":
-                //voiceUserJoining(data.user);
+                voiceUserJoining(data.user);
                 return;
 
             case "VOICE_LEAVING":
-                //voiceUserLeaving(data.user.id);
+                voiceUserLeaving(data.user.id);
                 return;
 
             default:
