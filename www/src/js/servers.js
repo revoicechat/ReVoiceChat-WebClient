@@ -89,11 +89,15 @@ function sseOpen() {
                 return;
 
             case "VOICE_JOINING":
-                voiceUserJoining(data.user);
+                if (data.roomId === global.room.id) {
+                    voiceUserJoining(data.user);
+                }
                 return;
 
             case "VOICE_LEAVING":
-                voiceUserLeaving(data.userId);
+                if (data.roomId === global.room.id) {
+                    voiceUserLeaving(data.userId);
+                }
                 return;
 
             default:
