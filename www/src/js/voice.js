@@ -220,7 +220,7 @@ async function voiceCreateUserDecoder(userId) {
     }
 }
 
-function voiceLeave() {
+async function voiceLeave() {
     if (global.voice.roomId !== null) {
         const roomId = global.voice.roomId;
         console.info(`VOICE : Leaving voice chat ${roomId}`);
@@ -235,13 +235,13 @@ function voiceLeave() {
     }
 
     // Close all decoders
-    voice.users.forEach(async (user) => {
+    for await (const [key, user] of Object.entries(voice.users)) {
         if (user.decoder !== null) {
-            await user.decoder.flush();
-            await user.decoder.close();
+            user.decoder.flush();
+            user.decoder.close();
         }
-    });
-    
+    };
+
     voiceUpdateSelfControls();
     voice.users = {};
 }
