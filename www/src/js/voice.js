@@ -114,10 +114,11 @@ async function voiceJoin(roomId) {
                 data: new Uint8Array(audioArrayBuffer),
             })
 
-            const currentUser = voice.users[header.user];
-
-            if (currentUser !== null && currentUser.decoder !== null && currentUser.decoder.state === "configured") {
-                currentUser.decoder.decode(audioChunk);
+            if (voice.users[header.user] !== null && voice.users[header.user] !== undefined) {
+                const currentUser = voice.users[header.user];
+                if (currentUser.decoder !== null && currentUser.decoder.state === "configured") {
+                    currentUser.decoder.decode(audioChunk);
+                }
             }
             else {
                 console.error("VOICE : User decoder don't exist");
