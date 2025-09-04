@@ -240,7 +240,7 @@ async function voiceLeave() {
             await user.decoder.close();
         }
     };
-    console.info("VOICE : All users decoder flushed and closed");
+    console.debug("VOICE : All users decoder flushed and closed");
 
     voiceUpdateSelfControls();
     voice.users = {};
@@ -250,7 +250,7 @@ async function voiceShowConnnectedUsers() {
     const result = await getCoreAPI(`/server/${global.server.id}/user`); // TO DO : Replace with actual Endpoint
 
     if (result === null) {
-        console.info("VOICE : No user in room");
+        console.debug("VOICE : No user in room");
         return;
     }
 
@@ -326,7 +326,7 @@ async function voiceUpdateUsersControls() {
     const result = await getCoreAPI(`/server/${global.server.id}/user`); // TO DO : Replace with actual Endpoint
 
     if (result === null) {
-        console.info("VOICE : No user in room");
+        console.debug("VOICE : No user in room");
         return;
     }
 
@@ -392,13 +392,13 @@ function voiceControlSelfMute() {
 
     if (global.voice.selfMute) {
         // Unmute
-        console.info("VOICE : Self unmute");
+        console.debug("VOICE : Self unmute");
         global.voice.selfMute = false;
         mute.classList.remove('active');
     }
     else {
         // Mute
-        console.info("VOICE : Self mute");
+        console.debug("VOICE : Self mute");
         global.voice.selfMute = true;
         mute.classList.add('active');
     }
