@@ -338,31 +338,34 @@ async function voiceUpdateUsersControls() {
 }
 
 function voiceUpdateSelfControls() {
-    const VOICE_ACTION = document.getElementById("voice-join-action");
+    const voiceAction = document.getElementById("voice-join-action");
     const readyState = (voice.socket !== null && global.voice.roomId === global.room.id) ? voice.socket.readyState : WebSocket.CLOSED;
 
     switch (readyState) {
         case WebSocket.CONNECTING:
             // Set disconnect actions
-            VOICE_ACTION.className = "join";
-            VOICE_ACTION.classList.add('waiting');
-            VOICE_ACTION.innerText = "Leave";
-            VOICE_ACTION.onclick = () => voiceLeave();
+            voiceAction.className = "join";
+            voiceAction.classList.add('waiting');
+            voiceAction.title = "Waiting to join the room";
+            voiceAction.innerHTML = SVG_PHONE_X;
+            voiceAction.onclick = () => voiceLeave();
             break;
 
         case WebSocket.CLOSED:
             // Set connect actions
-            VOICE_ACTION.className = "join";
-            VOICE_ACTION.classList.add('disconnected');
-            VOICE_ACTION.innerText = "Join";
-            VOICE_ACTION.onclick = () => voiceJoin(global.room.id);
+            voiceAction.className = "join";
+            voiceAction.classList.add('disconnected');
+            voiceAction.title = "Join the room";
+            voiceAction.innerHTML = SVG_PHONE;
+            voiceAction.onclick = () => voiceJoin(global.room.id);
             break;
 
         case WebSocket.OPEN:
-            VOICE_ACTION.className = "join";
-            VOICE_ACTION.classList.add('connected');
-            VOICE_ACTION.innerText = "Leave";
-            VOICE_ACTION.onclick = () => voiceLeave();
+            voiceAction.className = "join";
+            voiceAction.classList.add('connected');
+            voiceAction.title = "Leave the room";
+            voiceAction.innerHTML = SVG_PHONE_X;
+            voiceAction.onclick = () => voiceLeave();
             break;
     }
 }
