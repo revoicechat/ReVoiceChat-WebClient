@@ -246,11 +246,13 @@ async function voiceLeave() {
     // Close self encoder
     if(voice.encoder !== null){
         voice.encoder.close();
+        console.debug("VOICE : Encoder closed");
     }
 
     // Close audioContext
     if(voice.audioContext !== null){
         voice.audioContext.close();
+        console.debug("VOICE : AudioContext closed");
     }
 
     voiceUpdateSelfControls();
