@@ -284,7 +284,7 @@ async function voiceShowConnnectedUsers() {
 */
 async function voiceUserJoining(userData) {
     // User calling this is NOT self
-    if (userId !== global.user.id) {
+    if (userData.id !== global.user.id) {
         const voiceContent = document.getElementById("voice-content");
         const userPfpExist = await fileExistMedia(`/profiles/${userData.id}`);
 

@@ -93,7 +93,7 @@ function sseOpen() {
                 return;
 
             case "VOICE_LEAVING":
-                voiceUserLeaving(data.user.id);
+                voiceUserLeaving(data.userId);
                 return;
 
             default:
