@@ -235,10 +235,12 @@ function voiceLeave() {
     }
 
     // Close all decoders
-    voice.users.forEach(async (user) => {
-        await user.decoder.flush();
-        await user.decoder.close();
-    });
+    if (voice.users !== Object()) {
+        voice.users.forEach(async (user) => {
+            await user.decoder.flush();
+            await user.decoder.close();
+        });
+    }
 
     voiceUpdateSelfControls();
     voice.users = {};
