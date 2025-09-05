@@ -30,11 +30,6 @@ const global = {
         mode: "send",
         editId: null,
         emojisGlobal: []
-    },
-    voice:{
-        roomId: null,
-        users: {},
-        selfMute: false,
     }
 }
 
