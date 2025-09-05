@@ -1,0 +1,6 @@
+projectKey=ReVoiceChat-WebClient
+serverUrl=http://localhost:9000
+serverVersion=25.9.0.112764
+dashboardUrl=http://localhost:9000/dashboard?id=ReVoiceChat-WebClient
+ceTaskId=6cc107ec-1394-4ee9-84fd-b3fb27db2c8e
+ceTaskUrl=http://localhost:9000/api/ce/task?id=6cc107ec-1394-4ee9-84fd-b3fb27db2c8e

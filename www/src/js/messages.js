@@ -43,7 +43,7 @@ function createMessage(messageData) {
     return DIV;
 }
 
-function createMessageContent(data){
+function createMessageContent(data) {
     const DIV_CONTENT = document.createElement('div');
     DIV_CONTENT.className = "message-content";
     DIV_CONTENT.id = data.id;
@@ -98,7 +98,7 @@ async function sendMessage() {
 }
 
 async function deleteMessage(id) {
-    const result = await deleteCoreAPI(`/message/${id}`);
+    await deleteCoreAPI(`/message/${id}`);
 }
 
 async function editMessage(id) {
@@ -127,12 +127,11 @@ async function getEmojisGlobal() {
         });
 
         if (!response.ok) {
-            throw "Not OK";
+            throw new Error("Not OK");
         }
 
         global.chat.emojisGlobal = await response.json();
-    }
-    catch (error) {
+    } catch (error) {
         console.error(`An error occurred while processing your request \n${error}\nHost : ${global.url.media}\n`);
         return null;
     }
@@ -140,18 +139,18 @@ async function getEmojisGlobal() {
 
 function injectEmojis(inputText) {
     let result = [];
-    inputArray = inputText.split(" ");
+    let inputArray = inputText.split(" ");
 
     inputArray.forEach(element => {
         // Not emoji
-        if(element.charAt(0) !== ':' && element.charAt(element.length - 1) !== ':'){
+        if (element.charAt(0) !== ':' && element.charAt(element.length - 1) !== ':') {
             result.push(element);
             return;
         }
 
         // Emoji
         const emoji = element.substring(1, element.length - 1);
-        if(global.chat.emojisGlobal.includes(emoji)){
+        if (global.chat.emojisGlobal.includes(emoji)) {
             result.push(`<img src="${global.url.media}/emojis/global/${emoji}" alt="${emoji}" title=":${emoji}:">`);
             return;
         }
@@ -163,14 +162,10 @@ function injectEmojis(inputText) {
     return result.join(" ");
 }
 
+/** Identify HTML tags in the input string. Replacing the identified HTML tag with a null string.*/
 function removeTags(str) {
-	if ((str === null) || (str === ''))
-		return false;
-	else
-		str = str.toString();
-
-	// Regular expression to identify HTML tags in
-	// the input string. Replacing the identified
-	// HTML tag with a null string.
-	return str.replace(/(<([^>]+)>)/ig, '');
+    if (!str) return "";
+    const div = document.createElement("div");
+    div.innerHTML = String(str);
+    return div.textContent || "";
 }
