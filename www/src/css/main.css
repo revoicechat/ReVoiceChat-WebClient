@@ -96,7 +96,7 @@ svg {
 
 .block-right {
     margin-left: auto;
-    margin-right: 0;
+    margin-right: 0px;
 }
 
 
@@ -171,7 +171,7 @@ svg {
 /* ROOM LIST*/
 
 .room-list-container {
-    flex: 1 1 0;
+    flex: 1 1 0%;
     overflow-y: auto;
 }
 
@@ -181,8 +181,8 @@ svg {
     padding: 0.5rem;
     border-bottom-width: 1px;
     display: flex;
-    flex: 1 1 0;
-    min-width: 0;
+    flex: 1 1 0%;
+    min-width: 0px;
     justify-content: space-between;
     align-items: flex-start;
 }
@@ -191,7 +191,7 @@ svg {
 .room {
     display: flex;
     flex-direction: column;
-    flex: 1 1 0;
+    flex: 1 1 0%;
     user-select: auto;    
     height: 100%;
 }
@@ -221,13 +221,13 @@ svg {
 .room-container {
     display: flex;
     flex-direction: column;
-    flex: 1 1 0;
+    flex: 1 1 0%;
     overflow-y: auto;
 }
 
 .room-content {
     overflow-y: auto;
-    flex: 1 1 0;
+    flex: 1 1 0%;
     padding-top: 0.5rem;
 }
 
@@ -237,7 +237,7 @@ svg {
 }
 
 .text-control {
-    flex: 1 1 0;
+    flex: 1 1 0%;
 }
 
 .text-control input {
@@ -276,7 +276,7 @@ svg {
     visibility: hidden;
     padding-right: 1rem;
     margin-left: auto;
-    margin-right: 0;
+    margin-right: 0px;
 }
 
 .message-context-menu:hover,
@@ -472,7 +472,7 @@ svg {
 .config-left {
     width: 13rem;
     margin-left: auto;
-    margin-right: 0;
+    margin-right: 0px;
 }
 
 .config-container-right {
@@ -569,7 +569,7 @@ svg {
     visibility: hidden;
     padding-top: 0.25rem;
     margin-left: auto;
-    margin-right: 0;
+    margin-right: 0px;
 }
 
 .config-item .context-menu:hover,
