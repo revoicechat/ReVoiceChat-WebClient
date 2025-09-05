@@ -308,7 +308,7 @@ async function voiceUserJoining(userData) {
     voiceContent.appendChild(voiceCreateUserHTML(userData, userPfpExist));
 
     // User calling this is NOT self and current user is connected to voice room
-    if (userData.id !== global.user.id && voice.socket.currentState === WebSocket.OPEN) {
+    if (userData.id !== global.user.id && voice.socket !== null && voice.socket.currentState === WebSocket.OPEN) {
         await voiceCreateUserDecoder(userData.id);
     }
 }
