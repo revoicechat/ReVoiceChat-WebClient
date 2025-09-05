@@ -39,101 +39,24 @@ async function voiceJoin(roomId) {
         voice.socket = new WebSocket(`${global.url.voice}/${roomId}?token=${global.jwtToken}`);
         voice.socket.binaryType = "arraybuffer";
 
-        // Init send
-        await voiceSendInit();
+        // Setup encoder and transmitter
+        await voiceEncodeAndTransmit();
+
+        // Setup receiver and decoder
+        voice.socket.onmessage = voiceReceiveAndDecode;
+
+        // Update users in room
         await voiceUpdateJoinedUsers();
 
-        // Init AudioContext
-        voice.audioContext = new AudioContext({ sampleRate: voice.sampleRate });
-        await voice.audioContext.audioWorklet.addModule('src/js/lib/voicePcmCollector.js');
+        // Update self
+        voiceUpdateSelf();
 
-        /* Starting here is capture stuff */
-        // Init Mic capture
-        const micSource = voice.audioContext.createMediaStreamSource(await navigator.mediaDevices.getUserMedia({ audio: true }));
-
-        // Init AudioWorklet
-        const workletNode = new AudioWorkletNode(voice.audioContext, "PcmCollector");
-        micSource.connect(workletNode);
-
-        workletNode.port.onmessage = (event) => {
-            // We don't do anything if we are self muted
-            if (voice.selfMute) {
-                return;
-            }
-
-            const samples = event.data;
-
-            // Push samples to buffer
-            voice.buffer.push(...samples);
-
-            // While buffer is full
-            while (voice.buffer.length >= voice.bufferMaxLength) {
-                // Get 1 audio frames
-                const frame = voice.buffer.slice(0, 960);
-
-                // Remove this frame from buffer
-                voice.buffer = voice.buffer.slice(960);
-
-                // Create audioData object to feed encoder
-                const audioData = new AudioData({
-                    format: "f32-planar",
-                    sampleRate: voice.sampleRate,
-                    numberOfFrames: frame.length,
-                    numberOfChannels: 1,
-                    timestamp: voice.audioTimestamp,
-                    data: new Float32Array(frame).buffer
-                });
-
-                // Feed encoder
-                if (voice.encoder !== null && voice.encoder.state === "configured") {
-                    voice.encoder.encode(audioData);
-                }
-
-                audioData.close();
-
-                // Update audioTimestamp (add 20ms / 20000µs)
-                voice.audioTimestamp += 20000;
-            }
-        }
-
-        console.info("VOICE : Room joined");
-        document.getElementById(roomId).classList.add('active-voice');
-        voice.activeRoom = roomId;
-        voiceUpdateSelfControls();
-
-        /* Starting here is playback stuff */
-        voice.socket.onmessage = (packet) => {
-            const result = packetDecode(packet);
-            const header = result.header;
-            const data = result.data;
-
-            // If user sending packet is muted, we stop
-            if (voice.users[header.user].muted) {
-                return;
-            }
-
-            // Decode and read audio
-            const audioChunk = new EncodedAudioChunk({
-                type: "key",
-                timestamp: header.audioTimestamp * 1000,
-                data: new Uint8Array(data),
-            })
-
-            if (voice.users[header.user] !== null && voice.users[header.user] !== undefined) {
-                const currentUser = voice.users[header.user];
-                if (currentUser.decoder !== null && currentUser.decoder.state === "configured") {
-                    currentUser.decoder.decode(audioChunk);
-                }
-            }
-            else {
-                console.error("VOICE : User decoder don't exist");
-            }
-        };
-
-        // Socket state
+        // Socket states
         voice.socket.onopen = () => console.debug('VOICE : WebSocket open');
         voice.socket.onclose = () => console.debug('VOICE : WebSocket closed');
         voice.socket.onerror = (e) => console.error('VOICE : WebSocket error:', e);
+
+        console.info("VOICE : Room joined");
     }
     catch (error) {
         console.error(error);
@@ -181,7 +104,7 @@ async function voiceLeave() {
         console.debug("VOICE : AudioContext closed");
     }
 
-    voiceUpdateSelfControls();
+    voiceUpdateSelf();
     voiceUpdateJoinedUsers();
     voice.users = {};
 }
@@ -213,18 +136,71 @@ async function voiceUserLeaving(userId) {
     }
 }
 
-// <voiceJoin> call this function to setup encoder and send audio
-async function voiceSendInit() {
+// <voiceJoin> call this function to setup encoder and transmit audio
+async function voiceEncodeAndTransmit() {
     const supported = await AudioEncoder.isConfigSupported(voiceCodecConfig);
-    if (supported.supported) {
-        // Setup Encoder
-        voice.encoder = new AudioEncoder({
-            output: encoderCallback,
-            error: (error) => { throw Error(`Error during encoder setup:\n${error}\nCurrent codec :${voiceCodecConfig}`) },
-        });
+    if (!supported.supported) {
+        throw new Error("Codec not supported (Encoder)");
+    }
 
-        voice.encoder.configure(voiceCodecConfig)
-        return true;
+    // Setup Encoder
+    voice.encoder = new AudioEncoder({
+        output: encoderCallback,
+        error: (error) => { throw Error(`Error during encoder setup:\n${error}\nCurrent codec :${voiceCodecConfig}`) },
+    });
+
+    voice.encoder.configure(voiceCodecConfig)
+
+    // Init AudioContext
+    voice.audioContext = new AudioContext({ sampleRate: voice.sampleRate });
+    await voice.audioContext.audioWorklet.addModule('src/js/lib/voicePcmCollector.js');
+
+    // Init Mic capture
+    const micSource = voice.audioContext.createMediaStreamSource(await navigator.mediaDevices.getUserMedia({ audio: true }));
+
+    // Init AudioWorklet
+    const workletNode = new AudioWorkletNode(voice.audioContext, "PcmCollector");
+    micSource.connect(workletNode);
+
+    workletNode.port.onmessage = (event) => {
+        // We don't do anything if we are self muted
+        if (voice.selfMute) {
+            return;
+        }
+
+        const samples = event.data;
+
+        // Push samples to buffer
+        voice.buffer.push(...samples);
+
+        // While buffer is full
+        while (voice.buffer.length >= voice.bufferMaxLength) {
+            // Get 1 audio frames
+            const frame = voice.buffer.slice(0, 960);
+
+            // Remove this frame from buffer
+            voice.buffer = voice.buffer.slice(960);
+
+            // Create audioData object to feed encoder
+            const audioData = new AudioData({
+                format: "f32-planar",
+                sampleRate: voice.sampleRate,
+                numberOfFrames: frame.length,
+                numberOfChannels: 1,
+                timestamp: voice.audioTimestamp,
+                data: new Float32Array(frame).buffer
+            });
+
+            // Feed encoder
+            if (voice.encoder !== null && voice.encoder.state === "configured") {
+                voice.encoder.encode(audioData);
+            }
+
+            audioData.close();
+
+            // Update audioTimestamp (add 20ms / 20000µs)
+            voice.audioTimestamp += 20000;
+        }
     }
 
     // When encoder is done, it call this function to send data through the WebSocket
@@ -247,6 +223,34 @@ async function voiceSendInit() {
         if (voice.socket.readyState === WebSocket.OPEN) {
             voice.socket.send(packet);
         }
+    }
+}
+
+async function voiceReceiveAndDecode(packet) {
+    const result = packetDecode(packet);
+    const header = result.header;
+    const data = result.data;
+
+    // If user sending packet is muted, we stop
+    if (voice.users[header.user].muted) {
+        return;
+    }
+
+    // Decode and read audio
+    const audioChunk = new EncodedAudioChunk({
+        type: "key",
+        timestamp: header.audioTimestamp * 1000,
+        data: new Uint8Array(data),
+    })
+
+    if (voice.users[header.user] !== null && voice.users[header.user] !== undefined) {
+        const currentUser = voice.users[header.user];
+        if (currentUser.decoder !== null && currentUser.decoder.state === "configured") {
+            currentUser.decoder.decode(audioChunk);
+        }
+    }
+    else {
+        console.error("VOICE : User decoder don't exist");
     }
 }
 
@@ -420,7 +424,7 @@ async function voiceUpdateUserControls(userId) {
     }
 }
 
-function voiceUpdateSelfControls() {
+function voiceUpdateSelf() {
     const voiceAction = document.getElementById("voice-join-action");
     const readyState = (voice.socket !== null && voice.activeRoom === global.room.id) ? voice.socket.readyState : WebSocket.CLOSED;
 
@@ -444,6 +448,7 @@ function voiceUpdateSelfControls() {
             break;
 
         case WebSocket.OPEN:
+            document.getElementById(voice.activeRoom).classList.add('active-voice');
             voiceAction.className = "join";
             voiceAction.classList.add('connected');
             voiceAction.title = "Leave the room";
