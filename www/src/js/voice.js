@@ -227,7 +227,7 @@ async function voiceEncodeAndTransmit() {
 }
 
 // <voiceJoin> call this to setup reveicer and decoder of audio packet
-async function voiceReceiveAndDecode(packet) {
+function voiceReceiveAndDecode(packet) {
     const result = packetDecode(packet);
     const header = result.header;
     const data = result.data;
@@ -382,7 +382,7 @@ function voiceCreateUserHTML(userData, userPfpExist) {
 }
 
 // <voiceUpdateJoinedUsers> and <voiceUserJoining> call this to update control on given user
-async function voiceUpdateUserControls(userId) {
+function voiceUpdateUserControls(userId) {
     const userDiv = document.getElementById(`voice-${userId}`);
     const readyState = voice.socket !== null ? voice.socket.readyState : WebSocket.CLOSED;
 
