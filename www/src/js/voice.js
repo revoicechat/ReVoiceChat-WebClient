@@ -73,7 +73,6 @@ async function voiceLeave() {
     if (voice.activeRoom !== null) {
         const roomId = voice.activeRoom;
         console.info(`VOICE : Leaving voice chat ${roomId}`);
-        document.getElementById(roomId).classList.remove('active-voice');
     }
 
     voice.activeRoom = null;
@@ -443,6 +442,7 @@ function voiceUpdateSelf() {
 
         case WebSocket.CLOSED:
             // Set connect actions
+            document.getElementById(voice.activeRoom).classList.remove('active-voice');
             voiceAction.className = "join";
             voiceAction.classList.add('disconnected');
             voiceAction.title = "Join the room";
