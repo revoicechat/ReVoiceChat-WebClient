@@ -29,7 +29,7 @@ const voiceCodecConfig = {
     },
 }
 
-// <user> call this function to join a call in a room
+// <user> call this to join a call in a room
 async function voiceJoin(roomId) {
     console.info(`VOICE : Initiate join on room: ${roomId}`);
     voice.activeRoom = roomId;
@@ -68,7 +68,7 @@ async function voiceJoin(roomId) {
     }
 }
 
-// <user> call this function to leave a call in a room
+// <user> call this to leave a call in a room
 async function voiceLeave() {
     if (voice.activeRoom !== null) {
         const roomId = voice.activeRoom;
@@ -136,7 +136,7 @@ async function voiceUserLeaving(userId) {
     }
 }
 
-// <voiceJoin> call this function to setup encoder and transmit audio
+// <voiceJoin> call this to setup encoder and transmiter of audio packet
 async function voiceEncodeAndTransmit() {
     const supported = await AudioEncoder.isConfigSupported(voiceCodecConfig);
     if (!supported.supported) {
@@ -226,6 +226,7 @@ async function voiceEncodeAndTransmit() {
     }
 }
 
+// <voiceJoin> call this to setup reveicer and decoder of audio packet
 async function voiceReceiveAndDecode(packet) {
     const result = packetDecode(packet);
     const header = result.header;
@@ -254,7 +255,7 @@ async function voiceReceiveAndDecode(packet) {
     }
 }
 
-// Create a user audio decoder
+// Create an audio decoder for specified user
 async function voiceCreateUserDecoder(userId) {
     console.debug("VOICE : Creating decoder for user:", userId);
 
@@ -293,7 +294,7 @@ async function voiceCreateUserDecoder(userId) {
     }
 }
 
-// Show to user who is connected in a room before joinning the call
+// Show users in a room
 async function voiceShowJoinedUsers() {
     const result = await getCoreAPI(`/room/${global.room.id}/user`);
 
@@ -329,7 +330,7 @@ async function voiceShowJoinedUsers() {
     }
 }
 
-// Add or remove controls on user in room
+// Add or remove controls on users in room
 async function voiceUpdateJoinedUsers() {
     const result = await getCoreAPI(`/room/${global.room.id}/user`);
 
@@ -355,7 +356,7 @@ async function voiceUpdateJoinedUsers() {
     }
 }
 
-// Create DOM Element / HTML for a give user
+// Create DOM Element / HTML for a given user
 function voiceCreateUserHTML(userData, userPfpExist) {
     const DIV = document.createElement('div');
     DIV.id = `voice-${userData.id}`;
@@ -380,6 +381,7 @@ function voiceCreateUserHTML(userData, userPfpExist) {
     return DIV;
 }
 
+// <voiceUpdateJoinedUsers> and <voiceUserJoining> call this to update control on given user
 async function voiceUpdateUserControls(userId) {
     const userDiv = document.getElementById(`voice-${userId}`);
     const readyState = voice.socket !== null ? voice.socket.readyState : WebSocket.CLOSED;
@@ -424,6 +426,7 @@ async function voiceUpdateUserControls(userId) {
     }
 }
 
+// Update user controls and UI
 function voiceUpdateSelf() {
     const voiceAction = document.getElementById("voice-join-action");
     const readyState = (voice.socket !== null && voice.activeRoom === global.room.id) ? voice.socket.readyState : WebSocket.CLOSED;
@@ -458,6 +461,7 @@ function voiceUpdateSelf() {
     }
 }
 
+// <user> call this to mute other user
 function voiceControlUserMute(userId, muteButton) {
     // Invert mute state
     voice.users[userId].muted = !voice.users[userId].muted;
@@ -470,6 +474,7 @@ function voiceControlUserMute(userId, muteButton) {
     }
 }
 
+// <user> call this to mute himself
 function voiceControlSelfMute() {
     const muteButton = document.getElementById("voice-self-mute");
     voice.selfMute = !voice.selfMute;
@@ -486,8 +491,7 @@ function voiceControlSelfMute() {
     }
 }
 
-/* Those don't do shit yet, only show it */
-
+// <user> call this to change volume of other user
 function voicControlUserVolume(userId, volumeInput) {
     volumeInput.title = volume * 100 + "%";
 }
