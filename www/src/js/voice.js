@@ -368,6 +368,7 @@ function voiceCreateUserHTML(userData, userPfpExist) {
     return DIV;
 }
 
+// Add or remove controls on user in room
 async function voiceUpdateJoinedUsers() {
     const result = await getCoreAPI(`/room/${global.room.id}/user`);
 
@@ -437,7 +438,6 @@ async function voiceUpdateUserControls(userId) {
     }
 }
 
-
 function voiceUpdateSelfControls() {
     const voiceAction = document.getElementById("voice-join-action");
     const readyState = (voice.socket !== null && voice.activeRoom === global.room.id) ? voice.socket.readyState : WebSocket.CLOSED;
@@ -471,12 +471,6 @@ function voiceUpdateSelfControls() {
     }
 }
 
-/* Those don't do shit yet, only show it */
-
-function voiceControlVolume(userId, volumeInput) {
-    volumeInput.title = volume * 100 + "%";
-}
-
 function voiceControlMute(userId, muteButton) {
     // Invert mute state
     voice.users[userId].muted = !voice.users[userId].muted;
@@ -503,4 +497,10 @@ function voiceControlSelfMute() {
         console.debug("VOICE : Self unmute");
         muteButton.classList.remove('active');
     }
+}
+
+/* Those don't do shit yet, only show it */
+
+function voiceControlVolume(userId, volumeInput) {
+    volumeInput.title = volume * 100 + "%";
 }
