@@ -1,4 +1,5 @@
 const voice = {
+    activeRoom: null,
     encoder: null,
     socket: null,
     buffer: [],
@@ -9,6 +10,7 @@ const voice = {
     audioTimestamp: 0,
     users: {},
     audioContext: null,
+    selfMute: false,
 }
 
 const voiceCodecConfig = {
@@ -30,7 +32,7 @@ const voiceCodecConfig = {
 // <user> call this function to join a call in a room
 async function voiceJoin(roomId) {
     console.info(`VOICE : Initiate join on room: ${roomId}`);
-    global.voice.roomId = roomId;
+    voice.activeRoom = roomId;
 
     try {
         // Init WebSocket
@@ -54,6 +56,11 @@ async function voiceJoin(roomId) {
         micSource.connect(workletNode);
 
         workletNode.port.onmessage = (event) => {
+            // We don't do anything if we are self muted
+            if (voice.selfMute) {
+                return;
+            }
+
             const samples = event.data;
 
             // Push samples to buffer
@@ -91,7 +98,7 @@ async function voiceJoin(roomId) {
 
         console.info("VOICE : Room joined");
         document.getElementById(roomId).classList.add('active-voice');
-        global.voice.roomId = roomId;
+        voice.activeRoom = roomId;
         voiceUpdateSelfControls();
 
         /* Starting here is playback stuff */
@@ -106,25 +113,27 @@ async function voiceJoin(roomId) {
             const headerJSON = new TextDecoder().decode(headerBytes);
             const header = JSON.parse(headerJSON);
 
-            // If user sending packet not muted
-            if (!voice.users[header.user].muted) {
-                // Decode and read audio
-                const audioArrayBuffer = data.slice(headerEnd);
-                const audioChunk = new EncodedAudioChunk({
-                    type: "key",
-                    timestamp: header.audioTimestamp,
-                    data: new Uint8Array(audioArrayBuffer),
-                })
+            // If user sending packet is muted, we stop
+            if (voice.users[header.user].muted) {
+                return;
+            }
 
-                if (voice.users[header.user] !== null && voice.users[header.user] !== undefined) {
-                    const currentUser = voice.users[header.user];
-                    if (currentUser.decoder !== null && currentUser.decoder.state === "configured") {
-                        currentUser.decoder.decode(audioChunk);
-                    }
+            // Decode and read audio
+            const audioArrayBuffer = data.slice(headerEnd);
+            const audioChunk = new EncodedAudioChunk({
+                type: "key",
+                timestamp: header.audioTimestamp,
+                data: new Uint8Array(audioArrayBuffer),
+            })
+
+            if (voice.users[header.user] !== null && voice.users[header.user] !== undefined) {
+                const currentUser = voice.users[header.user];
+                if (currentUser.decoder !== null && currentUser.decoder.state === "configured") {
+                    currentUser.decoder.decode(audioChunk);
                 }
-                else {
-                    console.error("VOICE : User decoder don't exist");
-                }
+            }
+            else {
+                console.error("VOICE : User decoder don't exist");
             }
         };
 
@@ -136,7 +145,7 @@ async function voiceJoin(roomId) {
     catch (error) {
         console.error(error);
 
-        global.voice.roomId = null;
+        voice.activeRoom = null;
         if (voice.socket !== null) {
             voice.socket.close();
         }
@@ -232,13 +241,13 @@ async function voiceCreateUserDecoder(userId) {
 
 // <user> call this function to leave a call in a room
 async function voiceLeave() {
-    if (global.voice.roomId !== null) {
-        const roomId = global.voice.roomId;
+    if (voice.activeRoom !== null) {
+        const roomId = voice.activeRoom;
         console.info(`VOICE : Leaving voice chat ${roomId}`);
         document.getElementById(roomId).classList.remove('active-voice');
     }
 
-    global.voice.roomId = null;
+    voice.activeRoom = null;
 
     // Close WebSocket
     if (voice.socket !== null) {
@@ -302,7 +311,7 @@ async function voiceShowConnnectedUsers() {
     }
 
     // Room is currently active
-    if (global.voice.roomId === global.room.id) {
+    if (voice.activeRoom === global.room.id) {
         voiceUpdateJoinedUsers();
     }
 }
@@ -431,7 +440,7 @@ async function voiceUpdateUserControls(userId) {
 
 function voiceUpdateSelfControls() {
     const voiceAction = document.getElementById("voice-join-action");
-    const readyState = (voice.socket !== null && global.voice.roomId === global.room.id) ? voice.socket.readyState : WebSocket.CLOSED;
+    const readyState = (voice.socket !== null && voice.activeRoom === global.room.id) ? voice.socket.readyState : WebSocket.CLOSED;
 
     switch (readyState) {
         case WebSocket.CONNECTING:
@@ -481,18 +490,17 @@ function voiceControlMute(userId, muteButton) {
 }
 
 function voiceControlSelfMute() {
-    const mute = document.getElementById("voice-self-mute");
+    const muteButton = document.getElementById("voice-self-mute");
+    voice.selfMute = !voice.selfMute;
 
-    if (global.voice.selfMute) {
-        // Unmute
-        console.debug("VOICE : Self unmute");
-        global.voice.selfMute = false;
-        mute.classList.remove('active');
+    if (voice.selfMute) {
+        // Muted
+        console.debug("VOICE : Self mute");
+        muteButton.classList.add('active');
     }
     else {
-        // Mute
-        console.debug("VOICE : Self mute");
-        global.voice.selfMute = true;
-        mute.classList.add('active');
+        // Unmuted
+        console.debug("VOICE : Self unmute");
+        muteButton.classList.remove('active');
     }
 }
