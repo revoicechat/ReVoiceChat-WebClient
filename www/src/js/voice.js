@@ -401,7 +401,7 @@ function voiceUpdateUserControls(userId) {
             INPUT_VOLUME.max = "1";
             INPUT_VOLUME.step = "0.05";
             INPUT_VOLUME.title = "100%";
-            INPUT_VOLUME.oninput = () => voicControlUserVolume(userId, INPUT_VOLUME);
+            INPUT_VOLUME.oninput = () => voiceControlUserVolume(userId, INPUT_VOLUME);
 
             const BUTTON_MUTE = document.createElement('button');
             BUTTON_MUTE.className = "mute";
@@ -487,6 +487,6 @@ function voiceControlSelfMute() {
 }
 
 // <user> call this to change volume of other user
-function voicControlUserVolume(userId, volumeInput) {
+function voiceControlUserVolume(userId, volumeInput) {
     volumeInput.title = volume * 100 + "%";
 }
