@@ -102,10 +102,10 @@ async function voiceLeave() {
         console.debug("VOICE : AudioContext closed");
     }
 
+    voice.activeRoom = null;
     voiceUpdateSelf();
     voiceUpdateJoinedUsers();
     voice.users = {};
-    voice.activeRoom = null;
 }
 
 // <server.js> call this when a new user join the room
