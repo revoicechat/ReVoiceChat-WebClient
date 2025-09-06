@@ -441,7 +441,9 @@ function voiceUpdateSelf() {
 
         case WebSocket.CLOSED:
             // Set connect actions
-            document.getElementById(voice.activeRoom).classList.remove('active-voice');
+            if (voice.activeRoom) {
+                document.getElementById(voice.activeRoom).classList.remove('active-voice');
+            }
             voiceAction.className = "join";
             voiceAction.classList.add('disconnected');
             voiceAction.title = "Join the room";
