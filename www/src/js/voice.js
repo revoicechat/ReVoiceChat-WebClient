@@ -74,8 +74,6 @@ async function voiceLeave() {
         console.info(`VOICE : Leaving voice chat ${voice.activeRoom}`);
     }
 
-    
-
     // Close WebSocket
     if (voice.socket !== null) {
         voice.socket.close();
@@ -443,7 +441,7 @@ function voiceUpdateSelf() {
         case WebSocket.CLOSED:
             // Set connect actions
             if (voice.activeRoom) {
-                document.getElementById(voice.activeRoom).classList.remove('active-voice');
+                document.getElementById(global.room.id).classList.remove('active-voice');
             }
             voiceAction.className = "join";
             voiceAction.classList.add('disconnected');
