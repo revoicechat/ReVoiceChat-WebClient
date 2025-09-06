@@ -126,7 +126,7 @@ async function deleteCoreAPI(path) {
 async function fileExistMedia(path) {
     try {
         const response = await fetch(`${global.url.media}${path}`, {
-            method: 'OPTIONS',
+            method: 'POST',
             signal: AbortSignal.timeout(5000),
         });
 
@@ -149,7 +149,7 @@ async function fileExistMedia(path) {
 async function fileBulkExistMedia(path, data){
     try {
         const response = await fetch(`${global.url.media}${path}`, {
-            method: 'OPTIONS',
+            method: 'POST',
             signal: AbortSignal.timeout(5000),
             body: JSON.stringify(data)
         });
