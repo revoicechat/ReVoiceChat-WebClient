@@ -48,7 +48,7 @@ async function getServerUsers(serverId) {
         const usersPfpExist = await fileBulkExistMedia("/profiles/bulk", tempList);
 
         for (const neddle in sortedByStatus) {
-            userList.appendChild(await createUser(sortedByStatus[neddle], usersPfpExist ? [sortedByStatus[neddle].id] : false));
+            userList.appendChild(await createUser(sortedByStatus[neddle], usersPfpExist ? usersPfpExist[sortedByStatus[neddle].id] : false));
         }
     }
 }
