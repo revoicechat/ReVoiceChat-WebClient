@@ -24,6 +24,18 @@ body.loaded.fadein {
     opacity: 1;
 }
 
+button {
+    font-weight: 700;
+    text-align: center;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
 .main {
     display: flex;
     height: 100vh;
@@ -50,17 +62,9 @@ body.loaded.fadein {
 }
 
 .login-form button {
-    font-weight: 700;
-    text-align: center;
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
-    padding-left: 1rem;
-    padding-right: 1rem;
-    border-radius: 0.25rem;
-    cursor: pointer;
+    margin-top: 1.5rem;
     width: 100%;
     display: block;
-    margin-top: 1.5rem;
 }
 
 .login-element {
@@ -192,7 +196,7 @@ svg {
     display: flex;
     flex-direction: column;
     flex: 1 1 0%;
-    user-select: auto;    
+    user-select: auto;
     height: 100%;
 }
 

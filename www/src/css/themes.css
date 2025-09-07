@@ -231,6 +231,16 @@
         background-color: rgba(255, 255, 255, 0.1);
     }
 
+    .config-right button {
+        color: white;
+        background-color: rgb(99, 102, 241);
+    }
+
+    .config-right button:hover {
+        
+        background-color: rgba(12, 74, 110, 0.7);
+    }
+
     /* SweetAlert2 */
 
     .swalPopup {
