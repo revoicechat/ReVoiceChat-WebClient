@@ -57,6 +57,10 @@ const putCoreAPI = async (path, data) => fetchCoreAPI(path, data , 'PUT');
 const patchCoreAPI = async (path, data) => fetchCoreAPI(path, data , 'PATCH');
 
 async function fetchCoreAPI(path, data, method) {
+    if(data){
+        data = JSON.stringify(data);
+    }
+
     try {
         const response = await fetch(`${global.url.core}/api${path}`, {
             method: method,
@@ -65,7 +69,7 @@ async function fetchCoreAPI(path, data, method) {
                 'Content-Type': 'application/json',
                 'Authorization' : `Bearer ${global.jwtToken}`
             },
-            body: JSON.stringify(data)
+            body: data
         });
 
         const contentType = response.headers.get("content-type");

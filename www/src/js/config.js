@@ -133,7 +133,7 @@ async function updateServerName(input) {
     }
 
     const id = global.server.id;
-    const result = await patchCoreAPI(`server/${id}`, { name : serverName})
+    const result = await patchCoreAPI(`server/${id}`, { name: serverName })
     if (result) {
         document.getElementById('config-server-name').value = result.name;
         global.user.displayName = result.name
@@ -234,4 +234,24 @@ async function configDeleteRoom(data) {
             loadRooms();
         }
     });
+}
+
+async function configAddInvitation() {
+    const result = await fetchCoreAPI('/invitation/application', null, 'POST');
+    console.log(result);
+    if (result.status === "CREATED") {
+        Swal.fire({
+            title: `New invitation`,
+            html: `<input class='swal-input' type='text' value='${result.id}' readonly>`,
+            animation: false,
+            customClass: {
+                title: "swalTitle",
+                popup: "swalPopup",
+                confirmButton: "swalConfirm",
+            },
+            showCancelButton: false,
+            confirmButtonText: "OK",
+            allowOutsideClick: false,
+        })
+    }
 }
