@@ -308,14 +308,14 @@ async function voiceShowJoinedUsers() {
 
     let tempList = [];
 
-    for (const i in sortedByDisplayName) {
-        tempList.push(sortedByDisplayName[i].id);
+    for (const user of sortedByDisplayName) {
+        tempList.push(user.id);
     }
 
     const usersPfpExist = await fileBulkExistMedia("/profiles/bulk", tempList);
 
-    for (const i in sortedByDisplayName) {
-        voiceContent.appendChild(voiceCreateUserHTML(sortedByDisplayName[i], usersPfpExist ? [sortedByDisplayName[i].id] : false));
+    for (const user of sortedByDisplayName) {
+        voiceContent.appendChild(voiceCreateUserHTML(user, usersPfpExist ? [user.id] : false));
     }
 
     // Room is currently active
@@ -335,8 +335,8 @@ async function voiceUpdateJoinedUsers() {
 
     const connectedUser = result.connectedUser;
 
-    for (const i in connectedUser) {
-        const userId = connectedUser[i].id;
+    for (const user of connectedUser) {
+        const userId = user.id;
 
         // Not self
         if (global.user.id !== userId) {

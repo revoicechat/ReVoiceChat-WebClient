@@ -20,8 +20,8 @@ async function getMessages(roomId) {
         });
 
         ROOM.innerHTML = "";
-        for (const neddle in sortedResult) {
-            ROOM.appendChild(createMessage(sortedResult[neddle]));
+        for (const message of sortedResult) {
+            ROOM.appendChild(createMessage(message));
         }
 
         ROOM.scrollTop = ROOM.scrollHeight;

@@ -41,14 +41,14 @@ async function getServerUsers(serverId) {
 
         let tempList = [];
 
-        for (const neddle in sortedByStatus) {
-            tempList.push(sortedByStatus[neddle].id);
+        for (const user of sortedByStatus) {
+            tempList.push(user.id);
         }
 
         const usersPfpExist = await fileBulkExistMedia("/profiles/bulk", tempList);
 
-        for (const neddle in sortedByStatus) {
-            userList.appendChild(await createUser(sortedByStatus[neddle], usersPfpExist ? usersPfpExist[sortedByStatus[neddle].id] : false));
+        for (const user of sortedByStatus) {
+            userList.appendChild(await createUser(user, usersPfpExist ? usersPfpExist[user.id] : false));
         }
     }
 }
