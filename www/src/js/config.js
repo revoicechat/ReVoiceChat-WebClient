@@ -319,7 +319,7 @@ async function deleteInvitation(data) {
 }
 
 async function copyInvitation(link) {
-    const url = document.location.href.slice(0, -11) + `index.html?register&invitation=${link}&host=${global.url.core}`;
+    const url = document.location.href.slice(0, -11) + `index.html?register=&invitation=${link}&host=${global.url.core}`;
     try {
         if(navigator.clipboard){
             await navigator.clipboard.writeText(url);
