@@ -83,14 +83,14 @@ async function login(loginData, host) {
 
 function autoHost() {
     switch (document.location.origin) {
-        case "https://app.dev.revoicechat.fr":
-            document.getElementById("login-form").host.value = "https://core.dev.revoicechat.fr";
-            document.getElementById("register-form").host.value = "https://core.dev.revoicechat.fr";
+        case "https://dev.revoicechat.fr":
+            document.getElementById("login-form").host.value = "https://dev.revoicechat.fr";
+            document.getElementById("register-form").host.value = "https://dev.revoicechat.fr";
             break;
 
         case "https://app.revoicechat.fr":
-            document.getElementById("login-form").host.value = "https://core.revoicechat.fr";
-            document.getElementById("register-form").host.value = "https://core.revoicechat.fr";
+            document.getElementById("login-form").host.value = "https://app.revoicechat.fr";
+            document.getElementById("register-form").host.value = "https://app.revoicechat.fr";
             break;
         default:
             if (localStorage.getItem("lastHost")) {
