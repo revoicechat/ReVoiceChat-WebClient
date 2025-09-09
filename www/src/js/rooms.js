@@ -1,6 +1,5 @@
 async function getRooms(serverId) {
     const result = await fetchCoreAPI(`/server/${serverId}/structure`, 'GET');
-
     if (result && result.items) {
         const roomList = document.getElementById("room-list-container");
         roomList.innerHTML = "";
@@ -9,16 +8,11 @@ async function getRooms(serverId) {
         if (global.room.id !== null) {
             roomSelect(global.room);
         }
-        else {
-            roomSelect(result[0]);
-        }
     }
 }
 
 function roomCreate(roomList, data) {
-    console.log(data);
     for (const item of data) {
-        console.log(item)
         if(item.type === 'CATEGORY'){
             roomList.appendChild(roomCreateSeparator(item));
             roomCreate(roomList, item.items)
