@@ -640,3 +640,17 @@ svg {
     padding-left: 0.75rem;
     width: 100%;
 }
+
+.message-content blockquote {
+    border-left: #C0C0C0 3px solid;
+    padding-left: 5px;
+    color: #C0C0C0;
+}
+
+.message-content code {
+    border: #F0F0F0 1px solid;
+    border-radius: 3px;
+    padding-left: 5px;
+    padding-right: 5px;
+    background-color: #353e4b;
+}

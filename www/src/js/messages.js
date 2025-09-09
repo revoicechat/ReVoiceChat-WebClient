@@ -47,7 +47,7 @@ function createMessageContent(data) {
     const DIV_CONTENT = document.createElement('div');
     DIV_CONTENT.className = "message-content";
     DIV_CONTENT.id = data.id;
-    DIV_CONTENT.innerHTML = injectEmojis(removeTags(data.text));
+    DIV_CONTENT.innerHTML = marked.parse(injectEmojis(removeTags(data.text)));
     return DIV_CONTENT;
 }
 
