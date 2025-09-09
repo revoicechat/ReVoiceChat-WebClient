@@ -37,17 +37,15 @@ function createMessage(messageData) {
             <h3 class="message-owner">${messageData.user.displayName} <span class="message-timestamp">${timestampToText(messageData.createdDate)}</span></h3>
             ${createMessageContextMenu(messageData)}
         </div>
+        <revoice-message id="${messageData.id}">${messageData.text}</revoice-message>
     `;
-
-    DIV.appendChild(createMessageContent(messageData));
     return DIV;
 }
 
 function createMessageContent(data) {
     const DIV_CONTENT = document.createElement('div');
     DIV_CONTENT.className = "message-content";
-    DIV_CONTENT.id = data.id;
-    DIV_CONTENT.innerHTML = marked.parse(injectEmojis(removeTags(data.text)));
+    DIV_CONTENT.innerHTML = `<revoice-message id="${data.id}">${data.text}</revoice-message>`;
     return DIV_CONTENT;
 }
 
@@ -135,37 +133,4 @@ async function getEmojisGlobal() {
         console.error(`An error occurred while processing your request \n${error}\nHost : ${global.url.media}\n`);
         return null;
     }
-}
-
-function injectEmojis(inputText) {
-    let result = [];
-    let inputArray = inputText.split(" ");
-
-    inputArray.forEach(element => {
-        // Not emoji
-        if (element.charAt(0) !== ':' && element.charAt(element.length - 1) !== ':') {
-            result.push(element);
-            return;
-        }
-
-        // Emoji
-        const emoji = element.substring(1, element.length - 1);
-        if (global.chat.emojisGlobal.includes(emoji)) {
-            result.push(`<img src="${global.url.media}/emojis/global/${emoji}" alt="${emoji}" title=":${emoji}:">`);
-            return;
-        }
-
-        // Don't exist
-        return result.push(element);
-    });
-
-    return result.join(" ");
-}
-
-/** Identify HTML tags in the input string. Replacing the identified HTML tag with a null string.*/
-function removeTags(str) {
-    if (!str) return "";
-    const div = document.createElement("div");
-    div.innerHTML = String(str);
-    return div.textContent || "";
 }
