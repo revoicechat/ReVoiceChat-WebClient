@@ -275,6 +275,7 @@ async function createItemInvitation(data) {
     // Context menu
     const DIV_CM = document.createElement('div');
     DIV_CM.className = "context-menu";
+    DIV_CM.appendChild(createContextMenuButton("icon", SVG_CLIPBOARD_COPY, () => copyInvitation(data.id)));
     DIV_CM.appendChild(createContextMenuButton("icon", SVG_TRASH, () => deleteInvitation(data)));
     DIV.appendChild(DIV_CM);
 
@@ -315,4 +316,27 @@ async function deleteInvitation(data) {
             loadInvitations();
         }
     });
+}
+
+async function copyInvitation(link) {
+    const url = document.location.href.slice(0, -11) + `index.html?register&invitation=${link}&host=${global.url.core}`;
+    try {
+        if(navigator.clipboard){
+            await navigator.clipboard.writeText(url);
+            console.log('Content copied to clipboard');
+        }
+        else{
+            // Fallback
+            const input = document.createElement('input');
+            input.id = 'input-copy'
+            input.value = url;
+            document.body.appendChild(input);
+            document.getElementById('input-copy').select();
+            document.execCommand("copy");
+            input.remove();
+            console.log('Content copied to clipboard (fallback)');
+        }
+    } catch (err) {
+        console.error('Failed to copy: ', err);
+    }
 }

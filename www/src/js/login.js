@@ -10,6 +10,13 @@ document.addEventListener('DOMContentLoaded', function () {
     // Get login from URL (testing)
     document.getElementById('username').value = getQueryVariable('username') ? getQueryVariable('username') : "";
     document.getElementById('password').value = getQueryVariable('password') ? getQueryVariable('password') : "";
+
+    // Got here from invitation link
+    if(getQueryVariable('register') === ""){
+        document.getElementById('register-invitation').value = getQueryVariable('invitation') ? getQueryVariable('invitation') : "";
+        document.getElementById('register-host').value = getQueryVariable('host') ? getQueryVariable('host') : "";
+        switchToRegister();
+    }
 });
 
 document.getElementById("login-form").addEventListener('keydown', function (e) {
