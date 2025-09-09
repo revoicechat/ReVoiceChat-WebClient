@@ -73,6 +73,7 @@
 
     .room-element.active {
         background-color: rgb(7, 89, 133);
+        font-weight: 600;
     }
 
     .room-separator:hover {
