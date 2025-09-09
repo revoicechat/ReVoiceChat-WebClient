@@ -32,6 +32,10 @@ function selectConfigItem(name) {
         case 'members':
             loadMembers();
             break;
+
+        case 'invitations':
+            loadInvitations();
+            break;
     }
 }
 
@@ -50,8 +54,8 @@ async function loadRooms() {
         const roomList = document.getElementById("config-rooms-list");
         roomList.innerHTML = "";
 
-        for (const neddle in result) {
-            roomList.appendChild(await createItemRoom(result[neddle]));
+        for (const room of result) {
+            roomList.appendChild(await createItemRoom(room));
         }
     }
 }
@@ -90,13 +94,13 @@ async function loadMembers() {
             userList.innerHTML = "";
 
             let tempList = [];
-            for (const neddle in sortedByDisplayName) {
-                tempList.push(sortedByDisplayName[neddle].id);
+            for (const user of sortedByDisplayName) {
+                tempList.push(user.id);
             }
             const usersPfpExist = await fileBulkExistMedia("/profiles/bulk", tempList);
 
-            for (const neddle in sortedByDisplayName) {
-                userList.appendChild(await createItemUser(sortedByDisplayName[neddle], usersPfpExist[sortedByDisplayName[neddle].id]));
+            for (const user of sortedByDisplayName) {
+                userList.appendChild(await createItemUser(user, usersPfpExist[user.id]));
             }
         }
     }
@@ -237,7 +241,8 @@ async function configDeleteRoom(data) {
 }
 
 async function configAddInvitation() {
-    const result = await fetchCoreAPI('/invitation/application', 'POST');
+    const serverId = global.server.id;
+    const result = await fetchCoreAPI(`/invitation/server/${serverId}`, 'POST');
     console.log(result);
     if (result.status === "CREATED") {
         Swal.fire({
@@ -254,4 +259,60 @@ async function configAddInvitation() {
             allowOutsideClick: false,
         })
     }
+}
+
+async function createItemInvitation(data) {
+    const DIV = document.createElement('div');
+    DIV.id = data.id;
+    DIV.className = "config-item";
+
+    // Name
+    const DIV_NAME = document.createElement('div');
+    DIV_NAME.className = "name invitation";
+    DIV_NAME.innerText = `${data.id} (${data.status})`;
+    DIV.appendChild(DIV_NAME);
+
+    // Context menu
+    const DIV_CM = document.createElement('div');
+    DIV_CM.className = "context-menu";
+    DIV_CM.appendChild(createContextMenuButton("icon", SVG_TRASH, () => deleteInvitation(data)));
+    DIV.appendChild(DIV_CM);
+
+    return DIV;
+}
+
+async function loadInvitations() {
+    const serverId = global.server.id;
+    const result = await fetchCoreAPI(`/invitation/server/${serverId}`, 'GET');
+
+    if (result) {
+        const list = document.getElementById("config-invitations-list");
+        list.innerHTML = "";
+
+        for (const invitation of result) {
+            list.appendChild(await createItemInvitation(invitation));
+        }
+    }
+}
+
+async function deleteInvitation(data) {
+    Swal.fire({
+        title: `Delete invitation '${data.id}'`,
+        animation: false,
+        customClass: {
+            title: "swalTitle",
+            popup: "swalPopup",
+            cancelButton: "swalConfirm",
+            confirmButton: "swalCancel", // Swapped on purpose !
+        },
+        showCancelButton: true,
+        focusCancel: true,
+        confirmButtonText: "Delete",
+        allowOutsideClick: false,
+    }).then(async (result) => {
+        if (result.value) {
+            await fetchCoreAPI(`/invitation/${data.id}`, 'DELETE');
+            loadInvitations();
+        }
+    });
 }

@@ -613,6 +613,11 @@ svg {
     height: 1.25rem;
 }
 
+.config-item .invitation{
+    user-select: text;
+    cursor: default;
+}
+
 @keyframes voice-call {
     from {
         background-color: green;
