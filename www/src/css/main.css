@@ -511,6 +511,14 @@ svg {
     max-width: 45rem;
 }
 
+.config-button{
+    display: flex;
+}
+
+.config-button svg{
+    margin-right: 0.5rem;
+}
+
 .config .category {
     min-height: 2.5rem;
     font-weight: 800;
