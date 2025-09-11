@@ -436,13 +436,15 @@ function closeModal() {
 }
 
 function handleDragStart(e, item) {
-    draggedElement = {
-        item: item,
-        sourceParent: findParent(item)
-    };
-    e.target.classList.add('dragging');
-    const dropZones = document.querySelectorAll('.server-structure-drop-zone');
-    dropZones.forEach(dropZone => dropZone.classList.add('active'));
+    if (!draggedElement) {
+        draggedElement = {
+            item: item,
+            sourceParent: findParent(item)
+        };
+        e.target.classList.add('dragging');
+        const dropZones = document.querySelectorAll('.server-structure-drop-zone');
+        dropZones.forEach(dropZone => dropZone.classList.add('active'));
+    }
 }
 
 function handleDragEnd(e) {
@@ -461,7 +463,7 @@ function handleDragLeave(e) {
     e.currentTarget.classList.remove('drag-over');
 }
 
-function handleDrop(e, targetParentItems) {
+function handleDrop(e, targetParentItems, position = 0) {
     e.preventDefault();
     e.currentTarget.classList.remove('drag-over');
 
@@ -478,7 +480,7 @@ function handleDrop(e, targetParentItems) {
     }
 
     // Ajouter à la destination
-    targetParentItems.push(item);
+    targetParentItems.splice(position, 0, item);
 
     render();
 }
@@ -567,10 +569,11 @@ function renderItem(item, parentItems, level = 0) {
     if (item.type === 'CATEGORY' && item.items && item.items.length > 0) {
         const childrenDiv = document.createElement('div');
         childrenDiv.className = 'server-structure-item-children';
-        childrenDiv.appendChild(renderDropZone());
+        childrenDiv.appendChild(renderDropZone(item, 0));
+        let posSubCategory = 0
         item.items.forEach(childItem => {
             childrenDiv.appendChild(renderItem(childItem, item.items, level + 1));
-            childrenDiv.appendChild(renderDropZone());
+            childrenDiv.appendChild(renderDropZone(item, posSubCategory++));
         });
 
         itemDiv.appendChild(childrenDiv);
@@ -578,20 +581,20 @@ function renderItem(item, parentItems, level = 0) {
         // Catégorie vide
         const emptyDiv = document.createElement('div');
         emptyDiv.className = 'server-structure-item-children';
-        emptyDiv.appendChild(renderDropZone());
+        emptyDiv.appendChild(renderDropZone(item, 0));
         itemDiv.appendChild(emptyDiv);
     }
 
     return itemDiv;
 }
 
-function renderDropZone(classNames = "") {
+function renderDropZone(item, position, classNames = "") {
     const dropZone = document.createElement('div');
     dropZone.className = 'server-structure-drop-zone ' + classNames;
     dropZone.textContent = '';
     dropZone.addEventListener('dragover', handleDragOver);
     dropZone.addEventListener('dragleave', handleDragLeave);
-    dropZone.addEventListener('drop', (e) => handleDrop(e, item.items));
+    dropZone.addEventListener('drop', (e) => handleDrop(e, item.items, position));
     return dropZone;
 }
 
@@ -609,9 +612,10 @@ function render() {
     rootDropZone.addEventListener('drop', (e) => handleDrop(e, structureData.items));
 
     // Render all items
+    let posMain = 0
     structureData.items.forEach(item => {
         container.appendChild(renderItem(item, structureData.items));
-        container.appendChild(renderDropZone("server-root-zone"));
+        container.appendChild(renderDropZone(item, posMain++, "server-root-zone"));
     });
 
     // Update JSON display
