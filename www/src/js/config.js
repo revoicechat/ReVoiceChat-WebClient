@@ -111,12 +111,6 @@ async function updateServerName(input) {
     }
 }
 
-const FORM_DATA = {
-    name: null,
-    type: null
-};
-
-
 /* INVITATIONS */
 async function configAddInvitation() {
     const serverId = global.server.id;
@@ -203,11 +197,16 @@ async function copyInvitation(link) {
 
 
 /* ROOMS */
-let structureData = {items: []};
+let structureData = { items: [] };
 let detailedRoomData = [];
 
 let currentEditingItem = null;
 let draggedElement = null;
+
+const FORM_DATA = {
+    name: null,
+    type: null
+};
 
 async function createItemRoom(data) {
     const DIV = document.createElement('div');
@@ -232,14 +231,24 @@ async function createItemRoom(data) {
 }
 
 async function loadRooms() {
-    const roomResult = await fetchCoreAPI(`/server/${global.server.id}/room`, 'GET');
-    const struct = await fetchCoreAPI(`/server/${global.server.id}/structure`, 'GET');
-    if (struct && roomResult) {
+    await loadRoomData();
+    await loadRoomStructure();
+}
 
+async function loadRoomData() {
+    const roomResult = await fetchCoreAPI(`/server/${global.server.id}/room`, 'GET');
+    if (roomResult) {
         detailedRoomData = [];
         for (const room of roomResult) {
             detailedRoomData[room.id] = room;
         }
+        render();
+    }
+}
+
+async function loadRoomStructure() {
+    const struct = await fetchCoreAPI(`/server/${global.server.id}/structure`, 'GET');
+    if (struct) {
         structureData = struct;
 
         document.addEventListener('keydown', (e) => {
@@ -258,7 +267,7 @@ async function loadRooms() {
     }
 }
 
-async function configAddRoom() {
+async function roomAdd() {
     FORM_DATA.name = 'New room';
     FORM_DATA.type = 'TEXT';
 
@@ -291,19 +300,13 @@ async function configAddRoom() {
         `,
     }).then(async (result) => {
         if (result.value) {
-            const newRoom = await fetchCoreAPI(`/server/${global.server.id}/room`, 'PUT', { name: FORM_DATA.name, type: FORM_DATA.type });
-            loadRooms();
-            structureData.items.push({
-                type: "ROOM",
-                id: newRoom.id
-            });
-            detailedRoomData[newRoom.id] = newRoom
-            render();
+            await fetchCoreAPI(`/server/${global.server.id}/room`, 'PUT', { name: FORM_DATA.name, type: FORM_DATA.type });
+            await loadRoomData();
         }
     });
 }
 
-async function configEditRoom(data) {
+async function roomEdit(data) {
     FORM_DATA.name = data.name;
 
     Swal.fire({
@@ -320,7 +323,7 @@ async function configEditRoom(data) {
         confirmButtonText: "Edit",
         allowOutsideClick: false,
         html: `
-            <form class='config'>
+            <form class='popup'>
                 <label>Room name</label>
                 <input type='text' oninput='FORM_DATA.name=value' value='${data.name}'>
             </form>       
@@ -328,12 +331,12 @@ async function configEditRoom(data) {
     }).then(async (result) => {
         if (result.value) {
             await fetchCoreAPI(`/room/${data.id}`, 'PATCH', { name: FORM_DATA.name, type: FORM_DATA.type });
-            loadRooms();
+            await loadRoomData();
         }
     });
 }
 
-async function configDeleteRoom(data) {
+async function roomDelete(data) {
     Swal.fire({
         title: `Delete room '${data.name}'`,
         animation: false,
@@ -350,7 +353,7 @@ async function configDeleteRoom(data) {
     }).then(async (result) => {
         if (result.value) {
             await fetchCoreAPI(`/room/${data.id}`, 'DELETE');
-            loadRooms();
+            await loadRoomData();
         }
     });
 }
@@ -377,7 +380,7 @@ function showStructureAsJSON() {
 }
 
 function editItem(item) {
-    currentEditingItem = item;
+    currentEditingItem = item
     const modal = document.getElementById('editModal');
     const modalTitle = document.getElementById('modalTitle');
     const itemName = document.getElementById('itemName');
@@ -385,28 +388,21 @@ function editItem(item) {
     const idGroup = document.getElementById('idGroup');
 
     if (item.type === 'ROOM') {
-        modalTitle.textContent = 'Éditer Room';
-        itemName.value = item.name || '';
-        itemId.value = item.id || '';
-        idGroup.style.display = 'block';
-        itemName.placeholder = 'Nom de la room (optionnel)';
+        roomEdit(detailedRoomData[item.id]);
     } else {
         modalTitle.textContent = 'Éditer Catégorie';
         itemName.value = item.name || '';
         idGroup.style.display = 'none';
         itemName.placeholder = 'Nom de la catégorie';
+        modal.classList.add('show');
     }
-
-    modal.classList.add('show');
 }
 
-function deleteItem(item, parentItems) {
-    if (confirm('Êtes-vous sûr de vouloir supprimer cet élément ?')) {
-        const index = parentItems.indexOf(item);
-        if (index > -1) {
-            parentItems.splice(index, 1);
-        }
-        render();
+function deleteItem(item) {
+    if (item.type === 'ROOM') {
+        roomDelete(detailedRoomData[item.id]);
+    } else {
+
     }
 }
 
@@ -621,7 +617,7 @@ function render() {
 
 function exportJSON() {
     const dataStr = JSON.stringify(structureData, null, 2);
-    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+    const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
 
     const exportFileDefaultName = 'room-structure.json';
 
