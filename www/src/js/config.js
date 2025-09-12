@@ -358,7 +358,7 @@ async function roomDelete(data) {
     });
 }
 
-function addCategory(parentItems = null) {
+function categoryAdd(parentItems = null) {
     const newCategory = {
         type: "CATEGORY",
         name: "New category",
@@ -372,6 +372,31 @@ function addCategory(parentItems = null) {
     }
 
     render();
+}
+
+function categoryDelete(item, parentItems) {
+    Swal.fire({
+        title: `Delete category '${item.name}'`,
+        animation: false,
+        customClass: {
+            title: "swalTitle",
+            popup: "swalPopup",
+            cancelButton: "swalConfirm",
+            confirmButton: "swalCancel", // Swapped on purpose !
+        },
+        showCancelButton: true,
+        focusCancel: true,
+        confirmButtonText: "Delete",
+        allowOutsideClick: false,
+    }).then(async (result) => {
+        if (result.value) {
+            const index = parentItems.indexOf(item);
+            if (index > -1) {
+                parentItems.splice(index, 1);
+            }
+            render();
+        }
+    });
 }
 
 function showStructureAsJSON() {
@@ -398,11 +423,11 @@ function editItem(item) {
     }
 }
 
-function deleteItem(item) {
+function deleteItem(item, parentItems) {
     if (item.type === 'ROOM') {
         roomDelete(detailedRoomData[item.id]);
     } else {
-
+        categoryDelete(item, parentItems);
     }
 }
 
@@ -509,7 +534,11 @@ function renderItem(item, parentItems, level = 0) {
         // Remove room being rendered from list of not render
         roomsNotRendered = roomsNotRendered.filter((id) => id !== item.id);
 
-        const room = detailedRoomData[item.id]
+        const room = detailedRoomData[item.id];
+        if (room === null || room === undefined) {
+            return null;
+        }
+
         const icon = room.type === 'TEXT'
             ? '<revoice-icon-chat-bubble class="size-small" ></revoice-icon-chat-bubble>'
             : '<revoice-icon-phone class="size-small"></revoice-icon-phone>';
@@ -536,7 +565,7 @@ function renderItem(item, parentItems, level = 0) {
                             data-item='${JSON.stringify(item)}'><revoice-icon-pencil class="size-smaller"></revoice-icon-pencil></button>
                     <button class="server-structure-btn btn-delete" onclick="event.stopPropagation(); deleteItem(arguments[0], arguments[1])"
                             data-item='${JSON.stringify(item)}' data-parent='${JSON.stringify(parentItems)}'><revoice-icon-trash class="size-smaller"></revoice-icon-trash></button>
-                    <button class="server-structure-btn btn-add" onclick="event.stopPropagation(); addCategory(arguments[0].items)"><revoice-icon-folder-plus class="size-smaller"></revoice-icon-folder-plus></button>
+                    <button class="server-structure-btn btn-add" onclick="event.stopPropagation(); categoryAdd(arguments[0].items)"><revoice-icon-folder-plus class="size-smaller"></revoice-icon-folder-plus></button>
                 </div>`;
     }
 
@@ -555,10 +584,10 @@ function renderItem(item, parentItems, level = 0) {
     };
 
     if (item.type === 'CATEGORY') {
-        const addCategoryBtn = headerDiv.querySelector('.btn-add');
-        addCategoryBtn.onclick = (e) => {
+        const categoryAddBtn = headerDiv.querySelector('.btn-add');
+        categoryAddBtn.onclick = (e) => {
             e.stopPropagation();
-            addCategory(item.items);
+            categoryAdd(item.items);
         };
     }
 
@@ -608,20 +637,23 @@ function render() {
     rootDropZone.addEventListener('drop', (e) => handleDrop(e, structureData.items, 0));
 
     // Build items list from detailedRoomData 
-    for(const key in detailedRoomData){
+    for (const key in detailedRoomData) {
         roomsNotRendered.push(key);
     }
-    
+
     // Render all items in structure
     let posMain = 1
     structureData.items.forEach(item => {
-        container.appendChild(renderItem(item, structureData.items));
+        const renderedItem = renderItem(item, structureData.items)
+        if (renderedItem) {
+            container.appendChild(renderedItem);
+        }
         container.appendChild(renderDropZone(structureData, posMain++, "server-root-zone"));
     });
 
     // Render remaining rooms
-    for(const room of roomsNotRendered){
-        container.appendChild(renderItem({id: room, type: 'ROOM'}, null));
+    for (const room of roomsNotRendered) {
+        container.appendChild(renderItem({ id: room, type: 'ROOM' }, null));
     }
 
     // Update JSON display
