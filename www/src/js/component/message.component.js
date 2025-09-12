@@ -124,6 +124,10 @@ class MessageComponent extends HTMLElement {
                             color: #58a6ff;
                             font-weight: bold;
                         }
+                        .emoji {
+                            width: 1.5rem;
+                            height: 1.5rem;
+                        }
                     </style>
                     
                     <div class="container">
@@ -166,7 +170,7 @@ class MessageComponent extends HTMLElement {
 
     for (const element of slottedElements) {
       if (element.tagName === 'SCRIPT' && element.type === 'text/markdown') {
-        this.markdown = this.removeTags(this.injectEmojis(element.textContent.trim()));
+        this.markdown = element.textContent.trim();
         this.render();
         break;
       }
@@ -209,7 +213,8 @@ class MessageComponent extends HTMLElement {
     }
     try {
       this.hideSlots();
-      contentDiv.innerHTML = marked.parse(this.markdown);
+      console.log(this.injectEmojis(marked.parse(this.removeTags(this.markdown))))
+      contentDiv.innerHTML = this.injectEmojis(marked.parse(this.removeTags(this.markdown)));
     } catch (error) {
       console.error('Markdown parsing error:', error);
       contentDiv.innerHTML = `<p style="color: #ff6b6b;">Error parsing markdown: ${error.message}</p>`;
@@ -226,28 +231,14 @@ class MessageComponent extends HTMLElement {
   }
 
   injectEmojis(inputText) {
-    let result = [];
-    let inputArray = inputText.split(" ");
-
-    inputArray.forEach(element => {
-      // Not emoji
-      if (element.charAt(0) !== ':' && element.charAt(element.length - 1) !== ':') {
-        result.push(element);
-        return;
-      }
-
-      // Emoji
-      const emoji = element.substring(1, element.length - 1);
+    return inputText.replace(/:([A-Za-z0-9\-_]+):/g, (_, emoji) => {
+      // Call your custom function with the extracted content
       if (global.chat.emojisGlobal.includes(emoji)) {
-        result.push(`<img class="emoji" src="${global.url.media}/emojis/global/${emoji}" alt="${emoji}" title=":${emoji}:">`);
-        return;
+        return `<img class="emoji" src="${global.url.media}/emojis/global/${emoji}" alt="${emoji}" title=":${emoji}:">`;
+      } else {
+        return `:${emoji}:`
       }
-
-      // Don't exist
-      return result.push(element);
     });
-
-    return result.join(" ");
   }
 }
 
