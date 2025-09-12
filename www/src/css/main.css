@@ -260,6 +260,7 @@ svg {
 .room-control-container {
     display: flex;
     padding: 0.5rem;
+    min-height: 4rem;
 }
 
 .text-control {
@@ -267,12 +268,13 @@ svg {
 }
 
 .text-control input, .text-control textarea {
-    padding-top: 0.75rem;
-    padding-right: 3rem;
-    padding-bottom: 0.75rem;
-    padding-left: 1rem;
     width: 100%;
-    min-height: 1.5em;
+    margin-top: 0.25rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    min-height: 2rem;
     resize: none;
     overflow-y: hidden;
 }
@@ -387,6 +389,7 @@ svg {
     display: flex;
     align-items: center;
     padding: 0.75rem;
+    height: 4rem;
 }
 
 .status-bloc-1 {
