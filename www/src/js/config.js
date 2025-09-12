@@ -684,7 +684,7 @@ function importJSON() {
     input.click();
 }
 
-async function configUpdateStructure() {
+async function structureSave() {
     try {
         await fetchCoreAPI(`/server/${global.server.id}/structure`, 'PATCH', structureData);
     }
