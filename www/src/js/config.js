@@ -201,7 +201,7 @@ let detailedRoomData = [];
 let roomsNotRendered = [];
 let draggedElement = null;
 
-const FORM_DATA = {
+const popupData = {
     name: null,
     type: null
 };
@@ -253,8 +253,8 @@ async function loadRoomStructure() {
 }
 
 async function roomAdd() {
-    FORM_DATA.name = 'New room';
-    FORM_DATA.type = 'TEXT';
+    popupData.name = 'New room';
+    popupData.type = 'TEXT';
 
     Swal.fire({
         title: 'Add a room',
@@ -272,11 +272,11 @@ async function roomAdd() {
         html: `
             <form class='popup'>
                 <label>Room name</label>
-                <input type='text' oninput='FORM_DATA.name=value'>
+                <input type='text' oninput='popupData.name=value'>
                 <br/>
                 <br/>
                 <label>Room type</label>
-                <select oninput='FORM_DATA.type=value'>
+                <select oninput='popupData.type=value'>
                     <option value='TEXT'>Text</option>
                     <option value='VOICE'>Voice (Built-in)</option>
                     <option value='WEBRTC'>Voice (WebRTC)</option>
@@ -285,7 +285,7 @@ async function roomAdd() {
         `,
     }).then(async (result) => {
         if (result.value) {
-            await fetchCoreAPI(`/server/${global.server.id}/room`, 'PUT', { name: FORM_DATA.name, type: FORM_DATA.type });
+            await fetchCoreAPI(`/server/${global.server.id}/room`, 'PUT', { name: popupData.name, type: popupData.type });
             await loadRoomData();
         }
     });
@@ -293,7 +293,7 @@ async function roomAdd() {
 
 async function roomEdit(item) {
     const data = detailedRoomData[item.id];
-    FORM_DATA.name = data.name;
+    popupData.name = data.name;
 
     Swal.fire({
         title: `Edit room '${data.name}'`,
@@ -311,12 +311,12 @@ async function roomEdit(item) {
         html: `
             <form class='popup'>
                 <label>Room name</label>
-                <input type='text' oninput='FORM_DATA.name=value' value='${data.name}'>
+                <input type='text' oninput='popupData.name=value' value='${data.name}'>
             </form>       
         `,
     }).then(async (result) => {
         if (result.value) {
-            await fetchCoreAPI(`/room/${data.id}`, 'PATCH', { name: FORM_DATA.name, type: FORM_DATA.type });
+            await fetchCoreAPI(`/room/${data.id}`, 'PATCH', { name: popupData.name, type: popupData.type });
             await loadRoomData();
         }
     });
@@ -362,7 +362,7 @@ function categoryAdd(parentItems = null) {
 }
 
 function categoryEdit(item) {
-    FORM_DATA.name = item.name;
+    popupData.name = item.name;
 
     Swal.fire({
         title: `Edit category '${item.name}'`,
@@ -380,12 +380,12 @@ function categoryEdit(item) {
         html: `
             <form class='popup'>
                 <label>Category name</label>
-                <input type='text' oninput='FORM_DATA.name=value' value='${item.name}'>
+                <input type='text' oninput='popupData.name=value' value='${item.name}'>
             </form>       
         `,
     }).then(async (result) => {
         if (result.value) {
-            item.name = FORM_DATA.name;
+            item.name = popupData.name;
             render();
         }
     });
