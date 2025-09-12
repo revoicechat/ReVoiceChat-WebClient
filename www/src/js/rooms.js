@@ -27,7 +27,10 @@ function roomCreate(roomList, roomData, data) {
 
         if (item.type === 'ROOM') {
             const elementData = roomData[item.id];
-            roomList.appendChild(roomCreateElement(elementData, () => roomSelect(elementData)));
+            const roomElement = roomCreateElement(elementData, () => roomSelect(elementData));
+            if (roomElement) {
+                roomList.appendChild(roomElement);
+            }
         }
     }
 }
@@ -36,13 +39,17 @@ function roomCreateElement(data, onclick) {
     const DIV = document.createElement('div');
     let icon = "";
 
+    if (data === undefined || data === null) {
+        return;
+    }
+
     switch (data.type) {
         case "TEXT":
             icon = `<revoice-icon-chat-bubble></revoice-icon-chat-bubble>`;
             break;
         case "VOICE":
         case "WEBRTC":
-            icon =  `<revoice-icon-phone></revoice-icon-phone>`;
+            icon = `<revoice-icon-phone></revoice-icon-phone>`;
             break;
     }
 
