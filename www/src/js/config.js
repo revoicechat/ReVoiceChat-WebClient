@@ -280,7 +280,7 @@ async function configAddRoom() {
         confirmButtonText: "Add",
         allowOutsideClick: false,
         html: `
-            <form class='config'>
+            <form class='popup'>
                 <label>Room name</label>
                 <input type='text' oninput='FORM_DATA.name=value'>
                 <br/>

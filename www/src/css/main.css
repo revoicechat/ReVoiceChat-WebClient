@@ -36,12 +36,15 @@ button {
     text-align: center;
 }
 
-.app,
-.main {
+.main, .app, .config {
     display: flex;
     position: relative;
     z-index: 10;
     height: 100vh;
+}
+
+form.popup{
+    display: grid;
 }
 
 /* LOGIN */
@@ -511,11 +514,11 @@ svg {
     max-width: 45rem;
 }
 
-.config-button{
+.config button{
     display: flex;
 }
 
-.config-button svg{
+.config button svg{
     margin-right: 0.5rem;
 }
 
@@ -561,8 +564,8 @@ svg {
     font-size: 1rem;
 }
 
-.config input,
-.config select {
+form.popup input, .config input,
+form.popup select, .config select {
     margin-top: 0.5rem;
     outline: 2px solid transparent;
     outline-offset: 2px;

@@ -219,8 +219,8 @@
         background-color: rgb(7, 89, 133);
     }
 
-    .config input,
-    .config select {
+    .config input, .config select,
+    form.popup input, form.popup select {
         background-color: #292f3d;
         color: white;
     }
@@ -242,12 +242,12 @@
         background-color: rgba(255, 255, 255, 0.1);
     }
 
-    .config-button {
+    .config-right button {
         background-color: rgb(99, 102, 241);
         color: white;
     }
 
-    .config-button:hover {
+    .config-right button:hover {
         background-color: rgba(12, 74, 110, 0.7);
     }
 
