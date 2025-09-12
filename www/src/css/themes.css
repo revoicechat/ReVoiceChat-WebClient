@@ -30,7 +30,7 @@
     }
 
     /* Element */
-    .button-with-icon:hover {
+    .app button:hover {
         border-radius: 10px;
         background-color: rgb(7, 89, 133);
     }
@@ -308,7 +308,7 @@
     }
 
     /* Element */
-    .button-with-icon:hover {
+    .app button:hover {
         border-radius: 10px;
         background-color: #595959;
     }

@@ -36,6 +36,7 @@ button {
     text-align: center;
 }
 
+.app,
 .main {
     display: flex;
     position: relative;
@@ -43,6 +44,7 @@ button {
     height: 100vh;
 }
 
+/* LOGIN */
 .login {
     justify-content: center;
     align-items: center;
@@ -97,8 +99,8 @@ button {
     width: 100%;
 }
 
-/* ELEMENT */
-.button-with-icon {
+/* APP */
+.app button{
     padding: 0.5rem;
 }
 
@@ -112,10 +114,7 @@ svg {
     margin-left: auto;
 }
 
-
-
 /* SIDEBAR LEFT */
-
 .sidebar {
     display: flex;
     flex-direction: column;
