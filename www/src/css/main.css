@@ -301,11 +301,12 @@ svg {
 
 .message-header {
     display: flex;
+    align-items: center;
 }
 
 .message-context-menu {
     visibility: hidden;
-    margin-right: 0px;
+    margin-right: 0;
     margin-left: auto;
     padding-right: 1rem;
 }
@@ -329,7 +330,7 @@ svg {
 
 .message-owner {
     display: block;
-    padding-left: 1rem;
+    padding: 0.5rem 1rem;
     font-weight: 600;
     user-select: text;
     text-overflow: ellipsis;
