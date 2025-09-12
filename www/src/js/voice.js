@@ -10,8 +10,11 @@ const voice = {
     audioTimestamp: 0,
     users: {},
     audioContext: null,
+    audioCollector: null,
     selfMute: false,
+    selfCompressor: false,
     gainNode: null,
+    compressorNode: null,
 }
 
 const voiceCodecConfig = {
@@ -158,16 +161,24 @@ async function voiceEncodeAndTransmit() {
 
     // Create Gain node
     voice.gainNode = voice.audioContext.createGain();
-    
+
+    // Create voice.compressorNode Node with default value (not connected by default)
+    voice.compressorNode = voice.audioContext.createDynamicsCompressor();
+    voice.compressorNode.threshold.setValueAtTime(-50, voice.audioContext.currentTime);
+    voice.compressorNode.knee.setValueAtTime(40, voice.audioContext.currentTime);
+    voice.compressorNode.ratio.setValueAtTime(12, voice.audioContext.currentTime);
+    voice.compressorNode.attack.setValueAtTime(0, voice.audioContext.currentTime);
+    voice.compressorNode.release.setValueAtTime(0.25, voice.audioContext.currentTime);
+
     // Set initial volume base on range
     voice.gainNode.gain.setValueAtTime(document.getElementById('voice-self-volume').value, voice.audioContext.currentTime)
 
     // Init AudioWorklet
-    const audioCollector = new AudioWorkletNode(voice.audioContext, "AudioCollector");
+    voice.audioCollector = new AudioWorkletNode(voice.audioContext, "AudioCollector");
     micSource.connect(voice.gainNode); // connect mic to gain
-    voice.gainNode.connect(audioCollector); // connect gain to audioCollector
+    voice.gainNode.connect(voice.audioCollector); // connect gain to audioCollector
 
-    audioCollector.port.onmessage = (event) => {
+    voice.audioCollector.port.onmessage = (event) => {
         // We don't do anything if we are self muted
         if (voice.selfMute) {
             return;
@@ -515,5 +526,24 @@ function voiceControlSelfVolume(volume) {
     document.getElementById('voice-self-volume').title = parseInt(volume * 100) + "%";
     if (voice.gainNode) {
         voice.gainNode.gain.setValueAtTime(volume, voice.audioContext.currentTime);
+    }
+}
+
+function voiceControlSelfCompressor() {
+    voice.selfCompressor = !voice.selfCompressor;
+    if (voice.selfCompressor) {
+        document.getElementById('voice-self-compressor').classList.add('active');
+        if (voice.gainNode && voice.compressorNode) {
+            voice.gainNode.disconnect(voice.audioCollector);
+            voice.gainNode.connect(voice.compressorNode);
+            voice.compressorNode.connect(voice.audioCollector);
+        }
+    } else {
+        document.getElementById('voice-self-compressor').classList.remove('active');
+        if (voice.gainNode && voice.compressorNode) {
+            voice.gainNode.disonnect(voice.compressorNode);
+            voice.compressorNode.disconnect(voice.audioCollector);
+            voice.gainNode.connect(voice.audioCollector);
+        }
     }
 }

@@ -31,7 +31,6 @@
 
     /* Element */
     .app button:hover {
-        border-radius: 10px;
         background-color: rgb(7, 89, 133);
     }
 
@@ -157,14 +156,21 @@
     }
 
     .voice-control .mute:hover,
-    .voice-profile .mute:hover {
-        border-radius: 10px;
+    .voice-profile .mute:hover{
         background-color: rgb(7, 89, 133);
     }
 
     .voice-control .mute.active,
-    .voice-profile .mute.active {
+    .voice-profile .mute.active{
         color: red;
+    }
+
+    .voice-control .compressor:hover{
+        background-color: rgb(7, 89, 133);
+    }
+
+    .voice-control .compressor.active{
+        color: greenyellow;
     }
 
     /* Message */
@@ -219,8 +225,10 @@
         background-color: rgb(7, 89, 133);
     }
 
-    .config input, .config select,
-    form.popup input, form.popup select {
+    .config input,
+    .config select,
+    form.popup input,
+    form.popup select {
         background-color: #292f3d;
         color: white;
     }

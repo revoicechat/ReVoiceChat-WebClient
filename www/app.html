@@ -98,13 +98,18 @@
                         <button id="voice-join-action" class="connect join">[JOIN]</button>
                     </div>
                     <div class="voice-control">
-                        <button id="voice-self-mute" onclick="voiceControlSelfMute()" class="mute">
+                        <button id="voice-self-mute" onclick="voiceControlSelfMute()" title="Mute" class="mute" >
                             <revoice-icon-microphone></revoice-icon-microphone>
                         </button>
                     </div>
                     <div class="voice-control">
+                        <button id="voice-self-compressor" onclick="voiceControlSelfCompressor()" title="Compressor" class="compressor">
+                            <revoice-icon-arrow-in></revoice-icon-arrow-in>
+                        </button>
+                    </div>
+                    <div class="voice-control">
                         <input id="voice-self-volume" type="range" min="0" max="2" value="1" step="0.01"
-                            oninput="voiceControlSelfVolume(this.value)" title="100%"/>
+                            oninput="voiceControlSelfVolume(this.value)" title="100%" />
                     </div>
                 </div>
             </div>
