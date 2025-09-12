@@ -30,13 +30,14 @@ class MessageComponent extends HTMLElement {
     // Create the shadow DOM structure
     this.shadowRoot.innerHTML = `
                     <style>
+                        @import url("https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.11.1/build/styles/github-dark-dimmed.min.css");
+
                         :host {
                             display: block;
                             padding: 0 10px;
                             overflow-y: auto;
                             box-sizing: border-box;
                         }
-                        
                         /* Markdown content styling */
                         .markdown-content h1,
                         .markdown-content h2,
@@ -86,7 +87,6 @@ class MessageComponent extends HTMLElement {
                         .markdown-content pre {
                             background: #21262d;
                             border-radius: 6px;
-                            padding: 8px;
                             overflow-x: auto;
                             margin: 8px 0;
                             border: 1px solid #30363d;
@@ -130,7 +130,6 @@ class MessageComponent extends HTMLElement {
                             height: 1.5rem;
                         }
                     </style>
-                    
                     <div class="container">
                         <div class="markdown-content" id="content"></div>
                         <slot name="content" style="display: none;"></slot>
@@ -151,11 +150,7 @@ class MessageComponent extends HTMLElement {
       marked.setOptions({
         highlight(code, lang, info) {
           if (lang && hljs.getLanguage(lang)) {
-            try {
-              return hljs.highlight(code, {language: lang}).value;
-            } catch (err) {
-              console.warn('Highlight.js error:', err);
-            }
+            return hljs.highlight(code, { language: lang }).value;
           }
           return hljs.highlightAuto(code).value;
         },
@@ -207,6 +202,9 @@ class MessageComponent extends HTMLElement {
       this.#hideSlots();
       console.log(this.#injectEmojis(marked.parse(this.#removeTags(this.markdown))))
       contentDiv.innerHTML = this.#injectEmojis(marked.parse(this.#removeTags(this.markdown)));
+      contentDiv.querySelectorAll('pre code').forEach(block => {
+        hljs.highlightElement(block);
+      });
     } catch (error) {
       console.error('Markdown parsing error:', error);
       contentDiv.innerHTML = `<p style="color: #ff6b6b;">Error parsing markdown: ${error.message}</p>`;
