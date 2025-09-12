@@ -9,22 +9,24 @@ class MessageComponent extends HTMLElement {
     return ['markdown', 'theme'];
   }
 
+  /** generate the data in slot */
   connectedCallback() {
-    this.setupShadowDOM();
-    this.setupMarked();
-    this.render();
+    this.#setupShadowDOM();
+    this.#setupMarked();
+    this.#render();
   }
 
+  /** update the data in slot */
   attributeChangedCallback(name, oldValue, newValue) {
     if (name === 'markdown' && oldValue !== newValue) {
       this.markdown = newValue || '';
-      this.render();
+      this.#render();
     } else if (name === 'theme' && oldValue !== newValue) {
-      this.updateTheme(newValue);
+      this.#updateTheme(newValue);
     }
   }
 
-  setupShadowDOM() {
+  #setupShadowDOM() {
     // Create the shadow DOM structure
     this.shadowRoot.innerHTML = `
                     <style>
@@ -66,7 +68,6 @@ class MessageComponent extends HTMLElement {
                         .markdown-content blockquote {
                             border-left: 4px solid #58a6ff;
                             margin: 16px 0;
-                            padding-left: 16px;
                             color: #8b949e;
                             background: rgba(88, 166, 255, 0.1);
                             border-radius: 0 6px 6px 0;
@@ -139,12 +140,12 @@ class MessageComponent extends HTMLElement {
     // Listen for slotchange events
     this.shadowRoot.addEventListener('slotchange', (e) => {
       if (e.target.name === 'content') {
-        this.handleSlottedContent();
+        this.#handleSlottedContent();
       }
     });
   }
 
-  setupMarked() {
+  #setupMarked() {
     // Configure marked with highlight.js integration
     if (typeof marked !== 'undefined') {
       marked.setOptions({
@@ -164,43 +165,34 @@ class MessageComponent extends HTMLElement {
     }
   }
 
-  handleSlottedContent() {
+  #handleSlottedContent() {
     const contentSlot = this.shadowRoot.querySelector('slot[name="content"]');
     const slottedElements = contentSlot.assignedElements();
 
     for (const element of slottedElements) {
       if (element.tagName === 'SCRIPT' && element.type === 'text/markdown') {
         this.markdown = element.textContent.trim();
-        this.render();
+        this.#render();
         break;
       }
     }
   }
 
-  setMarkdown(markdown) {
-    this.markdown = markdown;
-    this.render();
-  }
-
-  getMarkdown() {
-    return this.markdown;
-  }
-
-  hideSlots() {
+  #hideSlots() {
     this.shadowRoot.querySelector('.container').className = 'container';
   }
 
-  updateTheme(theme) {
+  #updateTheme(theme) {
     // Could be extended to support different themes
     console.log('Theme updated to:', theme);
   }
 
-  render() {
+  #render() {
     const contentDiv = this.shadowRoot.getElementById('content');
 
     if (!this.markdown) {
       // Check if there's slotted content
-      this.handleSlottedContent();
+      this.#handleSlottedContent();
       if (!this.markdown) {
         contentDiv.innerHTML = '<p style="color: #8b949e; font-style: italic;">No markdown content provided</p>';
         return;
@@ -212,9 +204,9 @@ class MessageComponent extends HTMLElement {
       return;
     }
     try {
-      this.hideSlots();
-      console.log(this.injectEmojis(marked.parse(this.removeTags(this.markdown))))
-      contentDiv.innerHTML = this.injectEmojis(marked.parse(this.removeTags(this.markdown)));
+      this.#hideSlots();
+      console.log(this.#injectEmojis(marked.parse(this.#removeTags(this.markdown))))
+      contentDiv.innerHTML = this.#injectEmojis(marked.parse(this.#removeTags(this.markdown)));
     } catch (error) {
       console.error('Markdown parsing error:', error);
       contentDiv.innerHTML = `<p style="color: #ff6b6b;">Error parsing markdown: ${error.message}</p>`;
@@ -223,14 +215,14 @@ class MessageComponent extends HTMLElement {
   }
 
   /** Identify HTML tags in the input string. Replacing the identified HTML tag with a null string.*/
-  removeTags(str) {
+  #removeTags(str) {
     if (!str) return "";
     const div = document.createElement("div");
     div.innerHTML = String(str);
     return div.textContent || "";
   }
 
-  injectEmojis(inputText) {
+  #injectEmojis(inputText) {
     return inputText.replace(/:([A-Za-z0-9\-_]+):/g, (_, emoji) => {
       // Call your custom function with the extracted content
       if (global.chat.emojisGlobal.includes(emoji)) {
