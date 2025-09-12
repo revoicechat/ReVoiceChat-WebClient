@@ -93,7 +93,7 @@ async function voiceLeave() {
 
     // Flush and close all decoders
     for (const [, user] of Object.entries(voice.users)) {
-        if (user.decoder !== null) {
+        if (user && user.decoder) {
             await user.decoder.flush();
             await user.decoder.close();
         }
@@ -101,13 +101,13 @@ async function voiceLeave() {
     console.debug("VOICE : All users decoder flushed and closed");
 
     // Close self encoder
-    if (voice.encoder !== null) {
+    if (voice.encoder) {
         voice.encoder.close();
         console.debug("VOICE : Encoder closed");
     }
 
     // Close audioContext
-    if (voice.audioContext !== null) {
+    if (voice.audioContext) {
         voice.audioContext.close();
         console.debug("VOICE : AudioContext closed");
     }
