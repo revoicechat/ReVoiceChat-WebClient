@@ -35,6 +35,10 @@ const voiceCodecConfig = {
 
 // <user> call this to join a call in a room
 async function voiceJoin(roomId) {
+    if(voice.activeRoom){
+        return;
+    }
+
     console.info(`VOICE : Initiate join on room: ${roomId}`);
     voice.activeRoom = roomId;
 

@@ -27,7 +27,7 @@ function roomCreate(roomList, roomData, data) {
 
         if (item.type === 'ROOM') {
             const elementData = roomData[item.id];
-            const roomElement = roomCreateElement(elementData, () => roomSelect(elementData));
+            const roomElement = roomCreateElement(elementData, );
             if (roomElement) {
                 roomList.appendChild(roomElement);
             }
@@ -35,7 +35,7 @@ function roomCreate(roomList, roomData, data) {
     }
 }
 
-function roomCreateElement(data, onclick) {
+function roomCreateElement(data) {
     const DIV = document.createElement('div');
     let icon = "";
 
@@ -55,7 +55,12 @@ function roomCreateElement(data, onclick) {
 
     DIV.id = data.id;
     DIV.className = "room-element";
-    DIV.onclick = onclick;
+    DIV.onclick = () => roomSelect(data);
+
+    if(data.type === "VOICE"){
+        DIV.ondblclick = () => {voiceJoin(data.id);}
+    }
+
     DIV.innerHTML = `
         <h3 class="room-title">
         ${icon}
