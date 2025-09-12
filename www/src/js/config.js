@@ -2,6 +2,11 @@ const currentConfig = {
     active: null,
 }
 
+const popupData = {
+    name: null,
+    type: null
+};
+
 document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('config-server-uuid').innerText = global.server.id;
     document.getElementById('config-server-name').value = global.server.name;
@@ -201,11 +206,6 @@ let structureData = { items: [] };
 let roomsData = [];
 let roomsNotRendered = [];
 let draggedElement = null;
-
-const popupData = {
-    name: null,
-    type: null
-};
 
 async function createItemRoom(data) {
     const DIV = document.createElement('div');
