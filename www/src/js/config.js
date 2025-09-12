@@ -115,7 +115,6 @@ async function updateServerName(input) {
 async function configAddInvitation() {
     const serverId = global.server.id;
     const result = await fetchCoreAPI(`/invitation/server/${serverId}`, 'POST');
-    console.log(result);
     if (result.status === "CREATED") {
         Swal.fire({
             title: `New invitation`,
@@ -199,6 +198,7 @@ async function copyInvitation(link) {
 /* ROOMS */
 let structureData = { items: [] };
 let detailedRoomData = [];
+let roomsNotRendered = [];
 
 let currentEditingItem = null;
 let draggedElement = null;
@@ -238,7 +238,7 @@ async function loadRooms() {
 async function loadRoomData() {
     const roomResult = await fetchCoreAPI(`/server/${global.server.id}/room`, 'GET');
     if (roomResult) {
-        detailedRoomData = [];
+        detailedRoomData = {};
         for (const room of roomResult) {
             detailedRoomData[room.id] = room;
         }
@@ -506,6 +506,9 @@ function renderItem(item, parentItems, level = 0) {
     headerDiv.className = 'server-structure-item-header';
 
     if (item.type === 'ROOM') {
+        // Remove room being rendered from list of not render
+        roomsNotRendered = roomsNotRendered.filter((id) => id !== item.id);
+
         const room = detailedRoomData[item.id]
         const icon = room.type === 'TEXT'
             ? '<revoice-icon-chat-bubble class="size-small" ></revoice-icon-chat-bubble>'
@@ -604,12 +607,22 @@ function render() {
     rootDropZone.addEventListener('dragleave', handleDragLeave);
     rootDropZone.addEventListener('drop', (e) => handleDrop(e, structureData.items, 0));
 
-    // Render all items
+    // Build items list from detailedRoomData 
+    for(const key in detailedRoomData){
+        roomsNotRendered.push(key);
+    }
+    
+    // Render all items in structure
     let posMain = 1
     structureData.items.forEach(item => {
         container.appendChild(renderItem(item, structureData.items));
         container.appendChild(renderDropZone(structureData, posMain++, "server-root-zone"));
     });
+
+    // Render remaining rooms
+    for(const room of roomsNotRendered){
+        container.appendChild(renderItem({id: room, type: 'ROOM'}, null));
+    }
 
     // Update JSON display
     document.getElementById('jsonOutput').textContent = JSON.stringify(structureData, null, 2);
