@@ -522,10 +522,15 @@ svg {
     margin-right: 0.5rem;
 }
 
-.config .category {
+.config .category h2 {
     min-height: 2.5rem;
     font-weight: 800;
     font-size: 1.25rem;
+}
+
+.config .category button {
+    margin-left: 15px;
+    width: -webkit-fill-available;
 }
 
 .category~.category {
@@ -812,7 +817,7 @@ textarea.config-item{
 }
 
 .server-structure-tree-item:hover {
-    background-color: rgba(12, 74, 110, 0.7);
+    background-color: rgba(12, 74, 110, 0.2);
 }
 
 .server-structure-tree-item.dragging {
@@ -877,7 +882,7 @@ textarea.config-item{
 }
 
 .server-structure-btn {
-    padding: 4px 8px;
+    padding: 4px 0 4px 8px;
     border: none;
     border-radius: 0.25rem;
     cursor: pointer;
