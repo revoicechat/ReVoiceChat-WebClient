@@ -12,7 +12,6 @@ class MessageComponent extends HTMLElement {
   /** generate the data in slot */
   connectedCallback() {
     this.#setupShadowDOM();
-    this.#setupMarked();
     this.#render();
   }
 
@@ -144,22 +143,6 @@ class MessageComponent extends HTMLElement {
     });
   }
 
-  #setupMarked() {
-    // Configure marked with highlight.js integration
-    if (typeof marked !== 'undefined') {
-      marked.setOptions({
-        highlight(code, lang, info) {
-          if (lang && hljs.getLanguage(lang)) {
-            return hljs.highlight(code, { language: lang }).value;
-          }
-          return hljs.highlightAuto(code).value;
-        },
-        breaks: true,
-        gfm: true
-      });
-    }
-  }
-
   #handleSlottedContent() {
     const contentSlot = this.shadowRoot.querySelector('slot[name="content"]');
     const slottedElements = contentSlot.assignedElements();
@@ -202,14 +185,17 @@ class MessageComponent extends HTMLElement {
       this.#hideSlots();
       console.log(this.#injectEmojis(marked.parse(this.#removeTags(this.markdown))))
       contentDiv.innerHTML = this.#injectEmojis(marked.parse(this.#removeTags(this.markdown)));
-      contentDiv.querySelectorAll('pre code').forEach(block => {
-        hljs.highlightElement(block);
-      });
+      this.#renderCodeTemplate(contentDiv);
     } catch (error) {
       console.error('Markdown parsing error:', error);
       contentDiv.innerHTML = `<p style="color: #ff6b6b;">Error parsing markdown: ${error.message}</p>`;
     }
+  }
 
+  #renderCodeTemplate(contentDiv) {
+    contentDiv.querySelectorAll('pre code').forEach(block => {
+      hljs.highlightElement(block);
+    });
   }
 
   /** Identify HTML tags in the input string. Replacing the identified HTML tag with a null string.*/
