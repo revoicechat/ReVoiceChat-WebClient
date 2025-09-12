@@ -337,7 +337,7 @@ svg {
     user-select: text;
 }
 
-.message-content img {
+.emoji {
     width: 1.5rem;
     height: 1.5rem;
 }
