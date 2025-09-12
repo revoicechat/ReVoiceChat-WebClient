@@ -29,10 +29,6 @@ function selectConfigItem(name) {
             loadRooms();
             break;
 
-        case 'room-structure':
-            loadRoomStructure();
-            break;
-
         case 'members':
             loadMembers();
             break;
