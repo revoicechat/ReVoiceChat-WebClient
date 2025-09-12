@@ -343,11 +343,6 @@ svg {
     user-select: text;
 }
 
-.emoji {
-    width: 1.5rem;
-    height: 1.5rem;
-}
-
 .message-timestamp {
     font-weight: 400;
     font-size: 0.75rem;
