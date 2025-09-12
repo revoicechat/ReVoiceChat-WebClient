@@ -61,6 +61,10 @@ async function voiceJoin(roomId) {
         voice.socket.onerror = (e) => console.error('VOICE : WebSocket error:', e);
 
         console.info("VOICE : Room joined");
+
+        let audio = new Audio('src/audio/userConnectedMale.mp3');
+        audio.volume = 0.25;
+        audio.play();
     }
     catch (error) {
         console.error(error);
@@ -108,6 +112,10 @@ async function voiceLeave() {
     voiceUpdateSelf();
     voiceUpdateJoinedUsers();
     voice.users = {};
+
+    let audio = new Audio('src/audio/userDisconnectedMale.mp3');
+    audio.volume = 0.25;
+    audio.play();
 }
 
 // <server.js> call this when a new user join the room
@@ -120,6 +128,10 @@ async function voiceUserJoining(userData) {
     if (userData.id !== global.user.id && voice.socket !== null && voice.socket.readyState === WebSocket.OPEN) {
         await voiceCreateUserDecoder(userData.id);
         voiceUpdateUserControls(userData.id);
+
+        let audio = new Audio('src/audio/userJoinMale.mp3');
+        audio.volume = 0.25;
+        audio.play();
     }
 }
 
@@ -128,12 +140,16 @@ async function voiceUserLeaving(userId) {
     // Remove user from UI
     document.getElementById(`voice-${userId}`).remove();
 
-    // User calling this is NOT self
-    if (userId !== global.user.id && voice.socket.currentState === WebSocket.OPEN) {
+    // User leaving is NOT self
+    if (userId !== global.user.id && voice.socket !== null && voice.socket.readyState === WebSocket.OPEN) {
         const user = voice.users[userId];
         await user.decoder.flush();
         await user.decoder.close();
         voice.users[userId] = null;
+
+        let audio = new Audio('src/audio/userLeftMale.mp3');
+        audio.volume = 0.25;
+        audio.play();
     }
 }
 

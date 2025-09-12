@@ -1,11 +1,6 @@
 const global = {
     sse: null,
     jwtToken: null,
-    webrtc: {
-        socket: null,
-        p2p: null,
-        activeRoom: null,
-    },
     url: {
         core: null,
         media: null,
