@@ -980,3 +980,11 @@ textarea.config-item{
 .server-structure-panel::-webkit-scrollbar-thumb:hover {
     background: rgba(37, 211, 102, 0.7);
 }
+
+.size-small svg {
+    height: 20px;
+}
+
+.size-smaller svg {
+    height: 16px;
+}

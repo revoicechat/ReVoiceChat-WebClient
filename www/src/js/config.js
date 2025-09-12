@@ -515,7 +515,9 @@ function renderItem(item, parentItems, level = 0) {
 
     if (item.type === 'ROOM') {
         const room = detailedRoomData[item.id]
-        const icon = room.type === 'TEXT' ? '💬' : '🔊';
+        const icon = room.type === 'TEXT'
+            ? '<revoice-icon-chat-bubble class="size-small" ></revoice-icon-chat-bubble>'
+            : '<revoice-icon-phone class="size-small"></revoice-icon-phone>';
         headerDiv.innerHTML = `
                 <span class="server-structure-item-icon">${icon}</span>
                 <div class="server-structure-item-content">
@@ -524,22 +526,22 @@ function renderItem(item, parentItems, level = 0) {
                 </div>
                 <div class="server-structure-item-actions">
                     <button class="server-structure-btn btn-edit" onclick="event.stopPropagation(); editItem(arguments[0])" 
-                            data-item='${JSON.stringify(item)}'>✏️</button>
+                            data-item='${JSON.stringify(item)}'><revoice-icon-pencil class="size-smaller"></revoice-icon-pencil></button>
                     <button class="server-structure-btn btn-delete" onclick="event.stopPropagation(); deleteItem(arguments[0], arguments[1])"
-                            data-item='${JSON.stringify(item)}' data-parent='${JSON.stringify(parentItems)}'>🗑️</button>
+                            data-item='${JSON.stringify(item)}' data-parent='${JSON.stringify(parentItems)}'><revoice-icon-trash class="size-smaller"></revoice-icon-trash></button>
                 </div>`;
     } else if (item.type === 'CATEGORY') {
         headerDiv.innerHTML = `
-                <span class="server-structure-item-icon">📁</span>
+                <span class="server-structure-item-icon"><revoice-icon-folder class="size-small"></revoice-icon-folder></span>
                 <div class="server-structure-item-content">
                     <span class="server-structure-item-name">${item.name}</span>
                 </div>
                 <div class="server-structure-item-actions">
                     <button class="server-structure-btn btn-edit" onclick="event.stopPropagation(); editItem(arguments[0])" 
-                            data-item='${JSON.stringify(item)}'>✏️</button>
+                            data-item='${JSON.stringify(item)}'><revoice-icon-pencil class="size-smaller"></revoice-icon-pencil></button>
                     <button class="server-structure-btn btn-delete" onclick="event.stopPropagation(); deleteItem(arguments[0], arguments[1])"
-                            data-item='${JSON.stringify(item)}' data-parent='${JSON.stringify(parentItems)}'>🗑️</button>
-                    <button class="server-structure-btn btn-add" onclick="event.stopPropagation(); addCategory(arguments[0].items)">+📁</button>
+                            data-item='${JSON.stringify(item)}' data-parent='${JSON.stringify(parentItems)}'><revoice-icon-trash class="size-smaller"></revoice-icon-trash></button>
+                    <button class="server-structure-btn btn-add" onclick="event.stopPropagation(); addCategory(arguments[0].items)"><revoice-icon-folder-plus class="size-smaller"></revoice-icon-folder-plus></button>
                 </div>`;
     }
 
