@@ -421,9 +421,7 @@ function saveItem() {
     if (currentEditingItem.type === 'ROOM') {
         if (itemName) currentEditingItem.name = itemName;
         if (itemId) currentEditingItem.id = itemId;
-    } else {
-        if (itemName) currentEditingItem.name = itemName;
-    }
+    } else if (itemName) currentEditingItem.name = itemName;
 
     closeModal();
     render();
@@ -463,7 +461,7 @@ function handleDragLeave(e) {
     e.currentTarget.classList.remove('drag-over');
 }
 
-function handleDrop(e, targetParentItems, position = 0) {
+function handleDrop(e, targetParentItems, position) {
     e.preventDefault();
     e.currentTarget.classList.remove('drag-over');
 
@@ -475,13 +473,16 @@ function handleDrop(e, targetParentItems, position = 0) {
     if (sourceParent) {
         const sourceIndex = sourceParent.indexOf(item);
         if (sourceIndex > -1) {
+            if (targetParentItems === sourceParent) {
+                position -= 1
+            }
             sourceParent.splice(sourceIndex, 1);
         }
     }
 
     // Ajouter à la destination
     targetParentItems.splice(position, 0, item);
-
+    draggedElement = null;
     render();
 }
 
@@ -503,7 +504,7 @@ function findParent(targetItem, items = structureData.items) {
 
 function renderItem(item, parentItems, level = 0) {
     const itemDiv = document.createElement('div');
-    itemDiv.className = `server-structure-tree-item ${item.type.toLowerCase()}`;
+    itemDiv.className = `server-structure-tree-item server-structure-${item.type.toLowerCase()}`;
     itemDiv.draggable = true;
 
     itemDiv.addEventListener('dragstart', (e) => handleDragStart(e, item));
@@ -570,7 +571,7 @@ function renderItem(item, parentItems, level = 0) {
         const childrenDiv = document.createElement('div');
         childrenDiv.className = 'server-structure-item-children';
         childrenDiv.appendChild(renderDropZone(item, 0));
-        let posSubCategory = 0
+        let posSubCategory = 1
         item.items.forEach(childItem => {
             childrenDiv.appendChild(renderItem(childItem, item.items, level + 1));
             childrenDiv.appendChild(renderDropZone(item, posSubCategory++));
@@ -591,7 +592,6 @@ function renderItem(item, parentItems, level = 0) {
 function renderDropZone(item, position, classNames = "") {
     const dropZone = document.createElement('div');
     dropZone.className = 'server-structure-drop-zone ' + classNames;
-    dropZone.textContent = '';
     dropZone.addEventListener('dragover', handleDragOver);
     dropZone.addEventListener('dragleave', handleDragLeave);
     dropZone.addEventListener('drop', (e) => handleDrop(e, item.items, position));
@@ -600,22 +600,21 @@ function renderDropZone(item, position, classNames = "") {
 
 function render() {
     const container = document.getElementById('treeContainer');
-    const rootDropZone = document.getElementById('rootDropZone');
-
     // Clear existing items but keep root drop zone
     const existingItems = container.querySelectorAll('.server-structure-tree-item, .server-root-zone');
     existingItems.forEach(item => item.remove());
 
     // Setup root drop zone
+    const rootDropZone = document.getElementById('rootDropZone');
     rootDropZone.addEventListener('dragover', handleDragOver);
     rootDropZone.addEventListener('dragleave', handleDragLeave);
-    rootDropZone.addEventListener('drop', (e) => handleDrop(e, structureData.items));
+    rootDropZone.addEventListener('drop', (e) => handleDrop(e, structureData.items, 0));
 
     // Render all items
-    let posMain = 0
+    let posMain = 1
     structureData.items.forEach(item => {
         container.appendChild(renderItem(item, structureData.items));
-        container.appendChild(renderDropZone(item, posMain++, "server-root-zone"));
+        container.appendChild(renderDropZone(structureData, posMain++, "server-root-zone"));
     });
 
     // Update JSON display

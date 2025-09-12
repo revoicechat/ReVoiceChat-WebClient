@@ -801,11 +801,11 @@ textarea.config-item{
     cursor: pointer;
 }
 
-.server-structure-tree-item.room {
+.server-structure-tree-item.server-structure-room {
     border-left: 4px solid rgb(34 197 94);
 }
 
-.server-structure-tree-item.category {
+.server-structure-tree-item.server-structure-category {
     border-left: 4px solid rgb(99, 102, 241);
 }
 
