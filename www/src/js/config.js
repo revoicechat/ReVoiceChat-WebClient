@@ -113,6 +113,7 @@ async function configAddInvitation() {
     const serverId = global.server.id;
     const result = await fetchCoreAPI(`/invitation/server/${serverId}`, 'POST');
     if (result.status === "CREATED") {
+        loadInvitations();
         Swal.fire({
             title: `New invitation`,
             html: `<input class='swal-input' type='text' value='${result.id}' readonly>`,
