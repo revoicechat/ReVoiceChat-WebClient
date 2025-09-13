@@ -20,27 +20,28 @@
             <div class="config-left">
 
                 <div class="category">
-                    User settings
+                    <h2>User settings</h2>
+
+                    <!-- Overview -->
+                    <button class="sub-category" id="overview" onclick="selectSettingItem('overview')">
+                        <revoice-icon-information></revoice-icon-information>
+                        Overview
+                    </button>
+
+                    <!-- Themes -->
+                    <button class="sub-category" id="themes" onclick="selectSettingItem('themes')">
+                        <revoice-icon-swatch></revoice-icon-swatch>
+                        Themes
+                    </button>
                 </div>
 
-                <!-- Overview -->
-                <button class="sub-category" id="overview" onclick="selectSettingItem('overview')">
-                    <revoice-icon-information></revoice-icon-information>
-                    Overview
-                </button>
-
-                <!-- Themes -->
-                <button class="sub-category" id="themes" onclick="selectSettingItem('themes')">
-                    <revoice-icon-swatch></revoice-icon-swatch>
-                    Themes
-                </button>
-
                 <!-- Exit config -->
-                <div class="category"></div>
-                <button class="sub-category" onclick="document.location.href = 'app.html'">
-                    <revoice-icon-circle-x></revoice-icon-circle-x>
-                    Exit
-                </button>
+                <div class="category">
+                    <button class="sub-category" onclick="document.location.href = 'app.html'">
+                        <revoice-icon-circle-x></revoice-icon-circle-x>
+                        Exit
+                    </button>
+                </div>
 
             </div>
         </div>
@@ -53,8 +54,8 @@
                     <h2>Username</h2>
                     <input type="text" id="config-user-name" value="[USERNAME]" onchange="settingDisplayName(this)">
 
-                    <br/>
-                    <br/>
+                    <br />
+                    <br />
                     <button class="button" onclick="settingPassword()">Change password</button>
                 </div>
 
