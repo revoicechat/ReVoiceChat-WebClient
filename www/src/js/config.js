@@ -7,16 +7,15 @@ const popupData = {
     type: null
 };
 
-document.addEventListener('DOMContentLoaded', function () {
-    document.getElementById('config-server-uuid').innerText = global.server.id;
-    document.getElementById('config-server-name').value = global.server.name;
-    selectConfigItem("overview");
-
+document.addEventListener('DOMContentLoaded', async function () {
     // Preload
-    loadRoomData();
-    loadRoomStructure();
-    loadMembers();
-    loadInvitations();
+    await loadOverview()
+    await loadRoomData();
+    await loadRoomStructure();
+    await loadMembers();
+    await loadInvitations();
+
+    selectConfigItem("overview");
 });
 
 document.getRootNode().addEventListener('keydown', function (e) {
@@ -92,6 +91,14 @@ async function createItemUser(data, userPfpExist) {
     return DIV;
 }
 
+async function loadOverview() {
+    const id = global.server.id;
+    const serverInfo = await fetchCoreAPI(`/server/${id}`, 'GET');
+
+    document.getElementById('config-server-uuid').innerText = serverInfo.id;
+    document.getElementById('config-server-name').value = serverInfo.name;
+}
+
 async function updateServerName(input) {
     const serverName = input.value;
 
@@ -104,7 +111,7 @@ async function updateServerName(input) {
     const result = await fetchCoreAPI(`/server/${id}`, 'PATCH', { name: serverName })
     if (result) {
         document.getElementById('config-server-name').value = result.name;
-        global.user.displayName = result.name
+        global.server.name = result.name
     }
 }
 
