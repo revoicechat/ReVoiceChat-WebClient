@@ -124,7 +124,7 @@ svg {
     display: flex;
     flex-direction: column;
     border-right-width: 1px;
-    width: 15rem;
+    width: 20rem;
     height: 100%;
 }
 
@@ -167,7 +167,7 @@ svg {
     display: flex;
     flex-direction: column;
     padding-top: 0.5rem;
-    width: 15rem;
+    width: 16rem;
     height: 100%;
 }
 
