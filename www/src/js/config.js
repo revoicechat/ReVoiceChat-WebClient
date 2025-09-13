@@ -11,6 +11,12 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('config-server-uuid').innerText = global.server.id;
     document.getElementById('config-server-name').value = global.server.name;
     selectConfigItem("overview");
+
+    // Preload
+    loadRoomData();
+    loadRoomStructure();
+    loadMembers();
+    loadInvitations();
 });
 
 document.getRootNode().addEventListener('keydown', function (e) {
@@ -28,21 +34,6 @@ function selectConfigItem(name) {
     currentConfig.active = name;
     document.getElementById(name).classList.add('active');
     document.getElementById(`${name}-config`).classList.remove('hidden');
-
-    switch (name) {
-        case 'rooms':
-            loadRoomData();
-            loadRoomStructure();
-            break;
-
-        case 'members':
-            loadMembers();
-            break;
-
-        case 'invitations':
-            loadInvitations();
-            break;
-    }
 }
 
 function createContextMenuButton(className, innerHTML, onclick, title = "") {
@@ -686,7 +677,7 @@ function importJSON() {
 
 async function structureSave() {
     structureClean(structureData.items);
-    
+
     try {
         await fetchCoreAPI(`/server/${global.server.id}/structure`, 'PATCH', structureData);
     }
@@ -696,11 +687,11 @@ async function structureSave() {
 }
 
 function structureClean(parent) {
-    if(parent === null || parent === undefined){
+    if (parent === null || parent === undefined) {
         return;
     }
 
-    parent.forEach(item =>{
+    parent.forEach(item => {
         if (item.type === 'CATEGORY') {
             structureClean(item.items);
         }
