@@ -262,7 +262,8 @@ svg {
 
 .room-control-container {
     display: flex;
-    padding: 0.5rem;
+    padding-top: 0.5rem;
+    padding-left: 0.5rem;
     min-height: 4rem;
     border-top-width: 1px;
 }
@@ -288,21 +289,6 @@ svg {
 .text-control textarea:focus {
     outline: 2px solid transparent;
     outline-offset: 2px;
-}
-
-.voice-control {
-    margin-right: 0.5rem;
-    height: 3rem;
-}
-
-.voice-control button,
-.voice-control input {
-    display: block;
-    cursor: pointer;
-    margin-top: 0.25rem;
-    border-radius: 0.25rem;
-    padding: 0.5rem;
-    font-weight: 700;
 }
 
 /* MESSAGE */
@@ -363,6 +349,21 @@ svg {
 }
 
 /* VOICE */
+.voice-control {
+    margin-right: 0.5rem;
+    height: 3rem;
+}
+
+.voice-control button,
+.voice-control input {
+    display: block;
+    cursor: pointer;
+    margin-top: 0.25rem;
+    border-radius: 0.25rem;
+    padding: 0.5rem;
+    font-weight: 700;
+}
+
 .voice-profile {
     display: flex;
     cursor: pointer;
