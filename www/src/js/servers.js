@@ -58,9 +58,13 @@ function sseOpen() {
                 console.info("SSE : Pinged by server.");
                 return;
 
+            case "ROOM_UPDATE":
+                roomUpdate(data);
+                return;
+
             case "ROOM_MESSAGE":
                 if (data.message.roomId === global.room.id) {
-                    roomMessageSSE(data);
+                    roomMessage(data);
                 }
                 return;
 
@@ -80,10 +84,6 @@ function sseOpen() {
                 if (data.roomId === global.room.id) {
                     voiceUserLeaving(data.userId);
                 }
-                return;
-
-            case "ROOM_UPDATE":
-                roomUpdate(data);
                 return;
 
             default:

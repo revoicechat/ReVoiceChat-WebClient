@@ -147,7 +147,7 @@ async function getEmojisGlobal() {
     }
 }
 
-function roomMessageSSE(data) {
+function roomMessage(data) {
     const message = data.message;
     const room = document.getElementById("text-content");
     switch (data.action) {
