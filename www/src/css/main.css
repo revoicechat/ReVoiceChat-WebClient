@@ -62,6 +62,7 @@ form.popup {
     padding-right: 2.5rem;
     padding-bottom: 0.75rem;
     padding-left: 2.5rem;
+    background-color: #43434d;
 }
 
 .login-form {
@@ -72,6 +73,12 @@ form.popup {
     display: block;
     margin-top: 1.5rem;
     width: 100%;
+    background-color: #6366f1;
+    color: #ffffff;
+}
+
+.login-form button:hover {
+    background-color: #4042a1;
 }
 
 .login-form .switch {
@@ -81,6 +88,11 @@ form.popup {
     padding: 0 !important;
     font-family: arial, sans-serif;
     text-decoration: underline;
+    color: #6366f1;
+}
+
+.login-form .switch:hover {
+    color: #4042a1;
 }
 
 .login-element {
@@ -90,6 +102,7 @@ form.popup {
 .login-element label {
     display: block;
     font-weight: 700;
+    color: #ffffff;
 }
 
 .login-element input {
@@ -102,6 +115,9 @@ form.popup {
     padding-bottom: 0.5rem;
     padding-left: 0.75rem;
     width: 100%;
+    border-color: #ffffff;
+    background-color: #43434d;
+    color: #ffffff;
 }
 
 /* APP */

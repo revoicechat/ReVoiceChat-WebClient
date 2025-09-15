@@ -95,38 +95,6 @@ body {
     color: var(--pri-text-color);
 }
 
-/* Login */
-.login-box {
-    background-color: var(--qua-bg-color);
-}
-
-.login-form button {
-    background-color: var(--pri-button-bg-color);
-    color: var(--pri-text-color);
-}
-
-.login-form button:hover {
-    background-color: var(--pri-button-hover-color);
-}
-
-.login-element label {
-    color: var(--pri-text-color);
-}
-
-.login-element input {
-    border-color: var(--sec-bd-color);
-    background-color: var(--qua-bg-color);
-    color: var(--pri-text-color);
-}
-
-.login-form .switch {
-    color: var(--pri-button-bg-color);
-}
-
-.login-form .switch:hover {
-    color: var(--pri-button-hover-color);
-}
-
 /* Element */
 .app button:hover {
     background-color: var(--sec-button-hover-color);
