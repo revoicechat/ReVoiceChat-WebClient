@@ -33,10 +33,10 @@ function router(destination) {
 
 function routerPushState(destination) {
     const url = new URL(location);
-    url.searchParams.delete('route');
+    url.searchParams.delete('r');
 
     if (destination && destination !== ""){
-        url.searchParams.set("route", destination);
+        url.searchParams.set("r", destination);
     }
 
     history.pushState({}, "", url);
