@@ -51,14 +51,14 @@ class MessageComponent extends HTMLElement {
                         }
                         
                         .markdown-content p {
-                            color: #e6edf3;
+                            color: var(--pri-text-color);
                             margin: 0;
                         }
                         
                         .markdown-content ul, 
                         .markdown-content ol {
                             padding-left: 20px;
-                            color: #e6edf3;
+                            color: var(--pri-text-color);
                         }
                         
                         .markdown-content li {
@@ -76,7 +76,7 @@ class MessageComponent extends HTMLElement {
                         
                         .markdown-content code:not(.hljs) {
                             background: #21262d;
-                            color: #e6edf3;
+                            color: var(--pri-text-color);
                             padding: 2px 6px;
                             border-radius: 3px;
                             font-family: 'Fira Code', Consolas, monospace;
