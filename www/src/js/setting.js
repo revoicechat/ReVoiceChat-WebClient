@@ -1,17 +1,11 @@
 const currentSetting = {
     active: null,
-    password:{
+    password: {
         password: '',
         newPassword: '',
         confirmPassword: '',
     },
 }
-
-document.addEventListener('DOMContentLoaded', function () {
-    document.getElementById('config-user-name').value = global.user.displayName;
-    document.getElementById("config-user-theme").value = localStorage.getItem("Theme");
-    selectSettingItem("overview");
-});
 
 document.getRootNode().addEventListener('keydown', function (e) {
     if (e.key === 'Escape') {
@@ -19,16 +13,21 @@ document.getRootNode().addEventListener('keydown', function (e) {
     }
 });
 
+function settingLoad() {
+    document.getElementById("setting-user-name").value = global.user.displayName;
+    document.getElementById("setting-user-theme").value = localStorage.getItem("Theme");
+    selectSettingItem("overview");
+}
+
 function selectSettingItem(name) {
     if (currentSetting.active !== null) {
-        document.getElementById(currentSetting.active).classList.remove("active");
-        document.getElementById(`${currentSetting.active}-config`).classList.add("hidden");
+        document.getElementById(`setting-tab-${currentSetting.active}`).classList.remove("active");
+        document.getElementById(`setting-content-${currentSetting.active}`).classList.add("hidden");
     }
 
     currentSetting.active = name;
-    document.getElementById(name).classList.add('active');
-    document.getElementById(`${name}-config`).classList.remove('hidden');
-
+    document.getElementById(`setting-tab-${name}`).classList.add('active');
+    document.getElementById(`setting-content-${name}`).classList.remove('hidden');
 }
 
 function changeTheme(theme) {
@@ -83,7 +82,7 @@ function settingPassword() {
     }).then(async (result) => {
         if (result.value) {
             await fetchCoreAPI(`/user/me`, 'PATCH', { password: currentSetting.password });
-            
+
         }
     });
 }

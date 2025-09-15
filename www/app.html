@@ -13,9 +13,9 @@
     <title>ReVoiceChat - App</title>
 </head>
 
-<body class="fadein">
-    <!-- Main Container -->
-    <div class="app">
+<body>
+    <!-- App Container -->
+    <div class="main app hidden" id="route-app">
         <!-- Sidebar -->
         <div class="sidebar">
             <!-- Server info -->
@@ -28,9 +28,7 @@
                     </div>
 
                     <div class="block-right">
-                        <a href="config.html">
-                            <button><revoice-icon-cog-6></revoice-icon-cog-6></button>
-                        </a>
+                        <button onclick="router('config')"><revoice-icon-cog-6></revoice-icon-cog-6></button>
                     </div>
                 </div>
             </div>
@@ -54,9 +52,7 @@
                     </div>
                 </div>
                 <div class="block-right">
-                    <a href="setting.html">
-                        <button><revoice-icon-cog-6></revoice-icon-cog-6></button>
-                    </a>
+                    <button onclick="router('setting')"><revoice-icon-cog-6></revoice-icon-cog-6></button>
                 </div>
             </div>
         </div>
@@ -80,7 +76,7 @@
                 <div class="room-control-container">
                     <div class="text-control">
                         <label for="text-input" hidden="hidden"></label>
-                        <textarea rows="1" id="text-input" oninput="textInputMode(this)" ></textarea>
+                        <textarea rows="1" id="text-input" oninput="textInputMode(this)"></textarea>
                     </div>
                 </div>
             </div>
@@ -97,12 +93,13 @@
                         <button id="voice-join-action" class="connect join">[JOIN]</button>
                     </div>
                     <div class="voice-control">
-                        <button id="voice-self-mute" onclick="voiceControlSelfMute()" title="Mute" class="mute" >
+                        <button id="voice-self-mute" onclick="voiceControlSelfMute()" title="Mute" class="mute">
                             <revoice-icon-microphone></revoice-icon-microphone>
                         </button>
                     </div>
                     <div class="voice-control">
-                        <button id="voice-self-compressor" onclick="voiceControlSelfCompressor()" title="Compressor" class="compressor">
+                        <button id="voice-self-compressor" onclick="voiceControlSelfCompressor()" title="Compressor"
+                            class="compressor">
                             <revoice-icon-compressor></revoice-icon-compressor>
                         </button>
                     </div>
@@ -133,14 +130,193 @@
         </div>
     </div>
 
+    <!-- Config Containter -->
+    <div class="main config hidden" id="route-config">
+        <div class="config-container-left">
+            <div class="config-left">
+                <div class="category">
+                    <h2>Server settings</h2>
+                    <!-- Overview -->
+                    <button class="sub-category" id="overview" onclick="selectConfigItem('overview')">
+                        <revoice-icon-information></revoice-icon-information> Overview
+                    </button>
+                    <!-- Rooms -->
+                    <button class="sub-category" id="rooms" onclick="selectConfigItem('rooms')">
+                        <revoice-icon-chat-bubble></revoice-icon-chat-bubble> Rooms
+                    </button>
+                </div>
+                <div class="category">
+                    <h2>User Management</h2>
+                    <!-- Members -->
+                    <button class="sub-category" id="members" onclick="selectConfigItem('members')">
+                        <revoice-icon-users></revoice-icon-users> Members
+                    </button>
+                    <!-- Invitation -->
+                    <button class="sub-category" id="invitations" onclick="selectConfigItem('invitations')">
+                        <revoice-icon-envelope></revoice-icon-envelope> Invitations
+                    </button>
+                </div>
+                <div class="category">
+                    <h2>&nbsp;</h2>
+                    <!-- Exit config -->
+                    <button class="sub-category" onclick="router('app')">
+                        <revoice-icon-circle-x></revoice-icon-circle-x> Exit
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="config-container-right">
+            <div class="config-right">
+                <!-- Overview -->
+                <div class="hidden" id="overview-config">
+                    <h1>Overview</h1>
+                    <p>Server ID : <span id="config-server-uuid" class="selectable">[SERVER UUID]</span></p>
+                    <h2>Server name</h2>
+                    <input type="text" id="config-server-name" value="[SERVER NAME]" onchange="updateServerName(this)">
+                </div>
+
+                <!-- Rooms -->
+                <div class="hidden" id="rooms-config">
+                    <h1>Rooms</h1>
+
+                    <div class="server-structure-add-buttons">
+                        <button onclick="roomAdd()">
+                            <revoice-icon-circle-plus></revoice-icon-circle-plus>
+                            Room
+                        </button>
+                        <button onclick="categoryAdd()">
+                            <revoice-icon-folder-plus></revoice-icon-folder-plus>
+                            Category
+                        </button>
+                        <button onclick="showStructureAsJSON()">
+                            <revoice-icon-eye-open></revoice-icon-eye-open>
+                            JSON
+                        </button>
+                    </div>
+                    <div class="server-structure-container">
+                        <div class="server-structure-panel">
+                            <div class="server-structure-tree-container" id="treeContainer">
+                                <div class="server-structure-drop-zone" id="rootDropZone"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="server-structure-modal" id="jsonModal">
+                        <div class="server-structure-modal-large server-structure-modal-content">
+                            <h3>📋 Structure JSON</h3>
+                            <div class="server-structure-form-group">
+                                <pre class="server-structure-json-output" id="jsonOutput"></pre>
+                            </div>
+                            <div style="margin-top: 15px; display: flex; justify-content: space-between;">
+                                <div>
+                                    <button class="config-right" onclick="exportJSON()">💾 Export as JSON</button>
+                                    <button class="config-right" onclick="importJSON()">📥 Import structure</button>
+                                </div>
+                                <div>
+                                    <button class="config-right" onclick="closeModal()">Exit</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="config-button" onclick="structureSave()">Save</button>
+                </div>
+
+                <!-- Members -->
+                <div class="hidden" id="members-config">
+                    <h1>Members</h1>
+                    <div id="config-members-list" class="config-members-list">
+                        <!-- JS -->
+                    </div>
+                </div>
+
+                <!-- Invitations -->
+                <div class="hidden" id="invitations-config">
+                    <h1>Invitations</h1>
+                    <button onclick="configAddInvitation()">New invitation</button>
+                    <br /><br />
+                    <div id="config-invitations-list" class="config-invitation-list">
+                        <!-- JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Settings Container -->
+    <div class="main config hidden" id="route-setting">
+        <div class="config-container-left">
+            <div class="config-left">
+
+                <div class="category">
+                    <h2>User settings</h2>
+
+                    <!-- Overview -->
+                    <button class="sub-category" id="setting-tab-overview" onclick="selectSettingItem('overview')">
+                        <revoice-icon-information></revoice-icon-information>
+                        Overview
+                    </button>
+
+                    <!-- Themes -->
+                    <button class="sub-category" id="setting-tab-themes" onclick="selectSettingItem('themes')">
+                        <revoice-icon-swatch></revoice-icon-swatch>
+                        Themes
+                    </button>
+                </div>
+
+                <!-- Exit config -->
+                <div class="category">
+                    <button class="sub-category" onclick="router('app')">
+                        <revoice-icon-circle-x></revoice-icon-circle-x>
+                        Exit
+                    </button>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="config-container-right">
+            <div class="config-right">
+                <!-- Overview -->
+                <div class="hidden" id="setting-content-overview">
+                    <h1>Overview</h1>
+                    <h2>Username</h2>
+                    <input type="text" id="setting-user-name" value="[USERNAME]" onchange="settingDisplayName(this)">
+
+                    <br />
+                    <br />
+                    <button class="button" onclick="settingPassword()">Change password</button>
+                </div>
+
+                <!-- Themes -->
+                <div class="hidden" id="setting-content-themes">
+                    <h1>Themes</h1>
+                    <form>
+                        <select id='setting-user-theme' onchange=changeTheme(this.value)>
+                            <option value='femboy'>Femboy</option>
+                            <option value='dark'>Dark</option>
+                            <option value='darker'>Darker</option>
+                        </select>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Libraries -->
     <script src="src/js/lib/sweetalert2.min.js"></script>
     <script src="src/js/lib/marked.min.js"></script>
     <script src="src/js/lib/highlight.min.js"></script>
     <script src="src/js/lib/tools.js"></script>
+    <script src="src/js/lib/router.js"></script>
 
+    <!-- Components -->
     <script src="src/js/component/message.component.js"></script>
     <script src="src/js/component/icon.component.js"></script>
 
+    <!-- App -->
     <script src="src/js/app.js"></script>
     <script src="src/js/webrtc.js"></script>
     <script src="src/js/servers.js"></script>
@@ -148,6 +324,12 @@
     <script src="src/js/messages.js"></script>
     <script src="src/js/user.js"></script>
     <script src="src/js/voice.js"></script>
+
+    <!-- Server config -->
+    <script src="src/js/config.js"></script>
+
+    <!-- User settings -->
+    <script src="src/js/setting.js"></script>
 </body>
 
 </html>
