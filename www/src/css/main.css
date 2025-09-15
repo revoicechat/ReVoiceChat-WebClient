@@ -216,7 +216,6 @@ svg {
     justify-content: space-between;
     align-items: flex-start;
     cursor: pointer;
-    border-bottom-width: 1px;
     padding: 0.5rem;
     min-width: 0px;
 }
@@ -228,7 +227,6 @@ svg {
     justify-content: space-between;
     align-items: flex-start;
     cursor: pointer;
-    border-bottom-width: 1px;
     padding: 0.5rem;
     min-width: 0px;
 }
