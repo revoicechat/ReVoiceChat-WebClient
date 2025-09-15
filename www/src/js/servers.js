@@ -57,30 +57,13 @@ function sseOpen() {
             case "PING":
                 console.info("SSE : Pinged by server.");
                 return;
-            case "ROOM_MESSAGE": {
-                const message = data.message;
-                if (message.roomId === global.room.id) {
-                    const ROOM = document.getElementById("text-content");
-                    switch (data.action) {
-                        case "ADD":
-                            ROOM.appendChild(createMessage(message));
-                            break;
-                        case "MODIFY":
-                            document.getElementById(message.id).replaceWith(createMessageContent(message));
-                            break;
-                        case "REMOVE":
-                            document.getElementById(`container-${message.id}`).remove();
-                            break;
-                        default:
-                            console.error("Unsupported action : ", data.action);
-                            break;
-                    }
 
-                    ROOM.scrollTop = ROOM.scrollHeight;
+            case "ROOM_MESSAGE":
+                if (data.message.roomId === global.room.id) {
+                    roomMessageSSE(data);
                 }
-
                 return;
-            }
+
             case "DIRECT_MESSAGE":
                 return;
 
@@ -97,6 +80,10 @@ function sseOpen() {
                 if (data.roomId === global.room.id) {
                     voiceUserLeaving(data.userId);
                 }
+                return;
+
+            case "ROOM_UPDATE":
+                roomUpdate(data);
                 return;
 
             default:

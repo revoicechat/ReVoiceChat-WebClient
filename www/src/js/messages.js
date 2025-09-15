@@ -146,3 +146,24 @@ async function getEmojisGlobal() {
         return null;
     }
 }
+
+function roomMessageSSE(data) {
+    const message = data.message;
+    const room = document.getElementById("text-content");
+    switch (data.action) {
+        case "ADD":
+            room.appendChild(createMessage(message));
+            break;
+        case "MODIFY":
+            document.getElementById(message.id).replaceWith(createMessageContent(message));
+            break;
+        case "REMOVE":
+            document.getElementById(`container-${message.id}`).remove();
+            break;
+        default:
+            console.error("Unsupported action : ", data.action);
+            break;
+    }
+
+    room.scrollTop = room.scrollHeight;
+}

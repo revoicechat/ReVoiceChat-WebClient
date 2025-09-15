@@ -146,3 +146,21 @@ function roomCreateSeparator(data) {
     DIV.innerHTML = `<h3 class="room-title">${data.name.toUpperCase()}</h3>`;
     return DIV;
 }
+
+function roomUpdate(data){
+    const room = data.room;
+    switch(data.action){
+        case "CREATE":
+            return;
+
+        case "MODIFY":
+            document.getElementById(room.id).children[0].innerHTML = `<revoice-icon-chat-bubble></revoice-icon-chat-bubble> ${room.name}`;
+            if(room.id === global.room.id){
+                document.getElementById('room-name').innerText = room.name;
+            }
+            return;
+
+        case "DELETE":
+            return;
+    }
+}
