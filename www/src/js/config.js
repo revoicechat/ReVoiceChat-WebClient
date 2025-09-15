@@ -7,7 +7,7 @@ const popupData = {
     type: null
 };
 
-document.addEventListener('DOMContentLoaded', async function () {
+async function configLoad(){
     // Preload
     await loadOverview()
     await loadRoomData();
@@ -16,13 +16,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     await loadInvitations();
 
     selectConfigItem("overview");
-});
-
-document.getRootNode().addEventListener('keydown', function (e) {
-    if (e.key === 'Escape') {
-        document.location.href = "app.html";
-    }
-});
+}
 
 function selectConfigItem(name) {
     if (currentConfig.active !== null) {

@@ -7,12 +7,6 @@ const currentSetting = {
     },
 }
 
-document.getRootNode().addEventListener('keydown', function (e) {
-    if (e.key === 'Escape') {
-        document.location.href = "app.html";
-    }
-});
-
 function settingLoad() {
     document.getElementById("setting-user-name").value = global.user.displayName;
     document.getElementById("setting-user-theme").value = localStorage.getItem("Theme");

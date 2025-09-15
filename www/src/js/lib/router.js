@@ -9,17 +9,18 @@ document.addEventListener('DOMContentLoaded', function () {
 })
 
 function router(destination) {
-    document.querySelector('.main').classList.add('hidden');
+    document.querySelectorAll('.main').forEach(element => {element.classList.add('hidden')});
 
     switch (destination) {
         case "setting":
             routerPushState('setting');
-            document.getElementById('route-setting').classList.remove('hidden');
             settingLoad();
+            document.getElementById('route-setting').classList.remove('hidden');
             break;
 
         case "config":
             routerPushState('config');
+            configLoad()
             document.getElementById('route-config').classList.remove('hidden');
             break;
 
