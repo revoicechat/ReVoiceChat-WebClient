@@ -117,20 +117,20 @@ body {
 }
 
 /* Room */
-.room-separator,
-.room-element {
+.sidebar-room-separator,
+.sidebar-room-element {
     border-color: var(--pri-bd-color);
 }
 
-.room-separator {
+.sidebar-room-separator {
     font-weight: 600;
 }
 
-.room-element:hover {
+.sidebar-room-element:hover {
     background-color: var(--pri-hover-color);
 }
 
-.room-element.active {
+.sidebar-room-element.active {
     background-color: var(--pri-active-color);
     font-weight: 600;
 }

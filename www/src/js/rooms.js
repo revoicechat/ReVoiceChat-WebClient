@@ -8,7 +8,7 @@ async function getRooms(serverId) {
             rooms[room.id] = room;
         }
 
-        const roomList = document.getElementById("room-list-container");
+        const roomList = document.getElementById("sidebar-room-container");
         roomList.innerHTML = "";
         roomCreate(roomList, rooms, structResult.items);
 
@@ -59,7 +59,7 @@ function roomCreateElement(data) {
     }
 
     DIV.id = data.id;
-    DIV.className = "room-element";
+    DIV.className = "sidebar-room-element";
     DIV.onclick = () => roomSelect(data);
 
     if(data.type === "VOICE"){
@@ -142,7 +142,7 @@ function roomSelect(data) {
 
 function roomCreateSeparator(data) {
     const DIV = document.createElement('div');
-    DIV.className = "room-separator";
+    DIV.className = "sidebar-room-separator";
     DIV.innerHTML = `<h3 class="room-title">${data.name.toUpperCase()}</h3>`;
     return DIV;
 }

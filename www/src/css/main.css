@@ -175,6 +175,33 @@ svg {
     line-height: 1rem;
 }
 
+.sidebar-room-container {
+    flex: 1 1 0%;
+    overflow-y: auto;
+}
+
+.sidebar-room-element {
+    display: flex;
+    position: relative;
+    flex: 1 1 0%;
+    justify-content: space-between;
+    align-items: flex-start;
+    cursor: pointer;
+    padding: 0.5rem;
+    min-width: 0px;
+}
+
+.sidebar-room-separator {
+    display: flex;
+    position: relative;
+    flex: 1 1 0%;
+    justify-content: space-between;
+    align-items: flex-start;
+    cursor: pointer;
+    padding: 0.5rem;
+    min-width: 0px;
+}
+
 /* SIDEBAR USERS (right) */
 
 .sidebar-right {
@@ -200,35 +227,6 @@ svg {
     margin-right: 0.5rem;
     width: 1.5rem;
     height: 1.5rem;
-}
-
-/* ROOM LIST*/
-
-.room-list-container {
-    flex: 1 1 0%;
-    overflow-y: auto;
-}
-
-.room-element {
-    display: flex;
-    position: relative;
-    flex: 1 1 0%;
-    justify-content: space-between;
-    align-items: flex-start;
-    cursor: pointer;
-    padding: 0.5rem;
-    min-width: 0px;
-}
-
-.room-separator {
-    display: flex;
-    position: relative;
-    flex: 1 1 0%;
-    justify-content: space-between;
-    align-items: flex-start;
-    cursor: pointer;
-    padding: 0.5rem;
-    min-width: 0px;
 }
 
 /* ROOM */
