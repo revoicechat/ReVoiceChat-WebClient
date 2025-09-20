@@ -33,7 +33,7 @@ async function settingDisplayName(input) {
     const displayName = input.value;
 
     if (displayName === "" || displayName === null || displayName === undefined) {
-        console.error("Display name is incorrect");
+        console.error("Display name is not valid");
         return;
     }
 
