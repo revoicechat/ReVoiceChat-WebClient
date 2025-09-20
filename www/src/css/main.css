@@ -264,6 +264,7 @@ svg {
     display: flex;
     padding-top: 0.5rem;
     padding-left: 0.5rem;
+    padding-right: 0.5rem;
     min-height: 4rem;
     border-top-width: 1px;
 }
