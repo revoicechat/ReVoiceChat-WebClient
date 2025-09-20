@@ -7,7 +7,7 @@ const popupData = {
     type: null
 };
 
-async function configLoad(){
+async function configLoad() {
     // Preload
     await loadOverview()
     await loadRoomData();
@@ -161,7 +161,9 @@ async function loadInvitations() {
         list.innerHTML = "";
 
         for (const invitation of result) {
-            list.appendChild(await createItemInvitation(invitation));
+            if (invitation.status === 'CREATED') {
+                list.appendChild(await createItemInvitation(invitation));
+            }
         }
     }
 }
