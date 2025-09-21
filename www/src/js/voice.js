@@ -217,7 +217,7 @@ async function voiceEncodeAndTransmit() {
         voice.compressorNode.ratio.setValueAtTime(voice.compressorSetting.ratio, voice.audioContext.currentTime);
         voice.compressorNode.attack.setValueAtTime(voice.compressorSetting.attack, voice.audioContext.currentTime);
         voice.compressorNode.release.setValueAtTime(voice.compressorSetting.release, voice.audioContext.currentTime);
-        voice.compressorNode.reduction.setValueAtTime(voice.compressorSetting.reduction, voice.audioContext.currentTime);
+        voice.compressorNode.reduction = voice.compressorSetting.reduction;
 
         // connect gain to compressor
         voice.gainNode.connect(voice.compressorNode); 
