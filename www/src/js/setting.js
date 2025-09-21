@@ -70,7 +70,7 @@ function settingPassword() {
                 <input type='password' oninput='currentSetting.password.newPassword=this.value'>
                 <br/>
                 <br/>
-                <label>Confirm new password</label>
+                <label>Confirm password</label>
                 <input type='password' oninput='currentSetting.password.confirmPassword=this.value'>
             </form>       
         `,
