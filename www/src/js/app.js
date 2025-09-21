@@ -95,11 +95,12 @@ function loadUserSetting() {
 
     const defaultCompressorSetting = {
         enabled: true,
-        threshold: -50,
+        attack: 0,
         knee: 40,
         ratio: 12,
-        attack: 0,
-        release: 0.25
+        reduction: 0,
+        release: 0.25,
+        threshold: -50,
     }
 
     if (rawSettings) {

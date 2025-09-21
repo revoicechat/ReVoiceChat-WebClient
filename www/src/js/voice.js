@@ -21,6 +21,7 @@ const voice = {
         threshold: -50,
         knee: 40,
         ratio: 12,
+        reduction: 0,
         attack: 0,
         release: 0.25
     }
@@ -225,6 +226,7 @@ async function voiceEncodeAndTransmit() {
         voice.compressorNode.ratio.setValueAtTime(voice.compressorSetting.ratio, voice.audioContext.currentTime);
         voice.compressorNode.attack.setValueAtTime(voice.compressorSetting.attack, voice.audioContext.currentTime);
         voice.compressorNode.release.setValueAtTime(voice.compressorSetting.release, voice.audioContext.currentTime);
+        voice.compressorNode.reduction.setValueAtTime(voice.compressorSetting.reduction, voice.audioContext.currentTime);
 
         // connect gain to compressor
         voice.gainNode.connect(voice.compressorNode); 

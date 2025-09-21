@@ -12,6 +12,7 @@ function settingLoad() {
     document.getElementById("setting-user-name").value = global.user.displayName;
     document.getElementById("setting-user-theme").value = localStorage.getItem("Theme");
     selectSettingItem("overview");
+    settingCompressorLoad();
 }
 
 function selectSettingItem(name) {
@@ -80,4 +81,30 @@ function settingPassword() {
 
         }
     });
+}
+
+function settingCompressorLoad(){
+    document.getElementById('compressor-enabled').checked = voice.compressorSetting.enabled ? "checked" : "";
+
+    document.getElementById('compressor-attack').value = voice.compressorSetting.attack;
+    document.getElementById('compressor-attack').title = voice.compressorSetting.attack * 1000 + "ms";
+
+    document.getElementById('compressor-knee').value = voice.compressorSetting.knee;
+    document.getElementById('compressor-knee').title = voice.compressorSetting.knee;
+
+    document.getElementById('compressor-ratio').value = voice.compressorSetting.ratio;
+    document.getElementById('compressor-ratio').title = voice.compressorSetting.ratio;
+
+    document.getElementById('compressor-reduction').value = voice.compressorSetting.reduction;
+    document.getElementById('compressor-reduction').title = voice.compressorSetting.reduction + "dB";
+
+    document.getElementById('compressor-release').value = voice.compressorSetting.release;
+    document.getElementById('compressor-release').title = voice.compressorSetting.release * 1000 + "ms";
+
+    document.getElementById('compressor-threshold').value = voice.compressorSetting.threshold;
+    document.getElementById('compressor-threshold').title = voice.compressorSetting.threshold + "dB";
+}
+
+function settingCompressorUpdate(type, data){
+
 }
