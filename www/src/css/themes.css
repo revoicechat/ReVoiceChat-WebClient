@@ -256,10 +256,14 @@ form.popup input,
 form.popup select {
     background-color: var(--sec-bg-color);
     border-color: var(--pri-bd-color);
+    color : var(--pri-text-color);
 }
 
-.config label {
+
+.config label,
+form.popup label {
     font-weight: 800;
+    color : var(--pri-text-color);
 }
 
 .config-item {
@@ -288,6 +292,7 @@ textarea.config-item:hover {
     border: 1px solid var(--pri-bd-color);
 }
 
+.swal-input,
 .swalTitle {
     color: var(--pri-text-color);
 }

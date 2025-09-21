@@ -588,8 +588,8 @@ svg {
 }
 
 form.popup input,
-.config input,
 form.popup select,
+.config input,
 .config select {
     margin-top: 0.5rem;
     outline: 2px solid transparent;
@@ -599,6 +599,7 @@ form.popup select,
     padding-top: 0.5rem;
     padding-bottom: 0.5rem;
     padding-left: 0.75rem;
+    margin-bottom: 1rem;
     width: 100%;
 }
 
