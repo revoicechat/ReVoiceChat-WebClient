@@ -16,15 +16,7 @@ const voice = {
     selfVolume: 1,
     gainNode: null,
     compressorNode: null,
-    compressorSetting: {
-        enabled: true,
-        threshold: -50,
-        knee: 40,
-        ratio: 12,
-        reduction: 0,
-        attack: 0,
-        release: 0.25
-    }
+    compressorSetting: {}
 }
 
 const voiceCodecConfig = {
@@ -222,7 +214,6 @@ async function voiceEncodeAndTransmit() {
         // Create voice.compressorNode Node with default value (not connected by default)
         voice.compressorNode = voice.audioContext.createDynamicsCompressor();
         voice.compressorNode.threshold.setValueAtTime(voice.compressorSetting.threshold, voice.audioContext.currentTime);
-        voice.compressorNode.knee.setValueAtTime(voice.compressorSetting.knee, voice.audioContext.currentTime);
         voice.compressorNode.ratio.setValueAtTime(voice.compressorSetting.ratio, voice.audioContext.currentTime);
         voice.compressorNode.attack.setValueAtTime(voice.compressorSetting.attack, voice.audioContext.currentTime);
         voice.compressorNode.release.setValueAtTime(voice.compressorSetting.release, voice.audioContext.currentTime);
