@@ -149,6 +149,9 @@ function roomCreateSeparator(data) {
 
 function roomUpdate(data){
     const room = data.room;
+
+    if(!room && room.serverId !== global.server.id){return;}
+
     switch(data.action){
         case "ADD":
         case "REMOVE":
