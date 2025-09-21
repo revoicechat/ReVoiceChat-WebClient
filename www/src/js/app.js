@@ -82,7 +82,7 @@ function saveUserSetting() {
             selfVolume: voice.selfVolume,
             selfCompressor: voice.selfCompressor,
             selfMute: voice.selfMute,
-            usersSettings : voice.usersSettings,
+            usersSetting : voice.usersSetting,
         }
     }
 
@@ -97,6 +97,6 @@ function loadUserSetting() {
         voice.selfVolume = settings.voice.selfVolume;
         voice.selfCompressor = settings.voice.selfCompressor;
         voice.selfMute = settings.voice.selfMute;
-        voice.usersSettings = settings.usersSettings ? settings.usersSettings : {};
+        voice.usersSetting = settings.usersSetting ? settings.usersSetting : {};
     }
 }

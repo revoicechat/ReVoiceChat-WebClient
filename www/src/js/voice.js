@@ -9,15 +9,15 @@ const voice = {
     frameDuration: 20000,
     audioTimestamp: 0,
     users: {},
-    usersSettings: {},
+    usersSetting: {},
     audioContext: null,
     audioCollector: null,
     selfMute: false,
-    selfCompressor: false,
     selfVolume: 1,
     gainNode: null,
     compressorNode: null,
     compressorSetting: {
+        enabled: true,
         threshold: -50,
         knee: 40,
         ratio: 12,
@@ -209,14 +209,6 @@ async function voiceEncodeAndTransmit() {
     // Create Gain node
     voice.gainNode = voice.audioContext.createGain();
 
-    // Create voice.compressorNode Node with default value (not connected by default)
-    voice.compressorNode = voice.audioContext.createDynamicsCompressor();
-    voice.compressorNode.threshold.setValueAtTime(voice.compressorSetting.threshold, voice.audioContext.currentTime);
-    voice.compressorNode.knee.setValueAtTime(voice.compressorSetting.knee, voice.audioContext.currentTime);
-    voice.compressorNode.ratio.setValueAtTime(voice.compressorSetting.ratio, voice.audioContext.currentTime);
-    voice.compressorNode.attack.setValueAtTime(voice.compressorSetting.attack, voice.audioContext.currentTime);
-    voice.compressorNode.release.setValueAtTime(voice.compressorSetting.release, voice.audioContext.currentTime);
-
     // Set initial volume base on range
     voice.gainNode.gain.setValueAtTime(document.getElementById('voice-self-volume').value, voice.audioContext.currentTime)
 
@@ -225,9 +217,20 @@ async function voiceEncodeAndTransmit() {
     micSource.connect(voice.gainNode); // connect mic to gain
 
     // Connect compressor node
-    if (voice.selfCompressor) {
-        voice.gainNode.connect(voice.compressorNode); // connect gain to compressor
-        voice.compressorNode.connect(voice.audioCollector); // connect compressor to audioCollector
+    if (voice.compressorSetting.enabled) {
+        // Create voice.compressorNode Node with default value (not connected by default)
+        voice.compressorNode = voice.audioContext.createDynamicsCompressor();
+        voice.compressorNode.threshold.setValueAtTime(voice.compressorSetting.threshold, voice.audioContext.currentTime);
+        voice.compressorNode.knee.setValueAtTime(voice.compressorSetting.knee, voice.audioContext.currentTime);
+        voice.compressorNode.ratio.setValueAtTime(voice.compressorSetting.ratio, voice.audioContext.currentTime);
+        voice.compressorNode.attack.setValueAtTime(voice.compressorSetting.attack, voice.audioContext.currentTime);
+        voice.compressorNode.release.setValueAtTime(voice.compressorSetting.release, voice.audioContext.currentTime);
+
+        // connect gain to compressor
+        voice.gainNode.connect(voice.compressorNode); 
+
+        // connect compressor to audioCollector
+        voice.compressorNode.connect(voice.audioCollector); 
     } else {
         voice.gainNode.connect(voice.audioCollector); // connect gain to audioCollector
     }
@@ -330,8 +333,8 @@ async function voiceCreateUserDecoder(userId) {
     if (isSupported.supported) {
         voice.users[userId] = { decoder: null, playhead: 0, muted: false, gainNode: null, source: null };
 
-        if (!voice.usersSettings[userId]) {
-            voice.usersSettings[userId] = { muted: false, volume: 1 };
+        if (!voice.usersSetting[userId]) {
+            voice.usersSetting[userId] = { muted: false, volume: 1 };
         }
 
         voice.users[userId].decoder = new AudioDecoder({
@@ -473,8 +476,8 @@ function voiceUpdateUserControls(userId) {
                 break;
             }
 
-            if (voice.usersSettings && !voice.usersSettings[userId]) {
-                voice.usersSettings[userId].volume = 1
+            if (voice.usersSetting && !voice.usersSetting[userId]) {
+                voice.usersSetting[userId].volume = 1
             }
 
             // Add controls
@@ -482,7 +485,7 @@ function voiceUpdateUserControls(userId) {
             INPUT_VOLUME.type = "range";
             INPUT_VOLUME.className = "volume";
             INPUT_VOLUME.step = "0.01";
-            INPUT_VOLUME.value = voice.usersSettings[userId].volume;
+            INPUT_VOLUME.value = voice.usersSetting[userId].volume;
             INPUT_VOLUME.min = "0";
             INPUT_VOLUME.max = "2";
             INPUT_VOLUME.title = INPUT_VOLUME.value * 100 + "%";
@@ -549,11 +552,11 @@ function voiceControlUserMute(userId, muteButton, updateState = true) {
     if (updateState) {
         // Invert mute state
         voice.users[userId].muted = !voice.users[userId].muted;
-        voice.usersSettings[userId].muted = voice.users[userId].muted;
+        voice.usersSetting[userId].muted = voice.users[userId].muted;
     }
     else {
         // State from previous call
-        voice.users[userId].muted = voice.usersSettings[userId].muted;
+        voice.users[userId].muted = voice.usersSetting[userId].muted;
     }
 
     if (voice.users[userId].muted) {
@@ -572,7 +575,7 @@ function voiceControlUserVolume(userId, volumeInput) {
     const volume = volumeInput.value;
 
     volumeInput.title = volume * 100 + "%";
-    voice.usersSettings[userId].volume = volume;
+    voice.usersSetting[userId].volume = volume;
 
     const userGainNode = voice.users[userId].gainNode;
     if (userGainNode) {
