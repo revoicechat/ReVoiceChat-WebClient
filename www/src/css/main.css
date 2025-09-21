@@ -923,7 +923,7 @@ textarea.config-item {
     margin-left: 20px;
 }
 
-.server-structure-add-buttons {
+.config-buttons {
     display: flex;
     gap: 10px;
     margin-bottom: 20px;
