@@ -96,6 +96,6 @@ function loadUserSetting() {
         voice.selfVolume = settings.voice.selfVolume;
         voice.selfCompressor = settings.voice.selfCompressor;
         voice.selfMute = settings.voice.selfMute;
-        voice.usersSettings = settings.usersSettings;
+        voice.usersSettings = settings.usersSettings ? settings.usersSettings : {};
     }
 }

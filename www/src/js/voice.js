@@ -84,13 +84,12 @@ async function voiceJoin(roomId) {
 
 // <user> call this to leave a call in a room
 async function voiceLeave() {
-    if (voice.activeRoom !== null) {
-        console.info(`VOICE : Leaving voice chat ${voice.activeRoom}`);
-    }
+    console.info(`VOICE : Leaving voice chat ${voice.activeRoom}`);
 
     // Close WebSocket
     if (voice.socket !== null) {
         voice.socket.close();
+        voice.socket = null;
     }
 
     // Flush and close all decoders
@@ -105,20 +104,32 @@ async function voiceLeave() {
     // Close self encoder
     if (voice.encoder) {
         voice.encoder.close();
+        voice.encoder = null;
         console.debug("VOICE : Encoder closed");
     }
+
+    await voiceUpdateJoinedUsers();
 
     // Close audioContext
     if (voice.audioContext) {
         voice.audioContext.close();
+        voice.audioContext = null;
         console.debug("VOICE : AudioContext closed");
     }
 
+    // Clean everything else
+    voice.gainNode = null;
+    voice.compressorNode = null;
+    voice.buffer = null;
+    voice.buffer = [];
+    voice.audioTimestamp = 0;
     voice.activeRoom = null;
-    voiceUpdateSelf();
-    voiceUpdateJoinedUsers();
     voice.users = {};
+    voice.audioCollector = null;
 
+    voiceUpdateSelf();
+
+    // Play leave audio
     let audio = new Audio('src/audio/userDisconnectedMale.mp3');
     audio.volume = 0.25;
     audio.play();
@@ -296,8 +307,11 @@ async function voiceCreateUserDecoder(userId) {
 
     const isSupported = await AudioDecoder.isConfigSupported(voiceCodecConfig);
     if (isSupported.supported) {
-        voice.users[userId] = { decoder: null, playhead: 0, muted: false, gainNode: null };
-        voice.usersSettings[userId] = { muted: false, volume: 1 };
+        voice.users[userId] = { decoder: null, playhead: 0, muted: false, gainNode: null, source: null };
+
+        if (!voice.usersSettings[userId]) {
+            voice.usersSettings[userId] = { muted: false, volume: 1 };
+        }
 
         voice.users[userId].decoder = new AudioDecoder({
             output: decoderCallback,
@@ -383,14 +397,14 @@ async function voiceUpdateJoinedUsers() {
     for (const user of connectedUser) {
         const userId = user.id;
 
-        // Not self
-        if (global.user.id !== userId) {
-            voiceUpdateUserControls(userId);
-        }
-
         // No decoder
         if (voice.users[userId] === undefined) {
             await voiceCreateUserDecoder(userId);
+        }
+
+        // Not self
+        if (global.user.id !== userId) {
+            voiceUpdateUserControls(userId);
         }
     }
 }
@@ -438,22 +452,28 @@ function voiceUpdateUserControls(userId) {
                 break;
             }
 
+            if (voice.usersSettings && !voice.usersSettings[userId]) {
+                voice.usersSettings[userId].volume = 1
+            }
+
             // Add controls
             const INPUT_VOLUME = document.createElement('input');
             INPUT_VOLUME.type = "range";
             INPUT_VOLUME.className = "volume";
+            INPUT_VOLUME.step = "0.01";
+            INPUT_VOLUME.value = voice.usersSettings[userId].volume;
             INPUT_VOLUME.min = "0";
             INPUT_VOLUME.max = "2";
-            INPUT_VOLUME.value = "1";
-            INPUT_VOLUME.step = "0.01";
-            INPUT_VOLUME.title = "100%";
+            INPUT_VOLUME.title = INPUT_VOLUME.value * 100 + "%";
             INPUT_VOLUME.oninput = () => voiceControlUserVolume(userId, INPUT_VOLUME);
+            voiceControlUserVolume(userId, INPUT_VOLUME);
 
             const BUTTON_MUTE = document.createElement('button');
             BUTTON_MUTE.className = "mute";
             BUTTON_MUTE.title = "Mute";
             BUTTON_MUTE.onclick = () => voiceControlUserMute(userId, BUTTON_MUTE);
             BUTTON_MUTE.innerHTML = `<revoice-icon-speaker></revoice-icon-speaker>`;
+            voiceControlUserMute(userId, BUTTON_MUTE, false);
 
             const DIV_ACTION = document.createElement('div');
             DIV_ACTION.id = `voice-controls-${userId}`;
@@ -471,11 +491,6 @@ function voiceUpdateUserControls(userId) {
 function voiceUpdateSelf() {
     const voiceAction = document.getElementById("voice-join-action");
     const readyState = (voice.socket !== null && voice.activeRoom === global.room.id) ? voice.socket.readyState : WebSocket.CLOSED;
-
-    // Update UI element
-    voiceControlSelfCompressor(false);
-    voiceControlSelfMute(false);
-    voiceControlSelfVolume(null, false);
 
     switch (readyState) {
         case WebSocket.CONNECTING:
@@ -509,10 +524,16 @@ function voiceUpdateSelf() {
 }
 
 // <user> call this to mute other user
-function voiceControlUserMute(userId, muteButton) {
-    // Invert mute state
-    voice.users[userId].muted = !voice.users[userId].muted;
-    voice.usersSettings[userId].muted = voice.users[userId].muted;
+function voiceControlUserMute(userId, muteButton, updateState = true) {
+    if (updateState) {
+        // Invert mute state
+        voice.users[userId].muted = !voice.users[userId].muted;
+        voice.usersSettings[userId].muted = voice.users[userId].muted;
+    }
+    else {
+        // State from previous call
+        voice.users[userId].muted = voice.usersSettings[userId].muted;
+    }
 
     if (voice.users[userId].muted) {
         muteButton.classList.add('active');
@@ -540,8 +561,8 @@ function voiceControlUserVolume(userId, volumeInput) {
 }
 
 // <user> call this to mute himself
-function voiceControlSelfMute(updateValue = true) {
-    if (updateValue) {
+function voiceControlSelfMute(updateState = true) {
+    if (updateState) {
         voice.selfMute = !voice.selfMute;
         saveUserSetting();
     }
@@ -560,8 +581,8 @@ function voiceControlSelfMute(updateValue = true) {
 }
 
 // <user> call this to change his volume
-function voiceControlSelfVolume(volume, updateValue = true) {
-    if (updateValue) {
+function voiceControlSelfVolume(volume, updateState = true) {
+    if (updateState) {
         voice.selfVolume = volume;
     } else {
         document.getElementById('voice-self-volume').value = voice.selfVolume;
@@ -573,22 +594,22 @@ function voiceControlSelfVolume(volume, updateValue = true) {
     }
 }
 
-function voiceControlSelfCompressor(updateValue = true) {
-    if (updateValue) {
+function voiceControlSelfCompressor(updateState = true) {
+    if (updateState) {
         voice.selfCompressor = !voice.selfCompressor;
         saveUserSetting();
     }
 
     if (voice.selfCompressor) {
         document.getElementById('voice-self-compressor').classList.add('active');
-        if (voice.gainNode && voice.compressorNode) {
+        if (voice.socket && voice.gainNode && voice.compressorNode) {
             voice.gainNode.disconnect(voice.audioCollector);
             voice.gainNode.connect(voice.compressorNode);
             voice.compressorNode.connect(voice.audioCollector);
         }
     } else {
         document.getElementById('voice-self-compressor').classList.remove('active');
-        if (voice.gainNode && voice.compressorNode) {
+        if (voice.socket && voice.gainNode && voice.compressorNode) {
             voice.gainNode.disconnect(voice.compressorNode);
             voice.compressorNode.disconnect(voice.audioCollector);
             voice.gainNode.connect(voice.audioCollector);
