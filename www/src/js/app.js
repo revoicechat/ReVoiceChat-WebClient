@@ -92,11 +92,21 @@ function saveUserSetting() {
 function loadUserSetting() {
     const rawSettings = localStorage.getItem('userSettings');
 
+    const defaultCompressorSetting = {
+        enabled: true,
+        threshold: -50,
+        knee: 40,
+        ratio: 12,
+        attack: 0,
+        release: 0.25
+    }
+
     if (rawSettings) {
         const settings = JSON.parse(rawSettings);
         voice.selfVolume = settings.voice.selfVolume;
         voice.selfCompressor = settings.voice.selfCompressor;
         voice.selfMute = settings.voice.selfMute;
         voice.usersSetting = settings.usersSetting ? settings.usersSetting : {};
+        voice.compressorSetting = settings.compressorSetting ? settings.compressorSetting : defaultCompressorSetting;
     }
 }
