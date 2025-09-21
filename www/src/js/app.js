@@ -83,6 +83,7 @@ function saveUserSetting() {
             selfCompressor: voice.selfCompressor,
             selfMute: voice.selfMute,
             usersSetting : voice.usersSetting,
+            compressorSetting : voice.compressorSetting,
         }
     }
 
