@@ -150,7 +150,9 @@ function roomCreateSeparator(data) {
 function roomUpdate(data){
     const room = data.room;
     switch(data.action){
-        case "CREATE":
+        case "ADD":
+        case "REMOVE":
+            getRooms(global.server.id);
             return;
 
         case "MODIFY":
@@ -158,9 +160,6 @@ function roomUpdate(data){
             if(room.id === global.room.id){
                 document.getElementById('room-name').innerText = room.name;
             }
-            return;
-
-        case "DELETE":
             return;
     }
 }
