@@ -63,9 +63,7 @@ function sseOpen() {
                 return;
 
             case "ROOM_MESSAGE":
-                if (data.message.roomId === global.room.id) {
-                    roomMessage(data);
-                }
+                roomMessage(data);
                 return;
 
             case "DIRECT_MESSAGE":
@@ -75,15 +73,11 @@ function sseOpen() {
                 return;
 
             case "VOICE_JOINING":
-                if (data.roomId === global.room.id) {
-                    voiceUserJoining(data.user);
-                }
+                voiceUserJoining(data.user);
                 return;
 
             case "VOICE_LEAVING":
-                if (data.roomId === global.room.id) {
-                    voiceUserLeaving(data.userId);
-                }
+                voiceUserLeaving(data.userId);
                 return;
 
             default:

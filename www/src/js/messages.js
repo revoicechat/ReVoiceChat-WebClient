@@ -148,6 +148,8 @@ async function getEmojisGlobal() {
 }
 
 function roomMessage(data) {
+    if (data.message.roomId !== global.room.id) { return; }
+
     const message = data.message;
     const room = document.getElementById("text-content");
     switch (data.action) {

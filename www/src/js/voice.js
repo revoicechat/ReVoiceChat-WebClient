@@ -137,6 +137,8 @@ async function voiceLeave() {
 
 // <server.js> call this when a new user join the room
 async function voiceUserJoining(userData) {
+    if (data.roomId !== global.room.id) { return; }
+
     const voiceContent = document.getElementById("voice-content");
     const userPfpExist = await fileExistMedia(`/profiles/${userData.id}`);
     voiceContent.appendChild(voiceCreateUserHTML(userData, userPfpExist));
@@ -154,6 +156,8 @@ async function voiceUserJoining(userData) {
 
 // <server.js> call this when a user leave the room
 async function voiceUserLeaving(userId) {
+    if (data.roomId !== global.room.id) { return; }
+
     // Remove user from UI
     document.getElementById(`voice-${userId}`).remove();
 
