@@ -246,9 +246,11 @@ function settingVoiceMode() {
     const button = document.getElementById("voice-mode");
     if (currentSetting.voiceAdvanced) {
         button.innerText = "Simple";
+        document.getElementById('voice-sensitivity').innerText = "Noise gate";
     }
     else {
         button.innerText = "Advanced";
+        document.getElementById('voice-sensitivity').innerText = "Voice detection sensitivity";
     }
 
     const toggleable = document.getElementsByClassName('voice-toggleable');

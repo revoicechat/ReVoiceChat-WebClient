@@ -307,26 +307,25 @@
                     <h1>Voice</h1>
 
                     <div class="config-buttons">
-                        <button class="config-button" type="button" id="voice-mode" onclick="settingVoiceMode()">Advanced</button>
+                        <button class="config-button" type="button" id="voice-mode"
+                            onclick="settingVoiceMode()">Advanced</button>
                     </div>
 
                     <p>Effects are only applied when you join a room</p>
 
-                    <h2>Noise Gate</h2>
-
-                    <div class="config-buttons">
-                        <button class="config-button" type="button" onclick="settingNoiseGateDefault()">Default</button>
-                    </div>
+                    <h2 id="voice-sensitivity">Voice detection sensitivity</h2>
 
                     <form class="voice-settings">
-                        <label class="voice-toggleable hidden" for="noise-gate-attack" id="noise-gate-attack-label">[ATTACK]</label>
-                        <input class="voice-toggleable hidden" type="range" id="noise-gate-attack" min="0" max="0.05" step="0.001"
-                            onchange="settingNoiseGateUpdate('attack', this)"
+                        <label class="voice-toggleable hidden" for="noise-gate-attack"
+                            id="noise-gate-attack-label">[ATTACK]</label>
+                        <input class="voice-toggleable hidden" type="range" id="noise-gate-attack" min="0" max="0.05"
+                            step="0.001" onchange="settingNoiseGateUpdate('attack', this)"
                             oninput="settingNoiseGateDirectShow('attack', this)">
 
-                        <label class="voice-toggleable hidden" for="noise-gate-release" id="noise-gate-release-label">[RELEASE]</label>
-                        <input class="voice-toggleable hidden" type="range" id="noise-gate-release" min="0" max="0.05" step="0.001"
-                            onchange="settingNoiseGateUpdate('release', this)"
+                        <label class="voice-toggleable hidden" for="noise-gate-release"
+                            id="noise-gate-release-label">[RELEASE]</label>
+                        <input class="voice-toggleable hidden" type="range" id="noise-gate-release" min="0" max="0.05"
+                            step="0.001" onchange="settingNoiseGateUpdate('release', this)"
                             oninput="settingNoiseGateDirectShow('release', this)">
 
                         <label for="noise-gate-threshold" id="noise-gate-threshold-label">[THRESHOLD]</label>
@@ -335,15 +334,12 @@
                             oninput="settingNoiseGateDirectShow('threshold', this)">
                     </form>
 
+                    <div class="config-buttons">
+                        <button class="config-button" type="button" onclick="settingNoiseGateDefault()">Default</button>
+                    </div>
+
                     <h2 class="voice-toggleable hidden">Compressor</h2>
                     <form class="voice-settings voice-toggleable hidden">
-                        <div class="config-buttons">
-                            <button class="config-button" id="compressor-enabled" type="button"
-                                onclick="settingCompressorEnabled()">Enabled</button>
-                            <button class="config-button" type="button"
-                                onclick="settingCompressorDefault()">Default</button>
-                        </div>
-
                         <label for="compressor-attack" id="compressor-attack-label">[ATTACK]</label>
                         <input type="range" id="compressor-attack" min="0" max="1" step="0.01"
                             onchange="settingCompressorUpdate('attack', this)"
@@ -368,6 +364,13 @@
                         <input type="range" id="compressor-threshold" min="-100" max="0" step="1"
                             onchange="settingCompressorUpdate('threshold', this)"
                             oninput="settingCompressorDirectShow('threshold', this)">
+
+                        <div class="config-buttons">
+                            <button class="config-button" type="button"
+                                onclick="settingCompressorDefault()">Default</button>
+                            <button class="config-button" id="compressor-enabled" type="button"
+                                onclick="settingCompressorEnabled()">Enabled</button>
+                        </div>
                     </form>
 
                 </div>
