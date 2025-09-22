@@ -27,9 +27,9 @@ const voice = {
     },
     noiseGateNode: null,
     noiseGateSetting: {
+        attack: 0.01,
+        release: 0.2,
         threshold: -40,
-        attack: 0.05,
-        release: 0.2
     },
 }
 

@@ -12,6 +12,7 @@ function settingLoad() {
     document.getElementById("setting-user-name").value = global.user.displayName;
     document.getElementById("setting-user-theme").value = localStorage.getItem("Theme");
     settingCompressorShow();
+    settingNoiseGateShow();
     selectSettingItem("overview");
 }
 
@@ -181,4 +182,59 @@ function settingCompressorDefault() {
     }
     saveUserSetting();
     settingCompressorShow();
+}
+
+function settingNoiseGateDirectShow(param, element) {
+    switch (param) {
+        case 'attack':
+            document.getElementById('noise-gate-attack-label').innerText = `Attack : ${element.value * 1000}ms`;
+            break;
+        case 'release':
+            document.getElementById('noise-gate-release-label').innerText = `Release : ${element.value * 1000}ms`;
+            break;
+        case 'threshold':
+            document.getElementById('noise-gate-threshold-label').innerText = `Threshold : ${element.value}dB`;
+            break;
+    }
+}
+
+function settingNoiseGateShow() {
+    document.getElementById('noise-gate-attack').value = voice.noiseGateSetting.attack;
+    document.getElementById('noise-gate-attack').title = voice.noiseGateSetting.attack * 1000 + "ms";
+    document.getElementById('noise-gate-attack-label').innerText = `Attack : ${voice.noiseGateSetting.attack * 1000}ms`;
+
+    document.getElementById('noise-gate-release').value = voice.noiseGateSetting.release;
+    document.getElementById('noise-gate-release').title = voice.noiseGateSetting.release * 1000 + "ms";
+    document.getElementById('noise-gate-release-label').innerText = `Release : ${voice.noiseGateSetting.release * 1000}ms`;
+
+    document.getElementById('noise-gate-threshold').value = voice.noiseGateSetting.threshold;
+    document.getElementById('noise-gate-threshold').title = voice.noiseGateSetting.threshold + "dB";
+    document.getElementById('noise-gate-threshold-label').innerText = `Threshold : ${voice.noiseGateSetting.threshold}dB`;
+}
+
+function settingNoiseGateUpdate(param, data) {
+    switch (param) {
+        case 'attack':
+            voice.noiseGateSetting.attack = parseFloat(data.value);
+            break;
+        case 'release':
+            voice.noiseGateSetting.release = parseFloat(data.value);
+            break;
+        case 'threshold':
+            voice.noiseGateSetting.threshold = parseInt(data.value);
+            break;
+    }
+
+    saveUserSetting();
+    settingNoiseGateShow();
+}
+
+function settingNoiseGateDefault() {
+    voice.noiseGateSetting = {
+        attack: 0.01,
+        release: 0.2,
+        threshold: -40,
+    }
+    saveUserSetting();
+    settingNoiseGateShow();
 }

@@ -273,7 +273,7 @@ form.popup label {
     color: var(--pri-text-color);
 }
 
-.compressor-settings label {
+.voice-settings label {
     font-weight: 400;
     color: var(--pri-text-color);
 }
