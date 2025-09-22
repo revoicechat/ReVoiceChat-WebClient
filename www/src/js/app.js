@@ -80,8 +80,9 @@ function saveUserSetting() {
     const settings = {
         voice: {
             self: voice.self,
-            usersSetting : voice.usersSetting,
-            compressorSetting : voice.compressorSetting,
+            usersSetting: voice.usersSetting,
+            compressorSetting: voice.compressorSetting,
+            noiseGateSetting: voice.noiseGateSetting,
         }
     }
 
@@ -90,6 +91,11 @@ function saveUserSetting() {
 
 function loadUserSetting() {
     const rawSettings = localStorage.getItem('userSettings');
+
+    const defaultSelf = {
+        mute: false,
+        volume: 1,
+    }
 
     const defaultCompressor = {
         enabled: true,
@@ -101,9 +107,10 @@ function loadUserSetting() {
         threshold: -50,
     }
 
-    const defaultSelf = {
-        mute: false,
-        volume: 1,
+    const defaultNoiseGate = {
+        attack: 0.01,
+        release: 0.2,
+        threshold: -40,
     }
 
     if (rawSettings) {
@@ -112,5 +119,6 @@ function loadUserSetting() {
         voice.self = settings.voice.self ? settings.voice.compressorSetting : defaultSelf;
         voice.usersSetting = settings.usersSetting ? settings.usersSetting : {};
         voice.compressorSetting = settings.voice.compressorSetting ? settings.voice.compressorSetting : defaultCompressor;
+        voice.noiseGateSetting = settings.voice.noiseGateSetting ? settings.voice.noiseGateSetting : defaultNoiseGate;
     }
 }
