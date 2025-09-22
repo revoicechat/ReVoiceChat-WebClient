@@ -134,6 +134,7 @@ async function voiceLeave() {
     // Clean everything else
     voice.gainNode = null;
     voice.compressorNode = null;
+    voice.noiseGateNode = null;
     voice.buffer = null;
     voice.buffer = [];
     voice.audioTimestamp = 0;
