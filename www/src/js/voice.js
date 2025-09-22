@@ -621,14 +621,7 @@ function voiceControlSelfMute(updateState = true) {
 }
 
 // <user> call this to change his volume
-function voiceControlSelfVolume(volume, updateState = true) {
-    if (updateState) {
-        voice.selfVolume = volume;
-    } else {
-        document.getElementById('voice-self-volume').value = voice.selfVolume;
-    }
-
-    document.getElementById('voice-self-volume').title = parseInt(voice.selfVolume * 100) + "%";
+function voiceUpdateSelfVolume() {
     if (voice.gainNode) {
         voice.gainNode.gain.setValueAtTime(voice.selfVolume, voice.audioContext.currentTime);
     }

@@ -12,8 +12,9 @@ function settingLoad() {
     document.getElementById("setting-user-uuid").innerText = global.user.id;
     document.getElementById("setting-user-name").value = global.user.displayName;
     document.getElementById("setting-user-theme").value = localStorage.getItem("Theme");
-    settingCompressorShow();
+    settingVolumeShow();
     settingNoiseGateShow();
+    settingCompressorShow();
     selectSettingItem("overview");
 }
 
@@ -83,6 +84,22 @@ function settingPassword() {
 
         }
     });
+}
+
+function settingVolumeDirectShow(element) {
+    document.getElementById('volume-label').innerText = `Volume ${parseInt(element.value * 100)}%`;
+}
+
+function settingVolumeShow() {
+    document.getElementById('volume-label').innerText = `Volume ${parseInt(voice.selfVolume * 100)}%`;
+    document.getElementById('volume-input').value = voice.selfVolume;
+}
+
+function settingVolumeUpdate(data) {
+    voice.selfVolume = parseFloat(data.value)
+    saveUserSetting();
+    settingVolumeShow();
+    voiceUpdateSelfVolume();
 }
 
 function settingCompressorDirectShow(param, element) {
@@ -198,7 +215,7 @@ function settingNoiseGateDirectShow(param, element) {
                 document.getElementById('noise-gate-threshold-label').innerText = `Threshold : ${element.value}dB`;
             }
             else {
-                document.getElementById('noise-gate-threshold-label').innerText = `Sensitivity : ${element.value}dB`;
+                document.getElementById('noise-gate-threshold-label').innerText = `Sensitivity ${element.value}dB`;
             }
             break;
         }
@@ -221,7 +238,7 @@ function settingNoiseGateShow() {
         document.getElementById('noise-gate-threshold-label').innerText = `Threshold : ${voice.noiseGateSetting.threshold}dB`;
     }
     else {
-        document.getElementById('noise-gate-threshold-label').innerText = `Sensitivity : ${voice.noiseGateSetting.threshold}dB`;
+        document.getElementById('noise-gate-threshold-label').innerText = `Sensitivity ${voice.noiseGateSetting.threshold}dB`;
     }
 }
 
@@ -264,7 +281,7 @@ function settingVoiceMode() {
     else {
         button.innerText = "Advanced";
         document.getElementById('voice-sensitivity').innerText = "Voice detection";
-        document.getElementById('noise-gate-threshold-label').innerText = `Sensitivity : ${voice.noiseGateSetting.threshold}dB`;
+        document.getElementById('noise-gate-threshold-label').innerText = `Sensitivity ${voice.noiseGateSetting.threshold}dB`;
     }
 
     const toggleable = document.getElementsByClassName('voice-toggleable');

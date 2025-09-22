@@ -97,10 +97,6 @@
                             <revoice-icon-microphone></revoice-icon-microphone>
                         </button>
                     </div>
-                    <div class="voice-control">
-                        <input id="voice-self-volume" type="range" min="0" max="2" value="1" step="0.01"
-                            oninput="voiceControlSelfVolume(this.value)" onchange="saveUserSetting()" title="100%" />
-                    </div>
                 </div>
             </div>
 
@@ -258,10 +254,18 @@
                         Themes
                     </button>
 
-                    <!-- Voice -->
-                    <button class="sub-category" id="setting-tab-voice" onclick="selectSettingItem('voice')">
+                    <!-- Input -->
+                    <button class="sub-category" id="setting-tab-audio-input"
+                        onclick="selectSettingItem('audio-input')">
+                        <revoice-icon-microphone></revoice-icon-microphone>
+                        Audio input
+                    </button>
+
+                    <!-- Output -->
+                    <button class="sub-category" id="setting-tab-audio-output"
+                        onclick="selectSettingItem('audio-output')">
                         <revoice-icon-speaker></revoice-icon-speaker>
-                        Voice
+                        Audio output
                     </button>
                 </div>
 
@@ -302,16 +306,17 @@
                     </form>
                 </div>
 
-                <!-- Voice -->
-                <div class="hidden" id="setting-content-voice">
-                    <h1>Voice</h1>
+                <!-- Audio input -->
+                <div class="hidden" id="setting-content-audio-input">
+                    <h1>Audio input</h1>
 
-                    <div class="config-buttons">
-                        <button class="config-button" type="button" id="voice-mode"
-                            onclick="settingVoiceMode()">Advanced</button>
-                    </div>
+                    <h2>Volume</h2>
 
-                    <p>Effects are only applied when you join a room</p>
+                    <form class="voice-settings">
+                        <label for="volume-attack" id="volume-label">[VOLUME]</label>
+                        <input type="range" id="volume-input" min="0" max="2" step="0.01"
+                            onchange="settingVolumeUpdate(this)" oninput="settingVolumeDirectShow(this)">
+                    </form>
 
                     <h2 id="voice-sensitivity">Voice detection</h2>
 
@@ -372,6 +377,16 @@
                                 onclick="settingCompressorEnabled()">Enabled</button>
                         </div>
                     </form>
+
+                    <div class="config-buttons">
+                        <button class="config-button" type="button" id="voice-mode"
+                            onclick="settingVoiceMode()">Advanced</button>
+                    </div>
+                </div>
+
+                <!-- Audio output -->
+                <div class="hidden" id="setting-content-audio-output">
+                    <h1>Audio output</h1>
 
                 </div>
 
