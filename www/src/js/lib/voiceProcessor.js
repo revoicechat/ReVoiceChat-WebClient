@@ -13,8 +13,8 @@ class NoiseGate extends AudioWorkletProcessor {
     static get parameterDescriptors() {
         return [
             { name: 'threshold', defaultValue: -50 }, // dB
-            { name: 'attack', defaultValue: 0.05 },   // seconds
-            { name: 'release', defaultValue: 0.2 }    // seconds
+            { name: 'attack', defaultValue: 0.01 },   // seconds
+            { name: 'release', defaultValue: 0.4 }    // seconds
         ];
     }
 
@@ -24,7 +24,7 @@ class NoiseGate extends AudioWorkletProcessor {
         this.open = false;
         this.sampleRate = sampleRate;
         this.smoothRms = 0;
-        this.gateFloor = this.dBToLinear(-80);
+        this.gateFloor = this.dBToLinear(-100);
         this.smoothing = 0.9;
     }
 
@@ -32,16 +32,12 @@ class NoiseGate extends AudioWorkletProcessor {
         return Math.pow(10, db / 20);
     }
 
-    clamp(value, min, max) {
-        return Math.min(Math.max(value, min), max);
-    };
-
     process(inputs, outputs, parameters) {
         const input = inputs[0][0]; // mono
         const output = outputs[0][0]; // mono
         const threshold = this.dBToLinear(parameters.threshold[0]);
-        const attackCoeff = Math.exp(-1 / (parameters.attack[0] * this.sampleRate));
-        const releaseCoeff = Math.exp(-1 / (parameters.release[0] * this.sampleRate));
+        const attackCoeff = Math.exp(-1 / (parameters.attack[0] * this.sampleRate / 1000));
+        const releaseCoeff = Math.exp(-1 / (parameters.release[0] * this.sampleRate / 1000));
 
         if (!input || input.length === 0) {
             return false;
@@ -54,28 +50,25 @@ class NoiseGate extends AudioWorkletProcessor {
         }
         const rms = Math.sqrt(sum / input.length);
 
-        this.smoothRms = this.smoothRms * this.smoothing + rms * (1 - this.smoothing);
+        this.smoothRms = (this.smoothRms ** 2) + (rms * (1 - this.smoothing));
 
         // Gate logic
         if (this.smoothRms > threshold) {
             // Gate open
-            this.gain += (1 - this.gain) * attackCoeff;
+            this.gain = 1 - (1 - this.gain) * attackCoeff;
         } else {
             // Gate close
-            this.gain += (0 - this.gain) * releaseCoeff;
-        }
+            this.gain = this.gain * releaseCoeff;
 
-        // Clamp gain between gateFloor and 0dB
-        this.gain = this.clamp(this.gain, this.gateFloor, 1);
+            if (this.gain <= this.gateFloor) {
+                this.gain = this.gateFloor;
+            }
+        }
 
         // Apply gain
         for (let i = 0; i < input.length; i++) {
             output[i] = input[i] * this.gain;
         }
-
-        console.log("RMS : ", rms, " | SRMS : ", this.smoothRms)
-        console.log("attackCoeff : ", attackCoeff, " | releaseCoeff : ", releaseCoeff)
-        console.log("gain : ", this.gain)
 
         return true;
     }
