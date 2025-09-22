@@ -3,7 +3,7 @@ const voice = {
     encoder: null,
     socket: null,
     buffer: [],
-    bufferMaxLength: 960, // 48,000 samples / sec × 0.020 sec = 960 samples
+    bufferMaxLength: 960, // 48000Hz × 0.020 sec = 960 samples
     sampleRate: 48000,
     bitrate: 64000,
     frameDuration: 20000,
@@ -19,19 +19,19 @@ const voice = {
     gainNode: null,
     compressorNode: null,
     compressorSetting: {
-        enabled: true,
-        attack: 0,
-        knee: 40,
-        ratio: 12,
-        reduction: 0,
-        release: 0.25,
-        threshold: -50,
+        enabled: null,
+        attack: null,
+        knee: null,
+        ratio: null,
+        reduction: null,
+        release: null,
+        threshold: null,
     },
     noiseGateNode: null,
     noiseGateSetting: {
-        attack: 0.01,
-        release: 0.2,
-        threshold: -40,
+        attack: null,
+        release: null,
+        threshold: null,
     },
 }
 
