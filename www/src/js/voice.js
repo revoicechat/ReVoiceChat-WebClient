@@ -218,7 +218,7 @@ async function voiceEncodeAndTransmit() {
 
     // Create Gain node
     voice.gainNode = voice.audioContext.createGain();
-    voice.gainNode.gain.setValueAtTime(document.getElementById('voice-self-volume').value, voice.audioContext.currentTime)
+    voice.gainNode.gain.setValueAtTime(voice.self.volume, voice.audioContext.currentTime);
 
     // Create AudioCollector
     voice.audioCollector = new AudioWorkletNode(voice.audioContext, "AudioCollector");
