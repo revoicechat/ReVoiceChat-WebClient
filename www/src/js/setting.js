@@ -5,6 +5,7 @@ const currentSetting = {
         newPassword: '',
         confirmPassword: '',
     },
+    voiceAdvanced: false,
 }
 
 function settingLoad() {
@@ -237,4 +238,26 @@ function settingNoiseGateDefault() {
     }
     saveUserSetting();
     settingNoiseGateShow();
+}
+
+function settingVoiceMode() {
+    currentSetting.voiceAdvanced = !currentSetting.voiceAdvanced;
+
+    const button = document.getElementById("voice-mode");
+    if (currentSetting.voiceAdvanced) {
+        button.innerText = "Simple";
+    }
+    else {
+        button.innerText = "Advanced";
+    }
+
+    const toggleable = document.getElementsByClassName('voice-toggleable');
+    for(element of toggleable){
+        if (currentSetting.voiceAdvanced) {
+            element.classList.remove('hidden');
+        }
+        else {
+            element.classList.add('hidden');
+        }
+    }
 }
