@@ -193,9 +193,15 @@ function settingNoiseGateDirectShow(param, element) {
         case 'release':
             document.getElementById('noise-gate-release-label').innerText = `Release : ${element.value * 1000}ms`;
             break;
-        case 'threshold':
-            document.getElementById('noise-gate-threshold-label').innerText = `Threshold : ${element.value}dB`;
+        case 'threshold': {
+            if (currentSetting.voiceAdvanced) {
+                document.getElementById('noise-gate-threshold-label').innerText = `Threshold : ${element.value}dB`;
+            }
+            else {
+                document.getElementById('noise-gate-threshold-label').innerText = `Sensitivity : ${element.value}dB`;
+            }
             break;
+        }
     }
 }
 
@@ -210,7 +216,13 @@ function settingNoiseGateShow() {
 
     document.getElementById('noise-gate-threshold').value = voice.noiseGateSetting.threshold;
     document.getElementById('noise-gate-threshold').title = voice.noiseGateSetting.threshold + "dB";
-    document.getElementById('noise-gate-threshold-label').innerText = `Threshold : ${voice.noiseGateSetting.threshold}dB`;
+
+    if (currentSetting.voiceAdvanced) {
+        document.getElementById('noise-gate-threshold-label').innerText = `Threshold : ${voice.noiseGateSetting.threshold}dB`;
+    }
+    else {
+        document.getElementById('noise-gate-threshold-label').innerText = `Sensitivity : ${voice.noiseGateSetting.threshold}dB`;
+    }
 }
 
 function settingNoiseGateUpdate(param, data) {
@@ -247,14 +259,16 @@ function settingVoiceMode() {
     if (currentSetting.voiceAdvanced) {
         button.innerText = "Simple";
         document.getElementById('voice-sensitivity').innerText = "Noise gate";
+        document.getElementById('noise-gate-threshold-label').innerText = `Threshold : ${voice.noiseGateSetting.threshold}dB`;
     }
     else {
         button.innerText = "Advanced";
-        document.getElementById('voice-sensitivity').innerText = "Voice detection sensitivity";
+        document.getElementById('voice-sensitivity').innerText = "Voice detection";
+        document.getElementById('noise-gate-threshold-label').innerText = `Sensitivity : ${voice.noiseGateSetting.threshold}dB`;
     }
 
     const toggleable = document.getElementsByClassName('voice-toggleable');
-    for(element of toggleable){
+    for (element of toggleable) {
         if (currentSetting.voiceAdvanced) {
             element.classList.remove('hidden');
         }
