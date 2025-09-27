@@ -36,6 +36,8 @@ async function getServerUsers(serverId) {
         const userList = document.getElementById("user-list");
         userList.innerHTML = "";
 
+        let tempList = [];
+
         for (const user of sortedByStatus) {
             tempList.push(user.id);
         }
