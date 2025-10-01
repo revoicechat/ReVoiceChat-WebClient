@@ -1,7 +1,4 @@
 class ThemePreviewComponent extends HTMLElement {
-  constructor() {
-    super();
-  }
 
   connectedCallback() {
     const dataTheme = this.getAttribute("theme")
@@ -161,3 +158,48 @@ class ThemePreviewComponent extends HTMLElement {
 }
 
 customElements.define('revoice-theme-preview', ThemePreviewComponent);
+
+function getDataThemesFromDOM() {
+  return Array.from(new Set(
+      Array.from(document.querySelectorAll('[data-theme]'))
+          .map(el => el.getAttribute('data-theme') || "")
+          .flatMap(v => v.split(/\s+/))
+          .filter(Boolean)
+  ));
+}
+
+function getDataThemesFromStylesheets() {
+  const themes = new Set();
+  const regex = /\[data-theme\s*=\s*["']?([^"'\]]+)["']?]/g;
+
+  for (const sheet of document.styleSheets) {
+    let rules;
+    try {
+      rules = sheet.cssRules;
+    } catch {
+      continue; // skip cross-origin
+    }
+    if (!rules) continue;
+
+    const checkRules = (ruleList) => {
+      for (const rule of ruleList) {
+        if (rule.selectorText) {
+          let match;
+          while ((match = regex.exec(rule.selectorText)) !== null) {
+            themes.add(match[1]);
+          }
+        }
+        if (rule.cssRules) checkRules(rule.cssRules); // handle nested @media
+      }
+    };
+    checkRules(rules);
+  }
+  return Array.from(themes);
+}
+
+function getAllDeclaredDataThemes() {
+  return Array.from(new Set([
+    ...getDataThemesFromDOM(),
+    ...getDataThemesFromStylesheets()
+  ]));
+}

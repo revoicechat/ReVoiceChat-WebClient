@@ -13,8 +13,8 @@ let newProfilPictureFile = null;
 function settingLoad() {
     document.getElementById("setting-user-uuid").innerText = global.user.id;
     document.getElementById("setting-user-name").value = global.user.displayName;
-    document.querySelector(`revoice-theme-preview[theme="${localStorage.getItem("Theme")}"]`).parentElement.disabled = true;
     document.getElementById("setting-user-picture").src = `${global.url.media}/profiles/${global.user.id}`;
+    settingThemeShow();
     settingVolumeShow();
     settingNoiseGateShow();
     settingCompressorShow();
@@ -34,6 +34,17 @@ function settingLoad() {
         }
     });
 
+}
+
+function settingThemeShow() {
+    const themeForm = document.getElementById("setting-themes-form");
+    let html = "";
+    getAllDeclaredDataThemes().forEach(theme => html += `
+        <button type="button" onclick="changeTheme('${theme}')">
+            <revoice-theme-preview theme="${theme}"></revoice-theme-preview>
+        </button>`);
+    themeForm.innerHTML = html;
+    document.querySelector(`revoice-theme-preview[theme="${localStorage.getItem("Theme")}"]`).parentElement.disabled = true;
 }
 
 function selectSettingItem(name) {

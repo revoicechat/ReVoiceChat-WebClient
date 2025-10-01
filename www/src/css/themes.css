@@ -57,6 +57,35 @@
 
 }
 
+*[data-theme="light"] {
+    /* Background */
+    --pri-bg-color: #fbfbfb;
+    --sec-bg-color: #fbfbfb;
+    --ter-bg-color: #ffffff;
+    --qua-bg-color: #fbfbfb;
+
+    /* Border */
+    --pri-bd-color: #c4d0e3;
+    --sec-bd-color: #c4d0e3;
+
+    /* Text */
+    --pri-text-color: black;
+    --pri-placeholder-color: black;
+
+    /* Active */
+    --pri-active-color: #dddde0;
+
+    /* Hover */
+    --pri-hover-color: #e7e7e9;
+    --sec-hover-color: #e7e7e9;
+
+    /* Button */
+    --pri-button-bg-color: #5865f2;
+    --sec-button-bg-color: #b91c1c;
+    --pri-button-hover-color: #4452bb;
+    --sec-button-hover-color: #ff999c;
+}
+
 *[data-theme="femboy"] {
     /* Background */
     --pri-bg-color: #c4d0e3;
@@ -70,7 +99,7 @@
 
     /* Text */
     --pri-text-color: black;
-    --pri-placeholder-color: black;
+    --pri-placeholder-color: #878890;
 
     /* Active */
     --pri-active-color: #facec2;

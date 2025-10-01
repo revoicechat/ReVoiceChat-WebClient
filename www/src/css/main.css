@@ -1027,9 +1027,8 @@ textarea.config-item {
 
 .theme-form {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     flex-wrap: wrap;
-    width: max-content;
 }
 
 .theme-form button {
