@@ -577,6 +577,10 @@ svg {
     font-size: 1.25rem;
 }
 
+.config-right {
+    max-width: 45rem;
+}
+
 .config-right h2 {
     margin-top: 1rem;
     margin-bottom: 1rem;
