@@ -6,7 +6,7 @@ class MessageComponent extends HTMLElement {
   }
 
   static get observedAttributes() {
-    return ['markdown', 'theme'];
+    return ['markdown', 'theme', 'data-theme'];
   }
 
   /** generate the data in slot */
@@ -20,8 +20,8 @@ class MessageComponent extends HTMLElement {
     if (name === 'markdown' && oldValue !== newValue) {
       this.markdown = newValue || '';
       this.#render();
-    } else if (name === 'theme' && oldValue !== newValue) {
-      this.#updateTheme(newValue);
+    } else if ((name === 'theme' || name === 'data-theme') && oldValue !== newValue) {
+      this.#updateTheme();
     }
   }
 
@@ -29,7 +29,7 @@ class MessageComponent extends HTMLElement {
     // Create the shadow DOM structure
     this.shadowRoot.innerHTML = `
                     <style>
-                        @import url("https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.11.1/build/styles/github-dark-dimmed.min.css");
+                        /*@import url("https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.11.1/build/styles/github-dark-dimmed.min.css");*/
 
                         :host {
                             display: block;
@@ -134,6 +134,7 @@ class MessageComponent extends HTMLElement {
                         <slot name="content" style="display: none;"></slot>
                     </div>
                 `;
+    this.#updateTheme()
 
     // Listen for slotchange events
     this.shadowRoot.addEventListener('slotchange', (e) => {
@@ -160,9 +161,15 @@ class MessageComponent extends HTMLElement {
     this.shadowRoot.querySelector('.container').className = 'container';
   }
 
-  #updateTheme(theme) {
-    // Could be extended to support different themes
+  #updateTheme() {
+    let theme = getComputedStyle(this).getPropertyValue("--hljs-theme").trim();
+    theme = theme.substring(1, theme.length -1)
     console.log('Theme updated to:', theme);
+    const link = document.createElement("link");
+    link.id = "highlightjs-theme";
+    link.rel = "stylesheet";
+    link.href = theme;
+    this.shadowRoot.appendChild(link);
   }
 
   #render() {

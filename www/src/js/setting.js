@@ -60,6 +60,7 @@ function selectSettingItem(name) {
 
 function changeTheme(theme) {
     localStorage.setItem("Theme", theme);
+    document.querySelectorAll("revoice-message").forEach(elt => elt.setAttribute("data-theme", theme));
     document.documentElement.setAttribute("data-theme", theme);
     document.querySelectorAll(`revoice-theme-preview`).forEach(elt => {
         elt.parentElement.disabled = false

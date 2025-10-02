@@ -27,6 +27,9 @@
     --sec-button-bg-color: #b91c1c;
     --sec-button-hover-color: #ff999c;
     --sec-button-bg-text-color: var(--pri-text-color);
+
+    /* hljs */
+    --hljs-theme: 'src/css/highlightjs/dark.css';
 }
 
 *[data-theme="darker"] {
@@ -58,6 +61,9 @@
     --sec-button-bg-color: #b91c1c;
     --sec-button-hover-color: #2c2c30;
     --sec-button-bg-text-color: var(--pri-text-color);
+
+    /* hljs */
+    --hljs-theme: 'src/css/highlightjs/darker.css';
 }
 
 *[data-theme="light"] {
@@ -89,6 +95,9 @@
     --sec-button-bg-color: #b91c1c;
     --sec-button-hover-color: #ff999c;
     --sec-button-bg-text-color: #ffffff;
+
+    /* hljs */
+    --hljs-theme: 'src/css/highlightjs/light.css';
 }
 
 *[data-theme="femboy"] {
@@ -120,6 +129,9 @@
     --sec-button-bg-color: #b91c1c;
     --sec-button-hover-color: #ff999c;
     --sec-button-bg-text-color: var(--pri-text-color);
+
+    /* hljs */
+    --hljs-theme: 'src/css/highlightjs/femboy.css';
 }
 
 body {
@@ -353,4 +365,10 @@ textarea.config-item:hover {
 
 .swalCancel {
     background-color: var(--sec-button-bg-color);
+}
+
+@media screen and (max-width: 600px) {
+    .room-control-container {
+        background-color: var(--ter-bg-color);
+    }
 }

@@ -1043,7 +1043,7 @@ textarea.config-item {
     background-color: var(--pri-button-hover-color);
 }
 
-@media screen and (max-width: 80rem) {
+@media screen and (max-width: 600px) {
     body {
         overflow: auto;
     }
@@ -1082,7 +1082,7 @@ textarea.config-item {
     .room-content {
         overflow-y: clip;
         background-color: var(--sec-bg-color);
-        padding-top: 275px;
+        padding-top: 150px;
         padding-bottom: 75px;
     }
 
@@ -1096,5 +1096,18 @@ textarea.config-item {
         position: fixed;
         width: -webkit-fill-available;
         bottom: 0;
+        margin-left: 60px;
+        margin-right: 60px;
+        background-color: var(--ter-bg-color);
+    }
+
+    .status-container {
+        position: fixed;
+        width: -webkit-fill-available;
+        bottom: 0;
+    }
+
+    .sidebar-room-container {
+        max-height: 150px;
     }
 }
