@@ -116,7 +116,10 @@ async function editMessage(id) {
     const result = await fetchCoreAPI(`/message/${id}`, 'GET');
 
     if (result) {
-        document.getElementById('text-input').value = result.text;
+        const textarea = document.getElementById("text-input");
+        textarea.value = result.text;
+        textarea.style.height = "auto";
+        textarea.style.height = textarea.scrollHeight + "px";
         global.chat.mode = "edit";
         global.chat.editId = id;
         document.getElementById("text-input").focus();
