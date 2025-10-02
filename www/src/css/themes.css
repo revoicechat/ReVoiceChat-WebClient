@@ -21,10 +21,12 @@
     --sec-hover-color: #43434d;
 
     /* Button */
-    --pri-button-bg-color: #6366f1;
+    --pri-button-bg-color: #5865f2;
+    --pri-button-hover-color: #4452bb;
+    --pri-button-bg-text-color: var(--pri-text-color);
     --sec-button-bg-color: #b91c1c;
-    --pri-button-hover-color: #4042a1;
-    --sec-button-hover-color: #2c2c30;
+    --sec-button-hover-color: #ff999c;
+    --sec-button-bg-text-color: var(--pri-text-color);
 }
 
 *[data-theme="darker"] {
@@ -51,21 +53,22 @@
 
     /* Button */
     --pri-button-bg-color: #242427;
-    --sec-button-bg-color: #b91c1c;
     --pri-button-hover-color: #43434d;
+    --pri-button-bg-text-color: var(--pri-text-color);
+    --sec-button-bg-color: #b91c1c;
     --sec-button-hover-color: #2c2c30;
-
+    --sec-button-bg-text-color: var(--pri-text-color);
 }
 
 *[data-theme="light"] {
     /* Background */
-    --pri-bg-color: #f6f6f6;
-    --sec-bg-color: #fdfdfd;
-    --ter-bg-color: #f7f7f5;
-    --qua-bg-color: #e5e3d9;
+    --pri-bg-color: #f2f2f2;
+    --sec-bg-color: #ffffff;
+    --ter-bg-color: #f1f8ff;
+    --qua-bg-color: #dadada;
 
     /* Border */
-    --pri-bd-color: #707172;
+    --pri-bd-color: rgb(224, 224, 224);
     --sec-bd-color: #3c3c3d;
 
     /* Text */
@@ -73,17 +76,19 @@
     --pri-placeholder-color: black;
 
     /* Active */
-    --pri-active-color: #edece6;
+    --pri-active-color: #ffffff;
 
     /* Hover */
-    --pri-hover-color: #e3e1d7;
+    --pri-hover-color: #dadada;
     --sec-hover-color: #e8e6de;
 
     /* Button */
     --pri-button-bg-color: #5865f2;
-    --sec-button-bg-color: #b91c1c;
     --pri-button-hover-color: #4452bb;
+    --pri-button-bg-text-color: #ffffff;
+    --sec-button-bg-color: #b91c1c;
     --sec-button-hover-color: #ff999c;
+    --sec-button-bg-text-color: #ffffff;
 }
 
 *[data-theme="femboy"] {
@@ -110,9 +115,11 @@
 
     /* Button */
     --pri-button-bg-color: #facec2;
-    --sec-button-bg-color: #b91c1c;
     --pri-button-hover-color: #ff999c;
+    --pri-button-bg-text-color: var(--pri-text-color);
+    --sec-button-bg-color: #b91c1c;
     --sec-button-hover-color: #ff999c;
+    --sec-button-bg-text-color: var(--pri-text-color);
 }
 
 body {
@@ -318,6 +325,7 @@ form.popup label {
 
 .config-right button {
     background-color: var(--pri-button-bg-color);
+    color: var(--pri-button-bg-text-color);
 }
 
 .config-right button:hover {

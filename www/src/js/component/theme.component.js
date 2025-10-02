@@ -12,7 +12,6 @@ class ThemePreviewComponent extends HTMLElement {
             flex-direction: column;
             align-items: center;
             justify-content: space-evenly;
-            color: var(--pri-text-color);
         }
 
         .data-theme-container {
