@@ -59,25 +59,25 @@
 
 *[data-theme="light"] {
     /* Background */
-    --pri-bg-color: #fbfbfb;
-    --sec-bg-color: #fbfbfb;
-    --ter-bg-color: #ffffff;
-    --qua-bg-color: #fbfbfb;
+    --pri-bg-color: #f6f6f6;
+    --sec-bg-color: #fdfdfd;
+    --ter-bg-color: #f7f7f5;
+    --qua-bg-color: #e5e3d9;
 
     /* Border */
-    --pri-bd-color: #c4d0e3;
-    --sec-bd-color: #c4d0e3;
+    --pri-bd-color: #707172;
+    --sec-bd-color: #3c3c3d;
 
     /* Text */
     --pri-text-color: black;
     --pri-placeholder-color: black;
 
     /* Active */
-    --pri-active-color: #dddde0;
+    --pri-active-color: #edece6;
 
     /* Hover */
-    --pri-hover-color: #e7e7e9;
-    --sec-hover-color: #e7e7e9;
+    --pri-hover-color: #e3e1d7;
+    --sec-hover-color: #e8e6de;
 
     /* Button */
     --pri-button-bg-color: #5865f2;
