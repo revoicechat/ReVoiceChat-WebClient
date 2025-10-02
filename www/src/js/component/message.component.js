@@ -182,6 +182,7 @@ class MessageComponent extends HTMLElement {
       return;
     }
     try {
+      this.#setupMarked()
       this.#hideSlots();
       contentDiv.innerHTML = this.#injectEmojis(marked.parse(this.#removeTags(this.markdown)));
       this.#renderCodeTemplate(contentDiv);
@@ -212,6 +213,31 @@ class MessageComponent extends HTMLElement {
       } else {
         return `:${emoji}:`
       }
+    });
+  }
+
+  #setupMarked() {
+    var renderer = new marked.Renderer();
+    renderer.heading = function ({tokens: e, depth: t}) {
+      const text = this.parser.parse(e);
+      const DIV = document.createElement('div');
+      DIV.innerHTML = text
+      const p = DIV.children.item(0)
+      p.innerHTML = '#'.repeat(t) + " " + p.innerHTML;
+      return p.innerHTML;
+    }
+    renderer.link = function ({href:e, title:t, tokens:n}) {
+      // Allow only http(s), www, or IP-style links
+      if (/^(https?:\/\/|www\.|(\d{1,3}\.){3}\d{1,3})/.test(e)) {
+        return `<a href="${e}" target="_blank" rel="noopener noreferrer">${e}</a>`;
+      }
+      return this.parser.parse(n);
+    }
+
+    marked.use({renderer})
+    marked.use({
+      breaks: true,
+      gfm: true
     });
   }
 }
