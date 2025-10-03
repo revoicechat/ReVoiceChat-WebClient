@@ -1,15 +1,3 @@
-class PencilIconComponent extends HTMLElement {
-    constructor() {
-        super()
-        this.innerHTML = `
-            <svg data-slot="icon" aria-hidden="true" fill="currentColor" viewBox="0 0 16 16">
-                <path clip-rule="evenodd"
-                    d="M11.013 2.513a1.75 1.75 0 0 1 2.475 2.474L6.226 12.25a2.751 2.751 0 0 1-.892.596l-2.047.848a.75.75 0 0 1-.98-.98l.848-2.047a2.75 2.75 0 0 1 .596-.892l7.262-7.261Z"
-                    fill-rule="evenodd"></path>
-            </svg>`
-    }
-}
-
 class TrashIconComponent extends HTMLElement {
     constructor() {
         super()
@@ -18,6 +6,18 @@ class TrashIconComponent extends HTMLElement {
                     <path clip-rule="evenodd"
                         d="M5 3.25V4H2.75a.75.75 0 0 0 0 1.5h.3l.815 8.15A1.5 1.5 0 0 0 5.357 15h5.285a1.5 1.5 0 0 0 1.493-1.35l.815-8.15h.3a.75.75 0 0 0 0-1.5H11v-.75A2.25 2.25 0 0 0 8.75 1h-1.5A2.25 2.25 0 0 0 5 3.25Zm2.25-.75a.75.75 0 0 0-.75.75V4h3v-.75a.75.75 0 0 0-.75-.75h-1.5ZM6.05 6a.75.75 0 0 1 .787.713l.275 5.5a.75.75 0 0 1-1.498.075l-.275-5.5A.75.75 0 0 1 6.05 6Zm3.9 0a.75.75 0 0 1 .712.787l-.275 5.5a.75.75 0 0 1-1.498-.075l.275-5.5a.75.75 0 0 1 .786-.711Z"
                         fill-rule="evenodd"></path>
+            </svg>`
+    }
+}
+
+class PencilIconComponent extends HTMLElement {
+    constructor() {
+        super()
+        this.innerHTML = `
+            <svg data-slot="icon" aria-hidden="true" fill="currentColor" viewBox="0 0 16 16">
+                <path clip-rule="evenodd"
+                    d="M11.013 2.513a1.75 1.75 0 0 1 2.475 2.474L6.226 12.25a2.751 2.751 0 0 1-.892.596l-2.047.848a.75.75 0 0 1-.98-.98l.848-2.047a2.75 2.75 0 0 1 .596-.892l7.262-7.261Z"
+                    fill-rule="evenodd"></path>
             </svg>`
     }
 }
@@ -249,6 +249,16 @@ class Compressor extends HTMLElement {
     }
 }
 
+class EmojiIconComponent extends HTMLElement {
+        constructor(){
+        super()
+        this.innerHTML = `
+            <svg data-slot="icon" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path clip-rule="evenodd" fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25Zm-2.625 6c-.54 0-.828.419-.936.634a1.96 1.96 0 0 0-.189.866c0 .298.059.605.189.866.108.215.395.634.936.634.54 0 .828-.419.936-.634.13-.26.189-.568.189-.866 0-.298-.059-.605-.189-.866-.108-.215-.395-.634-.936-.634Zm4.314.634c.108-.215.395-.634.936-.634.54 0 .828.419.936.634.13.26.189.568.189.866 0 .298-.059.605-.189.866-.108.215-.395.634-.936.634-.54 0-.828-.419-.936-.634a1.96 1.96 0 0 1-.189-.866c0-.298.059-.605.189-.866Zm2.023 6.828a.75.75 0 1 0-1.06-1.06 3.75 3.75 0 0 1-5.304 0 .75.75 0 0 0-1.06 1.06 5.25 5.25 0 0 0 7.424 0Z"></path>
+            </svg>`
+        }
+}
+
 customElements.define('revoice-icon-pencil', PencilIconComponent);
 customElements.define('revoice-icon-trash', TrashIconComponent);
 customElements.define('revoice-icon-chat-bubble', ChatBubbleIconComponent);
@@ -270,3 +280,4 @@ customElements.define('revoice-icon-arrow-in', ArrowPointingIn);
 customElements.define('revoice-icon-speaker', Speaker);
 customElements.define('revoice-icon-speaker-x', SpeakerX);
 customElements.define('revoice-icon-compressor', Compressor);
+customElements.define('revoice-icon-emoji', EmojiIconComponent);

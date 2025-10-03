@@ -271,12 +271,14 @@ svg {
 
 .text-control {
     flex: 1 1 0%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
 }
 
 .text-control input,
 .text-control textarea {
     width: 100%;
-    margin-top: 0.25rem;
     padding-left: 1rem;
     padding-right: 1rem;
     padding-top: 0.5rem;
@@ -1110,10 +1112,4 @@ textarea.config-item {
     .sidebar-room-container {
         max-height: 150px;
     }
-}
-
-.text-control {
-    display: flex;
-    flex-direction: row;
-    align-items: flex-start;
 }
