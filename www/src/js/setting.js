@@ -312,16 +312,18 @@ function settingNoiseGateUpdate(param, data) {
     }
 
     appSaveSettings();
+    voiceUpdateGate();
     settingNoiseGateShow();
 }
 
 function settingNoiseGateDefault() {
-    voice.noiseGateSetting = {
+    voice.settings.gate = {
         attack: 0.01,
         release: 0.4,
         threshold: -45,
     }
     appSaveSettings();
+    voiceUpdateGate();
     settingNoiseGateShow();
 }
 

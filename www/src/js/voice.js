@@ -192,12 +192,16 @@ function voiceUpdateUserControls(userId) {
                 break;
             }
 
+            if(!voice.settings.users[userId]){
+                voice.settings.users[userId] = {volume : 1, muted : false};
+            }
+
             // Add controls
             const INPUT_VOLUME = document.createElement('input');
             INPUT_VOLUME.type = "range";
             INPUT_VOLUME.className = "volume";
             INPUT_VOLUME.step = "0.01";
-            INPUT_VOLUME.value = 1; //voice.instance.getUserVolume();
+            INPUT_VOLUME.value = voice.settings.users[userId].volume;
             INPUT_VOLUME.min = "0";
             INPUT_VOLUME.max = "2";
             INPUT_VOLUME.title = INPUT_VOLUME.value * 100 + "%";
@@ -347,4 +351,10 @@ function voiceSaveSettings() {
     }
 
     appSaveSettings();
+}
+
+function voiceUpdateGate(){
+    if(voice.instance){
+        voice.instance.setGate(voice.settings.gate);
+    }
 }
