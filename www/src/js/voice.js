@@ -1,54 +1,6 @@
 const voice = {
+    instance: null,
     activeRoom: null,
-    encoder: null,
-    socket: null,
-    buffer: [],
-    bufferMaxLength: 960, // 48000Hz × 0.020 sec = 960 samples
-    sampleRate: 48000,
-    bitrate: 64000,
-    frameDuration: 20000,
-    audioTimestamp: 0,
-    users: {},
-    usersSetting: {},
-    audioContext: null,
-    audioCollector: null,
-    self:{
-        mute: false,
-        volume: 1,
-    },
-    gainNode: null,
-    compressorNode: null,
-    compressorSetting: {
-        enabled: null,
-        attack: null,
-        knee: null,
-        ratio: null,
-        reduction: null,
-        release: null,
-        threshold: null,
-    },
-    noiseGateNode: null,
-    noiseGateSetting: {
-        attack: null,
-        release: null,
-        threshold: null,
-    },
-}
-
-const voiceCodecConfig = {
-    codec: "opus",
-    sampleRate: voice.sampleRate,
-    numberOfChannels: 1,
-    bitrate: voice.bitrate,
-    bitrateMode: "variable",
-    opus: {
-        application: "voip",
-        complexity: 9,
-        signal: "voice",
-        usedtx: true,
-        frameDuration: voice.frameDuration, //20ms
-        useinbanddec: true,
-    },
 }
 
 // <user> call this to join a call in a room
@@ -61,41 +13,27 @@ async function voiceJoin(roomId) {
     voice.activeRoom = roomId;
 
     try {
-        // Init WebSocket
-        voice.socket = new WebSocket(`${global.url.voice}/${roomId}?token=${global.jwtToken}`);
-        voice.socket.binaryType = "arraybuffer";
-
-        // Setup encoder and transmitter
-        await voiceEncodeAndTransmit();
-
-        // Setup receiver and decoder
-        voice.socket.onmessage = voiceReceiveAndDecode;
-
+        voice.instance = new VoiceCall();
+        await voice.instance.open(global.url.voice, roomId, global.jwtToken);
+        
         // Update users in room
         await voiceUpdateJoinedUsers();
 
         // Update self
         voiceUpdateSelf();
 
-        // Socket states
-        voice.socket.onopen = () => console.debug('VOICE : WebSocket open');
-        voice.socket.onclose = () => console.debug('VOICE : WebSocket closed');
-        voice.socket.onerror = (e) => console.error('VOICE : WebSocket error:', e);
-
-        console.info("VOICE : Room joined");
+        // Update counter
         await voiceUsersCountUpdate(roomId);
 
         let audio = new Audio('src/audio/userConnectedMale.mp3');
         audio.volume = 0.25;
         audio.play();
+
+        console.debug("VOICE : Room joined");
     }
     catch (error) {
         console.error(error);
-
         voice.activeRoom = null;
-        if (voice.socket !== null) {
-            voice.socket.close();
-        }
     }
 }
 
@@ -103,49 +41,9 @@ async function voiceJoin(roomId) {
 async function voiceLeave() {
     console.info(`VOICE : Leaving voice chat ${voice.activeRoom}`);
 
-    // Close WebSocket
-    if (voice.socket !== null) {
-        voice.socket.close();
-        voice.socket = null;
-    }
-
-    // Flush and close all decoders
-    for (const [, user] of Object.entries(voice.users)) {
-        if (user?.decoder) {
-            await user.decoder.flush();
-            await user.decoder.close();
-        }
-    }
-    console.debug("VOICE : All users decoder flushed and closed");
-
-    // Close self encoder
-    if (voice.encoder) {
-        voice.encoder.close();
-        voice.encoder = null;
-        console.debug("VOICE : Encoder closed");
-    }
-
+    voice.instance.close();
     await voiceUpdateJoinedUsers();
     await voiceUsersCountUpdate(voice.activeRoom);
-
-    // Close audioContext
-    if (voice.audioContext) {
-        voice.audioContext.close();
-        voice.audioContext = null;
-        console.debug("VOICE : AudioContext closed");
-    }
-
-    // Clean everything else
-    voice.gainNode = null;
-    voice.compressorNode = null;
-    voice.noiseGateNode = null;
-    voice.buffer = null;
-    voice.buffer = [];
-    voice.audioTimestamp = 0;
-    voice.activeRoom = null;
-    voice.users = {};
-    voice.audioCollector = null;
-
     voiceUpdateSelf();
 
     // Play leave audio
@@ -163,8 +61,8 @@ async function voiceUserJoining(data) {
     voiceContent.appendChild(voiceCreateUserHTML(userData));
 
     // User joining this is NOT self and current user is connected to voice room
-    if (userData.id !== global.user.id && voice.socket !== null && voice.socket.readyState === WebSocket.OPEN) {
-        await voiceCreateUserDecoder(userData.id);
+    if (userData.id !== global.user.id && voice.instance !== null && voice.instance.getState() === VoiceCall.OPEN) {
+        voice.instance.addUser(userData.id);
         voiceUpdateUserControls(userData.id);
 
         let audio = new Audio('src/audio/userJoinMale.mp3');
@@ -183,210 +81,12 @@ async function voiceUserLeaving(data) {
     document.getElementById(`voice-${userId}`).remove();
 
     // User leaving is NOT self
-    if (userId !== global.user.id && voice.socket !== null && voice.socket.readyState === WebSocket.OPEN) {
-        const user = voice.users[userId];
-        await user.decoder.flush();
-        await user.decoder.close();
-        voice.users[userId] = null;
+    if (userId !== global.user.id && voice.instance !== null && voice.instance.state === VoiceCall.OPEN) {
+        voice.instance.removeUser(userId);
 
         let audio = new Audio('src/audio/userLeftMale.mp3');
         audio.volume = 0.25;
         audio.play();
-    }
-}
-
-// <voiceJoin> call this to setup encoder and transmiter of audio packet
-async function voiceEncodeAndTransmit() {
-    const supported = await AudioEncoder.isConfigSupported(voiceCodecConfig);
-    if (!supported.supported) {
-        throw new Error("Codec not supported (Encoder)");
-    }
-
-    // Setup Encoder
-    voice.encoder = new AudioEncoder({
-        output: encoderCallback,
-        error: (error) => { throw Error(`Error during encoder setup:\n${error}\nCurrent codec :${voiceCodecConfig}`) },
-    });
-
-    voice.encoder.configure(voiceCodecConfig)
-
-    // Init AudioContext
-    voice.audioContext = new AudioContext({ sampleRate: voice.sampleRate });
-    await voice.audioContext.audioWorklet.addModule('src/js/lib/voiceProcessor.js');
-
-    // Init Mic capture
-    const micSource = voice.audioContext.createMediaStreamSource(await navigator.mediaDevices.getUserMedia({ audio: true }));
-
-    // Create Gain node
-    voice.gainNode = voice.audioContext.createGain();
-    voice.gainNode.gain.setValueAtTime(voice.self.volume, voice.audioContext.currentTime);
-
-    // Create AudioCollector
-    voice.audioCollector = new AudioWorkletNode(voice.audioContext, "AudioCollector");
-    micSource.connect(voice.gainNode); // connect mic to gain
-
-    // Create NoiseGate
-    voice.noiseGateNode = new AudioWorkletNode(voice.audioContext, "NoiseGate", {
-        parameterData: {
-            threshold: voice.noiseGateSetting.threshold,
-            attack: voice.noiseGateSetting.attack,
-            release: voice.noiseGateSetting.release
-        }
-    });
-    voice.gainNode.connect(voice.noiseGateNode) // connect gain to noise gate
-
-    // Connect compressor node
-    if (voice.compressorSetting.enabled) {
-        // Create voice.compressorNode Node with default value (not connected by default)
-        voice.compressorNode = voice.audioContext.createDynamicsCompressor();
-        voice.compressorNode.threshold.setValueAtTime(voice.compressorSetting.threshold, voice.audioContext.currentTime);
-        voice.compressorNode.ratio.setValueAtTime(voice.compressorSetting.ratio, voice.audioContext.currentTime);
-        voice.compressorNode.attack.setValueAtTime(voice.compressorSetting.attack, voice.audioContext.currentTime);
-        voice.compressorNode.release.setValueAtTime(voice.compressorSetting.release, voice.audioContext.currentTime);
-        voice.compressorNode.reduction = voice.compressorSetting.reduction;
-
-        // connect noise gate to compressor
-        voice.noiseGateNode.connect(voice.compressorNode);
-
-        // connect compressor to audioCollector
-        voice.compressorNode.connect(voice.audioCollector);
-    } else {
-        voice.noiseGateNode.connect(voice.audioCollector); // connect noise gate to audioCollector
-    }
-
-    voice.audioCollector.port.onmessage = (event) => {
-        // We don't do anything if we are self muted
-        if (voice.self.mute) {
-            return;
-        }
-
-        const samples = event.data;
-
-        // Push samples to buffer
-        voice.buffer.push(...samples);
-
-        // While buffer is full
-        while (voice.buffer.length >= voice.bufferMaxLength) {
-            // Get 1 audio frames
-            const frame = voice.buffer.slice(0, 960);
-
-            // Remove this frame from buffer
-            voice.buffer = voice.buffer.slice(960);
-
-            // Create audioData object to feed encoder
-            const audioData = new AudioData({
-                format: "f32-planar",
-                sampleRate: voice.sampleRate,
-                numberOfFrames: frame.length,
-                numberOfChannels: 1,
-                timestamp: voice.audioTimestamp,
-                data: new Float32Array(frame).buffer
-            });
-
-            // Feed encoder
-            if (voice.encoder !== null && voice.encoder.state === "configured") {
-                voice.encoder.encode(audioData);
-            }
-
-            audioData.close();
-
-            // Update audioTimestamp (add 20ms / 20000µs)
-            voice.audioTimestamp += 20000;
-        }
-    }
-
-    // When encoder is done, it call this function to send data through the WebSocket
-    function encoderCallback(audioChunk) {
-        // Get a copy of audioChunk and audioTimestamp
-        const audioTimestamp = voice.audioTimestamp;
-        const audioChunkCopy = new ArrayBuffer(audioChunk.byteLength);
-        audioChunk.copyTo(audioChunkCopy);
-
-        // Create Header to send with audioChunk
-        const header = JSON.stringify({
-            timestamp: Date.now(),
-            audioTimestamp: audioTimestamp / 1000, // audioTimestamp is in µs but sending ms is enough
-            user: global.user.id,
-        })
-
-        const packet = packetEncode(header, audioChunkCopy);
-
-        // Finally send it ! (but socket need to be open)
-        if (voice.socket.readyState === WebSocket.OPEN) {
-            voice.socket.send(packet);
-        }
-    }
-}
-
-// <voiceJoin> call this to setup reveicer and decoder of audio packet
-function voiceReceiveAndDecode(packet) {
-    const result = packetDecode(packet);
-    const header = result.header;
-    const data = result.data;
-
-    if (voice.users[header.user]) {
-        const currentUser = voice.users[header.user];
-        // If user sending packet is muted, we stop
-        if (currentUser.muted) {
-            return;
-        }
-
-        // Decode and read audio
-        const audioChunk = new EncodedAudioChunk({
-            type: "key",
-            timestamp: header.audioTimestamp * 1000,
-            data: new Uint8Array(data),
-        })
-
-        if (currentUser.decoder !== null && currentUser.decoder.state === "configured") {
-            currentUser.decoder.decode(audioChunk);
-        }
-    }
-}
-
-// Create an audio decoder for specified user
-async function voiceCreateUserDecoder(userId) {
-    console.debug("VOICE : Creating decoder for user:", userId);
-
-    const isSupported = await AudioDecoder.isConfigSupported(voiceCodecConfig);
-    if (isSupported.supported) {
-        voice.users[userId] = { decoder: null, playhead: 0, muted: false, gainNode: null, source: null };
-
-        if (!voice.usersSetting[userId]) {
-            voice.usersSetting[userId] = { muted: false, volume: 1 };
-        }
-
-        voice.users[userId].decoder = new AudioDecoder({
-            output: decoderCallback,
-            error: (error) => { throw Error(`Error during decoder setup:\n${error}\nCurrent codec :${voiceCodecConfig}`) },
-        });
-
-        voice.users[userId].decoder.configure(voiceCodecConfig)
-        voice.users[userId].playhead = 0;
-        voice.users[userId].gainNode = voice.audioContext.createGain();
-    }
-
-    function decoderCallback(audioData) {
-        const buffer = voice.audioContext.createBuffer(
-            audioData.numberOfChannels,
-            audioData.numberOfFrames,
-            audioData.sampleRate
-        );
-
-        const channelData = new Float32Array(audioData.numberOfFrames);
-        audioData.copyTo(channelData, { planeIndex: 0 });
-        buffer.copyToChannel(channelData, 0);
-
-        // Play the AudioBuffer
-        const source = voice.audioContext.createBufferSource();
-        source.buffer = buffer;
-
-        source.connect(voice.users[userId].gainNode); // connect audio source to gain
-        voice.users[userId].gainNode.connect(voice.audioContext.destination); // connect gain to output
-
-        voice.users[userId].playhead = Math.max(voice.users[userId].playhead, voice.audioContext.currentTime) + buffer.duration;
-        source.start(voice.users[userId].playhead);
-        audioData.close();
     }
 }
 
@@ -432,10 +132,7 @@ async function voiceUpdateJoinedUsers() {
     for (const user of connectedUser) {
         const userId = user.id;
 
-        // No decoder
-        if (voice.users[userId] === undefined) {
-            await voiceCreateUserDecoder(userId);
-        }
+        voice.instance.addUser(userId);
 
         // Not self
         if (global.user.id !== userId) {
@@ -469,23 +166,18 @@ function voiceCreateUserHTML(userData) {
 // <voiceUpdateJoinedUsers> and <voiceUserJoining> call this to update control on given user
 function voiceUpdateUserControls(userId) {
     const userDiv = document.getElementById(`voice-${userId}`);
-    const readyState = voice.socket !== null ? voice.socket.readyState : WebSocket.CLOSED;
 
-    switch (readyState) {
-        case WebSocket.CLOSED: {
+    switch (voice.instance.getState()) {
+        case VoiceCall.CLOSE: {
             if (document.getElementById(`voice-controls-${userId}`) !== null) {
                 document.getElementById(`voice-controls-${userId}`).remove();
             }
             break;
         }
-        case WebSocket.OPEN: {
+        case VoiceCall.OPEN: {
             if (document.getElementById(`voice-controls-${userId}`) !== null) {
                 console.info('VOICE : There is already controls in this room');
                 break;
-            }
-
-            if (voice.usersSetting && !voice.usersSetting[userId]) {
-                voice.usersSetting[userId].volume = 1
             }
 
             // Add controls
@@ -493,7 +185,7 @@ function voiceUpdateUserControls(userId) {
             INPUT_VOLUME.type = "range";
             INPUT_VOLUME.className = "volume";
             INPUT_VOLUME.step = "0.01";
-            INPUT_VOLUME.value = voice.usersSetting[userId].volume;
+            INPUT_VOLUME.value = 1; //voice.instance.getUserVolume();
             INPUT_VOLUME.min = "0";
             INPUT_VOLUME.max = "2";
             INPUT_VOLUME.title = INPUT_VOLUME.value * 100 + "%";
@@ -522,10 +214,10 @@ function voiceUpdateUserControls(userId) {
 // Update user controls and UI
 function voiceUpdateSelf() {
     const voiceAction = document.getElementById("voice-join-action");
-    const readyState = (voice.socket !== null && voice.activeRoom === global.room.id) ? voice.socket.readyState : WebSocket.CLOSED;
+    const instanceState = voice.instance !== null ? voice.instance.getState() : VoiceCall.CLOSE;
 
-    switch (readyState) {
-        case WebSocket.CONNECTING:
+    switch (instanceState) {
+        case VoiceCall.CONNECTING:
             // Set disconnect actions
             voiceAction.className = "join";
             voiceAction.classList.add('waiting');
@@ -534,7 +226,7 @@ function voiceUpdateSelf() {
             voiceAction.onclick = () => voiceLeave();
             break;
 
-        case WebSocket.CLOSED:
+        case VoiceCall.CLOSE:
             // Set connect actions
             document.getElementById(global.room.id).classList.remove('active-voice');
             voiceAction.className = "join";
@@ -544,7 +236,7 @@ function voiceUpdateSelf() {
             voiceAction.onclick = () => voiceJoin(global.room.id);
             break;
 
-        case WebSocket.OPEN:
+        case VoiceCall.OPEN:
             document.getElementById(voice.activeRoom).classList.add('active-voice');
             voiceAction.className = "join";
             voiceAction.classList.add('connected');
@@ -558,16 +250,10 @@ function voiceUpdateSelf() {
 // <user> call this to mute other user
 function voiceControlUserMute(userId, muteButton, updateState = true) {
     if (updateState) {
-        // Invert mute state
-        voice.users[userId].muted = !voice.users[userId].muted;
-        voice.usersSetting[userId].muted = voice.users[userId].muted;
-    }
-    else {
-        // State from previous call
-        voice.users[userId].muted = voice.usersSetting[userId].muted;
+        //voice.instance.toggleUserMute(userId);
     }
 
-    if (voice.users[userId].muted) {
+    if (false /*voice.instance.getUserMute(userId)*/) {
         muteButton.classList.add('active');
         muteButton.innerHTML = "<revoice-icon-speaker-x></revoice-icon-speaker-x>";
     }
@@ -583,24 +269,20 @@ function voiceControlUserVolume(userId, volumeInput) {
     const volume = volumeInput.value;
 
     volumeInput.title = volume * 100 + "%";
-    voice.usersSetting[userId].volume = volume;
+    //voice.instance.setUserVolume(userId, volume);
 
-    const userGainNode = voice.users[userId].gainNode;
-    if (userGainNode) {
-        userGainNode.gain.setValueAtTime(volume, voice.audioContext.currentTime);
-    }
     saveUserSetting();
 }
 
 // <user> call this to mute himself
 function voiceControlSelfMute(updateState = true) {
     if (updateState) {
-        voice.self.mute = !voice.self.mute;
+        voice.instance.toggleSelfMute();
         saveUserSetting();
     }
 
     const muteButton = document.getElementById("voice-self-mute");
-    if (voice.self.mute) {
+    if (voice.instance.getSelfMute()) {
         // Muted
         console.debug("VOICE : Self mute");
         muteButton.classList.add('active');
@@ -609,13 +291,6 @@ function voiceControlSelfMute(updateState = true) {
         // Unmuted
         console.debug("VOICE : Self unmute");
         muteButton.classList.remove('active');
-    }
-}
-
-// <user> call this to change his volume
-function voiceUpdateSelfVolume() {
-    if (voice.gainNode) {
-        voice.gainNode.gain.setValueAtTime(voice.self.volume, voice.audioContext.currentTime);
     }
 }
 
