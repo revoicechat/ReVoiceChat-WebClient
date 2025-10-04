@@ -6,6 +6,7 @@
     padding: 8px;
     border-radius: 4px;
     transition: background 0.2s;
+    margin-left: 0.5rem;
 }
 
 .emoji-btn:hover {
