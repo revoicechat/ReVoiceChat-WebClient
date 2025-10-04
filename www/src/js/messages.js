@@ -13,40 +13,41 @@ document.getElementById("text-input").addEventListener('keydown', function (e) {
 });
 
 const picker = new EmojiPicker();
-picker.init().then(res => {
-    initCustomGeneral(picker)
-    initCustomServer(picker)
-    initCustomUser(picker)
-    const pickerContainer = document.getElementById('emoji-picker');
-    pickerContainer.appendChild(picker.create());
-    // Gestion de l'interface
-    const emojiBtn = document.getElementById('emoji-picker-button');
-    const messageInput = document.getElementById('text-input');
+picker.init()
+    .then(() => initCustomGeneral(picker))
+    .then(() => {
+        initCustomServer(picker)
+        initCustomUser(picker)
+        const pickerContainer = document.getElementById('emoji-picker');
+        pickerContainer.appendChild(picker.create());
+        // Gestion de l'interface
+        const emojiBtn = document.getElementById('emoji-picker-button');
+        const messageInput = document.getElementById('text-input');
 
-    // Toggle emoji picker
-    emojiBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        pickerContainer.classList.toggle('show');
-    });
+        // Toggle emoji picker
+        emojiBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            pickerContainer.classList.toggle('show');
+        });
 
-    // Fermer le picker en cliquant ailleurs
-    document.addEventListener('click', (e) => {
-        if (!pickerContainer.contains(e.target) && e.target !== emojiBtn) {
-            pickerContainer.classList.remove('show');
-        }
-    });
+        // Fermer le picker en cliquant ailleurs
+        document.addEventListener('click', (e) => {
+            if (!pickerContainer.contains(e.target) && e.target !== emojiBtn) {
+                pickerContainer.classList.remove('show');
+            }
+        });
 
-    // Sélection d'emoji
-    picker.onEmojiSelect = (emoji) => {
-        const cursorPos = messageInput.selectionStart;
-        const textBefore = messageInput.value.substring(0, cursorPos);
-        const textAfter = messageInput.value.substring(cursorPos);
+        // Sélection d'emoji
+        picker.onEmojiSelect = (emoji) => {
+            const cursorPos = messageInput.selectionStart;
+            const textBefore = messageInput.value.substring(0, cursorPos);
+            const textAfter = messageInput.value.substring(cursorPos);
 
-        messageInput.value = textBefore + emoji + textAfter;
-        messageInput.focus();
-        messageInput.selectionStart = messageInput.selectionEnd = cursorPos + emoji.length;
-    };
-})
+            messageInput.value = textBefore + emoji + textAfter;
+            messageInput.focus();
+            messageInput.selectionStart = messageInput.selectionEnd = cursorPos + emoji.length;
+        };
+    })
 
 async function getMessages(roomId) {
     const result = await fetchCoreAPI(`/room/${roomId}/message`, 'GET');
@@ -104,6 +105,8 @@ function createMessageContextMenu(messageData) {
 
     return "";
 }
+
+const emojiSelect = (emoji) => picker.onEmojiSelect(emoji)
 
 async function sendMessage() {
     let result = null;
@@ -187,7 +190,9 @@ async function getEmojisGlobal() {
 }
 
 function roomMessage(data) {
-    if (data.message.roomId !== global.room.id) { return; }
+    if (data.message.roomId !== global.room.id) {
+        return;
+    }
 
     const message = data.message;
     const room = document.getElementById("text-content");
