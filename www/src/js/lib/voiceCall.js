@@ -1,4 +1,8 @@
 class VoiceCall {
+    static CLOSE = 0;
+    static CONNECTING = 1;
+    static OPEN = 2;
+
     #codecSettings = {
         codec: "opus",
         sampleRate: 48_000, // 48kHz
@@ -16,64 +20,87 @@ class VoiceCall {
     }
     #socket;
     #encoder;
-    #audioContext;
     #audioCollector;
-    #gainNode;
-    #gateNode;
+    #audioContext;
+    #audioTimestamp = 0;
     #compressorNode;
     #buffer = [];
     #bufferMaxLength = 960; // 48000Hz × 0.020 sec = 960 samples (should be compute from sample rate and frame duration)
-    #audioTimestamp = 0;
-    #users = [];
-    #usersSettings = [];
+    #gainNode;
+    #gateNode;
+    #users = {};
+    #state = 0;
+    #muted = false;
 
+    usersSettings = {};
 
-    muted = false;
+    async open(voiceUrl, roomId, token) {
+        this.#state = VoiceCall.CONNECTING;
 
+        // Create WebSocket
+        this.#socket = new WebSocket(`${voiceUrl}/${roomId}?token=${token}`);
+        this.#socket.binaryType = "arraybuffer";
 
-    async init(voiceUrl, roomId, token) {
-        try {
-            // Create WebSocket
-            this.#socket = new WebSocket(`${voiceUrl}/${roomId}?token=${token}`);
-            this.#socket.binaryType = "arraybuffer";
+        // Setup encoder and transmitter
+        await this.#encodeAndTransmit();
 
-            // Setup encoder and transmitter
-            await this.#encodeAndTransmit();
+        // Setup receiver and decoder
+        this.#socket.onmessage = (message) => { this.#receiveAndDecode(message, this.#packetDecode) };
 
-            // Setup receiver and decoder
-            this.#socket.onmessage = this.#receiveAndDecode;
+        // Socket states
+        this.#socket.onopen = () => { console.debug('VoiceCall : WebSocket open') };
+        this.#socket.onclose = async () => { console.debug('VoiceCall : WebSocket closed') };
+        this.#socket.onerror = async (e) => { await this.close(); console.error('VoiceCall : WebSocket error:', e) };
 
-            // Socket states
-            this.#socket.onopen = () => console.debug('VoiceCall : WebSocket open');
-            this.#socket.onclose = () => console.debug('VoiceCall : WebSocket closed');
-            this.#socket.onerror = (e) => console.error('VoiceCall : WebSocket error:', e);
+        this.#state = VoiceCall.OPEN;
+    }
 
-            console.debug("VoiceCall : Created");
+    async close() {
+        // Close WebSocket
+        if (this.#socket !== null) {
+            this.#socket.close();
         }
-        catch (error) {
-            console.error(error);
 
-            voice.activeRoom = null;
-            if (this.#socket !== null) {
-                this.#socket.close();
+        // Flush and close all decoders
+        console.log(this.#users)
+        for (const [, user] of Object.entries(this.#users)) {
+            if (user?.decoder && user.decoder.state === 'configured') {
+                await user.decoder.flush();
+                await user.decoder.close();
             }
         }
+
+        // Close self encoder
+        if (this.#encoder) {
+            this.#encoder.close();
+        }
+
+        // Close audioContext
+        if (this.#audioContext) {
+            this.#audioContext.close();
+        }
+
+        this.#state = VoiceCall.CLOSE;
+    }
+
+    getState() {
+        return this.#state;
     }
 
     async addUser(userId) {
-        if (userId && this.#socket !== null && this.#socket.readyState === WebSocket.OPEN) {
-            console.debug("VOICE : Creating decoder for user:", userId);
+        if (userId && this.#users[userId] === undefined && this.#socket !== null && this.#socket.readyState === WebSocket.OPEN) {
+            console.debug("Creating decoder for user:", userId);
 
             const isSupported = await AudioDecoder.isConfigSupported(this.#codecSettings);
             if (isSupported.supported) {
                 this.#users[userId] = { decoder: null, playhead: 0, muted: false, gainNode: null, source: null };
 
-                if (!this.#usersSettings[userId]) {
-                    this.#usersSettings[userId] = { muted: false, volume: 1 };
+                if (!this.usersSettings[userId]) {
+                    this.usersSettings[userId] = { muted: false, volume: 1 };
                 }
 
                 this.#users[userId].decoder = new AudioDecoder({
-                    output: decoderCallback,
+                    output: (chunk) => { decoderCallback(chunk, this.#audioContext, this.#users) },
                     error: (error) => { throw Error(`Decoder setup failed:\n${error}\nCurrent codec :${this.#codecSettings}`) },
                 });
 
@@ -82,8 +109,8 @@ class VoiceCall {
                 this.#users[userId].gainNode = this.#audioContext.createGain();
             }
 
-            function decoderCallback(audioData) {
-                const buffer = this.#audioContext.createBuffer(
+            function decoderCallback(audioData, audioContext, users) {
+                const buffer = audioContext.createBuffer(
                     audioData.numberOfChannels,
                     audioData.numberOfFrames,
                     audioData.sampleRate
@@ -94,17 +121,20 @@ class VoiceCall {
                 buffer.copyToChannel(channelData, 0);
 
                 // Play the AudioBuffer
-                const source = this.#audioContext.createBufferSource();
+                const source = audioContext.createBufferSource();
                 source.buffer = buffer;
 
-                source.connect(this.#users[userId].gainNode); // connect audio source to gain
-                this.#users[userId].gainNode.connect(this.#audioContext.destination); // connect gain to output
+                source.connect(users[userId].gainNode); // connect audio source to gain
+                users[userId].gainNode.connect(audioContext.destination); // connect gain to output
 
-                this.#users[userId].playhead = Math.max(this.#users[userId].playhead, this.#audioContext.currentTime) + buffer.duration;
-                source.start(this.#users[userId].playhead);
+                users[userId].playhead = Math.max(users[userId].playhead, audioContext.currentTime) + buffer.duration;
+                source.start(users[userId].playhead);
                 audioData.close();
             }
+
+            return true;
         }
+        return false;
     }
 
     async removeUser(userId) {
@@ -118,7 +148,7 @@ class VoiceCall {
 
     toggleUserMute(userId) {
         this.#users[userId].muted = !this.#users[userId].muted;
-        this.#usersSettings[userId].muted = this.#users[userId].muted;
+        this.usersSettings[userId].muted = this.#users[userId].muted;
     }
 
     setUserMute(userId, muted) {
@@ -130,25 +160,43 @@ class VoiceCall {
     }
 
     setUserVolume(userId, volume) {
-        this.#usersSettings[userId].volume = volume;
+        
+
+        this.usersSettings[userId].volume = volume;
 
         const userGainNode = this.#users[userId].gainNode;
         if (userGainNode) {
-            userGainNode.gain = volume;
+            userGainNode.gain.setValueAtTime(volume, this.#audioContext.currentTime);
         }
     }
 
     getUserVolume(userId) {
-        return this.#usersSettings[userId].volume;
+        if (this.usersSettings[userId] === undefined) {
+            return 1;
+        }
+
+        return this.usersSettings[userId].volume;
     }
 
-    setSelfVolume() {
+    toggleSelfMute() {
+        this.#muted = !this.#muted;
+    }
+
+    setSelfMute(muted) {
+        this.#muted = muted;
+    }
+
+    getSelfMute() {
+        return this.#muted;
+    }
+
+    setSelfVolume(volume) {
         if (this.#gainNode) {
-            this.#gainNode.gain.setValueAtTime(voice.self.volume, this.#audioContext.currentTime);
+            this.#gainNode.gain.setValueAtTime(volume, this.#audioContext.currentTime);
         }
     }
 
-    getSelfVolume(){
+    getSelfVolume() {
         return this.#gainNode.gain;
     }
 
@@ -194,7 +242,7 @@ class VoiceCall {
 
         // Setup Encoder
         this.#encoder = new AudioEncoder({
-            output: encoderCallback,
+            output: (chunk) => { encoderCallback(chunk, this.#audioTimestamp, this.#socket, this.#packetEncode); },
             error: (error) => { throw Error(`Encoder setup failed:\n${error}\nCurrent codec :${this.#codecSettings}`) },
         });
 
@@ -202,14 +250,14 @@ class VoiceCall {
 
         // Init AudioContext
         this.#audioContext = new AudioContext({ sampleRate: this.#codecSettings.sampleRate });
-        await this.#audioContext.audioWorklet.addModule('voiceProcessor.js');
+        await this.#audioContext.audioWorklet.addModule('src/js/lib/voiceProcessor.js');
 
         // Init Mic capture
         const micSource = this.#audioContext.createMediaStreamSource(await navigator.mediaDevices.getUserMedia({ audio: true }));
 
         // Create Gain node
         this.#gainNode = this.#audioContext.createGain();
-        this.#gainNode.gain = 1;
+        this.#gainNode.gain.setValueAtTime(1, this.#audioContext.currentTime);
 
         // Create AudioCollector
         this.#audioCollector = new AudioWorkletNode(this.#audioContext, "AudioCollector");
@@ -225,12 +273,11 @@ class VoiceCall {
 
         // Create compressorNode Node (with default parameters)
         this.#compressorNode = this.#audioContext.createDynamicsCompressor();
-        this.#compressorNode.attack = 0;
-        this.#compressorNode.knee = 40;
-        this.#compressorNode.ratio = 12;
-        this.#compressorNode.release = 0;
-        this.#compressorNode.reduction = 0;
-        this.#compressorNode.threshold = -50;
+        this.#compressorNode.attack.setValueAtTime(0, this.#audioContext.currentTime);
+        this.#compressorNode.knee.setValueAtTime(40, this.#audioContext.currentTime);
+        this.#compressorNode.ratio.setValueAtTime(12, this.#audioContext.currentTime);
+        this.#compressorNode.release.setValueAtTime(0, this.#audioContext.currentTime);
+        this.#compressorNode.threshold.setValueAtTime(-50, this.#audioContext.currentTime);
 
         // Connect microphone to gain
         micSource.connect(this.#gainNode);
@@ -246,7 +293,7 @@ class VoiceCall {
 
         this.#audioCollector.port.onmessage = (event) => {
             // We don't do anything if we are self muted
-            if (this.muted) {
+            if (this.#muted) {
                 return;
             }
 
@@ -285,10 +332,8 @@ class VoiceCall {
             }
         }
 
-        // When encoder is done, it call this function to send data through the WebSocket
-        function encoderCallback(audioChunk) {
+        function encoderCallback(audioChunk, audioTimestamp, socket, packetEncode) {
             // Get a copy of audioChunk and audioTimestamp
-            const audioTimestamp = this.#audioTimestamp;
             const audioChunkCopy = new ArrayBuffer(audioChunk.byteLength);
             audioChunk.copyTo(audioChunkCopy);
 
@@ -299,17 +344,17 @@ class VoiceCall {
                 user: global.user.id,
             })
 
-            const packet = this.#packetEncode(header, audioChunkCopy);
+            const packet = packetEncode(header, audioChunkCopy);
 
             // Finally send it ! (but socket need to be open)
-            if (this.#socket.readyState === WebSocket.OPEN) {
-                this.#socket.send(packet);
+            if (socket.readyState === WebSocket.OPEN) {
+                socket.send(packet);
             }
         }
     }
 
-    #receiveAndDecode(packet) {
-        const result = this.#packetDecode(packet);
+    #receiveAndDecode(packet, packetDecode) {
+        const result = packetDecode(packet);
         const header = result.header;
         const data = result.data;
 
