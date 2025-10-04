@@ -23,10 +23,10 @@
     /* Button */
     --pri-button-bg-color: #5865f2;
     --pri-button-hover-color: #4452bb;
-    --pri-button-bg-text-color: var(--pri-text-color);
+    --pri-button-text-color: var(--pri-text-color);
     --sec-button-bg-color: #b91c1c;
     --sec-button-hover-color: #2c2c30;
-    --sec-button-bg-text-color: var(--pri-text-color);
+    --sec-button-text-color: var(--pri-text-color);
 
     /* hljs */
     --hljs-theme: 'src/css/highlightjs/dark.css';
@@ -58,10 +58,10 @@
     /* Button */
     --pri-button-bg-color: #242427;
     --pri-button-hover-color: #43434d;
-    --pri-button-bg-text-color: var(--pri-text-color);
+    --pri-button-text-color: var(--pri-text-color);
     --sec-button-bg-color: #b91c1c;
     --sec-button-hover-color: #2c2c30;
-    --sec-button-bg-text-color: var(--pri-text-color);
+    --sec-button-text-color: var(--pri-text-color);
 
     /* hljs */
     --hljs-theme: 'src/css/highlightjs/darker.css';
@@ -93,10 +93,10 @@
     /* Button */
     --pri-button-bg-color: #5865f2;
     --pri-button-hover-color: #4452bb;
-    --pri-button-bg-text-color: #ffffff;
+    --pri-button-text-color: #ffffff;
     --sec-button-bg-color: #b91c1c;
     --sec-button-hover-color: #ff999c;
-    --sec-button-bg-text-color: #ffffff;
+    --sec-button-text-color: #ffffff;
 
     /* hljs */
     --hljs-theme: 'src/css/highlightjs/light.css';
@@ -128,10 +128,10 @@
     /* Button */
     --pri-button-bg-color: #facec2;
     --pri-button-hover-color: #ff999c;
-    --pri-button-bg-text-color: var(--pri-text-color);
+    --pri-button-text-color: var(--pri-text-color);
     --sec-button-bg-color: #b91c1c;
     --sec-button-hover-color: #ff999c;
-    --sec-button-bg-text-color: var(--pri-text-color);
+    --sec-button-text-color: var(--pri-text-color);
 
     /* hljs */
     --hljs-theme: 'src/css/highlightjs/femboy.css';
@@ -341,7 +341,7 @@ form.popup label {
 
 .config-right button {
     background-color: var(--pri-button-bg-color);
-    color: var(--pri-button-bg-text-color);
+    color: var(--pri-button-text-color);
 }
 
 .config-right button:hover {
