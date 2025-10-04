@@ -295,10 +295,10 @@ class VoiceCall {
         this.#gainNode = this.#audioContext.createGain();
         this.#gainNode.gain.setValueAtTime(this.#settings.self.volume, this.#audioContext.currentTime);
 
-        // Create AudioCollector
-        this.#audioCollector = new AudioWorkletNode(this.#audioContext, "AudioCollector");
+        // Connect microphone to gain
+        micSource.connect(this.#gainNode);
 
-        // Create NoiseGate (with default parameters)
+        // Create Gate
         this.#gateNode = new AudioWorkletNode(this.#audioContext, "NoiseGate", {
             parameterData: {
                 attack: this.#settings.gate.attack,
@@ -307,25 +307,30 @@ class VoiceCall {
             }
         });
 
-        // Create compressorNode Node (with default parameters)
-        this.#compressorNode = this.#audioContext.createDynamicsCompressor();
-        this.#compressorNode.attack.setValueAtTime(this.#settings.compressor.attack, this.#audioContext.currentTime);
-        this.#compressorNode.knee.setValueAtTime(this.#settings.compressor.knee, this.#audioContext.currentTime);
-        this.#compressorNode.ratio.setValueAtTime(this.#settings.compressor.ratio, this.#audioContext.currentTime);
-        this.#compressorNode.release.setValueAtTime(this.#settings.compressor.release, this.#audioContext.currentTime);
-        this.#compressorNode.threshold.setValueAtTime(this.#settings.compressor.threshold, this.#audioContext.currentTime);
-
-        // Connect microphone to gain
-        micSource.connect(this.#gainNode);
-
         // Connect gain to gate
         this.#gainNode.connect(this.#gateNode)
 
-        // Connect gate to compressor
-        this.#gateNode.connect(this.#compressorNode);
+        // Create AudioCollector
+        this.#audioCollector = new AudioWorkletNode(this.#audioContext, "AudioCollector");
 
-        // Connect compressor to audioCollector
-        this.#compressorNode.connect(this.#audioCollector);
+        // Create compressor if enabled
+        if (this.#settings.compressor.enabled) {
+            this.#compressorNode = this.#audioContext.createDynamicsCompressor();
+            this.#compressorNode.attack.setValueAtTime(this.#settings.compressor.attack, this.#audioContext.currentTime);
+            this.#compressorNode.knee.setValueAtTime(this.#settings.compressor.knee, this.#audioContext.currentTime);
+            this.#compressorNode.ratio.setValueAtTime(this.#settings.compressor.ratio, this.#audioContext.currentTime);
+            this.#compressorNode.release.setValueAtTime(this.#settings.compressor.release, this.#audioContext.currentTime);
+            this.#compressorNode.threshold.setValueAtTime(this.#settings.compressor.threshold, this.#audioContext.currentTime);
+
+            // Connect gate to compressor
+            this.#gateNode.connect(this.#compressorNode);
+
+            // Connect compressor to audioCollector
+            this.#compressorNode.connect(this.#audioCollector);
+        }else{
+            // Connect gate to audioCollector (i.e. bypass compressor)
+            this.#gateNode.connect(this.#audioCollector);
+        }
 
         this.#audioCollector.port.onmessage = (event) => {
             // We don't do anything if we are self muted
