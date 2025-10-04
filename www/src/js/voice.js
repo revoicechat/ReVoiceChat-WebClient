@@ -62,6 +62,8 @@ async function voiceLeave() {
 
 // <server.js> call this when a new user join the room
 async function voiceUserJoining(data) {
+    voiceUsersCountUpdate(data.roomId);
+    
     if (data.roomId !== global.room.id) { return; }
 
     const userData = data.user;
@@ -81,6 +83,8 @@ async function voiceUserJoining(data) {
 
 // <server.js> call this when a user leave the room
 async function voiceUserLeaving(data) {
+    voiceUsersCountUpdate(data.roomId);
+
     if (data.roomId !== global.room.id) { return; }
 
     const userId = data.userId;
@@ -316,7 +320,7 @@ function voiceUpdateSelfVolume() {
 
 // Count user in room
 async function voiceUsersCount(roomId) {
-    const result = await fetchCoreAPI(`/room/${global.room.id}/user`, 'GET');
+    const result = await fetchCoreAPI(`/room/${roomId}/user`, 'GET');
 
     if (result.connectedUser === null) {
         return 0;
@@ -326,7 +330,7 @@ async function voiceUsersCount(roomId) {
 }
 
 async function voiceUsersCountUpdate(roomId) {
-    const result = await fetchCoreAPI(`/room/${global.room.id}/user`, 'GET');
+    const result = await fetchCoreAPI(`/room/${roomId}/user`, 'GET');
     const element = document.getElementById(`room-extension-${roomId}`);
 
     let count = 0
