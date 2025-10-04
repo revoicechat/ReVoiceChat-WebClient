@@ -150,3 +150,9 @@
     object-fit: contain;
 }
 
+@media screen and (max-width: 600px) {
+    .emoji-picker {
+        right: 0;
+    }
+}
+
