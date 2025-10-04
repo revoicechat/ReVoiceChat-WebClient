@@ -10,7 +10,7 @@ async function getRooms(serverId) {
 
         const roomList = document.getElementById("sidebar-room-container");
         roomList.innerHTML = "";
-        roomCreate(roomList, rooms, structResult.items);
+        await roomCreate(roomList, rooms, structResult.items);
 
         if (global.room.id !== null) {
             roomSelect(global.room);
@@ -18,11 +18,11 @@ async function getRooms(serverId) {
     }
 }
 
-function roomCreate(roomList, roomData, data) {
+async function roomCreate(roomList, roomData, data) {
     for (const item of data) {
         if (item.type === 'CATEGORY') {
             roomList.appendChild(roomCreateSeparator(item));
-            roomCreate(roomList, roomData, item.items)
+            await roomCreate(roomList, roomData, item.items)
         }
 
         if (item.type === 'ROOM') {
@@ -32,7 +32,7 @@ function roomCreate(roomList, roomData, data) {
                 global.room = elementData;
             }
     
-            const roomElement = roomCreateElement(elementData, );
+            const roomElement = await roomCreateElement(elementData, );
             if (roomElement) {
                 roomList.appendChild(roomElement);
             }
@@ -50,7 +50,7 @@ function roomIcon(type){
     }
 }
 
-function roomCreateElement(data) {
+async function roomCreateElement(data) {
     const DIV = document.createElement('div');
 
     if (data === undefined || data === null) {
@@ -63,15 +63,20 @@ function roomCreateElement(data) {
     DIV.className = "sidebar-room-element";
     DIV.onclick = () => roomSelect(data);
 
+    let extension = "";
     if(data.type === "VOICE"){
         DIV.ondblclick = () => {voiceJoin(data.id);}
+        let userCount = await voiceUsersCount(data.id);
+        extension = `${userCount}<revoice-icon-user></revoice-icon-user>`;
     }
 
     DIV.innerHTML = `
         <h3 class="room-title">
         ${icon}
-        ${data.name}
+        <div class="room-title-name">${data.name}</div>
+        <div class="room-title-extension" id="room-extension-${data.id}">${extension}</div>
         </h3>`;
+
     return DIV;
 }
 

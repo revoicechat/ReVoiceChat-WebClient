@@ -83,6 +83,7 @@ async function voiceJoin(roomId) {
         voice.socket.onerror = (e) => console.error('VOICE : WebSocket error:', e);
 
         console.info("VOICE : Room joined");
+        await voiceUsersCountUpdate(roomId);
 
         let audio = new Audio('src/audio/userConnectedMale.mp3');
         audio.volume = 0.25;
@@ -125,6 +126,7 @@ async function voiceLeave() {
     }
 
     await voiceUpdateJoinedUsers();
+    await voiceUsersCountUpdate(voice.activeRoom);
 
     // Close audioContext
     if (voice.audioContext) {
@@ -615,4 +617,27 @@ function voiceUpdateSelfVolume() {
     if (voice.gainNode) {
         voice.gainNode.gain.setValueAtTime(voice.self.volume, voice.audioContext.currentTime);
     }
+}
+
+// Count user in room
+async function voiceUsersCount(roomId){
+    const result = await fetchCoreAPI(`/room/${global.room.id}/user`, 'GET');
+
+    if (result.connectedUser === null) {
+        return 0;
+    }
+
+    return result.connectedUser.length;
+}
+
+async function voiceUsersCountUpdate(roomId){
+    const result = await fetchCoreAPI(`/room/${global.room.id}/user`, 'GET');
+    const element = document.getElementById(`room-extension-${roomId}`);
+
+    let count = 0
+    if (result.connectedUser !== null) {
+        count = result.connectedUser.length
+    }
+
+    element.innerHTML = `${count}<revoice-icon-user></revoice-icon-user>`
 }
