@@ -1,4 +1,6 @@
 class VoiceCall {
+    "use strict";
+
     static CLOSE = 0;
     static CONNECTING = 1;
     static OPEN = 2;
@@ -291,7 +293,7 @@ class VoiceCall {
 
         // Create Gain node
         this.#gainNode = this.#audioContext.createGain();
-        this.#gainNode.gain.setValueAtTime(1, this.#audioContext.currentTime);
+        this.#gainNode.gain.setValueAtTime(this.#settings.self.volume, this.#audioContext.currentTime);
 
         // Create AudioCollector
         this.#audioCollector = new AudioWorkletNode(this.#audioContext, "AudioCollector");
@@ -299,19 +301,19 @@ class VoiceCall {
         // Create NoiseGate (with default parameters)
         this.#gateNode = new AudioWorkletNode(this.#audioContext, "NoiseGate", {
             parameterData: {
-                attack: 0.01,
-                release: 0.4,
-                threshold: -45
+                attack: this.#settings.gate.attack,
+                release: this.#settings.gate.release,
+                threshold: this.#settings.gate.threshold
             }
         });
 
         // Create compressorNode Node (with default parameters)
         this.#compressorNode = this.#audioContext.createDynamicsCompressor();
-        this.#compressorNode.attack.setValueAtTime(0, this.#audioContext.currentTime);
-        this.#compressorNode.knee.setValueAtTime(40, this.#audioContext.currentTime);
-        this.#compressorNode.ratio.setValueAtTime(12, this.#audioContext.currentTime);
-        this.#compressorNode.release.setValueAtTime(0, this.#audioContext.currentTime);
-        this.#compressorNode.threshold.setValueAtTime(-50, this.#audioContext.currentTime);
+        this.#compressorNode.attack.setValueAtTime(this.#settings.compressor.attack, this.#audioContext.currentTime);
+        this.#compressorNode.knee.setValueAtTime(this.#settings.compressor.knee, this.#audioContext.currentTime);
+        this.#compressorNode.ratio.setValueAtTime(this.#settings.compressor.ratio, this.#audioContext.currentTime);
+        this.#compressorNode.release.setValueAtTime(this.#settings.compressor.release, this.#audioContext.currentTime);
+        this.#compressorNode.threshold.setValueAtTime(this.#settings.compressor.threshold, this.#audioContext.currentTime);
 
         // Connect microphone to gain
         micSource.connect(this.#gainNode);
