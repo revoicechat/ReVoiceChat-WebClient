@@ -78,14 +78,6 @@ class ServerRolesWebComponent extends HTMLElement {
                     box-sizing: border-box;
                 }
 
-                :host {
-                    display: block;
-                    width: 100%;
-                    height: 100vh;
-                    background-color: black;
-                    color: white;
-                }
-
                 button {
                     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
                     cursor: pointer;
@@ -105,7 +97,8 @@ class ServerRolesWebComponent extends HTMLElement {
                     display: flex;
                     padding: 1rem;
                     height: 3.5rem;
-                    border-bottom: 1px solid #43434d;
+                    border-bottom: 1px solid;
+                    border-color: var(--pri-bd-color);
                     align-items: center;
                     justify-content: space-between;
                 }
@@ -116,35 +109,37 @@ class ServerRolesWebComponent extends HTMLElement {
                 }
 
                 .btn-primary {
-                    background-color: #6366f1;
-                    color: #ffffff;
+                    background-color: var(--pri-button-bg-color);
+                    color: var(--pri-button-text-color);
                 }
 
                 .btn-primary:hover {
-                    background-color: #4042a1;
+                    background-color: var(--pri-button-hover-color);
                 }
 
                 .btn-secondary {
-                    background-color: #43434d;
-                    color: #ffffff;
+                    background-color: var(--sec-button-bg-color);
+                    color: var(--sec-button-text-color);
                 }
 
                 .btn-secondary:hover {
-                    background-color: #363640;
+                    background-color: var(--sec-button-hover-color);
                 }
 
                 .sidebar {
                     display: flex;
                     flex-direction: column;
-                    border-right: 1px solid #43434d;
+                    border-right: 1px solid;
+                    border-color: var(--pri-bd-color);
                     width: 20rem;
                     height: 100%;
-                    background-color: #1a1a1f;
+                    background-color: var(--pri-bg-color);
                 }
 
                 .sidebar-header {
                     padding: 1rem;
-                    border-bottom: 1px solid #43434d;
+                    border-bottom: 1px solid;
+                    border-color: var(--pri-bd-color);
                     height: 3.5rem;
                     display: flex;
                     align-items: center;
@@ -189,15 +184,15 @@ class ServerRolesWebComponent extends HTMLElement {
                     height: auto;
                     min-height: 3rem;
                     align-items: center;
-                    background-color: #2a2a2f;
+                    background-color: var(--sec-bg-color);
                 }
 
                 .config-item:hover {
-                    background-color: #363640;
+                    background-color: var(--ter-bg-color);
                 }
 
                 .config-item.active {
-                    background-color: #4042a1;
+                    background-color: var(--pri-active-color);
                 }
 
                 .config-item .icon {
@@ -259,9 +254,10 @@ class ServerRolesWebComponent extends HTMLElement {
                     font-size: 1.125rem;
                     font-weight: 700;
                     margin-bottom: 1rem;
-                    color: #6366f1;
+                    color: var(--pri-text-color);
                     padding-bottom: 0.5rem;
-                    border-bottom: 2px solid #43434d;
+                    border-bottom: 2px solid;
+                    border-color: var(--pri-bd-color);
                 }
 
                 .risk-container {
@@ -274,7 +270,7 @@ class ServerRolesWebComponent extends HTMLElement {
                     align-items: center;
                     justify-content: space-between;
                     padding: 1rem;
-                    background-color: #2a2a2f;
+                    background-color: var(--pri-bg-color);
                     border-radius: 0.25rem;
                     border-left: 4px solid transparent;
                 }
@@ -288,7 +284,7 @@ class ServerRolesWebComponent extends HTMLElement {
                 }
 
                 .risk-item.default {
-                    border-left-color: #43434d;
+                    border-left-color: var(--pri-bd-color);
                 }
 
                 .risk-name {
@@ -303,18 +299,19 @@ class ServerRolesWebComponent extends HTMLElement {
 
                 .toggle-btn {
                     padding: 0.4rem 0.75rem;
-                    border: 1px solid #43434d;
-                    background: #363640;
+                    border: 1px solid;
+                    border-color: var(--pri-bd-color);
+                    background: var(--sec-bg-color);
                     border-radius: 0.25rem;
                     cursor: pointer;
                     font-size: 0.875rem;
                     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-                    color: white;
+                    color: var(--pri-text-color);
                     font-weight: 600;
                 }
 
                 .toggle-btn:hover {
-                    background: #43434d;
+                    background: var(--qua-bg-color);
                 }
 
                 .toggle-btn.active.enabled {
@@ -342,7 +339,7 @@ class ServerRolesWebComponent extends HTMLElement {
                     display: flex;
                     align-items: center;
                     padding: 0.75rem;
-                    background-color: #2a2a2f;
+                    background-color: var(--qua-bg-color);
                     border-radius: 0.25rem;
                     cursor: pointer;
                     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
@@ -350,11 +347,11 @@ class ServerRolesWebComponent extends HTMLElement {
                 }
 
                 .user-item:hover {
-                    background-color: #363640;
+                    background-color: var(--pri-bg-color);
                 }
 
                 .user-item.selected {
-                    background-color: #363640;
+                    background-color: var(--pri-bg-color);
                     border-color: #6366f1;
                 }
 
