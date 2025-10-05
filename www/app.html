@@ -140,9 +140,9 @@
                     <button class="sub-category" id="rooms" onclick="selectConfigItem('rooms')">
                         <revoice-icon-chat-bubble></revoice-icon-chat-bubble> Rooms
                     </button>
-                </div>
-                <div class="category">
-                    <h2>User Management</h2>
+                    <button class="sub-category" id="roles" onclick="selectConfigItem('roles')">
+                        <revoice-icon-role></revoice-icon-role> Roles
+                    </button>
                     <!-- Members -->
                     <button class="sub-category" id="members" onclick="selectConfigItem('members')">
                         <revoice-icon-users></revoice-icon-users> Members
@@ -217,6 +217,12 @@
                     </div>
 
                     <button class="config-button" onclick="structureSave()">Save</button>
+                </div>
+
+                <!-- Roles -->
+                <div class="hidden" id="roles-config">
+                    <h1>Roles</h1>
+                    <revoice-server-roles id="roles-config-component" server-id=""></revoice-server-roles>
                 </div>
 
                 <!-- Members -->
@@ -419,6 +425,7 @@
     <script src="src/js/component/emoji.component.js"></script>
     <script src="src/js/component/message.component.js"></script>
     <script src="src/js/component/theme.component.js"></script>
+    <script src="src/js/component/server.roles.component.js"></script>
 
     <!-- App -->
     <script src="src/js/app.js"></script>

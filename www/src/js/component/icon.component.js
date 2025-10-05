@@ -235,6 +235,32 @@ class UserIconComponent extends HTMLElement {
     }
 }
 
+class RoleIconComponent extends HTMLElement {
+    constructor(){
+        super()
+        this.innerHTML = `
+            <svg data-slot="icon" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <defs>
+                <mask id="userMask">
+                  <rect width="24" height="24" fill="white"/>
+                  <g transform="translate(12, 12) scale(0.55) translate(-12, -12)">
+                    <path clip-rule="evenodd"
+                          fill-rule="evenodd"
+                          fill="black"
+                          d="M7.5 6a4.5 4.5 0 1 1 9 0 4.5 4.5 0 0 1-9 0ZM3.751 20.105a8.25 8.25 0 0 1 16.498 0 .75.75 0 0 1-.437.695A18.683 18.683 0 0 1 12 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 0 1-.437-.695Z">
+                    </path>
+                  </g>
+                </mask>
+              </defs>
+              <path clip-rule="evenodd"
+                    fill-rule="evenodd"
+                    mask="url(#userMask)"
+                    d="M12.516 2.17a.75.75 0 0 0-1.032 0 11.209 11.209 0 0 1-7.877 3.08.75.75 0 0 0-.722.515A12.74 12.74 0 0 0 2.25 9.75c0 5.942 4.064 10.933 9.563 12.348a.749.749 0 0 0 .374 0c5.499-1.415 9.563-6.406 9.563-12.348 0-1.39-.223-2.73-.635-3.985a.75.75 0 0 0-.722-.516l-.143.001c-2.996 0-5.717-1.17-7.734-3.08Z">
+              </path>
+            </svg>`
+    }
+}
+
 customElements.define('revoice-icon-pencil', PencilIconComponent);
 customElements.define('revoice-icon-trash', TrashIconComponent);
 customElements.define('revoice-icon-chat-bubble', ChatBubbleIconComponent);
@@ -257,3 +283,4 @@ customElements.define('revoice-icon-speaker', SpeakerIconComponent);
 customElements.define('revoice-icon-speaker-x', SpeakerXIconComponent);
 customElements.define('revoice-icon-emoji', EmojiIconComponent);
 customElements.define('revoice-icon-user', UserIconComponent);
+customElements.define('revoice-icon-role', RoleIconComponent);

@@ -12,6 +12,7 @@ async function configLoad() {
     await loadOverview()
     await loadRoomData();
     await loadRoomStructure();
+    await loadServerRoles();
     await loadMembers();
     await loadInvitations();
 
@@ -54,6 +55,11 @@ async function loadMembers() {
             }
         }
     }
+}
+
+async function loadServerRoles() {
+    document.getElementById("roles-config-component")
+            .setAttribute("server-id", global.server.id)
 }
 
 async function createItemUser(data) {
