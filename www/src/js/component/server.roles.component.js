@@ -291,6 +291,7 @@ class ServerRolesWebComponent extends HTMLElement {
                 .risk-name {
                     font-weight: 500;
                     user-select: text;
+                    padding-right: 10px;
                 }
 
                 .risk-toggle {
