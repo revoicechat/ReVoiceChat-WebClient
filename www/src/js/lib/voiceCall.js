@@ -55,10 +55,27 @@ class VoiceCall {
     #settings = {};
 
     constructor(settings) {
-        this.#settings = settings;
+        if (settings) {
+            this.#settings = settings;
+        }
+        else {
+            this.#settings = DEFAULT_SETTINGS;
+        }
     }
 
     async open(voiceUrl, roomId, token) {
+        if(!voiceUrl){
+            throw Error('VoiceUrl is null or undefined');
+        }
+
+        if(!roomId){
+            throw Error('roomId is null or undefined');
+        }
+
+        if(!token){
+            throw Error('token is null or undefined');
+        }
+
         this.#state = VoiceCall.CONNECTING;
 
         // Create WebSocket
@@ -86,7 +103,6 @@ class VoiceCall {
         }
 
         // Flush and close all decoders
-        console.log(this.#users)
         for (const [, user] of Object.entries(this.#users)) {
             if (user?.decoder && user.decoder.state === 'configured') {
                 await user.decoder.flush();
@@ -117,8 +133,6 @@ class VoiceCall {
 
     async addUser(userId) {
         if (userId && this.#users[userId] === undefined && this.#socket !== null && this.#socket.readyState === WebSocket.OPEN) {
-            console.debug("Creating decoder for user:", userId);
-
             const isSupported = await AudioDecoder.isConfigSupported(this.#codecSettings);
             if (isSupported.supported) {
                 this.#users[userId] = { decoder: null, playhead: 0, muted: false, gainNode: null, source: null };
@@ -175,8 +189,10 @@ class VoiceCall {
     }
 
     toggleUserMute(userId) {
-        this.#users[userId].muted = !this.#users[userId].muted;
-        this.#settings.users[userId].muted = this.#users[userId].muted;
+        if (this.#settings.users[userId]) {
+            this.#users[userId].muted = !this.#users[userId].muted;
+            this.#settings.users[userId].muted = this.#users[userId].muted;
+        }
     }
 
     setUserMute(userId, muted) {
@@ -237,17 +253,17 @@ class VoiceCall {
         }
     }
 
-    setGate(gateSettings){
+    setGate(gateSettings) {
         this.#settings.gate = gateSettings;
         this.#gateNode.parameters.get("attack").setValueAtTime(this.#settings.gate.attack, this.#audioContext.currentTime);
         this.#gateNode.parameters.get("release").setValueAtTime(this.#settings.gate.release, this.#audioContext.currentTime);
         this.#gateNode.parameters.get("threshold").setValueAtTime(this.#settings.gate.threshold, this.#audioContext.currentTime);
     }
 
-    setCompressor(compressorSetting){
+    setCompressor(compressorSetting) {
         this.#settings.compressor = compressorSetting;
 
-        if(this.#compressorNode){
+        if (this.#compressorNode) {
             this.#compressorNode.attack.setValueAtTime(this.#settings.compressor.attack, this.#audioContext.currentTime);
             this.#compressorNode.knee.setValueAtTime(this.#settings.compressor.knee, this.#audioContext.currentTime);
             this.#compressorNode.ratio.setValueAtTime(this.#settings.compressor.ratio, this.#audioContext.currentTime);
@@ -346,7 +362,7 @@ class VoiceCall {
 
             // Connect compressor to audioCollector
             this.#compressorNode.connect(this.#audioCollector);
-        }else{
+        } else {
             // Connect gate to audioCollector (i.e. bypass compressor)
             this.#gateNode.connect(this.#audioCollector);
         }
