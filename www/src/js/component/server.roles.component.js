@@ -1,6 +1,6 @@
-import mainCss from '../../css/main.css' with { type: 'css' };
-import themeCss from '../../css/themes.css' with { type: 'css' };
-import tailwindCss from '../../css/tailwind.css' with { type: 'css' };
+import mainCss from '../../css/main.css' with {type: 'css'};
+import themeCss from '../../css/themes.css' with {type: 'css'};
+import tailwindCss from '../../css/tailwind.css' with {type: 'css'};
 
 class ServerRolesWebComponent extends HTMLElement {
 
@@ -212,12 +212,12 @@ class ServerRolesWebComponent extends HTMLElement {
             `).join('');
 
         // Add click listeners
-        rolesList.querySelectorAll('.config-item').forEach(item => {
+        for (const item of rolesList.querySelectorAll('.config-item')) {
             item.addEventListener('click', () => {
                 const roleId = item.dataset.roleId;
                 this.selectRole(roleId);
             });
-        });
+        }
     }
 
     selectRole(roleId) {
@@ -268,17 +268,17 @@ class ServerRolesWebComponent extends HTMLElement {
             </div>`;
 
         // Add event listeners for risk toggles
-        roleDetails.querySelectorAll('.toggle-btn').forEach(btn => {
+        for (const btn of roleDetails.querySelectorAll('.toggle-btn')) {
             btn.addEventListener('click', async () => {
                 const roleId = btn.dataset.roleId;
                 const risk = btn.dataset.risk;
                 const status = btn.dataset.status;
                 await this.toggleRisk(roleId, risk, status);
             });
-        });
+        }
 
         // Add event listeners for user toggles
-        roleDetails.querySelectorAll('.assigned-user-item').forEach(item => {
+        for (const item of roleDetails.querySelectorAll('.assigned-user-item')) {
             item.addEventListener('click', () => {
                 const checkbox = item.querySelector("input")
                 checkbox.checked = !checkbox.checked;
@@ -288,7 +288,7 @@ class ServerRolesWebComponent extends HTMLElement {
                     item.classList.remove("selected");
                 }
             });
-        });
+        }
 
         roleDetails.querySelector("#assigned-popup-button").addEventListener('click', async () => {
             await this.#assignedUser(role)
@@ -330,24 +330,24 @@ class ServerRolesWebComponent extends HTMLElement {
             html: `
             <form class='popup'>
                 <div class="server-structure-form-group">
-                    <label>Role Name</label>
+                    <label for="roleName">Role Name</label>
                     <input type="text" id="roleName" placeholder="Enter role name">
                 </div>
                 <div class="server-structure-form-group">
-                    <label>Color</label>
-                    <input style="height: 2.5rem;" type="color" id="roleColor" value="#6366f1">
+                    <label for="roleColor">Color</label>
+                    <input style="height: 2.5rem; padding: 0" type="color" id="roleColor" value="#6366f1">
                 </div>
                 <div class="server-structure-form-group">
-                    <label>Priority</label>
+                    <label for="rolePriority">Priority</label>
                     <input type="number" id="rolePriority" placeholder="1" min="1">
                 </div>
             </form>`,
             preConfirm: () => {
-                const popup    = Swal.getPopup();
-                const name     = popup.querySelector('#roleName').value;
-                const color    = popup.querySelector('#roleColor').value;
+                const popup = Swal.getPopup();
+                const name = popup.querySelector('#roleName').value;
+                const color = popup.querySelector('#roleColor').value;
                 const priority = popup.querySelector('#rolePriority').value;
-                return { name: name, color: color, priority: parseInt(priority) };
+                return {name: name, color: color, priority: Number.parseInt(priority)};
             }
         }).then(async (result) => {
             if (result.isConfirmed) {
@@ -430,10 +430,13 @@ class ServerRolesWebComponent extends HTMLElement {
             didOpen: () => {
                 const filterMemberList = (elt, value) => {
                     const items = Array.from(elt.querySelectorAll(".assigned-user-item"))
-                    items.forEach(item => { item.classList.remove("hide")})
-                    items.filter(item => !item.dataset.userLogin.toLowerCase().includes(value.toLowerCase()))
-                         .filter(item => !item.dataset.userDisplayName.toLowerCase().includes(value.toLowerCase()))
-                         .forEach(item => { item.classList.add("hide")})
+                    for (const item of items) {
+                        item.classList.remove("hide")
+                        if (!item.dataset.userLogin.toLowerCase().includes(value.toLowerCase())
+                            && !item.dataset.userDisplayName.toLowerCase().includes(value.toLowerCase())) {
+                            item.classList.add("hide")
+                        }
+                    }
                 }
                 document.querySelector("#current-members-search").addEventListener('input', (e) => {
                     const elt = document.querySelector("#current-members-list")
@@ -444,7 +447,7 @@ class ServerRolesWebComponent extends HTMLElement {
                     filterMemberList(elt, e.target.value)
                 });
             }
-            }).then(async (result) => {
+        }).then(async (result) => {
             if (result.isConfirmed) {
                 const roleId = role.id
                 await this.#toggleUsers(roleId, result.value);
