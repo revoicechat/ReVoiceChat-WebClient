@@ -1,3 +1,7 @@
+import mainCss from '../../css/main.css' with { type: 'css' };
+import themeCss from '../../css/themes.css' with { type: 'css' };
+import tailwindCss from '../../css/tailwind.css' with { type: 'css' };
+
 class ServerRolesWebComponent extends HTMLElement {
 
     constructor() {
@@ -65,186 +69,36 @@ class ServerRolesWebComponent extends HTMLElement {
         await fetchCoreAPI(`/role/${roleId}/risk/${riskName}`, 'PATCH', status.toUpperCase());
     }
 
-    async updateRoleUsers(roleId, userId, action) {
-        await fetchCoreAPI(`/role/${roleId}/user`, action, [userId])
-    }
-
     render() {
         this.shadowRoot.innerHTML = `
             <style>
-                * {
-                    font-family: sans-serif;
-                    user-select: none;
-                    box-sizing: border-box;
-                }
-
-                button {
-                    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-                    cursor: pointer;
-                    border-radius: 0.25rem;
-                    padding: 0.5rem 1rem;
-                    font-weight: 700;
-                    text-align: center;
-                    border: none;
-                }
-
-                .main {
+                .role-settings-main {
                     display: flex;
-                    height: 100vh;
                     width: max-content;
                 }
 
-                .room-header {
-                    display: flex;
-                    padding: 1rem;
-                    height: 3.5rem;
-                    border-bottom: 1px solid;
-                    border-color: var(--pri-bd-color);
-                    align-items: center;
-                    justify-content: space-between;
-                }
-
-                .room-header h1 {
-                    font-size: 1.5rem;
-                    margin: 0;
-                }
-
-                .btn-primary {
-                    background-color: var(--pri-button-bg-color);
-                    color: var(--pri-button-text-color);
-                }
-
-                .btn-primary:hover {
-                    background-color: var(--pri-button-hover-color);
-                }
-
-                .btn-secondary {
-                    background-color: var(--sec-button-bg-color);
-                    color: var(--sec-button-text-color);
-                }
-
-                .btn-secondary:hover {
-                    background-color: var(--sec-button-hover-color);
-                }
-
-                .sidebar {
+                .role-settings-sidebar {
                     display: flex;
                     flex-direction: column;
-                    border-right: 1px solid;
-                    border-color: var(--pri-bd-color);
                     width: 20rem;
-                    height: 100%;
-                    background-color: var(--pri-bg-color);
-                }
-
-                .sidebar-header {
-                    padding: 1rem;
-                    border-bottom: 1px solid;
-                    border-color: var(--pri-bd-color);
-                    height: 3.5rem;
-                    display: flex;
-                    align-items: center;
-                    justify-content: space-between;
-                }
-
-                .sidebar-header h2 {
-                    font-size: 1.25rem;
-                    margin: 0;
-                }
-
-                .sidebar-room-container {
-                    flex: 1 1 0%;
-                    overflow-y: auto;
-                }
-
-                .scrollbar::-webkit-scrollbar {
-                    width: 6px;
-                }
-
-                .scrollbar::-webkit-scrollbar-track {
-                    border-radius: 10px;
-                    background: rgba(255, 255, 255, 0.1);
-                }
-
-                .scrollbar::-webkit-scrollbar-thumb {
-                    border-radius: 10px;
-                    background: rgba(37, 211, 102, 0.5);
-                }
-
-                .scrollbar::-webkit-scrollbar-thumb:hover {
-                    background: rgba(37, 211, 102, 0.7);
+                    height: -webkit-fill-available;
+                    background-color: var(--sec-bg-color);
                 }
 
                 .config-item {
                     display: flex;
-                    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
                     cursor: pointer;
-                    margin-bottom: 0.3rem;
-                    border-radius: 0.25rem;
-                    padding: 0.75rem;
-                    height: auto;
-                    min-height: 3rem;
                     align-items: center;
-                    background-color: var(--sec-bg-color);
                 }
-
-                .config-item:hover {
-                    background-color: var(--ter-bg-color);
-                }
-
-                .config-item.active {
-                    background-color: var(--pri-active-color);
-                }
-
-                .config-item .icon {
-                    border-radius: 9999px;
-                    width: 2rem;
-                    height: 2rem;
-                    flex-shrink: 0;
-                }
-
-                .config-item .name {
-                    padding-left: 0.75rem;
-                    font-weight: 600;
-                    font-size: 1rem;
-                    flex: 1;
-                }
-
+                
                 .role-priority {
                     font-size: 0.75rem;
                     color: #95a5a6;
                     padding-left: 0.75rem;
                 }
 
-                .room {
-                    display: flex;
-                    flex: 1 1 0%;
-                    flex-direction: column;
-                    height: 100%;
-                }
-
                 .room-container {
-                    display: flex;
-                    flex: 1 1 0%;
-                    flex-direction: column;
-                    overflow-y: auto;
-                }
-
-                .room-content {
-                    flex: 1 1 0%;
-                    padding: 2rem;
-                    overflow-y: auto;
-                }
-
-                .config-section {
-                    margin-bottom: 2.5rem;
-                }
-
-                .config-section h2 {
-                    font-size: 1.25rem;
-                    margin-bottom: 1.5rem;
-                    font-weight: 800;
-                    color: white;
+                    padding-left: 2rem;
                 }
 
                 .risk-category {
@@ -252,13 +106,8 @@ class ServerRolesWebComponent extends HTMLElement {
                 }
 
                 .risk-category-header {
-                    font-size: 1.125rem;
                     font-weight: 700;
-                    margin-bottom: 1rem;
-                    color: var(--pri-text-color);
                     padding-bottom: 0.5rem;
-                    border-bottom: 2px solid;
-                    border-color: var(--pri-bd-color);
                 }
 
                 .risk-container {
@@ -273,183 +122,17 @@ class ServerRolesWebComponent extends HTMLElement {
                     padding: 1rem;
                     background-color: var(--pri-bg-color);
                     border-radius: 0.25rem;
-                    border-left: 4px solid transparent;
-                }
-
-                .risk-item.enabled {
-                    border-left-color: rgb(37, 211, 102);
-                }
-
-                .risk-item.disabled {
-                    border-left-color: rgb(220, 38, 38);
-                }
-
-                .risk-item.default {
+                    border-left: 4px solid;
                     border-left-color: var(--pri-bd-color);
                 }
 
                 .risk-name {
-                    font-weight: 500;
-                    user-select: text;
                     padding-right: 10px;
                 }
 
                 .risk-toggle {
                     display: flex;
                     gap: 0.5rem;
-                }
-
-                .toggle-btn {
-                    padding: 0.4rem 0.75rem;
-                    border: 1px solid;
-                    border-color: var(--pri-bd-color);
-                    background: var(--sec-bg-color);
-                    border-radius: 0.25rem;
-                    cursor: pointer;
-                    font-size: 0.875rem;
-                    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-                    color: var(--pri-text-color);
-                    font-weight: 600;
-                }
-
-                .toggle-btn:hover {
-                    background: var(--qua-bg-color);
-                }
-
-                .toggle-btn.active.enabled {
-                    background: rgb(37, 211, 102);
-                    border-color: rgb(37, 211, 102);
-                    color: black;
-                }
-
-                .toggle-btn.active.disabled {
-                    background: rgb(220, 38, 38);
-                    border-color: rgb(220, 38, 38);
-                }
-
-                .toggle-btn.active.default {
-                    background: #6366f1;
-                    border-color: #6366f1;
-                }
-
-                .users-list-container {
-                    display: grid;
-                    gap: 0.5rem;
-                }
-
-                .user-item {
-                    display: flex;
-                    align-items: center;
-                    padding: 0.75rem;
-                    background-color: var(--qua-bg-color);
-                    border-radius: 0.25rem;
-                    cursor: pointer;
-                    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-                    border: 2px solid transparent;
-                }
-
-                .user-item:hover {
-                    background-color: var(--pri-bg-color);
-                }
-
-                .user-item.selected {
-                    background-color: var(--pri-bg-color);
-                    border-color: #6366f1;
-                }
-
-                .user-checkbox {
-                    margin-right: 0.75rem;
-                }
-
-                .user-checkbox input[type="checkbox"] {
-                    width: 1.25rem;
-                    height: 1.25rem;
-                    cursor: pointer;
-                    accent-color: #6366f1;
-                }
-
-                .user-info {
-                    flex: 1;
-                }
-
-                .user-name {
-                    font-weight: 500;
-                }
-
-                .server-structure-modal {
-                    display: none;
-                    position: fixed;
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 100%;
-                    background: rgba(0, 0, 0, 0.7);
-                    z-index: 1000;
-                    justify-content: center;
-                    align-items: center;
-                }
-
-                .server-structure-modal.show {
-                    display: flex;
-                }
-
-                .server-structure-modal-content {
-                    background-color: #1a1a1f;
-                    border: 1px solid #43434d;
-                    padding: 30px;
-                    border-radius: 0.25rem;
-                    width: 90%;
-                    max-width: 500px;
-                    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-                }
-
-                .server-structure-modal h3 {
-                    margin-bottom: 20px;
-                    color: white;
-                    font-weight: 800;
-                    font-size: 1.25rem;
-                }
-
-                .server-structure-form-group {
-                    margin-bottom: 20px;
-                }
-
-                .server-structure-form-group label {
-                    display: block;
-                    margin-bottom: 8px;
-                    font-weight: 700;
-                    color: white;
-                }
-
-                .server-structure-form-group input,
-                .server-structure-form-group select {
-                    margin-top: 0.5rem;
-                    outline: 2px solid transparent;
-                    outline-offset: 2px;
-                    border: 1px solid #43434d;
-                    border-radius: 0.25rem;
-                    padding: 0.5rem 0.75rem;
-                    width: 100%;
-                    background-color: #2a2a2f;
-                    color: #ffffff;
-                }
-
-                .server-structure-modal-actions {
-                    display: flex;
-                    gap: 10px;
-                    justify-content: flex-end;
-                    margin-top: 25px;
-                }
-
-                .empty-state {
-                    text-align: center;
-                    padding: 4rem 2rem;
-                    color: #95a5a6;
-                }
-
-                .empty-state h3 {
-                    margin-bottom: 0.5rem;
-                    font-size: 1.25rem;
                 }
 
                 .detail-header {
@@ -461,17 +144,13 @@ class ServerRolesWebComponent extends HTMLElement {
                     border-bottom: 1px solid #43434d;
                 }
 
-                .detail-header .icon {
+                .icon {
                     width: 3rem;
                     height: 3rem;
                     border-radius: 9999px;
                 }
 
-                .detail-header h2 {
-                    font-size: 1.75rem;
-                    margin: 0;
-                    flex: 1;
-                }
+                .detail-header h2 { flex: 1;}
 
                 .detail-priority {
                     font-size: 0.875rem;
@@ -488,63 +167,34 @@ class ServerRolesWebComponent extends HTMLElement {
                 }
             </style>
 
-            <div class="main">
-                <div class="sidebar">
-                    <div class="sidebar-header">
-                        <h2>Roles</h2>
-                        <button class="btn-primary" id="createRoleBtn">+ New</button>
-                    </div>
-                    <div class="sidebar-room-container scrollbar" id="rolesList"></div>
+            <div class="config config-right">            
+                <div class="config-buttons">
+                    <button class="btn-primary" id="createRoleBtn"><revoice-icon-circle-plus></revoice-icon-circle-plus> New</button>
                 </div>
-                <div class="room">
-                    <div class="room-header">
-                        <h1>Risk Management</h1>
+                <div class="role-settings-main">
+                    <div class="role-settings-sidebar">
+                        <div class="sidebar-room-container" id="rolesList"></div>
                     </div>
-                    <div class="room-container">
-                        <div class="room-content scrollbar" id="roleDetails">
-                            <div class="empty-state">
-                                <h3>Select a role</h3>
-                                <p>Choose a role from the list to view and manage its risks</p>
+                    <div class="room">
+                        <div class="room-container">
+                            <div class="room-content" id="roleDetails">
+                                <div class="empty-state">
+                                    <h3>Select a role</h3>
+                                    <p>Choose a role from the list to view and manage its risks</p>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-
-            <div class="server-structure-modal" id="createRoleModal">
-                <div class="server-structure-modal-content">
-                    <h3>Create New Role</h3>
-                    <div class="server-structure-form-group">
-                        <label>Role Name</label>
-                        <input type="text" id="roleName" placeholder="Enter role name">
-                    </div>
-                    <div class="server-structure-form-group">
-                        <label>Color</label>
-                        <input type="color" id="roleColor" value="#6366f1">
-                    </div>
-                    <div class="server-structure-form-group">
-                        <label>Priority</label>
-                        <input type="number" id="rolePriority" placeholder="1" min="1">
-                    </div>
-                    <div class="server-structure-modal-actions">
-                        <button class="btn-secondary" id="cancelCreateBtn">Cancel</button>
-                        <button class="btn-primary" id="confirmCreateBtn">Create</button>
-                    </div>
-                </div>
-            </div>
         `;
-
+        this.shadowRoot.adoptedStyleSheets.push(tailwindCss, mainCss, themeCss);
         this.setupEventListeners();
     }
 
     setupEventListeners() {
         const createBtn = this.shadowRoot.getElementById('createRoleBtn');
-        const cancelBtn = this.shadowRoot.getElementById('cancelCreateBtn');
-        const confirmBtn = this.shadowRoot.getElementById('confirmCreateBtn');
-
-        createBtn.addEventListener('click', () => this.openCreateRoleModal());
-        cancelBtn.addEventListener('click', () => this.closeCreateRoleModal());
-        confirmBtn.addEventListener('click', () => this.createRole());
+        createBtn.addEventListener('click', () => this.#newRole());
     }
 
     renderRoles() {
@@ -578,8 +228,6 @@ class ServerRolesWebComponent extends HTMLElement {
 
     renderRoleDetails() {
         const role = this.roles.find(r => r.id === this.selectedRoleId);
-        console.log(this.availableUsers)
-        console.log(role)
         if (!role) return;
         const roleDetails = this.shadowRoot.getElementById('roleDetails');
         roleDetails.innerHTML = `
@@ -587,16 +235,16 @@ class ServerRolesWebComponent extends HTMLElement {
                 <div class="icon" style="background: ${role.color}"></div>
                 <h2>${role.name}</h2>
                 <div class="detail-priority">Priority: ${role.priority}</div>
+                <div class="detail-priority"><button class="btn-primary" id="assigned-popup-button">Assigned user: ${role.members.length}</button></div>
             </div>
 
             <div class="config-section">
-                <h2>Risk Configuration</h2>
                 ${this.availableRisks.map(category => `
                     <div class="risk-category">
                         <div class="risk-category-header">${category.title}</div>
                         <div class="risk-container">
                             ${category.risks.map(risk => `
-                                <div class="risk-item ${role.risks[risk.type] || 'default'}">
+                                <div class="risk-item">
                                     <div class="risk-name">${risk.title}</div>
                                     <div class="risk-toggle">
                                         <button class="toggle-btn enabled ${this.#findRisk(role, risk)?.mode === 'ENABLE' ? 'active' : ''}" 
@@ -617,23 +265,6 @@ class ServerRolesWebComponent extends HTMLElement {
                         </div>
                     </div>
                 `).join('')}
-            </div>
-
-            <div class="config-section">
-                <h2>Assigned Users</h2>
-                <div class="users-list-container">
-                    ${this.availableUsers.map(user => `
-                        <div class="user-item ${role.members.includes(user.id) ? 'selected' : ''}"
-                             data-role-id="${role.id}" data-user-id="${user.id}">
-                            <div class="user-checkbox">
-                                <input type="checkbox" ${role.members.includes(user.id) ? 'checked' : ''} readonly>
-                            </div>
-                            <div class="user-info">
-                                <div class="user-name">${user.displayName}</div>
-                            </div>
-                        </div>
-                    `).join('')}
-                </div>
             </div>`;
 
         // Add event listeners for risk toggles
@@ -647,14 +278,23 @@ class ServerRolesWebComponent extends HTMLElement {
         });
 
         // Add event listeners for user toggles
-        roleDetails.querySelectorAll('.user-item').forEach(item => {
-            item.addEventListener('click', async () => {
-                const roleId = item.dataset.roleId;
-                const userId = item.dataset.userId;
-                await this.toggleUser(roleId, userId);
+        roleDetails.querySelectorAll('.assigned-user-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const checkbox = item.querySelector("input")
+                checkbox.checked = !checkbox.checked;
+                if (checkbox.checked) {
+                    item.classList.add("selected");
+                } else {
+                    item.classList.remove("selected");
+                }
             });
         });
+
+        roleDetails.querySelector("#assigned-popup-button").addEventListener('click', async () => {
+            await this.#assignedUser(role)
+        })
     }
+
 
     #findRisk(role, risk) {
         return role.risks.find(item => item.type === risk.type);
@@ -671,52 +311,128 @@ class ServerRolesWebComponent extends HTMLElement {
         }
     }
 
-    async toggleUser(roleId, userId) {
+    async #newRole() {
+        Swal.fire({
+            title: 'Create New Role',
+            animation: false,
+            customClass: {
+                title: "swalTitle",
+                popup: "swalPopup",
+                cancelButton: "swalCancel",
+                confirmButton: "swalConfirm",
+                input: "assigned-user-checkbox"
+
+            },
+            showCancelButton: true,
+            focusConfirm: false,
+            confirmButtonText: "Add",
+            allowOutsideClick: false,
+            html: `
+            <form class='popup'>
+                <div class="server-structure-form-group">
+                    <label>Role Name</label>
+                    <input type="text" id="roleName" placeholder="Enter role name">
+                </div>
+                <div class="server-structure-form-group">
+                    <label>Color</label>
+                    <input style="height: 2.5rem;" type="color" id="roleColor" value="#6366f1">
+                </div>
+                <div class="server-structure-form-group">
+                    <label>Priority</label>
+                    <input type="number" id="rolePriority" placeholder="1" min="1">
+                </div>
+            </form>`,
+            preConfirm: () => {
+                const popup    = Swal.getPopup();
+                const name     = popup.querySelector('#roleName').value;
+                const color    = popup.querySelector('#roleColor').value;
+                const priority = popup.querySelector('#rolePriority').value;
+                return { name: name, color: color, priority: parseInt(priority) };
+            }
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                const newRole = await this.createRoleAPI(result.value);
+                await this.fetchRoles()
+                this.renderRoles();
+                this.selectRole(newRole.id);
+            }
+        });
+    }
+
+    async #assignedUser(role) {
+        Swal.fire({
+            title: 'Assigned Users',
+            animation: false,
+            customClass: {
+                title: "swalTitle",
+                popup: "swalPopup",
+                cancelButton: "swalCancel",
+                confirmButton: "swalConfirm",
+                input: "assigned-user-checkbox"
+
+            },
+            showCancelButton: true,
+            focusConfirm: false,
+            confirmButtonText: "Save",
+            allowOutsideClick: false,
+            html: `
+            <style>
+                 .assigned-user-item {
+                    color: var(--pri-text-color);
+                    display: flex;
+                    align-items: center;
+                    padding: 0.75rem;
+                }
+                
+                .assigned-user-item.selected {
+                    background-color: var(--pri-bg-color);
+                    border-color: var(--pri-button-bg-color);
+                }
+            
+                .assigned-user-checkbox {
+                    margin-right: 0.75rem;
+                }
+            
+                .assigned-user-checkbox input[type="checkbox"] {
+                    width: 1.25rem;
+                    height: 1.25rem;
+                    cursor: pointer;
+                    accent-color: var(--pri-button-bg-color);
+                }
+            </style>
+            <form class='popup'>
+                ${this.availableUsers.map(user => `
+                <div class="assigned-user-item"
+                     data-role-id="${role.id}" data-user-id="${user.id}">
+                    <div class="assigned-user-checkbox">
+                        <input type="checkbox" ${role.members.includes(user.id) ? 'checked' : ''} readonly>
+                    </div>
+                    <div>${user.displayName}</div>
+                </div>`).join('')}
+            </form>`,
+            preConfirm: () => {
+                // Get form values
+                let users = Array.from(Swal.getPopup().querySelectorAll('.assigned-user-item'));
+                users = users.filter(elt => elt.querySelector("input:checked"))
+                users = users.map(item => item.dataset.userId)
+                return users;
+            }
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                const roleId = role.id
+                await this.#toggleUsers(roleId, result.value);
+            }
+        });
+    }
+
+    async #toggleUsers(roleId, users) {
         try {
-            const role = this.roles.find(r => r.id === roleId);
-            const action = role.members.includes(userId) ? 'DELETE' : 'PUT';
-            await this.updateRoleUsers(roleId, userId, action);
+            await fetchCoreAPI(`/role/${roleId}/user`, 'PUT', users)
             await this.fetchRoles();
             this.renderRoleDetails();
         } catch (error) {
             console.error('Error updating user:', error);
             this.showError('Failed to update user assignment');
-        }
-    }
-
-    openCreateRoleModal() {
-        const modal = this.shadowRoot.getElementById('createRoleModal');
-        modal.classList.add('show');
-    }
-
-    closeCreateRoleModal() {
-        const modal = this.shadowRoot.getElementById('createRoleModal');
-        modal.classList.remove('show');
-        this.shadowRoot.getElementById('roleName').value = '';
-        this.shadowRoot.getElementById('roleColor').value = '#6366f1';
-        this.shadowRoot.getElementById('rolePriority').value = '';
-    }
-
-    async createRole() {
-        const name = this.shadowRoot.getElementById('roleName').value;
-        const color = this.shadowRoot.getElementById('roleColor').value;
-        const priority = parseInt(this.shadowRoot.getElementById('rolePriority').value) || this.roles.length + 1;
-
-        if (!name) {
-            alert('Please enter a role name');
-            return;
-        }
-
-        try {
-            const roleData = { name: name, color: color, priority: priority };
-            const newRole = await this.createRoleAPI(roleData);
-            this.roles.push(newRole);
-            this.closeCreateRoleModal();
-            this.renderRoles();
-            this.selectRole(newRole.id);
-        } catch (error) {
-            console.error('Error creating role:', error);
-            this.showError('Failed to create role');
         }
     }
 
