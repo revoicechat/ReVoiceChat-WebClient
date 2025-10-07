@@ -155,16 +155,17 @@ async function voiceUpdateJoinedUsers() {
 
 // Create DOM Element / HTML for a given user
 function voiceCreateUserHTML(userData) {
+    const userId = userData.id;
     const DIV = document.createElement('div');
-    DIV.id = `voice-${userData.id}`;
+    DIV.id = `voice-${userId}`;
     DIV.className = "voice-profile";
 
-    const profilePicture = `${global.url.media}/profiles/${userData.id}`;
+    const profilePicture = `${global.url.media}/profiles/${userId}`;
 
     DIV.innerHTML = `
-        <div class='block-user'>
+        <div class='block-user' id='voice-gate-${userId}'>
             <div class='relative'>
-                <img src='${profilePicture}' alt='PFP' class='icon ring-2' />
+                <img src='${profilePicture}' alt='PFP' class='icon' />
             </div>
             <div class='user'>
                 <h2 class='name'>${userData.displayName}</h2>

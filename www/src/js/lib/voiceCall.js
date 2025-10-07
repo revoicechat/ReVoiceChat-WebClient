@@ -54,6 +54,7 @@ class VoiceCall {
     #users = {};
     #state = 0;
     #settings = {};
+    #gateState = false;
 
     constructor(user, settings) {
         if(!user){
@@ -320,7 +321,7 @@ class VoiceCall {
 
         // Setup Encoder
         this.#encoder = new AudioEncoder({
-            output: (chunk) => { this.#encoderCallback(chunk, this.#audioTimestamp, this.#socket, this.#packetEncode, this.#user); },
+            output: (chunk) => { this.#encoderCallback(chunk, this.#audioTimestamp, this.#socket, this.#packetEncode, this.#user, this.#gateState); },
             error: (error) => { throw new Error(`Encoder setup failed:\n${error}\nCurrent codec :${this.#codecSettings}`) },
         });
 
@@ -349,8 +350,12 @@ class VoiceCall {
             }
         });
 
+        this.#gateNode.port.onmessage = (event) =>{
+            this.#gateState = event.data.open;
+        }
+
         // Connect gain to gate
-        this.#gainNode.connect(this.#gateNode)
+        this.#gainNode.connect(this.#gateNode);
 
         // Create AudioCollector
         this.#audioCollector = new AudioWorkletNode(this.#audioContext, "AudioCollector");
@@ -416,7 +421,7 @@ class VoiceCall {
         }
     }
 
-    #encoderCallback(audioChunk, audioTimestamp, socket, packetEncode, user) {
+    #encoderCallback(audioChunk, audioTimestamp, socket, packetEncode, user, gateState) {
             // Get a copy of audioChunk and audioTimestamp
             const audioChunkCopy = new ArrayBuffer(audioChunk.byteLength);
             audioChunk.copyTo(audioChunkCopy);
@@ -426,6 +431,7 @@ class VoiceCall {
                 timestamp: Date.now(),
                 audioTimestamp: audioTimestamp / 1000, // audioTimestamp is in µs but sending ms is enough
                 user: user,
+                gateState: gateState,
             })
 
             const packet = packetEncode(header, audioChunkCopy);
@@ -446,6 +452,14 @@ class VoiceCall {
             // If user sending packet is muted, we stop
             if (currentUser.muted) {
                 return;
+            }
+
+            // User gate open/close
+            if (header.gateState){
+                document.getElementById(`voice-gate-${header.user}`).classList.add('gate-active');
+            }
+            else{
+                document.getElementById(`voice-gate-${header.user}`).classList.remove('gate-active');
             }
 
             // Decode and read audio

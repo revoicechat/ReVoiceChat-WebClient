@@ -248,7 +248,7 @@ svg {
     margin-right: 0px;
 }
 
-.room-title-extension svg{
+.room-title-extension svg {
     padding: 0.2rem;
 }
 
@@ -391,6 +391,21 @@ svg {
     margin-left: auto;
 }
 
+.voice-profile .icon {
+    border-radius: 9999px;
+    width: 2rem;
+    height: 2rem;
+}
+
+.voice-profile .gate-active .icon {
+    border-color: rgb(37, 211, 102);
+    border-width: 3px;
+}
+
+.voice-profile .gate-active .user .name {
+    font-weight: 600;
+}
+
 .block-action .volume {
     width: 60%;
 }
@@ -421,7 +436,6 @@ svg {
     height: 2.5rem;
 }
 
-.voice-profile .icon,
 .sidebar-user-list .icon {
     border-radius: 9999px;
     width: 2rem;
@@ -891,8 +905,9 @@ textarea.config-item {
 .toggle-btn {
     padding: 0.4rem 0.75rem;
     border: 1px solid;
-    border-color: var(--ter-bg-color)!important;
-    background: var(--ter-bg-color)!important;;
+    border-color: var(--ter-bg-color) !important;
+    background: var(--ter-bg-color) !important;
+    ;
     border-radius: 0.25rem;
     cursor: pointer;
     font-size: 0.875rem;
@@ -902,23 +917,24 @@ textarea.config-item {
 }
 
 .toggle-btn:hover {
-    background: var(--qua-bg-color)!important;;
+    background: var(--qua-bg-color) !important;
+    ;
 }
 
 .toggle-btn.active.enabled {
-    background: rgb(37, 211, 102)!important;
-    border-color: rgb(37, 211, 102)!important;
+    background: rgb(37, 211, 102) !important;
+    border-color: rgb(37, 211, 102) !important;
     color: black;
 }
 
 .toggle-btn.active.disabled {
-    background: rgb(220, 38, 38)!important;
-    border-color: rgb(220, 38, 38)!important;
+    background: rgb(220, 38, 38) !important;
+    border-color: rgb(220, 38, 38) !important;
 }
 
 .toggle-btn.active.default {
-    background: #6366f1!important;
-    border-color: #6366f1!important;
+    background: #6366f1 !important;
+    border-color: #6366f1 !important;
 }
 
 .empty-state {
@@ -965,6 +981,7 @@ textarea.config-item {
         width: -webkit-fill-available;
         top: 0;
     }
+
     .room-container {
         height: -webkit-fill-available;
         overflow-y: visible;
