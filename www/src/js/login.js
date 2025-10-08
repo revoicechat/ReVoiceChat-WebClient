@@ -43,7 +43,9 @@ function userLogin() {
 }
 
 async function login(loginData, host) {
+    const spinner = new SpinnerOnButton("login-button")
     try {
+        spinner.run()
         const response = await fetch(`${host}/api/auth/login`, {
             cache: "no-store",
             signal: AbortSignal.timeout(5000),
@@ -55,6 +57,7 @@ async function login(loginData, host) {
         });
 
         if (!response.ok) {
+            spinner.error()
             throw new Error("Not OK");
         }
 
@@ -66,10 +69,11 @@ async function login(loginData, host) {
 
         const jwtToken = await response.text();
         setCookie('jwtToken', jwtToken, 1);
-
+        spinner.success()
         document.location.href = `app.html`;
     }
     catch (error) {
+        spinner.error()
         console.error("Error while login : ", error);
         Swal.fire({
             icon: "error",

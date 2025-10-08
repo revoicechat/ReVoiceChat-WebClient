@@ -89,6 +89,13 @@ async function loadOverview() {
     document.getElementById('config-server-name').value = serverInfo.name;
 }
 
+async function serverSettingsSave() {
+    const spinner = new SpinnerOnButton("save-server-settings-button")
+    spinner.run()
+    await updateServerName(document.getElementById("config-server-name"))
+    spinner.success()
+}
+
 async function updateServerName(input) {
     const serverName = input.value;
 
@@ -639,12 +646,16 @@ function render() {
 }
 
 async function structureSave() {
+    const spinner = new SpinnerOnButton("structure-save-button")
+    spinner.run()
     structureClean(structureData.items);
 
     try {
         await fetchCoreAPI(`/server/${global.server.id}/structure`, 'PATCH', structureData);
+        spinner.success()
     }
     catch (error) {
+        spinner.error()
         console.error("CONFIG : Updating structure:", error)
     }
 }

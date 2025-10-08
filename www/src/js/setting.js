@@ -105,9 +105,12 @@ function settingPassword() {
 }
 
 async function saveSetting() {
+    const spinner = new SpinnerOnButton("save-setting-button")
+    spinner.run()
     await settingProfilePicture();
     const settingUserName = document.getElementById("setting-user-name");
     await settingDisplayName(settingUserName.value);
+    spinner.success()
 }
 
 async function settingDisplayName(displayName) {

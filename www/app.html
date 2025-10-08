@@ -169,7 +169,8 @@
                     <h1>Overview</h1>
                     <p>Server ID : <span id="config-server-uuid" class="selectable">[SERVER UUID]</span></p>
                     <h2>Server name</h2>
-                    <input type="text" id="config-server-name" value="[SERVER NAME]" onchange="updateServerName(this)">
+                    <input type="text" id="config-server-name" value="[SERVER NAME]">
+                    <button id="save-server-settings-button" class="config-button" onclick="serverSettingsSave()">Save</button>
                 </div>
 
                 <!-- Rooms -->
@@ -194,7 +195,7 @@
                         </div>
                     </div>
 
-                    <button class="config-button" onclick="structureSave()">Save</button>
+                    <button id="structure-save-button" class="config-button" onclick="structureSave()">Save</button>
                 </div>
 
                 <!-- Roles -->
@@ -292,7 +293,7 @@
                     <div class="sidebar-container">
                         <button class="button" onclick="settingPassword()">Change password</button>
                         <span style="width: 10px"></span>
-                        <button class="button" onclick="saveSetting()">Save Settings</button>
+                        <button id="save-setting-button" class="button" onclick="saveSetting()">Save Settings</button>
                     </div>
                 </div>
 
@@ -404,6 +405,7 @@
     <script src="src/js/component/message.component.js"></script>
     <script src="src/js/component/theme.component.js"></script>
     <script src="src/js/component/server.roles.component.js" type="module"></script>
+    <script src="src/js/component/button.spinner.component.js"></script>
 
     <!-- App -->
     <script src="src/js/app.js"></script>
