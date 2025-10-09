@@ -1,12 +1,8 @@
-import mainCss from '../../css/main.css' with {type: 'css'};
-import themeCss from '../../css/themes.css' with {type: 'css'};
-import tailwindCss from '../../css/tailwind.css' with {type: 'css'};
-
 class ServerRolesWebComponent extends HTMLElement {
 
     constructor() {
         super();
-        this.attachShadow({mode: 'open'});
+        this.attachShadow({ mode: 'open' });
         this.serverId = null
     }
 
@@ -71,6 +67,9 @@ class ServerRolesWebComponent extends HTMLElement {
 
     render() {
         this.shadowRoot.innerHTML = `
+            <link href="src/css/tailwind.css" rel="stylesheet" />
+            <link href="src/css/main.css" rel="stylesheet" />
+            <link href="src/css/emoji.css" rel="stylesheet" />
             <style>
                 .role-settings-main {
                     display: flex;
@@ -188,7 +187,6 @@ class ServerRolesWebComponent extends HTMLElement {
                 </div>
             </div>
         `;
-        this.shadowRoot.adoptedStyleSheets.push(tailwindCss, mainCss, themeCss);
         this.setupEventListeners();
     }
 
@@ -347,7 +345,7 @@ class ServerRolesWebComponent extends HTMLElement {
                 const name = popup.querySelector('#roleName').value;
                 const color = popup.querySelector('#roleColor').value;
                 const priority = popup.querySelector('#rolePriority').value;
-                return {name: name, color: color, priority: Number.parseInt(priority)};
+                return { name: name, color: color, priority: Number.parseInt(priority) };
             }
         }).then(async (result) => {
             if (result.isConfirmed) {
