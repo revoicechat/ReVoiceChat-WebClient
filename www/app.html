@@ -82,7 +82,8 @@
                     <div class="emoji-picker" id="emoji-picker"></div>
                     <div class="text-control">
                         <textarea rows="1" id="text-input" oninput="textInputMode(this)"></textarea>
-                        <button class="emoji-btn" id="attachment-button"><revoice-icon-paper-clip></revoice-icon-paper-clip></button>
+                        <input type="file" id="text-attachment" style="display:none;">
+                        <button class="emoji-btn" id="attachment-button" onclick="messageJoinAttachment()"><revoice-icon-paper-clip></revoice-icon-paper-clip></button>
                         <button class="emoji-btn" id="emoji-picker-button"><revoice-icon-emoji></revoice-icon-emoji></button>
                     </div>
                 </div>
