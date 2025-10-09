@@ -57,7 +57,7 @@ class VoiceCall {
     #gateState = false;
 
     constructor(user, settings) {
-        if(!user){
+        if (!user) {
             throw new Error('user is null or undefined');
         }
 
@@ -72,15 +72,15 @@ class VoiceCall {
     }
 
     async open(voiceUrl, roomId, token) {
-        if(!voiceUrl){
+        if (!voiceUrl) {
             throw new Error('VoiceUrl is null or undefined');
         }
 
-        if(!roomId){
+        if (!roomId) {
             throw new Error('roomId is null or undefined');
         }
 
-        if(!token){
+        if (!token) {
             throw new Error('token is null or undefined');
         }
 
@@ -152,36 +152,13 @@ class VoiceCall {
                 }
 
                 this.#users[userId].decoder = new AudioDecoder({
-                    output: (chunk) => { decoderCallback(chunk, this.#audioContext, this.#users) },
+                    output: (chunk) => { this.#decoderCallback(chunk, this.#audioContext, this.#users, userId) },
                     error: (error) => { throw new Error(`Decoder setup failed:\n${error}\nCurrent codec :${this.#codecSettings}`) },
                 });
 
                 this.#users[userId].decoder.configure(this.#codecSettings)
                 this.#users[userId].playhead = 0;
                 this.#users[userId].gainNode = this.#audioContext.createGain();
-            }
-
-            function decoderCallback(audioData, audioContext, users) {
-                const buffer = audioContext.createBuffer(
-                    audioData.numberOfChannels,
-                    audioData.numberOfFrames,
-                    audioData.sampleRate
-                );
-
-                const channelData = new Float32Array(audioData.numberOfFrames);
-                audioData.copyTo(channelData, { planeIndex: 0 });
-                buffer.copyToChannel(channelData, 0);
-
-                // Play the AudioBuffer
-                const source = audioContext.createBufferSource();
-                source.buffer = buffer;
-
-                source.connect(users[userId].gainNode); // connect audio source to gain
-                users[userId].gainNode.connect(audioContext.destination); // connect gain to output
-
-                users[userId].playhead = Math.max(users[userId].playhead, audioContext.currentTime) + buffer.duration;
-                source.start(users[userId].playhead);
-                audioData.close();
             }
 
             return true;
@@ -352,7 +329,7 @@ class VoiceCall {
             }
         });
 
-        this.#gateNode.port.onmessage = (event) =>{
+        this.#gateNode.port.onmessage = (event) => {
             this.#gateState = event.data.open;
         }
 
@@ -423,27 +400,6 @@ class VoiceCall {
         }
     }
 
-    #encoderCallback(audioChunk, audioTimestamp, socket, packetEncode, user, gateState) {
-            // Get a copy of audioChunk and audioTimestamp
-            const audioChunkCopy = new ArrayBuffer(audioChunk.byteLength);
-            audioChunk.copyTo(audioChunkCopy);
-
-            // Create Header to send with audioChunk
-            const header = JSON.stringify({
-                timestamp: Date.now(),
-                audioTimestamp: audioTimestamp / 1000, // audioTimestamp is in µs but sending ms is enough
-                user: user,
-                gateState: gateState,
-            })
-
-            const packet = packetEncode(header, audioChunkCopy);
-
-            // Finally send it ! (but socket need to be open)
-            if (socket.readyState === WebSocket.OPEN) {
-                socket.send(packet);
-            }
-        }
-
     #receiveAndDecode(packet, packetDecode) {
         const result = packetDecode(packet);
         const header = result.header;
@@ -457,10 +413,10 @@ class VoiceCall {
             }
 
             // User gate open/close
-            if (header.gateState){
+            if (header.gateState) {
                 currentUser.gateHtml.classList.add('gate-active');
             }
-            else{
+            else {
                 currentUser.gateHtml.classList.remove('gate-active');
             }
 
@@ -476,4 +432,49 @@ class VoiceCall {
             }
         }
     }
+
+    #encoderCallback(audioChunk, audioTimestamp, socket, packetEncode, user, gateState) {
+        // Get a copy of audioChunk and audioTimestamp
+        const audioChunkCopy = new ArrayBuffer(audioChunk.byteLength);
+        audioChunk.copyTo(audioChunkCopy);
+
+        // Create Header to send with audioChunk
+        const header = JSON.stringify({
+            timestamp: Date.now(),
+            audioTimestamp: audioTimestamp / 1000, // audioTimestamp is in µs but sending ms is enough
+            user: user,
+            gateState: gateState,
+        })
+
+        const packet = packetEncode(header, audioChunkCopy);
+
+        // Finally send it ! (but socket need to be open)
+        if (socket.readyState === WebSocket.OPEN) {
+            socket.send(packet);
+        }
+    }
+
+    #decoderCallback(audioData, audioContext, users, userId) {
+        const buffer = audioContext.createBuffer(
+            audioData.numberOfChannels,
+            audioData.numberOfFrames,
+            audioData.sampleRate
+        );
+
+        const channelData = new Float32Array(audioData.numberOfFrames);
+        audioData.copyTo(channelData, { planeIndex: 0 });
+        buffer.copyToChannel(channelData, 0);
+
+        // Play the AudioBuffer
+        const source = audioContext.createBufferSource();
+        source.buffer = buffer;
+
+        source.connect(users[userId].gainNode); // connect audio source to gain
+        users[userId].gainNode.connect(audioContext.destination); // connect gain to output
+
+        users[userId].playhead = Math.max(users[userId].playhead, audioContext.currentTime) + buffer.duration;
+        source.start(users[userId].playhead);
+        audioData.close();
+    }
+
 }
