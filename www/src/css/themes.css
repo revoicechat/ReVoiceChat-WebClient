@@ -154,10 +154,6 @@ body {
     color: var(--pri-text-color);
 }
 
-.app button:hover {
-    background-color: var(--sec-button-bg-color);
-}
-
 /* Element */
 .app button:hover {
     background-color: var(--sec-button-hover-color);
@@ -367,15 +363,15 @@ form.popup label {
 
 .theme-select-button {
     background-color: var(--sec-button-bg-color)!important;
-    color: var(--sec-button-text-color)!important;;
+    color: var(--sec-button-text-color)!important;
 }
 
 .theme-select-button:hover {
-    background-color: var(--sec-button-hover-color)!important;;
+    background-color: var(--sec-button-hover-color)!important;
 }
 
 .theme-select-button[disabled] {
-    background-color: var(--sec-button-hover-color)!important;;
+    background-color: var(--sec-button-hover-color)!important;
 }
 
 textarea.config-item:hover {
