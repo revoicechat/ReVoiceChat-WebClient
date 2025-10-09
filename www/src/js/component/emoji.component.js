@@ -113,7 +113,10 @@ async function initCustomServer(picker) {
 
 async function initCustomUser(picker) {
     initCustomEmojiCategory(picker, 'custom_perso',
-        `<img class="emoji ${global.user.id}" src="${global.url.media}/profiles/${global.user.id}" alt="user-emote"/>`,
+        `<img class="emoji ${global.user.id}"
+                   src="${global.url.media}/profiles/${global.user.id}"
+                   style="border-radius: 9999px;"
+                   alt="user-emote"/>`,
         [
             { link: "🦄", content: "🦄", description: "unicorn", names: ["unicorn"]},
             { link: "🌟", content: "🌟", description: "star", names: ["star"]},
