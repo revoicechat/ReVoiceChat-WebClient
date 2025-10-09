@@ -929,8 +929,8 @@ textarea.config-item {
 }
 
 .toggle-btn.active.disabled {
-    background: var(--sec-button-bg-color) !important;
-    border-color: var(--sec-button-bg-color) !important;
+    background: var(--ter-button-bg-color) !important;
+    border-color: var(--ter-button-bg-color) !important;
 }
 
 .toggle-btn.active.default {

@@ -145,6 +145,8 @@ class ThemePreviewComponent extends HTMLElement {
                           <div class="data-theme-button" style="background-color: var(--pri-button-hover-color)">button 1 hover</div>
                           <div class="data-theme-button" style="background-color: var(--sec-button-bg-color)">button 2</div>
                           <div class="data-theme-button" style="background-color: var(--sec-button-hover-color)">button 2 hover</div>
+                          <div class="data-theme-button" style="background-color: var(--ter-button-hover-color)">button 3</div>
+                          <div class="data-theme-button" style="background-color: var(--ter-button-hover-color)">button 3 hover</div>
                       </div>
                       <div class="data-theme-right-last"></div>
                   </div>

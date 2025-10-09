@@ -24,9 +24,12 @@
     --pri-button-bg-color: #5E8C61;
     --pri-button-hover-color: #3D6B47;
     --pri-button-text-color: var(--pri-text-color);
-    --sec-button-bg-color: #a22121;
-    --sec-button-hover-color: #731818;
+    --sec-button-bg-color: #00000000;
+    --sec-button-hover-color: #2c2c30;
     --sec-button-text-color: var(--pri-text-color);
+    --ter-button-bg-color: #a22121;
+    --ter-button-hover-color: #731818;
+    --ter-button-text-color: var(--pri-text-color);
 
     /* hljs */
     --hljs-theme: 'src/css/highlightjs/dark.css';
@@ -59,9 +62,12 @@
     --pri-button-bg-color: #5E8C61;
     --pri-button-hover-color: #3D6B47;
     --pri-button-text-color: var(--pri-text-color);
-    --sec-button-bg-color: #a22121;
-    --sec-button-hover-color: #731818;
+    --sec-button-bg-color: #00000000;
+    --sec-button-hover-color: #2c2c30;
     --sec-button-text-color: var(--pri-text-color);
+    --ter-button-bg-color: #a22121;
+    --ter-button-hover-color: #731818;
+    --ter-button-text-color: var(--pri-text-color);
 
     /* hljs */
     --hljs-theme: 'src/css/highlightjs/darker.css';
@@ -94,9 +100,12 @@
     --pri-button-bg-color: #5E8C61;
     --pri-button-hover-color: #3D6B47;
     --pri-button-text-color: var(--pri-bg-color);
-    --sec-button-bg-color: #a22121;
-    --sec-button-hover-color: #731818;
-    --sec-button-text-color: var(--pri-bg-color);
+    --sec-button-bg-color: #00000000;
+    --sec-button-hover-color: var(--qua-bg-color);
+    --sec-button-text-color: var(--pri-text-color);
+    --ter-button-bg-color: #a22121;
+    --ter-button-hover-color: #731818;
+    --ter-button-text-color: var(--pri-text-color);
 
     /* hljs */
     --hljs-theme: 'src/css/highlightjs/light.css';
@@ -132,6 +141,9 @@
     --sec-button-bg-color: #b91c1c;
     --sec-button-hover-color: #ff999c;
     --sec-button-text-color: var(--pri-text-color);
+    --ter-button-bg-color: #a22121;
+    --ter-button-hover-color: #731818;
+    --ter-button-text-color: var(--pri-text-color);
 
     /* hljs */
     --hljs-theme: 'src/css/highlightjs/femboy.css';
@@ -140,6 +152,10 @@
 
 body {
     color: var(--pri-text-color);
+}
+
+.app button:hover {
+    background-color: var(--sec-button-bg-color);
 }
 
 /* Element */
@@ -377,11 +393,11 @@ textarea.config-item:hover {
 }
 
 .swalCancel {
-    background-color: var(--sec-button-bg-color);
+    background-color: var(--ter-button-bg-color);
 }
 
 .swalCancel:hover {
-    background-color: var(--sec-button-hover-color);
+    background-color: var(--ter-button-hover-color);
 }
 
 /* Server room structure */
