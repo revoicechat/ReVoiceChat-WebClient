@@ -65,6 +65,36 @@ async function fetchCoreAPI(path, method = null, data = null) {
     }
 }
 
+async function fetchMedia(path, method = null) {
+    if (method === null) {
+        method = 'GET';
+    }
+
+    try {
+        const response = await fetch(`${global.url.core}/media${path}`, {
+            method: method,
+            signal: AbortSignal.timeout(5000),
+            headers: {
+                'Authorization': `Bearer ${global.jwtToken}`
+            }
+        });
+
+        if (method !== "DELETE") {
+            const contentType = response.headers.get("content-type");
+
+            if (contentType?.includes("application/json")) {
+                return await response.json();
+            }
+        }
+
+        return response.ok;
+    }
+    catch (error) {
+        console.error(`fetchMedia: An error occurred while processing request \n${error}\nHost: ${global.url.core}\nPath: ${path}\nMethod: ${method}`);
+        return null;
+    }
+}
+
 async function fileExistMedia(path) {
     try {
         const response = await fetch(`${global.url.media}${path}`, {
@@ -145,15 +175,38 @@ async function copyToClipboard(data) {
     }
 }
 
-function filenameFromPath(path) {
-    let startIndex = (path.indexOf('\\') >= 0 ? path.lastIndexOf('\\') : path.lastIndexOf('/'));
-    let filename = path.substring(startIndex);
-    if (filename.indexOf('\\') === 0 || filename.indexOf('/') === 0) {
-        filename = filename.substring(1);
-    }
-    return filename;
-}
-
 function getGlobal() {
     return global;
+}
+
+/**
+ * Format bytes as human-readable text.
+ * 
+ * @param bytes Number of bytes.
+ * @param si True to use metric (SI) units, aka powers of 1000. False to use 
+ *           binary (IEC), aka powers of 1024.
+ * @param dp Number of decimal places to display.
+ * 
+ * @return Formatted string.
+ */
+function humanFileSize(bytes, si = false, dp = 1) {
+    const thresh = si ? 1000 : 1024;
+
+    if (Math.abs(bytes) < thresh) {
+        return bytes + ' B';
+    }
+
+    const units = si
+        ? ['kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
+        : ['KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'];
+    let u = -1;
+    const r = 10 ** dp;
+
+    do {
+        bytes /= thresh;
+        ++u;
+    } while (Math.round(Math.abs(bytes) * r) / r >= thresh && u < units.length - 1);
+
+
+    return bytes.toFixed(dp) + ' ' + units[u];
 }

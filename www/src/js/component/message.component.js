@@ -1,7 +1,7 @@
 class MessageComponent extends HTMLElement {
   constructor() {
     super();
-    this.attachShadow({mode: 'open'});
+    this.attachShadow({ mode: 'open' });
     this.markdown = '';
   }
 
@@ -129,9 +129,24 @@ class MessageComponent extends HTMLElement {
                             width: 1.5rem;
                             height: 1.5rem;
                         }
+
+                        a.media {
+                          cursor: pointer;
+                          pointer-events: initial;
+                        }
+                        
+                        img.media {
+                          max-width: 300px;
+                          max-height: 300px;
+                        }
+                        video.media {
+                          max-width: 300px;
+                          max-height: 300px;
+                        }
                     </style>
                     <div class="container">
                         <div class="markdown-content" id="content"></div>
+                        <slot name="medias" style="display: none;"></slot>
                         <slot name="content" style="display: none;"></slot>
                         <slot name="emotes" style="display: none;"></slot>
                     </div>
@@ -139,6 +154,9 @@ class MessageComponent extends HTMLElement {
 
     // Listen for slotchange events
     this.shadowRoot.addEventListener('slotchange', (e) => {
+      if (e.target.name === 'medias') {
+        this.#handleSlottedMedias();
+      }
       if (e.target.name === 'content') {
         this.#handleSlottedContent();
       }
@@ -146,6 +164,17 @@ class MessageComponent extends HTMLElement {
         this.#handleSlottedEmotes();
       }
     });
+  }
+
+  #handleSlottedMedias() {
+    const mediasSlot = this.shadowRoot.querySelector('slot[name="medias"]');
+    const slottedElements = mediasSlot.assignedElements();
+    for (const element of slottedElements) {
+      if (element.tagName === 'SCRIPT' && element.type === 'application/json') {
+        this.medias = JSON.parse(element.textContent)
+        break;
+      }
+    }
   }
 
   #handleSlottedContent() {
@@ -178,7 +207,7 @@ class MessageComponent extends HTMLElement {
 
   #updateTheme() {
     let theme = getComputedStyle(this).getPropertyValue("--hljs-theme").trim();
-    theme = theme.substring(1, theme.length -1)
+    theme = theme.substring(1, theme.length - 1)
     console.log('Theme updated to:', theme);
     const link = document.createElement("link");
     link.id = "highlightjs-theme";
@@ -193,6 +222,7 @@ class MessageComponent extends HTMLElement {
     if (!this.markdown) {
       // Check if there's slotted content
       this.#handleSlottedContent();
+      this.#handleSlottedMedias();
       this.#handleSlottedEmotes();
       if (!this.markdown) {
         contentDiv.innerHTML = '<p style="color: #8b949e; font-style: italic;">No markdown content provided</p>';
@@ -207,7 +237,8 @@ class MessageComponent extends HTMLElement {
     try {
       this.#setupMarked()
       this.#hideSlots();
-      contentDiv.innerHTML = this.#injectEmojis(marked.parse(this.#removeTags(this.markdown)));
+      contentDiv.innerHTML = this.#injectMedias();
+      contentDiv.innerHTML += this.#injectEmojis(marked.parse(this.#removeTags(this.markdown)));
       this.#renderCodeTemplate(contentDiv);
     } catch (error) {
       console.error('Markdown parsing error:', error);
@@ -246,7 +277,7 @@ class MessageComponent extends HTMLElement {
 
   #setupMarked() {
     const renderer = new marked.Renderer();
-    renderer.heading = function ({tokens: e, depth: t}) {
+    renderer.heading = function ({ tokens: e, depth: t }) {
       const text = this.parser.parse(e);
       const DIV = document.createElement('div');
       DIV.innerHTML = text
@@ -254,7 +285,7 @@ class MessageComponent extends HTMLElement {
       p.innerHTML = '#'.repeat(t) + " " + p.innerHTML;
       return p.innerHTML;
     }
-    renderer.link = function ({href:e, title:t, tokens:n}) {
+    renderer.link = function ({ href: e, title: t, tokens: n }) {
       // Allow only http(s), www, or IP-style links
       if (/^(https?:\/\/|www\.|(\d{1,3}\.){3}\d{1,3})/.test(e)) {
         return `<a href="${e}" target="_blank" rel="noopener noreferrer">${e}</a>`;
@@ -262,11 +293,36 @@ class MessageComponent extends HTMLElement {
       return this.parser.parse(n);
     }
 
-    marked.use({renderer})
+    marked.use({ renderer })
     marked.use({
       breaks: true,
       gfm: true
     });
+  }
+
+  #injectMedias() {
+    let result = "";
+    if (this.medias) {
+      for (const media of this.medias) {
+        const src = `${getGlobal().url.media}/attachments/${media.id}`;
+
+        switch (media.type) {
+          case "VIDEO":
+            result += `<video class='media' controls><source src="${src}"></video><br/>`;
+            break;
+          case "AUDIO":
+            result += `<audio class='media' controls><source src="${src}"></audio><br/>`;
+            break;
+          case "PICTURE":
+            result += `<a class='media' href="${src}" target="_blank"><img class='media' src="${src}" alt="${media.name}"/></a><br/>`;
+            break;
+          default:
+            result += `<a class='media' href="${src}" target="_blank">${media.name}</a><br/>`;
+            break;
+        }
+      }
+    }
+    return result;
   }
 }
 

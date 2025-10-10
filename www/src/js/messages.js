@@ -1,9 +1,11 @@
-document.getElementById("text-input").addEventListener('keydown', function (e) {
+document.getElementById("text-input").addEventListener('keydown', async function (e) {
     if (e.key === 'Enter') {
         if (e.shiftKey) {
             return;
         }
-        sendMessage();
+        e.preventDefault();
+        await sendMessage();
+        return;
     }
 
     if (e.key === 'Escape') {
@@ -78,28 +80,18 @@ function createMessage(messageData) {
             ${createMessageContextMenu(messageData)}
         </div>
         <revoice-message id="${messageData.id}">
-          <script type="text/markdown" slot="content">
-            ${messageData.text}
-          </script>
-          <script type="application/json" slot="emotes">
+            <script type="application/json" slot="medias">
+                ${JSON.stringify(messageData.medias)}
+            </script>
+            <script type="text/markdown" slot="content">
+                ${messageData.text}
+            </script>
+            <script type="application/json" slot="emotes">
                 ${JSON.stringify(messageData.emotes)}
-        </script>
+            </script>
         </revoice-message>
     `;
     return DIV;
-}
-
-function createMessageContent(data) {
-    const DIV_CONTENT = document.createElement('revoice-message');
-    DIV_CONTENT.id = data.id;
-    DIV_CONTENT.innerHTML = `
-        <script type="text/markdown" slot="content">
-            ${data.text}
-        </script>
-        <script type="application/json" slot="emotes">
-                ${JSON.stringify(data.emotes)}
-        </script>`;
-    return DIV_CONTENT;
 }
 
 function createMessageContextMenu(messageData) {
@@ -130,11 +122,33 @@ async function sendMessage() {
         medias: []
     }
 
-    // Attachment ?
-    const fileInput = document.getElementById("text-attachment");
-    const filePath = fileInput.value
-    if (filePath) {
-        data.medias.push({ name: filenameFromPath(filePath) });
+    // Attachments
+    const input = document.getElementById("text-attachment");
+    const attachments = [];
+    if (input && getGlobal().chat.mode === "send") {
+        for (const element of input.files) {
+            if (element.size < getGlobal().chat.attachmentMaxSize) {
+                data.medias.push({ name: element.name });
+                attachments[element.name] = element;
+            }
+            else {
+                await Swal.fire({
+                    icon: "error",
+                    title: "File too big",
+                    html: `"${element.name}" is too big<br/>Maximum size: ${humanFileSize(getGlobal().chat.attachmentMaxSize)}<br/>Your file: ${humanFileSize(element.size)}`,
+                    animation: true,
+                    customClass: {
+                        title: "swalTitle",
+                        popup: "swalPopup",
+                        confirmButton: "swalConfirm",
+                    },
+                    showCancelButton: false,
+                    focusConfirm: false,
+                    confirmButtonText: "OK",
+                });
+                return;
+            }
+        }
     }
 
     switch (getGlobal().chat.mode) {
@@ -148,10 +162,12 @@ async function sendMessage() {
     }
 
     if (result) {
+
+        // Send attachements
         if (getGlobal().chat.mode === "send") {
             for (const media of result.medias) {
                 const formData = new FormData();
-                formData.append("file", fileInput.files[0]);
+                formData.append("file", attachments[media.name]);
                 await fetch(`${getGlobal().url.media}/attachments/${media.id}`, {
                     method: "POST",
                     signal: AbortSignal.timeout(5000),
@@ -164,7 +180,7 @@ async function sendMessage() {
         }
 
         // Clean file input
-        fileInput.value = "";
+        attachments.value = "";
         document.getElementById("text-attachment-div").classList.add('hidden');
 
         // Clean text input
@@ -266,7 +282,7 @@ function userUpdate(data) {
 function messageJoinAttachment() {
     const fileInput = document.getElementById("text-attachment");
     fileInput.click();
-    fileInput.addEventListener('change', getFileName);
+    document.getElementById("text-attachment-div").classList.remove('hidden');
 }
 
 function messageRemoveAttachment() {
@@ -275,10 +291,7 @@ function messageRemoveAttachment() {
     document.getElementById("text-attachment-div").classList.add('hidden');
 }
 
-const getFileName = () => {
-    const fileInput = document.getElementById("text-attachment");
-    const fileInputDiv = document.getElementById("text-attachment-div");
-    if (fileInput.value) {
-        fileInputDiv.classList.remove('hidden');
-    }
+async function getAttachmentMaxSize() {
+    const response = await fetchMedia('/maxfilesize');
+    global.chat.attachmentMaxSize = response.maxFileSize;
 }

@@ -24,7 +24,8 @@ const global = {
     chat: {
         mode: "send",
         editId: null,
-        emojisGlobal: []
+        emojisGlobal: [],
+        attachmentMaxSize: 0,
     }
 }
 
@@ -62,6 +63,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Current page is the app
     const currentLocation = window.location.pathname.substring(window.location.pathname.lastIndexOf("/"));
     if (currentLocation === "/app.html") {
+        getAttachmentMaxSize();
         getEmojisGlobal();
         appLoadSettings();
         getServers();

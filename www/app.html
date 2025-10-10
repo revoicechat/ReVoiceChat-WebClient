@@ -83,13 +83,10 @@
                 <div class="room-control-container">
                     <div class="emoji-picker" id="emoji-picker"></div>
                     <div class="text-control">
-                        <div class="hidden" id="text-attachment-div">
-                            <div class="text-control-file">
-                                <input type="file" id="text-attachment">
-                                <button class="emoji-btn" id="attachment-button"
-                                    onclick="messageRemoveAttachment()"><revoice-icon-trash></revoice-icon-trash></button>
-
-                            </div>
+                        <div class="text-control-file hidden" id="text-attachment-div">
+                            <input type="file" id="text-attachment" multiple>
+                            <button class="emoji-btn" id="attachment-button"
+                                onclick="messageRemoveAttachment()"><revoice-icon-trash></revoice-icon-trash></button>
                         </div>
                         <div class="text-control-text">
                             <textarea rows="1" id="text-input" oninput="textInputMode(this)"></textarea>
