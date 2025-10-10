@@ -128,3 +128,7 @@ class SpinnerOnButton {
     return svg;
   }
 }
+
+if (typeof module !== 'undefined') {
+  module.exports = SpinnerOnButton;
+}
