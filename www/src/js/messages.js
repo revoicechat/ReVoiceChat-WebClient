@@ -153,7 +153,7 @@ async function sendMessage() {
         if (global.chat.mode == "send") {
             for (media of result.medias) {
                 const formData = new FormData();
-                formData.append("file", fileInput);
+                formData.append("file", filePath);
                 await fetch(`${global.url.media}/attachments/${result.id}`, {
                     method: "POST",
                     signal: AbortSignal.timeout(5000),
