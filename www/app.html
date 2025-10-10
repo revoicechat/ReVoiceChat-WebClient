@@ -14,7 +14,9 @@
     <link rel="shortcut icon" type="image/png" href="src/img/favicon.png" />
     <title>ReVoiceChat - App</title>
     <style>
-        body {font-family: 'Noto Color Emoji', sans-serif;}
+        body {
+            font-family: 'Noto Color Emoji', sans-serif;
+        }
     </style>
 </head>
 
@@ -81,10 +83,19 @@
                 <div class="room-control-container">
                     <div class="emoji-picker" id="emoji-picker"></div>
                     <div class="text-control">
-                        <textarea rows="1" id="text-input" oninput="textInputMode(this)"></textarea>
-                        <input type="file" id="text-attachment" style="display:none;">
-                        <button class="emoji-btn" id="attachment-button" onclick="messageJoinAttachment()"><revoice-icon-paper-clip></revoice-icon-paper-clip></button>
-                        <button class="emoji-btn" id="emoji-picker-button"><revoice-icon-emoji></revoice-icon-emoji></button>
+                        <div class="text-control-file hidden" id="text-attachment-div">
+                            <input type="file" id="text-attachment">
+                            <button class="emoji-btn" id="attachment-button"
+                                onclick="messageRemoveAttachment()"><revoice-icon-trash></revoice-icon-trash></button>
+                            
+                        </div>
+                        <div class="text-control-text">
+                            <textarea rows="1" id="text-input" oninput="textInputMode(this)"></textarea>
+                            <button class="emoji-btn" id="attachment-button"
+                                onclick="messageJoinAttachment()"><revoice-icon-paper-clip></revoice-icon-paper-clip></button>
+                            <button class="emoji-btn"
+                                id="emoji-picker-button"><revoice-icon-emoji></revoice-icon-emoji></button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -172,7 +183,8 @@
                     <p>Server ID : <span id="config-server-uuid" class="selectable">[SERVER UUID]</span></p>
                     <h2>Server name</h2>
                     <input type="text" id="config-server-name" value="[SERVER NAME]">
-                    <button id="save-server-settings-button" class="config-button" onclick="serverSettingsSave()">Save</button>
+                    <button id="save-server-settings-button" class="config-button"
+                        onclick="serverSettingsSave()">Save</button>
                 </div>
 
                 <!-- Rooms -->
@@ -281,9 +293,11 @@
                     <p>User ID : <span id="setting-user-uuid" class="selectable">[USER UUID]</span></p>
                     <br />
                     <div class="sidebar-container">
-                        <input type="file" id="setting-user-picture-new-file" accept="image/webp,image/png,image/jpg,image/jpeg,image/gif" style="display:none;">
+                        <input type="file" id="setting-user-picture-new-file"
+                            accept="image/webp,image/png,image/jpg,image/jpeg,image/gif" style="display:none;">
                         <input type="hidden" id="setting-user-picture-new-path" name="imagePath">
-                        <img id="setting-user-picture" src="src/img/default-avatar.webp" alt="Preview PFP" class="icon large-icon ring-2">
+                        <img id="setting-user-picture" src="src/img/default-avatar.webp" alt="Preview PFP"
+                            class="icon large-icon ring-2">
                         <span style="width: 10px"></span>
                         <button class="button" onclick="uploadNewProfilePicture()">Upload a profile picture</button>
                     </div>

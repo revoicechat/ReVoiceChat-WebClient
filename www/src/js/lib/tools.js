@@ -30,11 +30,11 @@ function getQueryVariable(variable) {
 }
 
 async function fetchCoreAPI(path, method = null, data = null) {
-    if(method === null){
+    if (method === null) {
         method = 'GET';
     }
 
-    if(data){
+    if (data) {
         data = JSON.stringify(data);
     }
 
@@ -123,7 +123,7 @@ function sseClose() {
     }
 }
 
-async function copyToClipboard(data){
+async function copyToClipboard(data) {
     try {
         if (navigator.clipboard) {
             await navigator.clipboard.writeText(data);
@@ -143,4 +143,13 @@ async function copyToClipboard(data){
     } catch (err) {
         console.error('copyToClipboard: Failed to copy:', err);
     }
+}
+
+function filenameFromPath(path) {
+    let startIndex = (path.indexOf('\\') >= 0 ? path.lastIndexOf('\\') : path.lastIndexOf('/'));
+    let filename = path.substring(startIndex);
+    if (filename.indexOf('\\') === 0 || filename.indexOf('/') === 0) {
+        filename = filename.substring(1);
+    }
+    return filename;
 }

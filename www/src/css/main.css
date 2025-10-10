@@ -277,10 +277,15 @@ svg {
 }
 
 .text-control {
+    width: 100%;
+    padding-bottom: 0.5rem;
+}
+
+.text-control-file,
+.text-control-text{
     flex: 1 1 0%;
     display: flex;
     flex-direction: row;
-    padding-bottom: 0.5rem;
     align-items: center;
 }
 
@@ -291,13 +296,21 @@ svg {
     min-height: 2rem;
     resize: none;
     overflow-y: hidden;
+    margin-top: 0.25rem;
+}
 
+.text-control input{
+    cursor: pointer;
 }
 
 .text-control input:focus,
 .text-control textarea:focus {
     outline: 2px solid transparent;
     outline-offset: 2px;
+}
+
+.text-control input[type=file]::file-selector-button {
+    display: none;
 }
 
 /* MESSAGE */
