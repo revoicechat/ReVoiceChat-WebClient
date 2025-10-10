@@ -135,9 +135,13 @@ class MessageComponent extends HTMLElement {
                           pointer-events: initial;
                         }
                         
-                        img.media{
-                          max-width: 250px;
-                          max-height: 250px;
+                        img.media {
+                          max-width: 300px;
+                          max-height: 300px;
+                        }
+                        video.media {
+                          max-width: 300px;
+                          max-height: 300px;
                         }
                     </style>
                     <div class="container">
@@ -303,6 +307,12 @@ class MessageComponent extends HTMLElement {
         const src = `${getGlobal().url.media}/attachments/${media.id}`;
 
         switch (media.type) {
+          case "VIDEO":
+            result += `<video class='media' controls><source src="${src}"></video><br/>`;
+            break;
+          case "AUDIO":
+            result += `<audio class='media' controls><source src="${src}"></audio><br/>`;
+            break;
           case "PICTURE":
             result += `<a class='media' href="${src}" target="_blank"><img class='media' src="${src}" alt="${media.name}"/></a><br/>`;
             break;
