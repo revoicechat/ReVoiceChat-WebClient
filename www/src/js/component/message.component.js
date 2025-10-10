@@ -133,6 +133,7 @@ class MessageComponent extends HTMLElement {
                     <div class="container">
                         <div class="markdown-content" id="content"></div>
                         <slot name="content" style="display: none;"></slot>
+                        <slot name="emotes" style="display: none;"></slot>
                     </div>
                 `;
 
@@ -140,6 +141,9 @@ class MessageComponent extends HTMLElement {
     this.shadowRoot.addEventListener('slotchange', (e) => {
       if (e.target.name === 'content') {
         this.#handleSlottedContent();
+      }
+      if (e.target.name === 'emotes') {
+        this.#handleSlottedEmotes();
       }
     });
   }
@@ -152,6 +156,24 @@ class MessageComponent extends HTMLElement {
       if (element.tagName === 'SCRIPT' && element.type === 'text/markdown') {
         this.markdown = element.textContent.trim();
         this.#render();
+        break;
+      }
+    }
+  }
+
+  #handleSlottedEmotes() {
+    const emotesSlot = this.shadowRoot.querySelector('slot[name="emotes"]');
+    console.log(emotesSlot);
+    const slottedElements = emotesSlot.assignedElements();
+    console.log(slottedElements);
+    for (const element of slottedElements) {
+      console.log(element);
+      console.log(element.tagName);
+      console.log(element.type);
+      console.log(element.textContent);
+      if (element.tagName === 'SCRIPT' && element.type === 'application/json') {
+        this.emotes = JSON.parse(element.textContent)
+        console.log(this.emotes);
         break;
       }
     }
@@ -178,6 +200,7 @@ class MessageComponent extends HTMLElement {
     if (!this.markdown) {
       // Check if there's slotted content
       this.#handleSlottedContent();
+      this.#handleSlottedEmotes();
       if (!this.markdown) {
         contentDiv.innerHTML = '<p style="color: #8b949e; font-style: italic;">No markdown content provided</p>';
         return;
@@ -217,9 +240,13 @@ class MessageComponent extends HTMLElement {
     return inputText.replace(/:([A-Za-z0-9\-_]+):/g, (_, emoji) => {
       if (global.chat.emojisGlobal.includes(emoji)) {
         return `<img class="emoji" src="${global.url.media}/emojis/${emoji}" alt="${emoji}" title=":${emoji}:">`;
-      } else {
-        return `:${emoji}:`
       }
+      console.log(this.emotes);
+      const emote = Array.from(this.emotes).find(item => item.name === emoji);
+      if (emote) {
+        return `<img class="emoji" src="${global.url.media}/emojis/${emote.id}" alt="${emoji}" title=":${emoji}:">`;
+      }
+      return `:${emoji}:`
     });
   }
 

@@ -81,6 +81,9 @@ function createMessage(messageData) {
           <script type="text/markdown" slot="content">
             ${messageData.text}
           </script>
+          <script type="application/json" slot="emotes">
+                ${JSON.stringify(messageData.emotes)}
+        </script>
         </revoice-message>
     `;
     return DIV;
@@ -89,7 +92,13 @@ function createMessage(messageData) {
 function createMessageContent(data) {
     const DIV_CONTENT = document.createElement('revoice-message');
     DIV_CONTENT.id = data.id;
-    DIV_CONTENT.innerHTML = `<script type="text/markdown" slot="content">${data.text}</script>`;
+    DIV_CONTENT.innerHTML = `
+        <script type="text/markdown" slot="content">
+            ${data.text}
+        </script>
+        <script type="application/json" slot="emotes">
+                ${JSON.stringify(data.emotes)}
+        </script>`;
     return DIV_CONTENT;
 }
 
