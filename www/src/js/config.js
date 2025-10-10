@@ -8,16 +8,15 @@ const popupData = {
 };
 
 async function configLoad() {
-    // Preload
-    await loadOverview()
+    selectConfigItem("overview");
+
+    await loadOverview();
     await loadRoomData();
     await loadRoomStructure();
     await loadServerRoles();
     await loadServerEmotes();
     await loadMembers();
-    await loadInvitations();
-
-    selectConfigItem("overview");
+    await loadInvitations();    
 }
 
 async function loadServerEmotes() {
