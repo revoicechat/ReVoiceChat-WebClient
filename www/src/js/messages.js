@@ -91,19 +91,6 @@ function createMessage(messageData) {
     return DIV;
 }
 
-function createMessageContent(data) {
-    const DIV_CONTENT = document.createElement('revoice-message');
-    DIV_CONTENT.id = data.id;
-    DIV_CONTENT.innerHTML = `
-        <script type="text/markdown" slot="content">
-            ${data.text}
-        </script>
-        <script type="application/json" slot="emotes">
-                ${JSON.stringify(data.emotes)}
-        </script>`;
-    return DIV_CONTENT;
-}
-
 function createMessageContextMenu(messageData) {
     if (messageData.user.id == getGlobal().user.id) {
         return `
@@ -135,7 +122,7 @@ async function sendMessage() {
     // Attachments
     const input = document.getElementById("text-attachment");
     const attachments = [];
-    if (input) {
+    if (input && getGlobal().chat.mode === "send") {
         for (const element of input.files) {
             if (element.size < getGlobal().chat.attachmentMaxSize) {
                 data.medias.push({ name: element.name });
