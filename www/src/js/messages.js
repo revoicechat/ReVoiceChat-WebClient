@@ -271,14 +271,10 @@ function messageRemoveAttachment() {
     document.getElementById("text-attachment-div").classList.add('hidden');
 }
 
-const getFileName = (event) => {
+const getFileName = () => {
     const fileInput = document.getElementById("text-attachment");
     const fileInputDiv = document.getElementById("text-attachment-div");
     if (fileInput.value) {
         fileInputDiv.classList.remove('hidden');
     }
-
-    const files = event.target.files;
-    const fileName = files[0].name;
-    console.log("file name: ", fileName);
 }
