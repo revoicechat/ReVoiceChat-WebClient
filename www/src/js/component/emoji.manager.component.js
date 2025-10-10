@@ -370,10 +370,7 @@ class EmojiManager extends HTMLElement {
             <div class="config-item">
                 <div class="emoji-header">
                     <div class="emoji-preview">
-                        ${this.emojiImages[emoji.id]
-            ? `<img src="${this.emojiImages[emoji.id]}" alt="${emoji.name}">`
-            : `<span style="font-size: 2rem;">🎨</span>`
-        }
+                        <img src="${global.url.media}/emojis/${emoji.id}" alt="${emoji.name}">
                     </div>
                     <div class="emoji-info">
                         <div class="emoji-name">:${emoji.name}:</div>
