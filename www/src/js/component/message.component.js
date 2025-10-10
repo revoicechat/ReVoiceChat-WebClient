@@ -234,10 +234,11 @@ class MessageComponent extends HTMLElement {
       if (getGlobal().chat.emojisGlobal.includes(emoji)) {
         return `<img class="emoji" src="${getGlobal().url.media}/emojis/${emoji}" alt="${emoji}" title=":${emoji}:">`;
       }
-      console.log(this.emotes);
-      const emote = Array.from(this.emotes).find(item => item.name === emoji);
-      if (emote) {
-        return `<img class="emoji" src="${getGlobal().url.media}/emojis/${emote.id}" alt="${emoji}" title=":${emoji}:">`;
+      if (this.emotes) {
+        const emote = Array.from(this.emotes).find(item => item.name === emoji);
+        if (emote) {
+          return `<img class="emoji" src="${getGlobal().url.media}/emojis/${emote.id}" alt="${emoji}" title=":${emoji}:">`;
+        }
       }
       return `:${emoji}:`
     });

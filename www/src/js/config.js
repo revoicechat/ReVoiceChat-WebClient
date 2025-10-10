@@ -21,7 +21,7 @@ async function configLoad() {
 }
 
 async function loadServerEmotes() {
-    const response = await fetchCoreAPI(`/emoji/server/${global.server.id}`);
+    const response = await fetchCoreAPI(`/emote/server/${global.server.id}`);
     document.getElementById("emotes-config").innerHTML = `
         <h1>Emotes</h1>
         <revoice-emoji-manager path="server/${global.server.id}" id="setting-emotes-form">

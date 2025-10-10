@@ -51,49 +51,22 @@ class EmojiManager extends HTMLElement {
 
     setupEventListeners() {
         const addForm = this.shadowRoot.getElementById('addForm');
-        const editForm = this.shadowRoot.getElementById('editForm');
-        const cancelBtn = this.shadowRoot.getElementById('cancelEdit');
-        const modal = this.shadowRoot.getElementById('editModal');
         const addFileInput = this.shadowRoot.getElementById('emojiFile');
-        const editFileInput = this.shadowRoot.getElementById('editEmojiFile');
-
         addForm.addEventListener('submit', (e) => {
             e.preventDefault();
             this.addEmoji();
         });
-
-        editForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            this.saveEdit();
-        });
-
-        cancelBtn.addEventListener('click', () => {
-            this.closeModal();
-        });
-
-        modal.addEventListener('click', (e) => {
-            if (e.target.id === 'editModal') {
-                this.closeModal();
-            }
-        });
-
         // Preview for add form
         addFileInput.addEventListener('change', (e) => {
-            this.handleFilePreview(e.target.files[0], 'addPreview');
-        });
-
-        // Preview for edit form
-        editFileInput.addEventListener('change', (e) => {
-            this.handleFilePreview(e.target.files[0], 'editPreview');
+            this.handleFilePreview(e.target.files[0], this.shadowRoot.getElementById('addPreview'));
         });
     }
 
-    handleFilePreview(file, previewId) {
+    handleFilePreview(file, preview) {
         if (!file) return;
 
         const reader = new FileReader();
         reader.onload = (e) => {
-            const preview = this.shadowRoot.getElementById(previewId);
             const src = e.target.result
             if (typeof src === 'string') {
                 preview.innerHTML = `<img src="${src}" alt="Preview">`;
@@ -237,19 +210,81 @@ class EmojiManager extends HTMLElement {
     openEditModal(id) {
         const emoji = this.emojis.find(e => e.id === id);
         if (!emoji) return;
+        Swal.fire({
+            title: 'Edit emoji',
+            animation: false,
+            customClass: {
+                title: "swalTitle",
+                popup: "swalPopup",
+                cancelButton: "swalCancel",
+                confirmButton: "swalConfirm",
+                input: "assigned-user-checkbox"
 
-        this.currentEditId = id;
-        this.shadowRoot.getElementById('editName').value = emoji.name;
-        this.shadowRoot.getElementById('editKeywords').value = emoji.keywords.join(', ');
-        this.shadowRoot.getElementById('editNameError').textContent = '';
-        this.shadowRoot.getElementById('editEmojiFile').value = '';
+            },
+            showCancelButton: true,
+            focusConfirm: false,
+            confirmButtonText: "Add",
+            allowOutsideClick: false,
+            html: `
+                <form id="editForm">
+                    <div class="form-row-with-preview">
+                        <div style="flex: 1; display: flex; flex-direction: column; gap: 1rem;">
+                            <div class="emotes-form-group">
+                                <label for="editName">Name (no spaces)</label>
+                                <input type="text" id="editName" required>
+                                <div class="error" id="editNameError"></div>
+                            </div>
+                            <div class="emotes-form-group">
+                                <label for="editKeywords">Keywords (comma-separated)</label>
+                                <input type="text" id="editKeywords">
+                            </div>
+                            <div class="emotes-form-group">
+                                <label for="editEmojiFile">Change image</label>
+                                <input type="file" id="editEmojiFile" accept="image/*">
+                            </div>
+                        </div>
+                        <div class="preview-container" id="editPreview"></div>
+                    </div>
+                </form>`,
+            didOpen: () => {
+                const popup = Swal.getPopup()
+                this.currentEditId = id;
+                popup.querySelector('#editName').value = emoji.name;
+                popup.querySelector('#editKeywords').value = emoji.keywords.join(', ');
+                popup.querySelector('#editNameError').textContent = '';
+                const editEmojiFile = popup.querySelector('#editEmojiFile')
+                editEmojiFile.value = '';
 
-        // Show current image
-        const editPreview = this.shadowRoot.getElementById('editPreview');
-        editPreview.innerHTML = `<img src="${getGlobal().url.media}/emojis/${id}" alt="${emoji.name}">`;
-        editPreview.style.display = 'flex';
+                const editPreview = popup.querySelector('#editPreview');
+                editPreview.innerHTML = `<img src="${getGlobal().url.media}/emojis/${id}" alt="${emoji.name}">`;
+                editPreview.style.display = 'flex';
 
-        this.shadowRoot.getElementById('editModal').classList.add('active');
+                editEmojiFile.addEventListener('change', (e) => {
+                    this.handleFilePreview(e.target.files[0], editPreview);
+                });
+            },
+            preConfirm: () => {
+                const popup = Swal.getPopup();
+                const name = popup.querySelector('#editName').value;
+                const keywords = popup.querySelector('#editKeywords').value.split(",");
+                const files = popup.querySelector('#editEmojiFile').value;
+                const nameError = this.validateName(name);
+                if (nameError) {
+                    popup.querySelector('#editNameError').textContent = nameError;
+                    return;
+                }
+                if (this.emojis.some(e => e.name === name.trim() && e.id !== this.currentEditId)) {
+                    popup.querySelector('#editNameError').textContent = "This name already exists";
+                    return;
+                }
+
+                return { name: name, keywords: keywords, file: files[0] };
+            }
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                this.saveEdit(result.value);
+            }
+        });
     }
 
     closeModal() {
@@ -257,48 +292,27 @@ class EmojiManager extends HTMLElement {
         this.currentEditId = null;
     }
 
-    saveEdit() {
-        const nameInput = this.shadowRoot.getElementById('editName');
-        const keywordsInput = this.shadowRoot.getElementById('editKeywords');
-        const fileInput = this.shadowRoot.getElementById('editEmojiFile');
-
-        this.shadowRoot.getElementById('editNameError').textContent = '';
-
-        const nameError = this.validateName(nameInput.value);
-        if (nameError) {
-            this.shadowRoot.getElementById('editNameError').textContent = nameError;
-            return;
-        }
-
-        // Check if name already exists (excluding current emoji)
-        if (this.emojis.some(e => e.name === nameInput.value.trim() && e.id !== this.currentEditId)) {
-            this.shadowRoot.getElementById('editNameError').textContent = "This name already exists";
-            return;
-        }
-
+    saveEdit(result) {
         const emoji = this.emojis.find(e => e.id === this.currentEditId);
         if (emoji) {
             const oldName = emoji.name;
-            const keywords = keywordsInput.value
-                .split(',')
-                .map(k => k.trim())
-                .filter(k => k.length > 0);
+            const keywords = result.keywords.map(k => k.trim()).filter(k => k.length > 0);
 
             const updateEmoji = async () => {
                 try {
                     await fetchCoreAPI(`/emote/${this.currentEditId}`, 'PATCH', {
-                        fileName: fileInput.files[0]?.name,
-                        content: nameInput.value.trim(),
+                        fileName: result.file?.name,
+                        content: result.name.trim(),
                         keywords: keywords
                     });
 
                     // Temporary: Update locally until API is integrated
-                    emoji.name = nameInput.value.trim();
+                    emoji.name = result.name.trim();
                     emoji.keywords = keywords;
 
-                    if (fileInput.files[0]) {
+                    if (result.file) {
                         const formData = new FormData();
-                        formData.append('file', fileInput.files[0]);
+                        formData.append('file', result.file);
                         await fetch(`${getGlobal().url.media}/emojis/${this.currentEditId}`, {
                             method: "POST",
                             signal: AbortSignal.timeout(5000),
@@ -321,7 +335,7 @@ class EmojiManager extends HTMLElement {
                             this.closeModal();
                             this.updateEmojiList();
                         };
-                        reader.readAsDataURL(fileInput.files[0]);
+                        reader.readAsDataURL(result.file);
                     } else {
                         // Dispatch custom event
                         this.dispatchEvent(new CustomEvent('emoji-updated', {
@@ -335,19 +349,14 @@ class EmojiManager extends HTMLElement {
                     }
                 } catch (error) {
                     console.error('Error updating emoji:', error);
-                    this.shadowRoot.getElementById('editNameError').textContent = 'Failed to update emoji';
                 }
             };
-
             updateEmoji();
         }
     }
 
     updateEmojiList() {
         const grid = this.shadowRoot.getElementById('emojiGrid');
-        const count = this.shadowRoot.getElementById('emojiCount');
-
-        count.textContent = this.emojis.length;
 
         if (this.emojis.length === 0) {
             grid.innerHTML = `
@@ -394,29 +403,10 @@ class EmojiManager extends HTMLElement {
 
     render() {
         this.shadowRoot.innerHTML = `
+            <link href="src/css/tailwind.css" rel="stylesheet" />
+            <link href="src/css/main.css" rel="stylesheet" />
+            <link href="src/css/emoji.css" rel="stylesheet" />
             <style>
-                :host {
-                    display: block;
-                    --pri-bg-color: #121214;
-                    --sec-bg-color: #1a1a1e;
-                    --ter-bg-color: #202024;
-                    --qua-bg-color: #43434d;
-                    --pri-bd-color: #43434d;
-                    --sec-bd-color: #ffffff;
-                    --pri-text-color: #ffffff;
-                    --pri-placeholder-color: #9ca3af;
-                    --pri-active-color: #2c2c30;
-                    --pri-hover-color: #242427;
-                    --sec-hover-color: #43434d;
-                    --pri-button-bg-color: #5E8C61;
-                    --pri-button-hover-color: #3D6B47;
-                    --pri-button-text-color: var(--pri-text-color);
-                    --sec-button-bg-color: #00000000;
-                    --sec-button-hover-color: #2c2c30;
-                    --ter-button-bg-color: #a22121;
-                    --ter-button-hover-color: #731818;
-                }
-
                 * {
                     font-family: sans-serif;
                     user-select: none;
@@ -437,21 +427,6 @@ class EmojiManager extends HTMLElement {
                     max-width: 1200px;
                     margin: 0 auto;
                     color: var(--pri-text-color);
-                }
-
-                .header {
-                    margin-bottom: 2rem;
-                }
-
-                .header h1 {
-                    font-size: 1.5rem;
-                    font-weight: 800;
-                    margin-bottom: 0.5rem;
-                }
-
-                .header p {
-                    color: var(--pri-placeholder-color);
-                    font-size: 0.875rem;
                 }
 
                 .add-section {
@@ -478,44 +453,6 @@ class EmojiManager extends HTMLElement {
                     display: flex;
                     gap: 1rem;
                     flex-wrap: wrap;
-                }
-
-                .form-row-with-preview {
-                    display: flex;
-                    gap: 1rem;
-                    align-items: flex-start;
-                }
-
-                .form-group {
-                    flex: 1;
-                    min-width: 250px;
-                }
-
-                .form-group label {
-                    display: block;
-                    margin-bottom: 0.5rem;
-                    font-weight: 800;
-                    color: var(--pri-text-color);
-                }
-
-                .form-group input[type="text"],
-                .form-group input[type="file"] {
-                    width: 100%;
-                    padding: 0.5rem 0.75rem;
-                    border: 1px solid var(--pri-bd-color);
-                    border-radius: 0.25rem;
-                    background-color: var(--ter-bg-color);
-                    color: var(--pri-text-color);
-                    outline: 2px solid transparent;
-                    outline-offset: 2px;
-                }
-
-                .form-group input::placeholder {
-                    color: var(--pri-placeholder-color);
-                }
-
-                .form-group input:focus {
-                    border-color: var(--pri-button-bg-color);
                 }
 
                 .preview-container {
@@ -603,6 +540,7 @@ class EmojiManager extends HTMLElement {
                     padding: 1rem;
                     background-color: var(--ter-bg-color);
                     border: 1px solid transparent;
+                    height: fit-content;
                 }
 
                 .config-item:hover {
@@ -663,51 +601,6 @@ class EmojiManager extends HTMLElement {
                     flex: 1;
                 }
 
-                .modal {
-                    display: none;
-                    position: fixed;
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 100%;
-                    background: rgba(0, 0, 0, 0.7);
-                    align-items: center;
-                    justify-content: center;
-                    z-index: 1000;
-                }
-
-                .modal.active {
-                    display: flex;
-                }
-
-                .modal-content {
-                    background-color: var(--pri-bg-color);
-                    border: 1px solid var(--pri-bd-color);
-                    border-radius: 0.25rem;
-                    padding: 2rem;
-                    max-width: 500px;
-                    width: 90%;
-                    max-height: 90vh;
-                    overflow-y: auto;
-                }
-
-                .modal-header {
-                    margin-bottom: 1.5rem;
-                }
-
-                .modal-header h3 {
-                    font-size: 1.25rem;
-                    font-weight: 800;
-                    color: var(--pri-text-color);
-                }
-
-                .modal-footer {
-                    display: flex;
-                    gap: 0.75rem;
-                    justify-content: flex-end;
-                    margin-top: 1.5rem;
-                }
-
                 .empty-state {
                     text-align: center;
                     padding: 3rem 2rem;
@@ -754,18 +647,18 @@ class EmojiManager extends HTMLElement {
                         <div class="form-row-with-preview">
                             <div style="flex: 1; display: flex; flex-direction: column; gap: 1rem;">
                                 <div class="form-row">
-                                    <div class="form-group">
+                                    <div class="emotes-form-group">
                                         <label for="emojiFile">Emoji image</label>
                                         <input type="file" id="emojiFile" accept="image/*" required>
                                         <div class="error" id="fileError"></div>
                                     </div>
-                                    <div class="form-group">
+                                    <div class="emotes-form-group">
                                         <label for="emojiName">Name (no spaces)</label>
                                         <input type="text" id="emojiName" placeholder="e.g. super_emoji" required>
                                         <div class="error" id="nameError"></div>
                                     </div>
                                 </div>
-                                <div class="form-group">
+                                <div class="emotes-form-group">
                                     <label for="emojiKeywords">Keywords (optional, comma-separated)</label>
                                     <input type="text" id="emojiKeywords" placeholder="e.g. happy, smile, joy">
                                 </div>
@@ -777,40 +670,7 @@ class EmojiManager extends HTMLElement {
                 </div>
 
                 <div class="emoji-list">
-                    <h2>My collection (<span id="emojiCount">0</span>)</h2>
                     <div class="emoji-grid" id="emojiGrid"></div>
-                </div>
-            </div>
-
-            <div class="modal" id="editModal">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h3>Edit emoji</h3>
-                    </div>
-                    <form id="editForm">
-                        <div class="form-row-with-preview">
-                            <div style="flex: 1; display: flex; flex-direction: column; gap: 1rem;">
-                                <div class="form-group">
-                                    <label for="editName">Name (no spaces)</label>
-                                    <input type="text" id="editName" required>
-                                    <div class="error" id="editNameError"></div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="editKeywords">Keywords (comma-separated)</label>
-                                    <input type="text" id="editKeywords">
-                                </div>
-                                <div class="form-group">
-                                    <label for="editEmojiFile">Change image</label>
-                                    <input type="file" id="editEmojiFile" accept="image/*">
-                                </div>
-                            </div>
-                            <div class="preview-container" id="editPreview"></div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn-secondary" id="cancelEdit">Cancel</button>
-                            <button type="submit" class="btn-primary">Save</button>
-                        </div>
-                    </form>
                 </div>
             </div>
         `;
