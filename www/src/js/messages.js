@@ -154,7 +154,7 @@ async function sendMessage() {
             for (media of result.medias) {
                 const formData = new FormData();
                 formData.append("file", fileInput);
-                await fetch(`${global.url.media}/attachment/${result.id}`, {
+                await fetch(`${global.url.media}/attachments/${result.id}`, {
                     method: "POST",
                     signal: AbortSignal.timeout(5000),
                     headers: {
