@@ -130,9 +130,14 @@ class MessageComponent extends HTMLElement {
                             height: 1.5rem;
                         }
 
-                        .media {
+                        a.media {
                           cursor: pointer;
                           pointer-events: initial;
+                        }
+                        
+                        img.media{
+                          max-width: 250px;
+                          max-height: 250px;
                         }
                     </style>
                     <div class="container">
@@ -295,7 +300,16 @@ class MessageComponent extends HTMLElement {
     let result = "";
     if (this.medias) {
       for (const media of this.medias) {
-        result += `<a class='media' href="${getGlobal().url.media}/attachments/${media.id}" target="_blank">${media.name}</a><br/>`;
+        const src = `${getGlobal().url.media}/attachments/${media.id}`;
+
+        switch (media.type) {
+          case "PICTURE":
+            result += `<a class='media' href="${src}" target="_blank"><img class='media' src="${src}" alt="${media.name}"/></a><br/>`;
+            break;
+          default:
+            result += `<a class='media' href="${src}" target="_blank">${media.name}</a><br/>`;
+            break;
+        }
       }
     }
     return result;
