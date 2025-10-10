@@ -302,6 +302,6 @@ function messageRemoveAttachment() {
 }
 
 async function getAttachmentMaxSize() {
-    const response = await fetchMedia('maxfilesize');
+    const response = await fetchMedia('/maxfilesize');
     global.chat.attachmentMaxSize = response['maxfilesize'];
 }
