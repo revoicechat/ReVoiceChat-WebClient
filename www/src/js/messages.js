@@ -144,8 +144,6 @@ async function sendMessage() {
 
         case "edit":
             result = await fetchCoreAPI(`/message/${global.chat.editId}`, 'PATCH', data);
-            global.chat.mode = "send";
-            global.chat.editId = null;
             break;
     }
 
@@ -173,6 +171,10 @@ async function sendMessage() {
         const textarea = document.getElementById("text-input");
         textarea.value = "";
         textarea.style.height = "auto";
+
+        // Default mode
+        global.chat.mode = "send";
+        global.chat.editId = null;
         return;
     }
 
