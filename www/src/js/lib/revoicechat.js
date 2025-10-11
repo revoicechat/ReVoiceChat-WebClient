@@ -1,10 +1,80 @@
 class ReVoiceChat {
+    // URL
+    coreUrl;
+    mediaUrl;
+    voiceUrl;
+
+    constructor() {
+        // Retrieve URL
+        const storedCoreUrl = sessionStorage.getItem('url.core');
+        if (!storedCoreUrl) {
+            document.location.href = `index.html`;
+        }
+
+        // Validate URL
+        const core = new URL(storedCoreUrl);
+
+        // Store URL
+        this.coreUrl = `${core.protocol}//${core.host}`;
+        this.mediaUrl = `${core.protocol}//${core.host}/media`;
+        this.voiceUrl = `${core.protocol}//${core.host}/api/voice`;
+
+        // Store token
+        this.#token = getCookie("jwtToken");
+    }
+
+    saveState() {
+        const state = {
+            coreUrl: this.coreUrl,
+            mediaUrl: this.mediaUrl,
+            voiceUrl: this.voiceUrl,
+
+            server: {
+                id: null,
+                name: null,
+            },
+            room: {
+                id: null,
+                name: null,
+                type: null,
+            },
+            user: {
+                id: null,
+                displayName: null,
+            },
+            chat: {
+                mode: "send",
+                editId: null,
+                emojisGlobal: [],
+                attachmentMaxSize: 0,
+            }
+        }
+
+        sessionStorage.setItem('lastState', JSON.stringify(state));
+    }
+
+    #restoreState() {
+        if (sessionStorage.getItem('lastState')) {
+            const lastState = JSON.parse(sessionStorage.getItem('lastState'));
+
+            // URL
+            coreUrl = lastState.coreUrl;
+            mediaUrl = lastState.mediaUrl;
+            voiceUrl = lastState.voiceUrl;
+
+            // Server
+            global.server = lastState.server;
+
+            // Room
+            global.room = lastState.room;
+
+            // User
+            global.user = lastState.user;
+        }
+    }
+
     // Token
     #token;
-
-    setToken(token) {
-        this.#token = token;
-    }
 
     getToken() {
         return this.#token;
@@ -14,7 +84,7 @@ class ReVoiceChat {
     #sse;
 
     openSSE() {
-        this.#sse = new EventSource(`${getGlobal().url.core}/api/sse?jwt=${RVC.getToken()}`);
+        this.#sse = new EventSource(`${RVC.coreUrl}/api/sse?jwt=${RVC.getToken()}`);
 
         this.#sse.onmessage = (event) => {
             event = JSON.parse(event.data);
@@ -64,7 +134,7 @@ class ReVoiceChat {
         };
 
         this.#sse.onerror = () => {
-            console.error(`An error occurred while attempting to connect to "${getGlobal().url.core}/api/sse".\nRetry in 10 seconds`);
+            console.error(`An error occurred while attempting to connect to "${RVC.coreUrl}/api/sse".\nRetry in 10 seconds`);
             setTimeout(() => {
                 sseOpen();
                 getMessages(getGlobal().room.id);

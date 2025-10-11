@@ -46,7 +46,7 @@ async function fetchCoreAPI(path, method = null, data = null) {
     }
 
     try {
-        const response = await fetch(`${global.url.core}/api${path}`, {
+        const response = await fetch(`${RVC.coreUrl}/api${path}`, {
             method: method,
             signal: AbortSignal.timeout(5000),
             headers: {
@@ -67,7 +67,7 @@ async function fetchCoreAPI(path, method = null, data = null) {
         return response.ok;
     }
     catch (error) {
-        console.error(`fetchCoreAPI: An error occurred while processing request \n${error}\nHost: ${global.url.core}\nPath: ${path}\nMethod: ${method}`);
+        console.error(`fetchCoreAPI: An error occurred while processing request \n${error}\nHost: ${RVC.coreUrl}\nPath: ${path}\nMethod: ${method}`);
         return null;
     }
 }
@@ -78,7 +78,7 @@ async function fetchMedia(path, method = null) {
     }
 
     try {
-        const response = await fetch(`${global.url.core}/media${path}`, {
+        const response = await fetch(`${RVC.coreUrl}/media${path}`, {
             method: method,
             signal: AbortSignal.timeout(5000),
             headers: {
@@ -97,14 +97,14 @@ async function fetchMedia(path, method = null) {
         return response.ok;
     }
     catch (error) {
-        console.error(`fetchMedia: An error occurred while processing request \n${error}\nHost: ${global.url.core}\nPath: ${path}\nMethod: ${method}`);
+        console.error(`fetchMedia: An error occurred while processing request \n${error}\nHost: ${RVC.coreUrl}\nPath: ${path}\nMethod: ${method}`);
         return null;
     }
 }
 
 async function fileExistMedia(path) {
     try {
-        const response = await fetch(`${global.url.media}${path}`, {
+        const response = await fetch(`${RVC.mediaUrl}${path}`, {
             method: 'POST',
             signal: AbortSignal.timeout(5000),
         });
@@ -120,7 +120,7 @@ async function fileExistMedia(path) {
         throw new Error(`Invalid response status: ${response.status}`);
     }
     catch (error) {
-        console.error(`An error occurred while processing your request \n${error}\nHost : ${global.url.media}\nPath : ${path}`);
+        console.error(`An error occurred while processing your request \n${error}\nHost : ${RVC.mediaUrl}\nPath : ${path}`);
         return null;
     }
 }

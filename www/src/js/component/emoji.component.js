@@ -120,7 +120,7 @@ async function initCustomUser(picker) {
     const emojis = await fetchCoreAPI(`/emote/me`);
     initCustomEmojiCategory(picker, 'custom_perso',
         `<img class="emoji ${getGlobal().user.id}"
-                   src="${getGlobal().url.media}/profiles/${getGlobal().user.id}"
+                   src="${RVC.mediaUrl}/profiles/${getGlobal().user.id}"
                    style="border-radius: 9999px;"
                    alt="user-emote"/>`,
         Array.from(emojis).map(emoji => {
@@ -141,7 +141,7 @@ function initCustomEmojiCategory(picker, name, icon, emojis) {
     }
     for (const emote of emojis) {
         emojiCategory.emojis.push({
-            content: `<img class="emoji" src="${getGlobal().url.media}/emojis/${emote.link}" alt="${emote.content}" title=":${emote.content}:"/>`,
+            content: `<img class="emoji" src="${RVC.mediaUrl}/emojis/${emote.link}" alt="${emote.content}" title=":${emote.content}:"/>`,
             data: `:${emote.content}:`,
             description: emote.description,
             names: emote.names

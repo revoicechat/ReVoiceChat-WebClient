@@ -8,7 +8,7 @@ async function getUsername() {
         document.getElementById("user-name").innerText = result.displayName;
         document.getElementById("user-status").innerText = result.status;
         document.getElementById("user-dot").className = `user-dot ${statusToDotClassName(result.status)}`;
-        document.getElementById("user-picture").src = `${global.url.media}/profiles/${result.id}`;
+        document.getElementById("user-picture").src = `${RVC.mediaUrl}/profiles/${result.id}`;
     }
 }
 
@@ -47,7 +47,7 @@ async function createUser(data) {
     const DIV = document.createElement('div');
     DIV.id = data.id;
     DIV.className = `${data.id} user-profile`
-    const profilePicture = `${global.url.media}/profiles/${data.id}`;
+    const profilePicture = `${RVC.mediaUrl}/profiles/${data.id}`;
     DIV.innerHTML = `
         <div class="relative">
             <img src="${profilePicture}" alt="PFP" class="icon ring-2" />

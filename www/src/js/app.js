@@ -2,9 +2,6 @@ const RVC = new ReVoiceChat();
 
 const global = {
     url: {
-        core: null,
-        media: null,
-        voice: null,
         voiceSignal: null,
         voiceStun: null,
     },
@@ -33,31 +30,6 @@ const global = {
 document.addEventListener('DOMContentLoaded', function () {
     document.documentElement.dataset.theme = localStorage.getItem("Theme") || "dark";
 
-    // Login
-    if (sessionStorage.getItem('url.core')) {
-        global.url.core = sessionStorage.getItem(('url.core'));
-
-        const core = new URL(global.url.core);
-
-        global.url.media = `${core.protocol}//${core.host}/media`;
-        global.url.voice = `${core.protocol}//${core.host}/api/voice`;
-        RVC.setToken(getCookie("jwtToken"));
-    }
-
-    // Last state (app wasn't closed)
-    if (sessionStorage.getItem('lastState')) {
-        const lastState = JSON.parse(sessionStorage.getItem('lastState'));
-        global.url = lastState.url;
-        global.server = lastState.server;
-        global.room = lastState.room;
-        global.user = lastState.user;
-    }
-
-    // No data
-    if (global.url.core === null) {
-        document.location.href = `index.html`;
-    }
-
     // Current page is the app
     const currentLocation = window.location.pathname.substring(window.location.pathname.lastIndexOf("/"));
     if (currentLocation === "/app.html") {
@@ -72,7 +44,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 addEventListener("beforeunload", () => {
-    sessionStorage.setItem('lastState', JSON.stringify(global));
+    RVC.saveState();
     RVC.closeSSE();
 })
 

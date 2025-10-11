@@ -20,7 +20,7 @@ async function voiceJoin(roomId) {
 
     try {
         voice.instance = new VoiceCall(global.user.id, voice.settings);
-        await voice.instance.open(global.url.voice, roomId, RVC.getToken());
+        await voice.instance.open(RVC.voiceUrl, roomId, RVC.getToken());
 
         // Update users in room
         await voiceUpdateJoinedUsers();
@@ -150,7 +150,7 @@ function voiceCreateUserHTML(userData) {
     DIV.id = `voice-${userId}`;
     DIV.className = "voice-profile";
 
-    const profilePicture = `${global.url.media}/profiles/${userId}`;
+    const profilePicture = `${RVC.mediaUrl}/profiles/${userId}`;
 
     DIV.innerHTML = `
         <div class='block-user' id='voice-gate-${userId}'>

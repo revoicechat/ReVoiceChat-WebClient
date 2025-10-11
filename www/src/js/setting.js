@@ -13,7 +13,7 @@ let newProfilPictureFile = null;
 function settingLoad() {
     document.getElementById("setting-user-uuid").innerText = getGlobal().user.id;
     document.getElementById("setting-user-name").value = getGlobal().user.displayName;
-    document.getElementById("setting-user-picture").src = `${getGlobal().url.media}/profiles/${getGlobal().user.id}`;
+    document.getElementById("setting-user-picture").src = `${RVC.mediaUrl}/profiles/${getGlobal().user.id}`;
     settingThemeShow();
     settingEmoteShow();
     settingVolumeShow();
@@ -146,7 +146,7 @@ async function settingProfilePicture() {
     if (settingUserPictureNewPath.value && newProfilPictureFile) {
         const formData = new FormData();
         formData.append("file", newProfilPictureFile);
-        await fetch(`${getGlobal().url.media}/profiles/${getGlobal().user.id}`, {
+        await fetch(`${RVC.mediaUrl}/profiles/${getGlobal().user.id}`, {
             method: "POST",
             signal: AbortSignal.timeout(5000),
             headers: {

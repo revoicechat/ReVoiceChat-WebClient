@@ -168,7 +168,7 @@ async function sendMessage() {
             for (const media of result.medias) {
                 const formData = new FormData();
                 formData.append("file", attachments[media.name]);
-                await fetch(`${getGlobal().url.media}/attachments/${media.id}`, {
+                await fetch(`${RVC.mediaUrl}/attachments/${media.id}`, {
                     method: "POST",
                     signal: AbortSignal.timeout(5000),
                     headers: {
@@ -237,7 +237,7 @@ function textInputMode(input) {
 
 async function getEmojisGlobal() {
     try {
-        const response = await fetch(`${getGlobal().url.media}/emojis/global/all`, {
+        const response = await fetch(`${RVC.mediaUrl}/emojis/global/all`, {
             signal: AbortSignal.timeout(5000),
         });
 
@@ -247,7 +247,7 @@ async function getEmojisGlobal() {
 
         getGlobal().chat.emojisGlobal = await response.json();
     } catch (error) {
-        console.error(`An error occurred while processing your request \n${error}\nHost : ${getGlobal().url.media}\n`);
+        console.error(`An error occurred while processing your request \n${error}\nHost : ${RVC.mediaUrl}\n`);
         return null;
     }
 }
@@ -283,7 +283,7 @@ function roomMessage(data) {
 function userUpdate(data) {
     const id = data.id;
     for (const icon of document.querySelectorAll(`.${id} img.icon`)) {
-        icon.src = `${getGlobal().url.media}/profiles/${id}?t=${Date.now()}`;
+        icon.src = `${RVC.mediaUrl}/profiles/${id}?t=${Date.now()}`;
     }
     for (const name of document.querySelectorAll(`.${id} .name`)) {
         name.innerText = data.displayName;

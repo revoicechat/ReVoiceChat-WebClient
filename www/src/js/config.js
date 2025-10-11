@@ -78,7 +78,7 @@ async function createItemUser(data) {
     DIV.id = data.id;
     DIV.className = `${data.id} config-item`;
 
-    const profilePicture = `${global.url.media}/profiles/${data.id}`;
+    const profilePicture = `${RVC.mediaUrl}/profiles/${data.id}`;
 
     DIV.innerHTML = `
         <div class="relative">
@@ -210,7 +210,7 @@ async function deleteInvitation(data) {
 }
 
 async function copyInvitation(link) {
-    const url = document.location.href.slice(0, -11) + `index.html?register=&invitation=${link}&host=${global.url.core}`;
+    const url = document.location.href.slice(0, -11) + `index.html?register=&invitation=${link}&host=${RVC.coreUrl}`;
     copyToClipboard(url);
 }
 

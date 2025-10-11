@@ -262,12 +262,12 @@ class MessageComponent extends HTMLElement {
   #injectEmojis(inputText) {
     return inputText.replace(/:([A-Za-z0-9\-_]+):/g, (_, emoji) => {
       if (getGlobal().chat.emojisGlobal.includes(emoji)) {
-        return `<img class="emoji" src="${getGlobal().url.media}/emojis/${emoji}" alt="${emoji}" title=":${emoji}:">`;
+        return `<img class="emoji" src="${RVC.mediaUrl}/emojis/${emoji}" alt="${emoji}" title=":${emoji}:">`;
       }
       if (this.emotes) {
         const emote = Array.from(this.emotes).find(item => item.name === emoji);
         if (emote) {
-          return `<img class="emoji" src="${getGlobal().url.media}/emojis/${emote.id}" alt="${emoji}" title=":${emoji}:">`;
+          return `<img class="emoji" src="${RVC.mediaUrl}/emojis/${emote.id}" alt="${emoji}" title=":${emoji}:">`;
         }
       }
       return `:${emoji}:`
@@ -304,7 +304,7 @@ class MessageComponent extends HTMLElement {
     if (this.medias) {
       for (const media of this.medias) {
         if (media.status === "STORED") {
-          const src = `${getGlobal().url.media}/attachments/${media.id}`;
+          const src = `${RVC.mediaUrl}/attachments/${media.id}`;
           switch (media.type) {
             case "VIDEO":
               result += `<video class='media' controls><source src="${src}"></video><br/>`;
