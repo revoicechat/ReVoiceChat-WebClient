@@ -21,6 +21,9 @@ class ReVoiceChat {
 
         // Store token
         this.#token = getCookie("jwtToken");
+
+        // Restore State
+        this.#restoreState();
     }
 
     saveState() {
@@ -54,22 +57,12 @@ class ReVoiceChat {
     }
 
     #restoreState() {
-        if (sessionStorage.getItem('lastState')) {
-            const lastState = JSON.parse(sessionStorage.getItem('lastState'));
-
+        const lastState = JSON.parse(sessionStorage.getItem('lastState'));
+        if (lastState) {
             // URL
-            coreUrl = lastState.coreUrl;
-            mediaUrl = lastState.mediaUrl;
-            voiceUrl = lastState.voiceUrl;
-
-            // Server
-            global.server = lastState.server;
-
-            // Room
-            global.room = lastState.room;
-
-            // User
-            global.user = lastState.user;
+            this.coreUrl = lastState.coreUrl;
+            this.mediaUrl = lastState.mediaUrl;
+            this.voiceUrl = lastState.voiceUrl;
         }
     }
 
