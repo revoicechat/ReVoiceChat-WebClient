@@ -1,12 +1,5 @@
+const { jest, beforeEach, afterEach, describe, expect, test} = require('@jest/globals');
 const SpinnerOnButton = require('./button.spinner.component.js');
-const {
-  jest,
-  beforeEach,
-  afterEach,
-  describe,
-  expect,
-  test
-} = require('@jest/globals');
 
 describe('SpinnerOnButton', () => {
   let container;

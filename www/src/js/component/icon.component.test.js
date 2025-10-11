@@ -1,3 +1,4 @@
+const { beforeEach, afterEach, describe, expect, test} = require('@jest/globals');
 const [
     PencilIconComponent,
     TrashIconComponent,
@@ -24,13 +25,6 @@ const [
     RoleIconComponent,
     PaperClipIconComponent
 ] = require('./icon.component.js');
-const {
-    beforeEach,
-    afterEach,
-    describe,
-    expect,
-    test
-} = require('@jest/globals');
 
 
 function setup(newIcon) {
