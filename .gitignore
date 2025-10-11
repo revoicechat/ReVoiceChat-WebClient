@@ -8,5 +8,8 @@ test*
 *.iml
 *.ipr
 
+**/coverage
+
+node_modules*
 
 **/.scannerwork/**

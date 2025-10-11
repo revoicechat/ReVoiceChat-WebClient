@@ -295,3 +295,32 @@ customElements.define('revoice-icon-emoji', EmojiIconComponent);
 customElements.define('revoice-icon-user', UserIconComponent);
 customElements.define('revoice-icon-role', RoleIconComponent);
 customElements.define('revoice-icon-paper-clip', PaperClipIconComponent);
+
+if (typeof module !== 'undefined') {
+    module.exports = [
+        PencilIconComponent,
+        TrashIconComponent,
+        ChatBubbleIconComponent,
+        PhoneIconComponent,
+        PhoneXIconComponent,
+        MicrophoneIconComponent,
+        ClipboardIconComponent,
+        CirclePlusIconComponent,
+        FolderPlusIconComponent,
+        EyeOpenIconComponent,
+        FolderIconComponent,
+        Cog6ToothIconComponent,
+        UsersIconComponent,
+        InformationIconComponent,
+        SwatchIconComponent,
+        CircleXIconComponent,
+        EnvelopeIconComponent,
+        ArrowPointingIn,
+        SpeakerIconComponent,
+        SpeakerXIconComponent,
+        EmojiIconComponent,
+        UserIconComponent,
+        RoleIconComponent,
+        PaperClipIconComponent
+    ];
+}
