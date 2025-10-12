@@ -570,7 +570,7 @@ class ReVoiceChatUser {
     #id;
     #displayName;
 
-    constructor(rvc){
+    constructor(rvc) {
         this.#rvc = rvc;
         rvc.user = this;
         this.#load();
@@ -596,6 +596,31 @@ class ReVoiceChatUser {
             document.getElementById("user-status").innerText = result.status;
             document.getElementById("user-dot").className = `user-dot ${statusToDotClassName(result.status)}`;
             document.getElementById("user-picture").src = `${this.#rvc.mediaUrl}/profiles/${result.id}`;
+        }
+    }
+
+    saveSettings() {
+        const settings = {
+            voice: voice.settings,
+        }
+
+        localStorage.setItem('userSettings', JSON.stringify(settings));
+    }
+
+    loadSettings() {
+        const settings = JSON.parse(localStorage.getItem('userSettings'));
+
+        const defaultVoice = VoiceCall.DEFAULT_SETTINGS;
+
+        // Apply settings
+        if (settings) {
+            voice.settings.self = settings.voice.self ? settings.voice.self : defaultVoice.self;
+            voice.settings.users = settings.voice.users ? settings.voice.users : {};
+            voice.settings.compressor = settings.voice.compressor ? settings.voice.compressor : defaultVoice.compressor;
+            voice.settings.gate = settings.voice.gate ? settings.voice.gate : defaultVoice.gate;
+        }
+        else {
+            voice.settings = defaultVoice;
         }
     }
 }

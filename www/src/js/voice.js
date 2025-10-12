@@ -341,7 +341,7 @@ function voiceSaveSettings() {
         voice.settings = voice.instance.getSettings();
     }
 
-    appSaveSettings();
+    RVC_User.saveSettings();
 }
 
 function voiceUpdateGate(){

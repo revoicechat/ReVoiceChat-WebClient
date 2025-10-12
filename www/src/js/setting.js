@@ -175,7 +175,7 @@ function settingVolumeShow() {
 
 function settingVolumeUpdate(data) {
     voice.settings.self.volume = Number.parseFloat(data.value)
-    appSaveSettings();
+    RVC_User.saveSettings();
     settingVolumeShow();
     voiceUpdateSelfVolume();
 }
@@ -235,7 +235,7 @@ function settingCompressorShow() {
 
 function settingCompressorEnabled() {
     voice.settings.compressor.enabled = !voice.settings.compressor.enabled;
-    appSaveSettings();
+    RVC_User.saveSettings();
     settingCompressorShow();
 }
 
@@ -261,7 +261,7 @@ function settingCompressorUpdate(param, data) {
             break;
     }
 
-    appSaveSettings();
+    RVC_User.saveSettings();
     settingCompressorShow();
 }
 
@@ -275,7 +275,7 @@ function settingCompressorDefault() {
         release: 0.25,
         threshold: -50,
     }
-    appSaveSettings();
+    RVC_User.saveSettings();
     settingCompressorShow();
 }
 
@@ -330,7 +330,7 @@ function settingNoiseGateUpdate(param, data) {
             break;
     }
 
-    appSaveSettings();
+    RVC_User.saveSettings();
     voiceUpdateGate();
     settingNoiseGateShow();
 }
@@ -341,7 +341,7 @@ function settingNoiseGateDefault() {
         release: 0.4,
         threshold: -45,
     }
-    appSaveSettings();
+    RVC_User.saveSettings();
     voiceUpdateGate();
     settingNoiseGateShow();
 }
