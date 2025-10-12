@@ -4,6 +4,7 @@ class ReVoiceChat {
     user;
     room;
     server;
+    state;
 
     // URL
     coreUrl;
@@ -32,49 +33,13 @@ class ReVoiceChat {
         this.user = new User(this);
         this.room = new Room(this);
         this.server = new Server(this);
+        this.state = new State(this);
 
         // Save state before page unload
         addEventListener("beforeunload", () => {
-            this.#saveState();
+            this.state.save();
             this.#closeSSE();
         })
-    }
-
-    #saveState() {
-        const state = {
-            server: {
-                id: this.server.id,
-                name: this.server.name,
-            },
-            room: {
-                id: this.room.id,
-                name: this.room.name,
-                type: this.room.type,
-            },
-            user: {
-                id: null,
-                displayName: null,
-            },
-            chat: {
-                mode: "send",
-                editId: null,
-                emojisGlobal: [],
-                attachmentMaxSize: 0,
-            }
-        }
-
-        sessionStorage.setItem('lastState', JSON.stringify(state));
-    }
-
-    restoreState() {
-        const lastState = JSON.parse(sessionStorage.getItem('lastState'));
-        if (lastState) {
-            this.server.id = lastState.server.id;
-            this.server.name = lastState.server.name;
-            this.room.id = lastState.room.id;
-            this.room.name = lastState.room.name;
-            this.room.type = lastState.room.type;
-        }
     }
 
     // Token
@@ -219,6 +184,51 @@ class ReVoiceChat {
         catch (error) {
             console.error(`fetchMedia: An error occurred while processing request \n${error}\nHost: ${this.coreUrl}\nPath: ${path}\nMethod: ${method}`);
             return null;
+        }
+    }
+}
+
+class State {
+    #rvc;
+
+    constructor(rvc) {
+        this.#rvc = rvc;
+    }
+
+    save() {
+        const state = {
+            server: {
+                id: this.#rvc.server.id,
+                name: this.#rvc.server.name,
+            },
+            room: {
+                id: this.#rvc.room.id,
+                name: this.#rvc.room.name,
+                type: this.#rvc.room.type,
+            },
+            user: {
+                id: null,
+                displayName: null,
+            },
+            chat: {
+                mode: "send",
+                editId: null,
+                emojisGlobal: [],
+                attachmentMaxSize: 0,
+            }
+        }
+
+        sessionStorage.setItem('lastState', JSON.stringify(state));
+    }
+
+    restore() {
+        const lastState = JSON.parse(sessionStorage.getItem('lastState'));
+        if (lastState) {
+            this.#rvc.server.id = lastState.server.id;
+            this.#rvc.server.name = lastState.server.name;
+            this.#rvc.room.id = lastState.room.id;
+            this.#rvc.room.name = lastState.room.name;
+            this.#rvc.room.type = lastState.room.type;
         }
     }
 }

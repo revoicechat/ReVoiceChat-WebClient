@@ -20,9 +20,8 @@ document.addEventListener('DOMContentLoaded', function () {
     getAttachmentMaxSize();
     getEmojisGlobal();
 
-    RVC.restoreState();
+    RVC.state.restore();
     RVC.openSSE();
     RVC.router.routeTo(getQueryVariable('r'));
-
     RVC.user.loadSettings();
 });
