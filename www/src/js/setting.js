@@ -11,9 +11,9 @@ const currentSetting = {
 let newProfilPictureFile = null;
 
 function settingLoad() {
-    document.getElementById("setting-user-uuid").innerText = getGlobal().user.id;
-    document.getElementById("setting-user-name").value = getGlobal().user.displayName;
-    document.getElementById("setting-user-picture").src = `${RVC.mediaUrl}/profiles/${getGlobal().user.id}`;
+    document.getElementById("setting-user-uuid").innerText = RVC_User.getId();
+    document.getElementById("setting-user-name").value = RVC_User.getDisplayName();
+    document.getElementById("setting-user-picture").src = `${RVC.mediaUrl}/profiles/${RVC_User.getId()}`;
     settingThemeShow();
     settingEmoteShow();
     settingVolumeShow();
@@ -136,7 +136,7 @@ async function settingDisplayName(displayName) {
     }
     const result = await RVC.fetchCore(`/user/me`, 'PATCH', { displayName: displayName });
     if (result) {
-        getGlobal().user.displayName = result.displayName
+        RVC_User.getDisplayName() = result.displayName
         document.getElementById('setting-user-name').value = result.displayName;
     }
 }
@@ -146,7 +146,7 @@ async function settingProfilePicture() {
     if (settingUserPictureNewPath.value && newProfilPictureFile) {
         const formData = new FormData();
         formData.append("file", newProfilPictureFile);
-        await fetch(`${RVC.mediaUrl}/profiles/${getGlobal().user.id}`, {
+        await fetch(`${RVC.mediaUrl}/profiles/${RVC_User.getId()}`, {
             method: "POST",
             signal: AbortSignal.timeout(5000),
             headers: {

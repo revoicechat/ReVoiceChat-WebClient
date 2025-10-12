@@ -19,7 +19,7 @@ async function voiceJoin(roomId) {
     voice.activeRoom = roomId;
 
     try {
-        voice.instance = new VoiceCall(global.user.id, voice.settings);
+        voice.instance = new VoiceCall(RVC_User.getId(), voice.settings);
         await voice.instance.open(RVC.voiceUrl, roomId, RVC.getToken());
 
         // Update users in room
@@ -65,7 +65,7 @@ async function voiceUserJoining(data) {
     voiceContent.appendChild(voiceCreateUserHTML(userData));
 
     // User joining this is NOT self and current user is connected to voice room
-    if (userData.id !== global.user.id && voice.instance !== null && voice.instance.getState() === VoiceCall.OPEN) {
+    if (userData.id !== RVC_User.getId() && voice.instance !== null && voice.instance.getState() === VoiceCall.OPEN) {
         voice.instance.addUser(userData.id);
         voiceUpdateUserControls(userData.id);
 
@@ -85,7 +85,7 @@ async function voiceUserLeaving(data) {
     document.getElementById(`voice-${userId}`).remove();
 
     // User leaving is NOT self
-    if (userId !== global.user.id && voice.instance !== null && voice.instance.state === VoiceCall.OPEN) {
+    if (userId !== RVC_User.getId() && voice.instance !== null && voice.instance.state === VoiceCall.OPEN) {
         voice.instance.removeUser(userId);
 
         RVC.notification.play('voiceUserLeft');
@@ -137,7 +137,7 @@ async function voiceUpdateJoinedUsers() {
         voice.instance.addUser(userId);
 
         // Not self
-        if (global.user.id !== userId) {
+        if (RVC_User.getId() !== userId) {
             voiceUpdateUserControls(userId);
         }
     }

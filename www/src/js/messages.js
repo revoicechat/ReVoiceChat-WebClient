@@ -95,7 +95,7 @@ function createMessage(messageData) {
 }
 
 function createMessageContextMenu(messageData) {
-    if (messageData.user.id == getGlobal().user.id) {
+    if (messageData.user.id == RVC_User.getId()) {
         return `
         <div class="message-context-menu">
             <div class="icon" onclick="editMessage('${messageData.id}')"><revoice-icon-pencil></revoice-icon-pencil></div>
@@ -262,7 +262,7 @@ function roomMessage(data) {
     switch (data.action) {
         case "ADD":
             room.appendChild(createMessage(message));
-            if(getGlobal().user.id != message.user.id){
+            if(RVC_User.getId() != message.user.id){
                 RVC.notification.play('messageNew');
             }
             break;

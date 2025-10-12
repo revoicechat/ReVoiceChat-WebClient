@@ -178,7 +178,7 @@ class ReVoiceChat {
             return response.ok;
         }
         catch (error) {
-            console.error(`RVC.fetchCore: An error occurred while processing request \n${error}\nHost: ${this.coreUrl}\nPath: ${path}\nMethod: ${method}`);
+            console.error(`fetchCore: An error occurred while processing request \n${error}\nHost: ${this.coreUrl}\nPath: ${path}\nMethod: ${method}`);
             return null;
         }
     }
@@ -208,7 +208,7 @@ class ReVoiceChat {
             return response.ok;
         }
         catch (error) {
-            console.error(`RVC.fetchMedia: An error occurred while processing request \n${error}\nHost: ${this.coreUrl}\nPath: ${path}\nMethod: ${method}`);
+            console.error(`fetchMedia: An error occurred while processing request \n${error}\nHost: ${this.coreUrl}\nPath: ${path}\nMethod: ${method}`);
             return null;
         }
     }
@@ -282,6 +282,14 @@ class ReVoiceChatServer {
         this.load();
     }
 
+    getId() {
+        return this.#id;
+    }
+
+    getName() {
+        return this.#name;
+    }
+
     async load() {
         const result = await this.#rvc.fetchCore("/server", 'GET');
 
@@ -305,10 +313,9 @@ class ReVoiceChatServer {
 
         this.#id = id;
         this.#name = name;
-
         document.getElementById("server-name").innerText = name;
 
-        getServerUsers(id);
+        this.#getUsers(id);
         getRooms(id);
     }
 
@@ -323,11 +330,86 @@ class ReVoiceChatServer {
         }
     }
 
+    async #getUsers(serverId) {
+        const result = await this.#rvc.fetchCore(`/server/${serverId}/user`, 'GET');
+
+        if (result !== null) {
+            const sortedByDisplayName = [...result].sort((a, b) => {
+                return a.displayName.localeCompare(b.displayName);
+            });
+
+            const sortedByStatus = [...sortedByDisplayName].sort((a, b) => {
+                if (a.status === b.status) {
+                    return 0;
+                }
+                else {
+                    if (a.status === "OFFLINE") {
+                        return 1;
+                    }
+                    if (b.status === "OFFLINE") {
+                        return -1;
+                    }
+                }
+            });
+
+            const userList = document.getElementById("user-list");
+            userList.innerHTML = "";
+
+            for (const user of sortedByStatus) {
+                userList.appendChild(await this.#createUser(user));
+            }
+        }
+    }
+
+    async #createUser(data) {
+        const DIV = document.createElement('div');
+        DIV.id = data.id;
+        DIV.className = `${data.id} user-profile`
+        const profilePicture = `${this.#rvc.mediaUrl}/profiles/${data.id}`;
+        DIV.innerHTML = `
+        <div class="relative">
+            <img src="${profilePicture}" alt="PFP" class="icon ring-2" />
+            <div id="dot-${data.id}" class="user-dot ${statusToDotClassName(data.status)}"></div>
+        </div>
+        <div class="user">
+            <h2 class="name">${data.displayName}</h2>
+        </div>
+    `;
+
+        return DIV;
+    }
+}
+
+class ReVoiceChatUser {
+    #rvc;
+    #id;
+    #displayName;
+
+    constructor(rvc) {
+        this.#rvc = rvc;
+        this.#getUsername();
+    }
+
+    getDisplayName() {
+        return this.#displayName;
+    }
+
     getId() {
         return this.#id;
     }
 
-    getName() {
-        return this.#name;
+    async #getUsername() {
+        const result = await this.#rvc.fetchCore(`/user/me`, 'GET');
+
+        if (result !== null) {
+            this.#id = result.id;
+            this.#displayName = result.displayName;
+
+            document.getElementById("status-container").classList.add(result.id);
+            document.getElementById("user-name").innerText = result.displayName;
+            document.getElementById("user-status").innerText = result.status;
+            document.getElementById("user-dot").className = `user-dot ${statusToDotClassName(result.status)}`;
+            document.getElementById("user-picture").src = `${this.#rvc.mediaUrl}/profiles/${result.id}`;
+        }
     }
 }

@@ -1,4 +1,4 @@
-const SwalCustomClass ={
+const SwalCustomClass = {
     title: "swalTitle",
     popup: "swalPopup",
     cancelButton: "swalCancel",
@@ -119,4 +119,18 @@ function humanFileSize(bytes, si = false, dp = 1) {
 
 
     return bytes.toFixed(dp) + ' ' + units[u];
+}
+
+function statusToDotClassName(status) {
+    switch (status) {
+        case "ONLINE":
+            return "user-dot-online";
+        case "AWAY":
+            return "user-dot-away";
+        case "DO_NOT_DISTURB":
+            return "user-dot-dnd";
+        case "INVISIBLE":
+        default:
+            return "user-dot-offline";
+    }
 }
