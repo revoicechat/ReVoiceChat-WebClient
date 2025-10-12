@@ -11,9 +11,9 @@ const currentSetting = {
 let newProfilPictureFile = null;
 
 function settingLoad() {
-    document.getElementById("setting-user-uuid").innerText = RVC_User.getId();
-    document.getElementById("setting-user-name").value = RVC_User.getDisplayName();
-    document.getElementById("setting-user-picture").src = `${RVC.mediaUrl}/profiles/${RVC_User.getId()}`;
+    document.getElementById("setting-user-uuid").innerText = RVC.user.id;
+    document.getElementById("setting-user-name").value = RVC.user.displayName;
+    document.getElementById("setting-user-picture").src = `${RVC.mediaUrl}/profiles/${RVC.user.id}`;
     settingThemeShow();
     settingEmoteShow();
     settingVolumeShow();
@@ -136,7 +136,7 @@ async function settingDisplayName(displayName) {
     }
     const result = await RVC.fetchCore(`/user/me`, 'PATCH', { displayName: displayName });
     if (result) {
-        RVC_User.getDisplayName() = result.displayName
+        RVC.user.displayName = result.displayName
         document.getElementById('setting-user-name').value = result.displayName;
     }
 }
@@ -146,7 +146,7 @@ async function settingProfilePicture() {
     if (settingUserPictureNewPath.value && newProfilPictureFile) {
         const formData = new FormData();
         formData.append("file", newProfilPictureFile);
-        await fetch(`${RVC.mediaUrl}/profiles/${RVC_User.getId()}`, {
+        await fetch(`${RVC.mediaUrl}/profiles/${RVC.user.id}`, {
             method: "POST",
             signal: AbortSignal.timeout(5000),
             headers: {
@@ -175,7 +175,7 @@ function settingVolumeShow() {
 
 function settingVolumeUpdate(data) {
     voice.settings.self.volume = Number.parseFloat(data.value)
-    RVC_User.saveSettings();
+    RVC.user.saveSettings();
     settingVolumeShow();
     voiceUpdateSelfVolume();
 }
@@ -235,7 +235,7 @@ function settingCompressorShow() {
 
 function settingCompressorEnabled() {
     voice.settings.compressor.enabled = !voice.settings.compressor.enabled;
-    RVC_User.saveSettings();
+    RVC.user.saveSettings();
     settingCompressorShow();
 }
 
@@ -261,7 +261,7 @@ function settingCompressorUpdate(param, data) {
             break;
     }
 
-    RVC_User.saveSettings();
+    RVC.user.saveSettings();
     settingCompressorShow();
 }
 
@@ -275,7 +275,7 @@ function settingCompressorDefault() {
         release: 0.25,
         threshold: -50,
     }
-    RVC_User.saveSettings();
+    RVC.user.saveSettings();
     settingCompressorShow();
 }
 
@@ -330,7 +330,7 @@ function settingNoiseGateUpdate(param, data) {
             break;
     }
 
-    RVC_User.saveSettings();
+    RVC.user.saveSettings();
     voiceUpdateGate();
     settingNoiseGateShow();
 }
@@ -341,7 +341,7 @@ function settingNoiseGateDefault() {
         release: 0.4,
         threshold: -45,
     }
-    RVC_User.saveSettings();
+    RVC.user.saveSettings();
     voiceUpdateGate();
     settingNoiseGateShow();
 }

@@ -28,6 +28,11 @@ class ReVoiceChat {
         // Store token
         this.#token = getCookie("jwtToken");
 
+        // Instantiate other classes
+        this.user = new ReVoiceChatUser(this);
+        this.room = new ReVoiceChatRoom(this);
+        this.server = new ReVoiceChatServer(this);
+
         // Save state before page unload
         addEventListener("beforeunload", () => {
             this.#saveState();
@@ -138,7 +143,7 @@ class ReVoiceChat {
             console.error(`An error occurred while attempting to connect to "${this.coreUrl}/api/sse".\nRetry in 10 seconds`);
             setTimeout(() => {
                 this.openSSE();
-                getMessages(RVC_Room.id);
+                getMessages(RVC.room.id);
             }, 10000);
         }
     }
@@ -280,29 +285,20 @@ class ReVoiceChatRouter {
 
 class ReVoiceChatUser {
     #rvc;
-    #id;
-    #displayName;
+    id;
+    displayName;
 
     constructor(rvc) {
         this.#rvc = rvc;
-        rvc.user = this;
         this.#load();
-    }
-
-    getDisplayName() {
-        return this.#displayName;
-    }
-
-    getId() {
-        return this.#id;
     }
 
     async #load() {
         const result = await this.#rvc.fetchCore(`/user/me`, 'GET');
 
         if (result !== null) {
-            this.#id = result.id;
-            this.#displayName = result.displayName;
+            this.id = result.id;
+            this.displayName = result.displayName;
 
             document.getElementById("status-container").classList.add(result.id);
             document.getElementById("user-name").innerText = result.displayName;
@@ -346,7 +342,6 @@ class ReVoiceChatRoom {
 
     constructor(rvc) {
         this.#rvc = rvc;
-        rvc.room = this;
     }
 
     async load(serverId) {
@@ -530,7 +525,6 @@ class ReVoiceChatServer {
 
     constructor(rvc) {
         this.#rvc = rvc;
-        rvc.server = this;
         this.#load();
     }
 

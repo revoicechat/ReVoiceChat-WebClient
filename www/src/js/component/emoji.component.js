@@ -102,7 +102,7 @@ async function initCustomGeneral(picker) {
 }
 
 async function initCustomServer(picker) {
-    const emojis = await RVC.fetchCore(`/emote/server/${RVC_Server.id}`);
+    const emojis = await RVC.fetchCore(`/emote/server/${RVC.server.id}`);
     initCustomEmojiCategory(picker, 'custom_server',
         '🏠',
         Array.from(emojis).map(emoji => {
@@ -119,8 +119,8 @@ async function initCustomServer(picker) {
 async function initCustomUser(picker) {
     const emojis = await RVC.fetchCore(`/emote/me`);
     initCustomEmojiCategory(picker, 'custom_perso',
-        `<img class="emoji ${RVC_User.getId()}"
-                   src="${RVC.mediaUrl}/profiles/${RVC_User.getId()}"
+        `<img class="emoji ${RVC.user.id}"
+                   src="${RVC.mediaUrl}/profiles/${RVC.user.id}"
                    style="border-radius: 9999px;"
                    alt="user-emote"/>`,
         Array.from(emojis).map(emoji => {

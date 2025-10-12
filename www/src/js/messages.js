@@ -95,7 +95,7 @@ function createMessage(messageData) {
 }
 
 function createMessageContextMenu(messageData) {
-    if (messageData.user.id == RVC_User.getId()) {
+    if (messageData.user.id == RVC.user.id) {
         return `
         <div class="message-context-menu">
             <div class="icon" onclick="editMessage('${messageData.id}')"><revoice-icon-pencil></revoice-icon-pencil></div>
@@ -153,7 +153,7 @@ async function sendMessage() {
 
     switch (global.chat.mode) {
         case "send":
-            result = await RVC.fetchCore(`/room/${RVC_Room.id}/message`, 'PUT', data);
+            result = await RVC.fetchCore(`/room/${RVC.room.id}/message`, 'PUT', data);
             break;
 
         case "edit":
@@ -253,7 +253,7 @@ async function getEmojisGlobal() {
 }
 
 function roomMessage(data) {
-    if (data.message.roomId !== RVC_Room.id) {
+    if (data.message.roomId !== RVC.room.id) {
         return;
     }
 
@@ -262,7 +262,7 @@ function roomMessage(data) {
     switch (data.action) {
         case "ADD":
             room.appendChild(createMessage(message));
-            if(RVC_User.getId() != message.user.id){
+            if(RVC.user.id != message.user.id){
                 RVC.notification.play('messageNew');
             }
             break;
