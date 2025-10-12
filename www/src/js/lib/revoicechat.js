@@ -141,7 +141,9 @@ class ReVoiceChat {
             this.#sse = null;
         }
     }
+}
 
+class ReVoiceChatNotification {
     // Notifications
     #defaultSounds = {
         messageNew: 'src/audio/messageNew.ogg',
@@ -151,7 +153,7 @@ class ReVoiceChat {
         voiceDisconnected: 'src/audio/userDisconnectedMale.mp3',
     }
 
-    playNotification(type) {
+    play(type) {
         if (!this.#defaultSounds[type]) {
             console.error('Notification type is null or undefined');
         }

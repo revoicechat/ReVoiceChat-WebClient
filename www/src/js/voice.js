@@ -31,7 +31,7 @@ async function voiceJoin(roomId) {
         // Update counter
         await voiceUsersCountUpdate(roomId);
 
-        RVC.playNotification('voiceConnected');
+        RVCNotification.play('voiceConnected');
     }
     catch (error) {
         console.error(error);
@@ -51,7 +51,7 @@ async function voiceLeave() {
     voice.activeRoom = null;
 
     // Play leave audio
-    RVC.playNotification('voiceDisconnected');
+    RVCNotification.play('voiceDisconnected');
 }
 
 // <server.js> call this when a new user join the room
@@ -69,7 +69,7 @@ async function voiceUserJoining(data) {
         voice.instance.addUser(userData.id);
         voiceUpdateUserControls(userData.id);
 
-        RVC.playNotification('voiceUserJoin');
+        RVCNotification.play('voiceUserJoin');
     }
 }
 
@@ -88,7 +88,7 @@ async function voiceUserLeaving(data) {
     if (userId !== global.user.id && voice.instance !== null && voice.instance.state === VoiceCall.OPEN) {
         voice.instance.removeUser(userId);
 
-        RVC.playNotification('voiceUserLeft');
+        RVCNotification.play('voiceUserLeft');
     }
 }
 
