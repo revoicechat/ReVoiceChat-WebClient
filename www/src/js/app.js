@@ -1,5 +1,5 @@
 const RVC = new ReVoiceChat();
-const RVCS = new ReVoiceChatServer(RVC);
+const RVC_Server = new ReVoiceChatServer(RVC);
 const RVC_User = new ReVoiceChatUser(RVC);
 
 const global = {

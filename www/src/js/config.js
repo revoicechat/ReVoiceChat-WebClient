@@ -20,10 +20,10 @@ async function configLoad() {
 }
 
 async function loadServerEmotes() {
-    const response = await RVC.fetchCore(`/emote/server/${RVCS.getId()}`);
+    const response = await RVC.fetchCore(`/emote/server/${RVC_Server.getId()}`);
     document.getElementById("emotes-config").innerHTML = `
         <h1>Emotes</h1>
-        <revoice-emoji-manager path="server/${RVCS.getId()}" id="setting-emotes-form">
+        <revoice-emoji-manager path="server/${RVC_Server.getId()}" id="setting-emotes-form">
             <script type="application/json" slot="emojis-data">
                 ${JSON.stringify(response)}
             </script>
@@ -51,7 +51,7 @@ function createContextMenuButton(className, innerHTML, onclick, title = "") {
 }
 
 async function loadMembers() {
-    const result = await RVC.fetchCore(`/server/${RVCS.getId()}/user`, 'GET');
+    const result = await RVC.fetchCore(`/server/${RVC_Server.getId()}/user`, 'GET');
 
     if (result) {
         const sortedByDisplayName = [...result].sort((a, b) => {
@@ -70,7 +70,7 @@ async function loadMembers() {
 
 async function loadServerRoles() {
     document.getElementById("roles-config-component")
-            .setAttribute("server-id", RVCS.getId())
+            .setAttribute("server-id", RVC_Server.getId())
 }
 
 async function createItemUser(data) {
@@ -93,7 +93,7 @@ async function createItemUser(data) {
 }
 
 async function loadOverview() {
-    const id = RVCS.getId();
+    const id = RVC_Server.getId();
     const serverInfo = await RVC.fetchCore(`/server/${id}`, 'GET');
 
     document.getElementById('config-server-uuid').innerText = serverInfo.id;
@@ -124,7 +124,7 @@ async function updateServerName(input) {
         return;
     }
 
-    const id = RVCS.getId();
+    const id = RVC_Server.getId();
     const result = await RVC.fetchCore(`/server/${id}`, 'PATCH', { name: serverName })
     if (result) {
         document.getElementById('config-server-name').value = result.name;
@@ -134,7 +134,7 @@ async function updateServerName(input) {
 
 /* INVITATIONS */
 async function configAddInvitation() {
-    const serverId = RVCS.getId();
+    const serverId = RVC_Server.getId();
     const result = await RVC.fetchCore(`/invitation/server/${serverId}`, 'POST');
     if (result.status === "CREATED") {
         loadInvitations();
@@ -172,7 +172,7 @@ async function createItemInvitation(data) {
 }
 
 async function loadInvitations() {
-    const serverId = RVCS.getId();
+    const serverId = RVC_Server.getId();
     const result = await RVC.fetchCore(`/invitation/server/${serverId}`, 'GET');
 
     if (result) {
@@ -244,7 +244,7 @@ async function createItemRoom(data) {
 }
 
 async function loadRoomData() {
-    const roomResult = await RVC.fetchCore(`/server/${RVCS.getId()}/room`, 'GET');
+    const roomResult = await RVC.fetchCore(`/server/${RVC_Server.getId()}/room`, 'GET');
     if (roomResult) {
         roomsData = {};
         for (const room of roomResult) {
@@ -255,7 +255,7 @@ async function loadRoomData() {
 }
 
 async function loadRoomStructure() {
-    const struct = await RVC.fetchCore(`/server/${RVCS.getId()}/structure`, 'GET');
+    const struct = await RVC.fetchCore(`/server/${RVC_Server.getId()}/structure`, 'GET');
     if (struct) {
         structureData = struct;
         render();
@@ -290,7 +290,7 @@ async function roomAdd() {
         `,
     }).then(async (result) => {
         if (result.value) {
-            await RVC.fetchCore(`/server/${RVCS.getId()}/room`, 'PUT', { name: popupData.name, type: popupData.type });
+            await RVC.fetchCore(`/server/${RVC_Server.getId()}/room`, 'PUT', { name: popupData.name, type: popupData.type });
             await loadRoomData();
         }
     });
@@ -652,7 +652,7 @@ async function structureSave() {
     structureClean(structureData.items);
 
     try {
-        await RVC.fetchCore(`/server/${RVCS.getId()}/structure`, 'PATCH', structureData);
+        await RVC.fetchCore(`/server/${RVC_Server.getId()}/structure`, 'PATCH', structureData);
         spinner.success()
     }
     catch (error) {
