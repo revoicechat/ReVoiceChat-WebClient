@@ -253,6 +253,10 @@ async function getEmojisGlobal() {
 }
 
 function roomMessage(data) {
+    if (data.action === "ADD" && RVC.user.id != data.message.user.id) {
+        RVC.alert.play('messageNew');
+    }
+
     if (data.message.roomId !== RVC.room.id) {
         return;
     }
@@ -262,9 +266,6 @@ function roomMessage(data) {
     switch (data.action) {
         case "ADD":
             room.appendChild(createMessage(message));
-            if(RVC.user.id != message.user.id){
-                RVC.alert.play('messageNew');
-            }
             break;
         case "MODIFY":
             document.getElementById(message.id).replaceWith(createMessageContent(message));
