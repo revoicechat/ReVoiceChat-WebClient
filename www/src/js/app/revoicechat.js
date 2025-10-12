@@ -1,5 +1,5 @@
 class ReVoiceChat {
-    notification = new Notification();
+    alert = new Alert();
     router = new Router();
     user;
     room;
@@ -223,8 +223,7 @@ class ReVoiceChat {
     }
 }
 
-class Notification {
-    // Notifications
+class Alert {
     #defaultSounds = {
         messageNew: 'src/audio/messageNew.ogg',
         voiceUserJoin: 'src/audio/userJoinMale.mp3',

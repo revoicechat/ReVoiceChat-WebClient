@@ -263,7 +263,7 @@ function roomMessage(data) {
         case "ADD":
             room.appendChild(createMessage(message));
             if(RVC.user.id != message.user.id){
-                RVC.notification.play('messageNew');
+                RVC.alert.play('messageNew');
             }
             break;
         case "MODIFY":

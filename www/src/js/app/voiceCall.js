@@ -307,7 +307,7 @@ class VoiceCall {
 
         // Init AudioContext
         this.#audioContext = new AudioContext({ sampleRate: this.#codecSettings.sampleRate });
-        await this.#audioContext.audioWorklet.addModule('src/js/lib/voiceProcessor.js');
+        await this.#audioContext.audioWorklet.addModule('src/js/app/voiceProcessor.js');
 
         // Init Mic capture
         const micSource = this.#audioContext.createMediaStreamSource(await navigator.mediaDevices.getUserMedia({ audio: true }));
