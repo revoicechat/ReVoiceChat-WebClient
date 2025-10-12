@@ -35,7 +35,7 @@
                     </div>
 
                     <div class="block-right">
-                        <button onclick="router('config')"><revoice-icon-cog-6></revoice-icon-cog-6></button>
+                        <button onclick="RVC.router.routeTo('config')"><revoice-icon-cog-6></revoice-icon-cog-6></button>
                     </div>
                 </div>
             </div>
@@ -59,7 +59,7 @@
                     </div>
                 </div>
                 <div class="block-right">
-                    <button onclick="router('setting')"><revoice-icon-cog-6></revoice-icon-cog-6></button>
+                    <button onclick="RVC.router.routeTo('setting')"><revoice-icon-cog-6></revoice-icon-cog-6></button>
                 </div>
             </div>
         </div>
@@ -170,7 +170,7 @@
                 <div class="category">
                     <h2>&nbsp;</h2>
                     <!-- Exit config -->
-                    <button class="sub-category" onclick="router('app')">
+                    <button class="sub-category" onclick="RVC.router.routeTo('app')">
                         <revoice-icon-circle-x></revoice-icon-circle-x> Exit
                     </button>
                 </div>
@@ -287,7 +287,7 @@
 
                 <!-- Exit config -->
                 <div class="category">
-                    <button class="sub-category" onclick="router('app')">
+                    <button class="sub-category" onclick="RVC.router.routeTo('app')">
                         <revoice-icon-circle-x></revoice-icon-circle-x>
                         Exit
                     </button>
@@ -430,7 +430,6 @@
     <script src="src/js/lib/highlight.min.js"></script>
     <script src="src/js/lib/revoicechat.js"></script>
     <script src="src/js/lib/tools.js"></script>
-    <script src="src/js/lib/router.js"></script>
     <script src="src/js/lib/voiceCall.js"></script>
 
     <!-- Components -->

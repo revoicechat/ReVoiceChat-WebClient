@@ -1,4 +1,7 @@
 class ReVoiceChat {
+    notification = new ReVoiceChatNotification();
+    router = new ReVoiceChatRouter();
+
     // URL
     coreUrl;
     mediaUrl;
@@ -24,14 +27,16 @@ class ReVoiceChat {
 
         // Restore State
         this.#restoreState();
+
+        // Save state before page unload
+        addEventListener("beforeunload", () => {
+            this.#saveState();
+            this.#closeSSE();
+        })
     }
 
-    saveState() {
+    #saveState() {
         const state = {
-            coreUrl: this.coreUrl,
-            mediaUrl: this.mediaUrl,
-            voiceUrl: this.voiceUrl,
-
             server: {
                 id: null,
                 name: null,
@@ -59,10 +64,7 @@ class ReVoiceChat {
     #restoreState() {
         const lastState = JSON.parse(sessionStorage.getItem('lastState'));
         if (lastState) {
-            // URL
-            this.coreUrl = lastState.coreUrl;
-            this.mediaUrl = lastState.mediaUrl;
-            this.voiceUrl = lastState.voiceUrl;
+
         }
     }
 
@@ -77,6 +79,8 @@ class ReVoiceChat {
     #sse;
 
     openSSE() {
+        this.#closeSSE();
+
         this.#sse = new EventSource(`${RVC.coreUrl}/api/sse?jwt=${RVC.getToken()}`);
 
         this.#sse.onmessage = (event) => {
@@ -135,7 +139,7 @@ class ReVoiceChat {
         }
     }
 
-    closeSSE() {
+    #closeSSE() {
         if (this.#sse) {
             this.#sse.close();
             this.#sse = null;
@@ -161,5 +165,42 @@ class ReVoiceChatNotification {
         let audio = new Audio(this.#defaultSounds[type]);
         audio.volume = 0.25;
         audio.play();
+    }
+}
+
+class ReVoiceChatRouter {
+    routeTo(destination) {
+        document.querySelectorAll('.main').forEach(element => { element.classList.add('hidden') });
+
+        switch (destination) {
+            case "setting":
+                this.#pushState('setting');
+                settingLoad();
+                document.getElementById('route-setting').classList.remove('hidden');
+                break;
+
+            case "config":
+                this.#pushState('config');
+                configLoad()
+                document.getElementById('route-config').classList.remove('hidden');
+                break;
+
+            case "app":
+            default:
+                this.#pushState('');
+                document.getElementById('route-app').classList.remove('hidden');
+                break;
+        }
+    }
+
+    #pushState(destination) {
+        const url = new URL(location);
+        url.searchParams.delete('r');
+
+        if (destination && destination !== "") {
+            url.searchParams.set("r", destination);
+        }
+
+        history.pushState({}, "", url);
     }
 }

@@ -1,5 +1,4 @@
 const RVC = new ReVoiceChat();
-const RVCNotification = new ReVoiceChatNotification();
 
 const global = {
     url: {
@@ -40,14 +39,9 @@ document.addEventListener('DOMContentLoaded', function () {
         getServers();
         RVC.openSSE();
         getUsername();
-        router(getQueryVariable('r'));
+        RVC.router.routeTo(getQueryVariable('r'));
     }
 });
-
-addEventListener("beforeunload", () => {
-    RVC.saveState();
-    RVC.closeSSE();
-})
 
 function appSaveSettings() {
     const settings = {
