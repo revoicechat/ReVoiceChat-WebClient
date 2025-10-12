@@ -2,6 +2,8 @@ class ReVoiceChat {
     notification = new ReVoiceChatNotification();
     router = new ReVoiceChatRouter();
     user;
+    room;
+    server;
 
     // URL
     coreUrl;
@@ -26,12 +28,6 @@ class ReVoiceChat {
         // Store token
         this.#token = getCookie("jwtToken");
 
-        // Restore State
-        this.#restoreState();
-
-        // Load server list
-        this.#serverLoad();
-
         // Save state before page unload
         addEventListener("beforeunload", () => {
             this.#saveState();
@@ -42,13 +38,13 @@ class ReVoiceChat {
     #saveState() {
         const state = {
             server: {
-                id: this.#serverId,
-                name: this.#serverName,
+                id: this.server.id,
+                name: this.server.name,
             },
             room: {
-                id: this.#roomId,
-                name: this.#roomName,
-                type: this.#roomType,
+                id: this.room.id,
+                name: this.room.name,
+                type: this.room.type,
             },
             user: {
                 id: null,
@@ -65,14 +61,14 @@ class ReVoiceChat {
         sessionStorage.setItem('lastState', JSON.stringify(state));
     }
 
-    #restoreState() {
+    restoreState() {
         const lastState = JSON.parse(sessionStorage.getItem('lastState'));
         if (lastState) {
-            this.#serverId = lastState.server.id;
-            this.#serverName = lastState.server.name;
-            this.#roomId = lastState.room.id;
-            this.#roomName = lastState.room.name;
-            this.#roomType = lastState.room.type;
+            this.server.id = lastState.server.id;
+            this.server.name = lastState.server.name;
+            this.room.id = lastState.room.id;
+            this.room.name = lastState.room.name;
+            this.room.type = lastState.room.type;
         }
     }
 
@@ -103,11 +99,11 @@ class ReVoiceChat {
                     return;
 
                 case "SERVER_UPDATE":
-                    this.#serverUpdate(data);
+                    this.server.update(data);
                     return;
 
                 case "ROOM_UPDATE":
-                    this.#roomUpdate(data);
+                    this.room.update(data);
                     return;
 
                 case "ROOM_MESSAGE":
@@ -142,7 +138,7 @@ class ReVoiceChat {
             console.error(`An error occurred while attempting to connect to "${this.coreUrl}/api/sse".\nRetry in 10 seconds`);
             setTimeout(() => {
                 this.openSSE();
-                getMessages(RVC.getRoomId());
+                getMessages(RVC_Room.id);
             }, 10000);
         }
     }
@@ -218,289 +214,6 @@ class ReVoiceChat {
         catch (error) {
             console.error(`fetchMedia: An error occurred while processing request \n${error}\nHost: ${this.coreUrl}\nPath: ${path}\nMethod: ${method}`);
             return null;
-        }
-    }
-
-    // Servers
-    #serverId;
-    #serverName;
-
-    getServerId() {
-        return this.#serverId;
-    }
-
-    getServerName() {
-        return this.#serverName;
-    }
-
-    async #serverLoad() {
-        const result = await this.fetchCore("/server", 'GET');
-
-        if (result === null) {
-            return;
-        }
-
-        if (this.#serverId) {
-            this.serverSelect(this.#serverId, this.#serverName);
-        } else {
-            const server = result[0]
-            this.serverSelect(server.id, server.name);
-        }
-    }
-
-    serverSelect(id, name) {
-        if (!id || !name) {
-            console.error("Server id or name is null or undefined");
-            return;
-        }
-
-        this.#serverId = id;
-        this.#serverName = name;
-        document.getElementById("server-name").innerText = name;
-
-        this.#serverUsers(id);
-        this.#getRooms(id);
-    }
-
-    #serverUpdate(data) {
-        switch (data.action) {
-            case "MODIFY":
-                getRooms(this.#serverId);
-                return;
-
-            default:
-                return;
-        }
-    }
-
-    async #serverUsers(serverId) {
-        const result = await this.fetchCore(`/server/${serverId}/user`, 'GET');
-
-        if (result !== null) {
-            const sortedByDisplayName = [...result].sort((a, b) => {
-                return a.displayName.localeCompare(b.displayName);
-            });
-
-            const sortedByStatus = [...sortedByDisplayName].sort((a, b) => {
-                if (a.status === b.status) {
-                    return 0;
-                }
-                else {
-                    if (a.status === "OFFLINE") {
-                        return 1;
-                    }
-                    if (b.status === "OFFLINE") {
-                        return -1;
-                    }
-                }
-            });
-
-            const userList = document.getElementById("user-list");
-            userList.innerHTML = "";
-
-            for (const user of sortedByStatus) {
-                userList.appendChild(await this.#createUser(user));
-            }
-        }
-    }
-
-    async #createUser(data) {
-        const DIV = document.createElement('div');
-        DIV.id = data.id;
-        DIV.className = `${data.id} user-profile`
-        const profilePicture = `${this.mediaUrl}/profiles/${data.id}`;
-        DIV.innerHTML = `
-            <div class="relative">
-                <img src="${profilePicture}" alt="PFP" class="icon ring-2" />
-                <div id="dot-${data.id}" class="user-dot ${statusToDotClassName(data.status)}"></div>
-            </div>
-            <div class="user">
-                <h2 class="name">${data.displayName}</h2>
-            </div>
-        `;
-
-        return DIV;
-    }
-
-    // Rooms
-    #roomId;
-    #roomName;
-    #roomType;
-
-    getRoomId() {
-        return this.#roomId;
-    }
-
-    async #getRooms(serverId) {
-        const roomResult = await this.fetchCore(`/server/${serverId}/room`, 'GET');
-        const structResult = await this.fetchCore(`/server/${serverId}/structure`, 'GET');
-
-        if (structResult?.items && roomResult) {
-            const rooms = [];
-            for (const room of roomResult) {
-                rooms[room.id] = room;
-            }
-
-            const roomList = document.getElementById("sidebar-room-container");
-            roomList.innerHTML = "";
-            await this.#roomCreate(roomList, rooms, structResult.items);
-
-            if (this.#roomId) {
-                this.#roomSelect(this.#roomId, this.#roomName, this.#roomType);
-            }
-            else {
-                const key = Object.keys(rooms)[0];
-                const room = rooms[key];
-                this.#roomSelect(room.id, room.name, room.type);
-            }
-        }
-    }
-
-    async #roomCreate(roomList, roomData, data) {
-        for (const item of data) {
-            if (item.type === 'CATEGORY') {
-                roomList.appendChild(this.#roomCreateSeparator(item));
-                await this.#roomCreate(roomList, roomData, item.items)
-            }
-
-            if (item.type === 'ROOM') {
-                const elementData = roomData[item.id];
-
-                if (this.#roomId === null) {
-                    this.#roomId = elementData.id;
-                    this.#roomName = elementData.name;
-                    this.#roomType = elementData.type;
-                }
-
-                const roomElement = await this.#roomCreateElement(elementData);
-                if (roomElement) {
-                    roomList.appendChild(roomElement);
-                }
-            }
-        }
-    }
-
-    #roomIcon(type) {
-        switch (type) {
-            case "TEXT":
-                return `<revoice-icon-chat-bubble></revoice-icon-chat-bubble>`;
-            case "VOICE":
-            case "WEBRTC":
-                return `<revoice-icon-phone></revoice-icon-phone>`;
-        }
-    }
-
-    async #roomCreateElement(data) {
-        const DIV = document.createElement('div');
-
-        if (data === undefined || data === null) {
-            return;
-        }
-
-        const icon = this.#roomIcon(data.type);
-
-        DIV.id = data.id;
-        DIV.className = "sidebar-room-element";
-        DIV.onclick = () => this.#roomSelect(data.id, data.name, data.type);
-
-        let extension = "";
-        if (data.type === "VOICE") {
-            DIV.ondblclick = () => { voiceJoin(data.id); }
-            let userCount = await voiceUsersCount(data.id);
-            extension = `${userCount}<revoice-icon-user></revoice-icon-user>`;
-        }
-
-        DIV.innerHTML = `
-            <h3 class="room-title">
-            ${icon}
-            <div class="room-title-name">${data.name}</div>
-            <div class="room-title-extension" id="room-extension-${data.id}">${extension}</div>
-            </h3>
-        `;
-
-        return DIV;
-    }
-
-    #roomSelect(id, name, type) {
-        if (!id || !name || !type) {
-            console.error("ROOM : Can't select a room because data is null or undefined");
-            return;
-        }
-
-        if (this.#roomId && document.getElementById(this.#roomId) !== undefined) {
-            document.getElementById(this.#roomId).classList.remove("active");
-        }
-
-        this.#roomId = id;
-        this.#roomName = name;
-        this.#roomType = type;
-
-        document.getElementById(this.#roomId).classList.add("active");
-        document.getElementById("room-name").innerText = this.#roomName;
-
-        switch (type) {
-            case "TEXT":
-                this.#roomSelectText();
-                break;
-            case "WEBRTC":
-                this.#roomSelectWebRtc();
-                break;
-            case "VOICE":
-                this.#roomSelectVoice();
-                break;
-        }
-    }
-
-    #roomSelectText() {
-        document.getElementById("room-icon").innerHTML = `<revoice-icon-chat-bubble></revoice-icon-chat-bubble>`;
-
-        document.getElementById("voice-container").classList.add('hidden');
-        document.getElementById("text-container").classList.remove('hidden');
-
-        document.getElementById("text-input").placeholder = `Send a message in ${this.#roomName}`;
-        document.getElementById("text-input").focus();
-
-        getMessages(this.#roomId);
-    }
-
-    #roomSelectWebRtc() {
-        console.info(`ROOM : Selected WebRTC room : ${this.#roomId}`);
-    }
-
-    #roomSelectVoice() {
-        document.getElementById("room-icon").innerHTML = `<revoice-icon-phone></revoice-icon-phone>`;
-
-        document.getElementById("text-container").classList.add('hidden');
-        document.getElementById("voice-container").classList.remove('hidden');
-
-        voiceUpdateSelf();
-        voiceShowJoinedUsers(this.#roomId);
-    }
-
-    #roomCreateSeparator(data) {
-        const DIV = document.createElement('div');
-        DIV.className = "sidebar-room-separator";
-        DIV.innerHTML = `<h3 class="room-title">${data.name.toUpperCase()}</h3>`;
-        return DIV;
-    }
-
-    #roomUpdate(data) {
-        const room = data.room;
-
-        if (!room && room.serverId !== this.#serverId) { return; }
-
-        switch (data.action) {
-            case "ADD":
-            case "REMOVE":
-                this.#getRooms(this.#serverId);
-                return;
-
-            case "MODIFY":
-                document.getElementById(room.id).children[0].innerHTML = `${roomIcon(room.type)} ${room.name}`;
-                if (room.id === this.#roomId) {
-                    document.getElementById('room-name').innerText = room.name;
-                }
-                return;
         }
     }
 }
@@ -622,6 +335,292 @@ class ReVoiceChatUser {
         else {
             voice.settings = defaultVoice;
         }
+    }
+}
+
+class ReVoiceChatRoom {
+    #rvc;
+    id;
+    name;
+    type;
+
+    constructor(rvc) {
+        this.#rvc = rvc;
+        rvc.room = this;
+    }
+
+    async load(serverId) {
+        const roomResult = await this.#rvc.fetchCore(`/server/${serverId}/room`, 'GET');
+        const structResult = await this.#rvc.fetchCore(`/server/${serverId}/structure`, 'GET');
+
+        if (structResult?.items && roomResult) {
+            const rooms = [];
+            for (const room of roomResult) {
+                rooms[room.id] = room;
+            }
+
+            const roomList = document.getElementById("sidebar-room-container");
+            roomList.innerHTML = "";
+            await this.#create(roomList, rooms, structResult.items);
+
+            if (this.id) {
+                this.#select(this.id, this.name, this.type);
+            }
+            else {
+                const key = Object.keys(rooms)[0];
+                const room = rooms[key];
+                this.#select(room.id, room.name, room.type);
+            }
+        }
+    }
+
+    async #create(roomList, roomData, data) {
+        for (const item of data) {
+            if (item.type === 'CATEGORY') {
+                roomList.appendChild(this.#roomCreateSeparator(item));
+                await this.#create(roomList, roomData, item.items)
+            }
+
+            if (item.type === 'ROOM') {
+                const elementData = roomData[item.id];
+
+                if (this.id === null) {
+                    this.id = elementData.id;
+                    this.name = elementData.name;
+                    this.type = elementData.type;
+                }
+
+                const roomElement = await this.#createElement(elementData);
+                if (roomElement) {
+                    roomList.appendChild(roomElement);
+                }
+            }
+        }
+    }
+
+    #icon(type) {
+        switch (type) {
+            case "TEXT":
+                return `<revoice-icon-chat-bubble></revoice-icon-chat-bubble>`;
+            case "VOICE":
+            case "WEBRTC":
+                return `<revoice-icon-phone></revoice-icon-phone>`;
+        }
+    }
+
+    async #createElement(data) {
+        const DIV = document.createElement('div');
+
+        if (data === undefined || data === null) {
+            return;
+        }
+
+        const icon = this.#icon(data.type);
+
+        DIV.id = data.id;
+        DIV.className = "sidebar-room-element";
+        DIV.onclick = () => this.#select(data.id, data.name, data.type);
+
+        let extension = "";
+        if (data.type === "VOICE") {
+            DIV.ondblclick = () => { voiceJoin(data.id); }
+            let userCount = await voiceUsersCount(data.id);
+            extension = `${userCount}<revoice-icon-user></revoice-icon-user>`;
+        }
+
+        DIV.innerHTML = `
+            <h3 class="room-title">
+            ${icon}
+            <div class="room-title-name">${data.name}</div>
+            <div class="room-title-extension" id="room-extension-${data.id}">${extension}</div>
+            </h3>
+        `;
+
+        return DIV;
+    }
+
+    #select(id, name, type) {
+        if (!id || !name || !type) {
+            console.error("ROOM : Can't select a room because data is null or undefined");
+            return;
+        }
+
+        if (this.id && document.getElementById(this.id) !== undefined) {
+            document.getElementById(this.id).classList.remove("active");
+        }
+
+        this.id = id;
+        this.name = name;
+        this.type = type;
+
+        document.getElementById(this.id).classList.add("active");
+        document.getElementById("room-name").innerText = this.name;
+
+        switch (type) {
+            case "TEXT":
+                this.#selectText();
+                break;
+            case "WEBRTC":
+                this.#selectWebRtc();
+                break;
+            case "VOICE":
+                this.#selectVoice();
+                break;
+        }
+    }
+
+    #selectText() {
+        document.getElementById("room-icon").innerHTML = `<revoice-icon-chat-bubble></revoice-icon-chat-bubble>`;
+
+        document.getElementById("voice-container").classList.add('hidden');
+        document.getElementById("text-container").classList.remove('hidden');
+
+        document.getElementById("text-input").placeholder = `Send a message in ${this.name}`;
+        document.getElementById("text-input").focus();
+
+        getMessages(this.id);
+    }
+
+    #selectWebRtc() {
+        console.info(`ROOM : Selected WebRTC room : ${this.id}`);
+    }
+
+    #selectVoice() {
+        document.getElementById("room-icon").innerHTML = `<revoice-icon-phone></revoice-icon-phone>`;
+
+        document.getElementById("text-container").classList.add('hidden');
+        document.getElementById("voice-container").classList.remove('hidden');
+
+        voiceUpdateSelf();
+        voiceShowJoinedUsers(this.id);
+    }
+
+    #roomCreateSeparator(data) {
+        const DIV = document.createElement('div');
+        DIV.className = "sidebar-room-separator";
+        DIV.innerHTML = `<h3 class="room-title">${data.name.toUpperCase()}</h3>`;
+        return DIV;
+    }
+
+    update(data) {
+        const room = data.room;
+
+        if (!room && room.serverId !== this.#rvc.server.id) { return; }
+
+        switch (data.action) {
+            case "ADD":
+            case "REMOVE":
+                this.load(this.server.id);
+                return;
+
+            case "MODIFY":
+                document.getElementById(room.id).children[0].innerHTML = `${roomIcon(room.type)} ${room.name}`;
+                if (room.id === this.id) {
+                    document.getElementById('room-name').innerText = room.name;
+                }
+                return;
+        }
+    }
+}
+
+class ReVoiceChatServer {
+    #rvc;
+    id;
+    name;
+
+    constructor(rvc) {
+        this.#rvc = rvc;
+        rvc.server = this;
+        this.#load();
+    }
+
+    async #load() {
+        const result = await this.#rvc.fetchCore("/server", 'GET');
+
+        if (result === null) {
+            return;
+        }
+
+        if (this.id) {
+            this.select(this.id, this.name);
+        } else {
+            const server = result[0]
+            this.select(server.id, server.name);
+        }
+    }
+
+    select(id, name) {
+        if (!id || !name) {
+            console.error("Server id or name is null or undefined");
+            return;
+        }
+
+        this.id = id;
+        this.name = name;
+        document.getElementById("server-name").innerText = name;
+
+        this.#usersLoad();
+        this.#rvc.room.load(id);
+    }
+
+    update(data) {
+        switch (data.action) {
+            case "MODIFY":
+                getRooms(this.id);
+                return;
+
+            default:
+                return;
+        }
+    }
+
+    async #usersLoad() {
+        const result = await this.#rvc.fetchCore(`/server/${this.id}/user`, 'GET');
+
+        if (result !== null) {
+            const sortedByDisplayName = [...result].sort((a, b) => {
+                return a.displayName.localeCompare(b.displayName);
+            });
+
+            const sortedByStatus = [...sortedByDisplayName].sort((a, b) => {
+                if (a.status === b.status) {
+                    return 0;
+                }
+                else {
+                    if (a.status === "OFFLINE") {
+                        return 1;
+                    }
+                    if (b.status === "OFFLINE") {
+                        return -1;
+                    }
+                }
+            });
+
+            const userList = document.getElementById("user-list");
+            userList.innerHTML = "";
+
+            for (const user of sortedByStatus) {
+                userList.appendChild(await this.#createUser(user));
+            }
+        }
+    }
+
+    async #createUser(data) {
+        const DIV = document.createElement('div');
+        DIV.id = data.id;
+        DIV.className = `${data.id} user-profile`
+        const profilePicture = `${this.#rvc.mediaUrl}/profiles/${data.id}`;
+        DIV.innerHTML = `
+            <div class="relative">
+                <img src="${profilePicture}" alt="PFP" class="icon ring-2" />
+                <div id="dot-${data.id}" class="user-dot ${statusToDotClassName(data.status)}"></div>
+            </div>
+            <div class="user">
+                <h2 class="name">${data.displayName}</h2>
+            </div>
+        `;
+
+        return DIV;
     }
 }
 

@@ -1,5 +1,7 @@
 const RVC = new ReVoiceChat();
 const RVC_User = new ReVoiceChatUser(RVC);
+const RVC_Room = new ReVoiceChatRoom(RVC);
+const RVC_Server = new ReVoiceChatServer(RVC);
 
 const global = {
     url: {
@@ -21,6 +23,7 @@ document.addEventListener('DOMContentLoaded', function () {
     getAttachmentMaxSize();
     getEmojisGlobal();
 
+    RVC.restoreState();
     RVC.openSSE();
     RVC.router.routeTo(getQueryVariable('r'));
 

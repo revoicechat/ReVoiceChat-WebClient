@@ -58,7 +58,7 @@ async function voiceLeave() {
 async function voiceUserJoining(data) {
     voiceUsersCountUpdate(data.roomId);
     
-    if (data.roomId !== RVC.getRoomId()) { return; }
+    if (data.roomId !== RVC_Room.id) { return; }
 
     const userData = data.user;
     const voiceContent = document.getElementById("voice-content");
@@ -77,7 +77,7 @@ async function voiceUserJoining(data) {
 async function voiceUserLeaving(data) {
     voiceUsersCountUpdate(data.roomId);
 
-    if (data.roomId !== RVC.getRoomId()) { return; }
+    if (data.roomId !== RVC_Room.id) { return; }
 
     const userId = data.userId;
 
@@ -94,7 +94,7 @@ async function voiceUserLeaving(data) {
 
 // Show users in a room
 async function voiceShowJoinedUsers() {
-    const result = await RVC.fetchCore(`/room/${RVC.getRoomId()}/user`, 'GET');
+    const result = await RVC.fetchCore(`/room/${RVC_Room.id}/user`, 'GET');
 
     if (result.connectedUser === null) {
         console.debug("VOICE : No user in room");
@@ -115,14 +115,14 @@ async function voiceShowJoinedUsers() {
     }
 
     // Room is currently active
-    if (voice.activeRoom === RVC.getRoomId()) {
+    if (voice.activeRoom === RVC_Room.id) {
         voiceUpdateJoinedUsers();
     }
 }
 
 // Add or remove controls on users in room
 async function voiceUpdateJoinedUsers() {
-    const result = await RVC.fetchCore(`/room/${RVC.getRoomId()}/user`, 'GET');
+    const result = await RVC.fetchCore(`/room/${RVC_Room.id}/user`, 'GET');
 
     if (result === null) {
         console.debug("VOICE : No user in room");
@@ -235,12 +235,12 @@ function voiceUpdateSelf() {
 
         case VoiceCall.CLOSE:
             // Set connect actions
-            document.getElementById(RVC.getRoomId()).classList.remove('active-voice');
+            document.getElementById(RVC_Room.id).classList.remove('active-voice');
             voiceAction.className = "join";
             voiceAction.classList.add('disconnected');
             voiceAction.title = "Join the room";
             voiceAction.innerHTML = `<revoice-icon-phone></revoice-icon-phone>`;
-            voiceAction.onclick = () => voiceJoin(RVC.getRoomId());
+            voiceAction.onclick = () => voiceJoin(RVC_Room.id);
             break;
 
         case VoiceCall.OPEN:

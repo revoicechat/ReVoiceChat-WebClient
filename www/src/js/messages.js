@@ -153,7 +153,7 @@ async function sendMessage() {
 
     switch (global.chat.mode) {
         case "send":
-            result = await RVC.fetchCore(`/room/${RVC.getRoomId()}/message`, 'PUT', data);
+            result = await RVC.fetchCore(`/room/${RVC_Room.id}/message`, 'PUT', data);
             break;
 
         case "edit":
@@ -253,7 +253,7 @@ async function getEmojisGlobal() {
 }
 
 function roomMessage(data) {
-    if (data.message.roomId !== RVC.getRoomId()) {
+    if (data.message.roomId !== RVC_Room.id) {
         return;
     }
 
