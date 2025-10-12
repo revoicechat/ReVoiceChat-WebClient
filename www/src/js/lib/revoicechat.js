@@ -1,6 +1,6 @@
 class ReVoiceChat {
-    notification = new ReVoiceChatNotification();
-    router = new ReVoiceChatRouter();
+    notification = new Notification();
+    router = new Router();
     user;
     room;
     server;
@@ -29,9 +29,9 @@ class ReVoiceChat {
         this.#token = getCookie("jwtToken");
 
         // Instantiate other classes
-        this.user = new ReVoiceChatUser(this);
-        this.room = new ReVoiceChatRoom(this);
-        this.server = new ReVoiceChatServer(this);
+        this.user = new User(this);
+        this.room = new Room(this);
+        this.server = new Server(this);
 
         // Save state before page unload
         addEventListener("beforeunload", () => {
@@ -223,7 +223,7 @@ class ReVoiceChat {
     }
 }
 
-class ReVoiceChatNotification {
+class Notification {
     // Notifications
     #defaultSounds = {
         messageNew: 'src/audio/messageNew.ogg',
@@ -244,7 +244,7 @@ class ReVoiceChatNotification {
     }
 }
 
-class ReVoiceChatRouter {
+class Router {
     routeTo(destination) {
         for (const element of document.querySelectorAll('.main')) {
             element.classList.add('hidden');
@@ -283,7 +283,7 @@ class ReVoiceChatRouter {
     }
 }
 
-class ReVoiceChatUser {
+class User {
     #rvc;
     id;
     displayName;
@@ -334,7 +334,7 @@ class ReVoiceChatUser {
     }
 }
 
-class ReVoiceChatRoom {
+class Room {
     #rvc;
     id;
     name;
@@ -518,7 +518,7 @@ class ReVoiceChatRoom {
     }
 }
 
-class ReVoiceChatServer {
+class Server {
     #rvc;
     id;
     name;
@@ -617,4 +617,3 @@ class ReVoiceChatServer {
         return DIV;
     }
 }
-
