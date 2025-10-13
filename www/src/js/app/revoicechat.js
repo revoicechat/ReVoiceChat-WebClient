@@ -33,8 +33,8 @@ class ReVoiceChat {
         // Instantiate other classes
         this.fetcher = new Fetcher(this.#token, this.coreUrl);
         this.user = new User(this.fetcher, this.mediaUrl);
-        this.room = new Room(this);
-        this.server = new Server(this);
+        this.room = new Room(this.fetcher);
+        this.server = new Server(this.fetcher, this.mediaUrl, this.room);
         this.state = new State(this);
 
         // Save state before page unload
@@ -75,7 +75,7 @@ class ReVoiceChat {
                     return;
 
                 case "ROOM_UPDATE":
-                    this.room.update(data);
+                    this.room.update(data, this.server.id);
                     return;
 
                 case "ROOM_MESSAGE":
@@ -358,15 +358,13 @@ class User {
 }
 
 class Room {
-    #rvc;
     #fetcher;
     id;
     name;
     type;
 
-    constructor(rvc) {
-        this.#rvc = rvc;
-        this.#fetcher = rvc.fetcher;
+    constructor(fetcher) {
+        this.#fetcher = fetcher;
     }
 
     async load(serverId) {
@@ -522,10 +520,10 @@ class Room {
         return DIV;
     }
 
-    update(data) {
+    update(data, currentServerId) {
         const room = data.room;
 
-        if (!room && room.serverId !== this.#rvc.server.id) { return; }
+        if (!room && room.serverId !== currentServerId) { return; }
 
         switch (data.action) {
             case "ADD":
@@ -544,14 +542,16 @@ class Room {
 }
 
 class Server {
-    #rvc;
     #fetcher;
+    #mediaURL;
+    #room;
     id;
     name;
 
-    constructor(rvc) {
-        this.#rvc = rvc;
-        this.#fetcher = rvc.fetcher;
+    constructor(fetcher, mediaURL, room) {
+        this.#fetcher = fetcher;
+        this.#mediaURL = mediaURL;
+        this.#room = room;
         this.#load();
     }
 
@@ -581,13 +581,13 @@ class Server {
         document.getElementById("server-name").innerText = name;
 
         this.#usersLoad();
-        this.#rvc.room.load(id);
+        this.#room.load(id);
     }
 
     update(data) {
         switch (data.action) {
             case "MODIFY":
-                this.#rvc.room.load(this.id);
+                this.#room.load(this.id);
                 return;
 
             default:
@@ -630,7 +630,7 @@ class Server {
         const DIV = document.createElement('div');
         DIV.id = data.id;
         DIV.className = `${data.id} user-profile`
-        const profilePicture = `${this.#rvc.mediaUrl}/profiles/${data.id}`;
+        const profilePicture = `${this.#mediaURL}/profiles/${data.id}`;
         DIV.innerHTML = `
             <div class="relative">
                 <img src="${profilePicture}" alt="PFP" class="icon ring-2" />
