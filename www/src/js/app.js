@@ -6,10 +6,7 @@ const global = {
         voiceStun: null,
     },
     chat: {
-        mode: "send",
-        editId: null,
-        emojisGlobal: [],
-        attachmentMaxSize: 0,
+        emojisGlobal: []
     }
 }
 
@@ -17,7 +14,6 @@ const global = {
 document.addEventListener('DOMContentLoaded', function () {
     document.documentElement.dataset.theme = localStorage.getItem("Theme") || "dark";
 
-    getAttachmentMaxSize();
     getEmojisGlobal();
 
     RVC.state.load();

@@ -86,12 +86,12 @@
                         <div class="text-control-file hidden" id="text-attachment-div">
                             <input type="file" id="text-attachment" multiple>
                             <button class="emoji-btn" id="attachment-button"
-                                onclick="messageRemoveAttachment()"><revoice-icon-trash></revoice-icon-trash></button>
+                                onclick="RVC.room.textController.removeAttachment()"><revoice-icon-trash></revoice-icon-trash></button>
                         </div>
                         <div class="text-control-text">
-                            <textarea rows="1" id="text-input" oninput="textInputMode(this)"></textarea>
+                            <textarea rows="1" id="text-input" oninput="RVC.room.textController.oninput(this)"></textarea>
                             <button class="emoji-btn" id="attachment-button"
-                                onclick="messageJoinAttachment()"><revoice-icon-paper-clip></revoice-icon-paper-clip></button>
+                                onclick="RVC.room.textController.joinAttachment()"><revoice-icon-paper-clip></revoice-icon-paper-clip></button>
                             <button class="emoji-btn"
                                 id="emoji-picker-button"><revoice-icon-emoji></revoice-icon-emoji></button>
                         </div>
