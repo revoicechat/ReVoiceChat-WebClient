@@ -31,7 +31,7 @@ class ReVoiceChat {
         this.#token = getCookie("jwtToken");
 
         // Instantiate other classes
-        this.fetcher = new Fetcher(this.#token, this.coreUrl);
+        this.fetcher = new Fetcher(this.#token, this.coreUrl, this.mediaUrl);
         this.user = new User(this.fetcher, this.mediaUrl);
         this.room = new Room(this.fetcher);
         this.server = new Server(this.fetcher, this.mediaUrl, this.room);
@@ -126,10 +126,12 @@ class ReVoiceChat {
 
 class Fetcher {
     #coreURL;
+    #mediaURL;
     #token;
 
-    constructor(token, coreURL){
+    constructor(token, coreURL, mediaURL){
         this.#coreURL = coreURL;
+        this.#mediaURL = mediaURL;
         this.#token = token;
     }
     
@@ -175,7 +177,7 @@ class Fetcher {
         }
 
         try {
-            const response = await fetch(`${this.#coreURL}/media${path}`, {
+            const response = await fetch(`${this.#mediaURL}${path}`, {
                 method: method,
                 signal: AbortSignal.timeout(5000),
                 headers: {
@@ -194,7 +196,7 @@ class Fetcher {
             return response.ok;
         }
         catch (error) {
-            console.error(`fetchMedia: An error occurred while processing request \n${error}\nHost: ${this.#coreURL}/media\nPath: ${path}\nMethod: ${method}`);
+            console.error(`fetchMedia: An error occurred while processing request \n${error}\nHost: ${this.#mediaURL}\nPath: ${path}\nMethod: ${method}`);
             return null;
         }
     }
