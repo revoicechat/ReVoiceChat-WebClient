@@ -91,7 +91,7 @@ class VoiceCall {
         this.#socket.binaryType = "arraybuffer";
 
         // Setup encoder and transmitter
-        await this.#encodeAndTransmit();
+        await this.#encodeAudio();
 
         // Setup receiver and decoder
         this.#socket.onmessage = (message) => { this.#receiveAndDecode(message, this.#packetDecode) };
@@ -151,7 +151,7 @@ class VoiceCall {
                 }
 
                 this.#users[userId].decoder = new AudioDecoder({
-                    output: (chunk) => { this.#decoderCallback(chunk, this.#audioContext, this.#users, userId) },
+                    output: (chunk) => { this.#playbackAudio(chunk, this.#audioContext, this.#users, userId) },
                     error: (error) => { throw new Error(`Decoder setup failed:\n${error.name}\nCurrent codec :${this.#codecSettings.codec}`) },
                 });
 
@@ -291,7 +291,7 @@ class VoiceCall {
         return result;
     }
 
-    async #encodeAndTransmit() {
+    async #encodeAudio() {
         const supported = await AudioEncoder.isConfigSupported(this.#codecSettings);
         if (!supported.supported) {
             throw new Error("Encoder Codec not supported");
@@ -299,7 +299,7 @@ class VoiceCall {
 
         // Setup Encoder
         this.#encoder = new AudioEncoder({
-            output: (chunk) => { this.#encoderCallback(chunk, this.#audioTimestamp, this.#socket, this.#packetEncode, this.#user, this.#gateState); },
+            output: (chunk) => { this.#sendPacket(chunk, this.#audioTimestamp, this.#socket, this.#packetEncode, this.#user, this.#gateState); },
             error: (error) => { throw new Error(`Encoder setup failed:\n${error.name}\nCurrent codec :${this.#codecSettings.codec}`) },
         });
 
@@ -432,7 +432,7 @@ class VoiceCall {
         }
     }
 
-    #encoderCallback(audioChunk, audioTimestamp, socket, packetEncode, user, gateState) {
+    #sendPacket(audioChunk, audioTimestamp, socket, packetEncode, user, gateState) {
         // Get a copy of audioChunk and audioTimestamp
         const audioChunkCopy = new ArrayBuffer(audioChunk.byteLength);
         audioChunk.copyTo(audioChunkCopy);
@@ -453,7 +453,7 @@ class VoiceCall {
         }
     }
 
-    #decoderCallback(audioData, audioContext, users, userId) {
+    #playbackAudio(audioData, audioContext, users, userId) {
         const buffer = audioContext.createBuffer(
             audioData.numberOfChannels,
             audioData.numberOfFrames,
