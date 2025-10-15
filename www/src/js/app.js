@@ -1,3 +1,5 @@
+import ReVoiceChat from './app/revoicechat.js';
+
 const RVC = new ReVoiceChat();
 
 const global = {
@@ -38,3 +40,5 @@ document.getElementById("text-input").addEventListener('keydown', async function
         RVC.room.textController.mode = "send";
     }
 });
+
+export { RVC, global };

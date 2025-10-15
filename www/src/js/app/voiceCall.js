@@ -1,4 +1,4 @@
-class VoiceCall {
+export default class VoiceCall {
     "use strict";
 
     static CLOSE = 0;

@@ -1,0 +1,274 @@
+export default class TextController {
+    #alert;
+    #user;
+    #fetcher;
+    #room;
+    mode = "send";
+    #editId;
+    #attachmentMaxSize = 0;
+    emojisGlobal;
+
+    constructor(fetcher, alert, user, room) {
+        this.#fetcher = fetcher;
+        this.#alert = alert;
+        this.#user = user;
+        this.#room = room;
+        this.#getAttachmentMaxSize();
+    }
+
+    async getAllFrom(roomId) {
+        const result = await this.#fetcher.fetchCore(`/room/${roomId}/message`, 'GET');
+
+        if (result !== null) {
+            const ROOM = document.getElementById("text-content");
+
+            const sortedResult = [...result.content].sort((a, b) => {
+                return new Date(a.createdDate) - new Date(b.createdDate);
+            });
+
+            ROOM.innerHTML = "";
+            for (const message of sortedResult) {
+                ROOM.appendChild(this.#create(message));
+            }
+
+            ROOM.scrollTop = ROOM.scrollHeight;
+        }
+    }
+
+    processSSE(data) {
+        if (data.action === "ADD" && this.#user.id != data.message.user.id) {
+            this.#alert.play('messageNew');
+        }
+
+        if (data.message.roomId !== RVC.room.id) {
+            return;
+        }
+
+        const message = data.message;
+        const room = document.getElementById("text-content");
+        switch (data.action) {
+            case "ADD":
+                room.appendChild(this.#create(message));
+                break;
+            case "MODIFY":
+                document.getElementById(message.id).replaceWith(this.#createContent(message));
+                break;
+            case "REMOVE":
+                document.getElementById(`container-${message.id}`).remove();
+                break;
+            default:
+                console.error("Unsupported action : ", data.action);
+                break;
+        }
+
+        room.scrollTop = room.scrollHeight;
+    }
+
+    joinAttachment() {
+        const fileInput = document.getElementById("text-attachment");
+        fileInput.click();
+        document.getElementById("text-attachment-div").classList.remove('hidden');
+    }
+
+    removeAttachment() {
+        const fileInput = document.getElementById("text-attachment");
+        fileInput.value = "";
+        document.getElementById("text-attachment-div").classList.add('hidden');
+    }
+
+    async send() {
+        let result = null;
+        let textInput = sanitizeString(document.getElementById('text-input').value);
+
+        if (textInput == "" || textInput == null) {
+            return;
+        }
+
+        const data = {
+            text: textInput,
+            medias: []
+        }
+
+        // Attachments
+        const input = document.getElementById("text-attachment");
+        const attachments = [];
+        if (input && this.mode === "send") {
+            for (const element of input.files) {
+                if (element.size < this.#attachmentMaxSize) {
+                    data.medias.push({ name: element.name });
+                    attachments[element.name] = element;
+                }
+                else {
+                    await Swal.fire({
+                        icon: "error",
+                        title: "File too big",
+                        html: `"${element.name}" is too big<br/>Maximum size: ${humanFileSize(this.#attachmentMaxSize)}<br/>Your file: ${humanFileSize(element.size)}`,
+                        animation: true,
+                        customClass: {
+                            title: "swalTitle",
+                            popup: "swalPopup",
+                            confirmButton: "swalConfirm",
+                        },
+                        showCancelButton: false,
+                        focusConfirm: false,
+                        confirmButtonText: "OK",
+                    });
+                    return;
+                }
+            }
+        }
+
+        switch (this.mode) {
+            case "send":
+                result = await this.#fetcher.fetchCore(`/room/${this.#room.id}/message`, 'PUT', data);
+                break;
+
+            case "edit":
+                result = await this.#fetcher.fetchCore(`/message/${this.#editId}`, 'PATCH', data);
+                break;
+
+            default:
+                console.error('Invalid mode');
+                break;
+        }
+
+        if (result) {
+
+            // Send attachements
+            if (this.mode === "send") {
+                for (const media of result.medias) {
+                    const formData = new FormData();
+                    formData.append("file", attachments[media.name]);
+                    await fetch(`${RVC.mediaUrl}/attachments/${media.id}`, {
+                        method: "POST",
+                        signal: AbortSignal.timeout(5000),
+                        headers: {
+                            'Authorization': `Bearer ${RVC.getToken()}`
+                        },
+                        body: formData
+                    });
+                }
+            }
+
+            // Clean file input
+            attachments.value = "";
+            document.getElementById("text-attachment-div").classList.add('hidden');
+
+            // Clean text input
+            const textarea = document.getElementById("text-input");
+            textarea.value = "";
+            textarea.style.height = "auto";
+
+            // Default mode
+            this.mode = "send";
+            this.#editId = null;
+            return;
+        }
+
+        Swal.fire({
+            icon: 'error',
+            title: `Something went wrong`,
+            text: "Error while sending message",
+            animation: false,
+            customClass: SwalCustomClass,
+            showCancelButton: false,
+            confirmButtonText: "OK",
+            allowOutsideClick: false,
+        });
+    }
+
+    oninput(input) {
+        input.style.height = "auto";
+        input.style.height = input.scrollHeight + "px";
+        if (input.value == "") {
+            this.mode = "send";
+            this.#editId = null;
+        }
+    }
+
+    #create(messageData) {
+        const CONTAINER = document.createElement('div');
+        CONTAINER.id = `container-${messageData.id}`;
+        CONTAINER.className = "message-container";
+
+        const HEADER = document.createElement('div');
+        HEADER.className = "message-header";
+        HEADER.innerHTML = `<h3 class="message-owner">${messageData.user.displayName} <span class="message-timestamp">${timestampToText(messageData.createdDate)}</span></h3>`;
+
+        const CONTEXT_MENU = this.#createContextMenu(messageData)
+        if (CONTEXT_MENU) {
+            HEADER.appendChild(CONTEXT_MENU);
+        }
+
+        CONTAINER.appendChild(HEADER);
+
+        CONTAINER.appendChild(this.#createContent(messageData));
+        return CONTAINER;
+    }
+
+    #createContent(messageData) {
+        const CONTENT = document.createElement('revoice-message');
+        CONTENT.id = messageData.id;
+        CONTENT.innerHTML = `
+            <script type="application/json" slot="medias">
+                ${JSON.stringify(messageData.medias)}
+            </script>
+            <script type="text/markdown" slot="content">
+                ${messageData.text}
+            </script>
+            <script type="application/json" slot="emotes">
+                ${JSON.stringify(messageData.emotes)}
+            </script>
+        `;
+        return CONTENT;
+    }
+
+    async #edit(id) {
+        const result = await this.#fetcher.fetchCore(`/message/${id}`, 'GET');
+
+        if (result) {
+            const textarea = document.getElementById("text-input");
+            textarea.value = result.text;
+            textarea.style.height = "auto";
+            textarea.style.height = textarea.scrollHeight + "px";
+            this.mode = "edit";
+            this.#editId = id;
+            document.getElementById("text-input").focus();
+        }
+    }
+
+    async #delete(id) {
+        await this.#fetcher.fetchCore(`/message/${id}`, 'DELETE');
+    }
+
+    #createContextMenu(messageData) {
+        if (messageData.user.id != this.#user.id) {
+            return null;
+        }
+
+        const DIV = document.createElement('div');
+        DIV.className = "message-context-menu";
+
+        const EDIT = document.createElement('div');
+        EDIT.className = "icon";
+        EDIT.innerHTML = "<revoice-icon-pencil></revoice-icon-pencil>";
+        EDIT.onclick = () => this.#edit(messageData.id);
+
+        const DELETE = document.createElement('div');
+        DELETE.className = "icon";
+        DELETE.innerHTML = "<revoice-icon-trash></revoice-icon-trash>";
+        DELETE.onclick = () => this.#delete(messageData.id);
+
+        DIV.appendChild(EDIT);
+        DIV.appendChild(DELETE);
+
+        return DIV
+    }
+
+    async #getAttachmentMaxSize() {
+        const response = await this.#fetcher.fetchMedia('/maxfilesize');
+        if (response) {
+            this.#attachmentMaxSize = response.maxFileSize;
+        }
+    }
+}

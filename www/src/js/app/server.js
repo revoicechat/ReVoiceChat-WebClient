@@ -1,0 +1,103 @@
+export default class Server {
+    #fetcher;
+    #mediaURL;
+    #room;
+    id;
+    name;
+
+    constructor(fetcher, mediaURL, room) {
+        this.#fetcher = fetcher;
+        this.#mediaURL = mediaURL;
+        this.#room = room;
+        this.#load();
+    }
+
+    async #load() {
+        const result = await this.#fetcher.fetchCore("/server", 'GET');
+
+        if (result === null) {
+            return;
+        }
+
+        if (this.id) {
+            this.select(this.id, this.name);
+        } else {
+            const server = result[0]
+            this.select(server.id, server.name);
+        }
+    }
+
+    select(id, name) {
+        if (!id || !name) {
+            console.error("Server id or name is null or undefined");
+            return;
+        }
+
+        this.id = id;
+        this.name = name;
+        document.getElementById("server-name").innerText = name;
+
+        this.#usersLoad();
+        this.#room.load(id);
+    }
+
+    update(data) {
+        switch (data.action) {
+            case "MODIFY":
+                this.#room.load(this.id);
+                return;
+
+            default:
+                return;
+        }
+    }
+
+    async #usersLoad() {
+        const result = await this.#fetcher.fetchCore(`/server/${this.id}/user`, 'GET');
+
+        if (result !== null) {
+            const sortedByDisplayName = [...result].sort((a, b) => {
+                return a.displayName.localeCompare(b.displayName);
+            });
+
+            const sortedByStatus = [...sortedByDisplayName].sort((a, b) => {
+                if (a.status === b.status) {
+                    return 0;
+                }
+                else {
+                    if (a.status === "OFFLINE") {
+                        return 1;
+                    }
+                    if (b.status === "OFFLINE") {
+                        return -1;
+                    }
+                }
+            });
+
+            const userList = document.getElementById("user-list");
+            userList.innerHTML = "";
+
+            for (const user of sortedByStatus) {
+                userList.appendChild(await this.#createUser(user));
+            }
+        }
+    }
+
+    async #createUser(data) {
+        const DIV = document.createElement('div');
+        DIV.id = data.id;
+        DIV.className = `${data.id} user-profile`
+        const profilePicture = `${this.#mediaURL}/profiles/${data.id}`;
+        DIV.innerHTML = `
+            <div class="relative">
+                <img src="${profilePicture}" alt="PFP" class="icon ring-2" />
+                <div id="dot-${data.id}" class="user-dot ${statusToDotClassName(data.status)}"></div>
+            </div>
+            <div class="user">
+                <h2 class="name">${data.displayName}</h2>
+            </div>
+        `;
+
+        return DIV;
+    }
+}
