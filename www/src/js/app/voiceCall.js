@@ -118,12 +118,12 @@ class VoiceCall {
         }
 
         // Close self encoder
-        if (this.#encoder) {
+        if (this.#encoder && this.#encoder.state !== "closed") {
             this.#encoder.close();
         }
 
         // Close audioContext
-        if (this.#audioContext) {
+        if (this.#audioContext && this.#audioContext.state !== "closed") {
             this.#audioContext.close();
         }
 
