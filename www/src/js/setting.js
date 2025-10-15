@@ -177,7 +177,7 @@ function settingVolumeUpdate(data) {
     voice.settings.self.volume = Number.parseFloat(data.value)
     RVC.user.saveSettings();
     settingVolumeShow();
-    voiceUpdateSelfVolume();
+    RVC.room.voiceController.setSelfVolume();
 }
 
 function settingCompressorDirectShow(param, element) {
