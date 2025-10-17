@@ -331,7 +331,7 @@ function settingNoiseGateUpdate(param, data) {
     }
 
     RVC.user.saveSettings();
-    voiceUpdateGate();
+    RVC.room.voiceController.updateGate();
     settingNoiseGateShow();
 }
 
@@ -342,7 +342,7 @@ function settingNoiseGateDefault() {
         threshold: -45,
     }
     RVC.user.saveSettings();
-    voiceUpdateGate();
+    RVC.room.voiceController.updateGate();
     settingNoiseGateShow();
 }
 

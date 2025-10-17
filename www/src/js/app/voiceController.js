@@ -268,7 +268,7 @@ export default class VoiceController {
         this.#user.saveSettings();
     }
 
-    voiceUpdateGate() {
+    updateGate() {
         if (this.#voiceCall) {
             this.#voiceCall.setGate(this.#user.voiceSettings.gate);
         }
