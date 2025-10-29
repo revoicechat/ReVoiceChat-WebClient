@@ -16,7 +16,7 @@ export default class VoiceCall {
         gate: {
             attack: 0.01,
             release: 0.4,
-            threshold: -45,
+            threshold: -60,
         },
         self: {
             muted: false,

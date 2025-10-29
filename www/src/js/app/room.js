@@ -176,7 +176,7 @@ export default class Room {
         switch (data.action) {
             case "ADD":
             case "REMOVE":
-                this.load(this.server.id);
+                this.load(currentServerId);
                 return;
 
             case "MODIFY":

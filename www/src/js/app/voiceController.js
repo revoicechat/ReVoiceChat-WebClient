@@ -178,7 +178,7 @@ export default class VoiceController {
                 INPUT_VOLUME.value = this.#user.voiceSettings.users[userId].volume;
                 INPUT_VOLUME.min = "0";
                 INPUT_VOLUME.max = "2";
-                INPUT_VOLUME.title = INPUT_VOLUME.value * 100 + "%";
+                INPUT_VOLUME.title = parseInt(INPUT_VOLUME.value * 100) + "%";
                 INPUT_VOLUME.oninput = () => this.#controlUserVolume(userId, INPUT_VOLUME);
                 this.#controlUserVolume(userId, INPUT_VOLUME);
 
@@ -223,7 +223,7 @@ export default class VoiceController {
     #controlUserVolume(userId, volumeInput) {
         const volume = volumeInput.value;
 
-        volumeInput.title = volume * 100 + "%";
+        volumeInput.title = parseInt(volume * 100) + "%";
 
         if (this.#voiceCall) {
             this.#voiceCall.setUserVolume(userId, volume);
@@ -268,7 +268,7 @@ export default class VoiceController {
         this.#user.saveSettings();
     }
 
-    voiceUpdateGate() {
+    updateGate() {
         if (this.#voiceCall) {
             this.#voiceCall.setGate(this.#user.voiceSettings.gate);
         }
