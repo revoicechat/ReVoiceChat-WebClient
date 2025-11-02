@@ -35,7 +35,7 @@ function userLogin() {
     // Validate URL
     try {
         const inputHost = new URL(FORM.host.value);
-        login(LOGIN, inputHost.origin);
+        login(LOGIN, tauriActive ? inputHost.href : inputHost.origin);
     }
     catch (e) {
         Swal.fire({
@@ -71,7 +71,7 @@ async function login(loginData, host) {
         }
 
         // Var session
-        sessionStorage.setItem('url.core', host);
+        setCookie('url.core', host, 30);
 
         // Local storage
         localStorage.setItem("lastHost", host);

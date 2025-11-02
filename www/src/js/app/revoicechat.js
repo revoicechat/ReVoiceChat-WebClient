@@ -23,7 +23,8 @@ export default class ReVoiceChat {
 
     constructor() {
         // Retrieve URL
-        const storedCoreUrl = sessionStorage.getItem('url.core');
+        console.log(getCookie('url.core'));
+        const storedCoreUrl = getCookie('url.core');
         if (!storedCoreUrl) {
             document.location.href = `index.html`;
         }

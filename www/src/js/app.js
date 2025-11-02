@@ -17,12 +17,12 @@ const global = {
 document.addEventListener('DOMContentLoaded', function () {
     document.documentElement.dataset.theme = localStorage.getItem("Theme") || "dark";
 
-    getEmojisGlobal();
-
     RVC.state.load();
     RVC.openSSE();
     RVC.router.routeTo(getQueryVariable('r'));
     RVC.user.loadSettings();
+
+    getEmojisGlobal();
 });
 
 // Event listener
