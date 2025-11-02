@@ -105,7 +105,13 @@ export default class ReVoiceChat {
                 case "VOICE_LEAVING":
                     this.room.voiceController.userLeaving(data);
                     return;
-
+                case "EMOTE_UPDATE":
+                    if (data.entity === this.user.id) {
+                        // TODO
+                    } else if (data.entity === this.server.id) {
+                        // TODO
+                    }
+                    return;
                 default:
                     console.error("SSE type unknowned: ", type);
                     return;
