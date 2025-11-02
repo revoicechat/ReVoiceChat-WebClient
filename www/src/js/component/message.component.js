@@ -313,7 +313,7 @@ class MessageComponent extends HTMLElement {
               result += `<audio class='media' controls><source src="${src}"></audio><br/>`;
               break;
             case "PICTURE":
-              result += `<a class='media' href="${src}" target="_blank"><img class='media' src="${src}" alt="${media.name}"/></a><br/>`;
+              result += `<a class='media' href="${src}" target="_blank"><img class='media' src="${src}" alt="${media.name}" loading="lazy"/></a><br/>`;
               break;
             default:
               result += `<a class='media' href="${src}" target="_blank">${media.name}</a><br/>`;
