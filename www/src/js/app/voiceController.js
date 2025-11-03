@@ -28,7 +28,7 @@ export default class VoiceController {
         this.#activeRoom = roomId;
 
         try {
-            this.#voiceCall = new VoiceCall(this.#user.id, this.#user.voiceSettings);
+            this.#voiceCall = new VoiceCall(this.#user.id, this.#user.settings.voice);
             await this.#voiceCall.open(this.#voiceURL, roomId, this.#token);
 
             // Update users in room
@@ -166,8 +166,8 @@ export default class VoiceController {
                     break;
                 }
 
-                if (!this.#user.voiceSettings.users[userId]) {
-                    this.#user.voiceSettings.users[userId] = { volume: 1, muted: false };
+                if (!this.#user.settings.voice.users[userId]) {
+                    this.#user.settings.voice.users[userId] = { volume: 1, muted: false };
                 }
 
                 // Add controls
@@ -175,7 +175,7 @@ export default class VoiceController {
                 INPUT_VOLUME.type = "range";
                 INPUT_VOLUME.className = "volume";
                 INPUT_VOLUME.step = "0.01";
-                INPUT_VOLUME.value = this.#user.voiceSettings.users[userId].volume;
+                INPUT_VOLUME.value = this.#user.settings.voice.users[userId].volume;
                 INPUT_VOLUME.min = "0";
                 INPUT_VOLUME.max = "2";
                 INPUT_VOLUME.title = parseInt(INPUT_VOLUME.value * 100) + "%";
@@ -256,13 +256,13 @@ export default class VoiceController {
 
     setSelfVolume() {
         if (this.#voiceCall) {
-            this.#voiceCall.setSelfVolume(this.#user.voiceSettings.self.volume);
+            this.#voiceCall.setSelfVolume(this.#user.settings.voice.self.volume);
         }
     }
 
     #saveSettings() {
         if (this.#voiceCall) {
-            this.#user.voiceSettings = this.#voiceCall.getSettings();
+            this.#user.settings.voice = this.#voiceCall.getSettings();
         }
 
         this.#user.saveSettings();
@@ -270,7 +270,7 @@ export default class VoiceController {
 
     updateGate() {
         if (this.#voiceCall) {
-            this.#voiceCall.setGate(this.#user.voiceSettings.gate);
+            this.#voiceCall.setGate(this.#user.settings.voice.gate);
         }
     }
 
