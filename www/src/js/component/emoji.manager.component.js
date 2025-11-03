@@ -189,6 +189,7 @@ class EmojiManager extends HTMLElement {
                     await RVC.fetcher.fetchCore(`/emote/${id}`, 'DELETE');
 
                     // Temporary: Delete locally until API is integrated
+                    const emoji = this.emojis.find((e) => e.id === id);
                     this.emojis = this.emojis.filter(e => e.id !== id);
 
                     // Dispatch custom event
