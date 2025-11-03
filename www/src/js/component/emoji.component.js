@@ -19,6 +19,7 @@ class EmojiPicker {
     create() {
         const picker = document.createElement('div');
         picker.className = 'emoji-picker-content';
+        picker.id = 'emoji-picker-content';
         picker.innerHTML = `
           <div class="emoji-picker-header">
             <div class="emoji-picker-categories">
@@ -67,8 +68,12 @@ class EmojiPicker {
 
         grid.innerHTML = emojis.map(emoji => {
             const data = emoji.data ? emoji.data : emoji.content;
-            return `<button class="emoji-item" data-emoji="${data}" onclick="emojiSelect('${data}')">${emoji.content}</button>`
+            return `<button class="emoji-item" data-emoji="${data}">${emoji.content}</button>`
         }).join('');
+
+        for (const item of grid.querySelectorAll('.emoji-item')) {
+            item.onclick = () => this.onEmojiSelect(item.dataset.emoji);
+        }
     }
 
     attachEvents() {
@@ -92,7 +97,6 @@ class EmojiPicker {
 }
 
 async function initCustomGeneral(picker) {
-    await getEmojisGlobal();
     initCustomEmojiCategory(picker,
         'custom_general',
         '<img src="src/img/favicon.png" alt="revoice"/>',

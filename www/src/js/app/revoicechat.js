@@ -5,6 +5,7 @@ import Router from './router.js';
 import User from './user.js';
 import Room from './room.js';
 import Server from './server.js';
+import {reloadEmojis} from '../emoji.js';
 
 export default class ReVoiceChat {
     alert = new Alert();
@@ -23,7 +24,6 @@ export default class ReVoiceChat {
 
     constructor() {
         // Retrieve URL
-        console.log(getCookie('url.core'));
         const storedCoreUrl = getCookie('url.core');
         if (!storedCoreUrl) {
             document.location.href = `index.html`;
@@ -106,11 +106,7 @@ export default class ReVoiceChat {
                     this.room.voiceController.userLeaving(data);
                     return;
                 case "EMOTE_UPDATE":
-                    if (data.entity === this.user.id) {
-                        // TODO
-                    } else if (data.entity === this.server.id) {
-                        // TODO
-                    }
+                    reloadEmojis()
                     return;
                 default:
                     console.error("SSE type unknowned: ", type);

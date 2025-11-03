@@ -1,42 +1,19 @@
 const picker = new EmojiPicker();
-picker.init()
+picker.init().then(async () => initPicker())
     .then(async () => {
-        await initCustomGeneral(picker)
-        await initCustomUser(picker)
-        await initCustomServer(picker)
         const pickerContainer = document.getElementById('emoji-picker');
-        pickerContainer.appendChild(picker.create());
-        // Gestion de l'interface
         const emojiBtn = document.getElementById('emoji-picker-button');
-        const messageInput = document.getElementById('text-input');
-
-        // Toggle emoji picker
         emojiBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             pickerContainer.classList.toggle('show');
         });
-
-        // Fermer le picker en cliquant ailleurs
         document.addEventListener('click', (e) => {
             if (!pickerContainer.contains(e.target) && e.target !== emojiBtn) {
                 pickerContainer.classList.remove('show');
             }
         });
 
-        // Sélection d'emoji
-        picker.onEmojiSelect = (emoji) => {
-            const cursorPos = messageInput.selectionStart;
-            const textBefore = messageInput.value.substring(0, cursorPos);
-            const textAfter = messageInput.value.substring(cursorPos);
-
-            messageInput.value = textBefore + emoji + textAfter;
-            messageInput.focus();
-            messageInput.selectionStart = messageInput.selectionEnd = cursorPos + emoji.length;
-        };
     })
-
-
-const emojiSelect = (emoji) => picker.onEmojiSelect(emoji)
 
 async function getEmojisGlobal() {
     try {
@@ -54,3 +31,31 @@ async function getEmojisGlobal() {
         return null;
     }
 }
+
+async function reloadEmojis() {
+    await picker.init()
+    await initPicker()
+}
+
+async function initPicker() {
+    await getEmojisGlobal();
+    await initCustomGeneral(picker)
+    await initCustomUser(picker)
+    await initCustomServer(picker)
+    const pickerContainer = document.getElementById('emoji-picker');
+    pickerContainer.querySelector('#emoji-picker-content')?.remove();
+    pickerContainer.appendChild(picker.create());
+    const messageInput = document.getElementById('text-input');
+    // Sélection d'emoji
+    picker.onEmojiSelect = (emoji) => {
+        const cursorPos = messageInput.selectionStart;
+        const textBefore = messageInput.value.substring(0, cursorPos);
+        const textAfter = messageInput.value.substring(cursorPos);
+
+        messageInput.value = textBefore + emoji + textAfter;
+        messageInput.focus();
+        messageInput.selectionStart = messageInput.selectionEnd = cursorPos + emoji.length;
+    };
+}
+
+export {getEmojisGlobal, reloadEmojis}

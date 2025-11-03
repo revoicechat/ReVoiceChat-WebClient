@@ -1,5 +1,6 @@
 import ReVoiceChat from './app/revoicechat.js';
 import TextController from './app/textController.js';
+import {getEmojisGlobal} from './emoji.js';
 
 const RVC = new ReVoiceChat();
 
@@ -12,6 +13,10 @@ const global = {
         emojisGlobal: []
     }
 }
+
+// Attach to window (need improvement)
+window.global = global;
+window.RVC = RVC;
 
 // Ready state
 document.addEventListener('DOMContentLoaded', function () {
@@ -41,7 +46,3 @@ document.getElementById("text-input").addEventListener('keydown', async function
         RVC.room.textController.mode = TextController.MODE_SEND;
     }
 });
-
-// Attach to window (need improvement)
-window.global = global;
-window.RVC = RVC;
