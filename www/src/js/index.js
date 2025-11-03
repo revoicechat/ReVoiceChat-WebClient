@@ -11,6 +11,11 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('username').value = getQueryVariable('username') ? getQueryVariable('username') : "";
     document.getElementById('password').value = getQueryVariable('password') ? getQueryVariable('password') : "";
 
+    // Last login
+    if (localStorage.getItem("lastUsername")) {
+        document.getElementById("username").value = localStorage.getItem("lastUsername");
+    }
+
     // Got here from invitation link
     if (getQueryVariable('register') === "") {
         document.getElementById('register-invitation').value = getQueryVariable('invitation') ? getQueryVariable('invitation') : "";
@@ -75,6 +80,7 @@ async function login(loginData, host) {
 
         // Local storage
         localStorage.setItem("lastHost", host);
+        localStorage.setItem("lastUsername", loginData.username);
 
         const jwtToken = await response.text();
         setCookie('jwtToken', jwtToken, 1);
