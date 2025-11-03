@@ -1,5 +1,14 @@
 ## How to build ReVoiceChat-WebClient
 
+### Production
+
+```sh
+npm install
+npm run tauri:build
+```
+
+### Development
+
 ```sh
 npm install
 npm run tauri:dev
