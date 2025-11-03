@@ -138,6 +138,7 @@ class MessageComponent extends HTMLElement {
                         img.media {
                           max-width: 300px;
                           max-height: 300px;
+                          border-radius: 10px;
                         }
                         video.media {
                           max-width: 300px;
