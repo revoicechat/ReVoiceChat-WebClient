@@ -2,6 +2,9 @@ document.addEventListener('DOMContentLoaded', function () {
     // Set theme
     document.documentElement.setAttribute("data-theme", localStorage.getItem("Theme") || "dark");
 
+    // Autologin
+    autoLogin();
+
     // Clear old session data
     sessionStorage.removeItem('lastState');
 
@@ -74,9 +77,6 @@ async function login(loginData, host) {
             spinner.error()
             throw new Error("Not OK");
         }
-
-        // Var session
-        setCookie('url.core', host, 30);
 
         // Local storage
         localStorage.setItem("lastHost", host);
@@ -199,5 +199,30 @@ async function register(loginData, host) {
             allowOutsideClick: false,
             animation: false,
         })
+    }
+}
+
+async function autoLogin() {
+    const storedToken = getCookie('jwtToken');
+    const storedCoreUrl = localStorage.getItem("lastHost");
+    if (storedToken && storedCoreUrl) {
+        try {
+            const response = await fetch(`${storedCoreUrl}/api/user/me`, {
+                cache: "no-store",
+                signal: AbortSignal.timeout(5000),
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${storedToken}`
+                },
+                method: 'GET',
+            });
+
+            if (response.ok) {
+                document.location.href = `app.html`;
+            }
+        }
+        catch (error) {
+            console.error(error);
+        }
     }
 }

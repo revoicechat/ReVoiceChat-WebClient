@@ -5,7 +5,7 @@ import Router from './router.js';
 import User from './user.js';
 import Room from './room.js';
 import Server from './server.js';
-import {reloadEmojis} from '../emoji.js';
+import { reloadEmojis } from '../emoji.js';
 
 export default class ReVoiceChat {
     alert = new Alert();
@@ -24,7 +24,7 @@ export default class ReVoiceChat {
 
     constructor() {
         // Retrieve URL
-        const storedCoreUrl = getCookie('url.core');
+        const storedCoreUrl = localStorage.getItem("lastHost");
         if (!storedCoreUrl) {
             document.location.href = `index.html`;
         }
@@ -38,7 +38,13 @@ export default class ReVoiceChat {
         this.voiceUrl = `${core.protocol}//${core.host}/api/voice`;
 
         // Store token
-        this.#token = getCookie("jwtToken");
+        const storedToken = getCookie("jwtToken");
+        if (storedToken) {
+            this.#token = storedToken;
+        }
+        else {
+            document.location.href = `index.html`;
+        }
 
         // Instantiate other classes
         this.fetcher = new Fetcher(this.#token, this.coreUrl, this.mediaUrl);
