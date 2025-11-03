@@ -4,28 +4,28 @@ export default class SettingsController {
     voice = VoiceCall.DEFAULT_SETTINGS;
 
     constructor() {
-        // Voice default all
-        document.getElementById('voice-default-all').addEventListener('click', () => this.#voiceDefault());
+        // Voice default
+        document.getElementById('voice-default').addEventListener('click', () => this.#voiceDefault());
 
         // Input Volume
         const inputVolume = document.getElementById('input-volume');
         inputVolume.addEventListener('change', () => this.#volumeUpdate(inputVolume));
-        inputVolume.addEventListener('input', () => this.#volumeDirectShow(inputVolume));
+        inputVolume.addEventListener('input', () => this.#volumeUpdateUI(inputVolume));
 
         // NoiseGate events
         document.getElementById('noise-gate-default').addEventListener('click', () => this.#noiseGateDefault());
 
         const noiseGateAttack = document.getElementById('noise-gate-attack');
         noiseGateAttack.addEventListener('change', () => this.#noiseGateUpdate('attack', noiseGateAttack));
-        noiseGateAttack.addEventListener('input', () => this.#noiseGateDirectShow('attack', noiseGateAttack));
+        noiseGateAttack.addEventListener('input', () => this.#noiseGateUpdateUI('attack', noiseGateAttack));
 
         const noiseGateRelease = document.getElementById('noise-gate-release');
         noiseGateRelease.addEventListener('change', () => this.#noiseGateUpdate('release', noiseGateRelease));
-        noiseGateRelease.addEventListener('input', () => this.#noiseGateDirectShow('release', noiseGateRelease));
+        noiseGateRelease.addEventListener('input', () => this.#noiseGateUpdateUI('release', noiseGateRelease));
 
         const noiseGateThreshold = document.getElementById('noise-gate-threshold');
         noiseGateThreshold.addEventListener('change', () => this.#noiseGateUpdate('threshold', noiseGateThreshold));
-        noiseGateThreshold.addEventListener('input', () => this.#noiseGateDirectShow('threshold', noiseGateThreshold));
+        noiseGateThreshold.addEventListener('input', () => this.#noiseGateUpdateUI('threshold', noiseGateThreshold));
 
         // Compressor events
         document.getElementById('compressor-default').addEventListener('click', () => this.#compressorDefault());
@@ -33,23 +33,23 @@ export default class SettingsController {
 
         const compressorAttack = document.getElementById('compressor-attack');
         compressorAttack.addEventListener('change', () => this.#compressorUpdate('attack', compressorAttack));
-        compressorAttack.addEventListener('input', () => this.#compressorDirectShow('attack', compressorAttack));
+        compressorAttack.addEventListener('input', () => this.#compressorUpdateUI('attack', compressorAttack));
 
         const compressorRatio = document.getElementById('compressor-ratio');
         compressorRatio.addEventListener('change', () => this.#compressorUpdate('ratio', compressorRatio));
-        compressorRatio.addEventListener('input', () => this.#compressorDirectShow('ratio', compressorRatio));
+        compressorRatio.addEventListener('input', () => this.#compressorUpdateUI('ratio', compressorRatio));
 
         const compressorReduction = document.getElementById('compressor-reduction');
         compressorReduction.addEventListener('change', () => this.#compressorUpdate('reduction', compressorReduction));
-        compressorReduction.addEventListener('input', () => this.#compressorDirectShow('reduction', compressorReduction));
+        compressorReduction.addEventListener('input', () => this.#compressorUpdateUI('reduction', compressorReduction));
 
         const compressorRelease = document.getElementById('compressor-release');
         compressorRelease.addEventListener('change', () => this.#compressorUpdate('release', compressorRelease));
-        compressorRelease.addEventListener('input', () => this.#compressorDirectShow('release', compressorRelease));
+        compressorRelease.addEventListener('input', () => this.#compressorUpdateUI('release', compressorRelease));
 
         const compressorThreshold = document.getElementById('compressor-threshold');
         compressorThreshold.addEventListener('change', () => this.#compressorUpdate('threshold', compressorThreshold));
-        compressorThreshold.addEventListener('input', () => this.#compressorDirectShow('threshold', compressorThreshold));
+        compressorThreshold.addEventListener('input', () => this.#compressorUpdateUI('threshold', compressorThreshold));
     }
 
     save() {
@@ -86,7 +86,7 @@ export default class SettingsController {
     }
 
     // Input Volume
-    #volumeDirectShow(element) {
+    #volumeUpdateUI(element) {
         document.getElementById('input-volume-label').innerText = `Volume ${Number.parseInt(element.value * 100)}%`;
     }
 
@@ -103,7 +103,7 @@ export default class SettingsController {
     }
 
     // Noise gate
-    #noiseGateDirectShow(param, element) {
+    #noiseGateUpdateUI(param, element) {
         switch (param) {
             case 'attack':
                 document.getElementById('noise-gate-attack-label').innerText = `Attack : ${element.value * 1000}ms`;
@@ -167,7 +167,7 @@ export default class SettingsController {
     }
 
     // Compressor
-    #compressorDirectShow(param, element) {
+    #compressorUpdateUI(param, element) {
         switch (param) {
             case 'attack':
                 document.getElementById('compressor-attack-label').innerText = `Attack : ${element.value * 1000}ms`;
