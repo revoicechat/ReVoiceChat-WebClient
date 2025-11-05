@@ -66,6 +66,8 @@ export default class UserSettingsController {
         for (const param of parameters) {
             document.getElementById(`setting-tab-${param}`).addEventListener('click', () => this.select(param));
         }
+
+        document.getElementById(`setting-tab-logout`).addEventListener('click', () => this.#user.logout());
     }
 
     #overviewLoad() {

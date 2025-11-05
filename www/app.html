@@ -244,7 +244,6 @@
     <div class="main config hidden" id="route-setting">
         <div class="config-container-left">
             <div class="config-left">
-
                 <div class="category">
                     <h2>User settings</h2>
 
@@ -279,16 +278,17 @@
                     </button>
                 </div>
 
+                <!-- Logout -->
                 <div class="category">
-                    <button class="sub-category danger" onclick="RVC.user.logout()">
+                    <button class="sub-category danger" id="setting-tab-logout">
                         <revoice-icon-logout></revoice-icon-logout>
                         Logout
                     </button>
                 </div>
 
-                <!-- Exit config -->
+                <!-- Exit -->
                 <div class="category">
-                    <button class="sub-category" onclick="RVC.router.routeTo('app')">
+                    <button class="sub-category" id="setting-tab-exit">
                         <revoice-icon-circle-x></revoice-icon-circle-x>
                         Exit
                     </button>

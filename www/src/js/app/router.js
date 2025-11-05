@@ -1,4 +1,8 @@
 export default class Router {
+    constructor(){
+        document.getElementById(`setting-tab-exit`).addEventListener('click', () => this.routeTo('app'));
+    }
+
     routeTo(destination) {
         for (const element of document.querySelectorAll('.main')) {
             element.classList.add('hidden');
