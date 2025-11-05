@@ -371,6 +371,7 @@ form.popup label {
 }
 
 .theme-select-button {
+    padding: 0;
     background-color: var(--sec-button-bg-color)!important;
     color: var(--sec-button-text-color)!important;
 }

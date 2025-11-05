@@ -8,18 +8,6 @@ const currentSetting = {
 
 let newProfilPictureFile = null;
 
-function changeTheme(theme) {
-    localStorage.setItem("Theme", theme);
-    for (const elt of document.querySelectorAll("revoice-message")) {
-        elt.dataset.theme = theme;
-    }
-    document.documentElement.dataset.theme = theme;
-    for (const elt of document.querySelectorAll(`revoice-theme-preview`)) {
-        elt.parentElement.disabled = false
-    }
-    document.querySelector(`revoice-theme-preview[theme="${theme}"]`).parentElement.disabled = true;
-}
-
 function settingPassword() {
     Swal.fire({
         title: `Change password`,

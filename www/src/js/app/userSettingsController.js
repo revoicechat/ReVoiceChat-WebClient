@@ -90,13 +90,25 @@ export default class UserSettingsController {
 
     #themeLoad() {
         const themeForm = document.getElementById("setting-themes-form");
-        let html = "";
         for (const theme of getAllDeclaredDataThemes()) {
-            html += `<button style="padding: 0" class="theme-select-button" type="button" onclick="changeTheme('${theme}')">
-                     <revoice-theme-preview theme="${theme}"></revoice-theme-preview>
-                 </button>`;
+            const button = document.createElement('button');
+            button.onclick = () => this.#themeChange(theme);
+            button.className = "theme-select-button";
+            button.innerHTML =  `<revoice-theme-preview theme="${theme}"></revoice-theme-preview>`;
+            themeForm.appendChild(button)
         }
-        themeForm.innerHTML = html;
+    }
+
+    #themeChange(theme) {
+        localStorage.setItem("Theme", theme);
+        for (const elt of document.querySelectorAll("revoice-message")) {
+            elt.dataset.theme = theme;
+        }
+        document.documentElement.dataset.theme = theme;
+        for (const elt of document.querySelectorAll(`revoice-theme-preview`)) {
+            elt.parentElement.disabled = false
+        }
+        document.querySelector(`revoice-theme-preview[theme="${theme}"]`).parentElement.disabled = true;
     }
 
     #emoteLoad() {
