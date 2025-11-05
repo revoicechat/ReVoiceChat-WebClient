@@ -77,9 +77,9 @@ export default class SettingsController {
 
         const noiseGateParameters = ['attack', 'release', 'threshold'];
         for (const param of noiseGateParameters) {
-            const element = document.getElementById(`compressor-${param}`);
-            element.addEventListener('change', () => this.#compressorUpdate(param, element));
-            element.addEventListener('input', () => this.#compressorUpdateUI(param, element));
+            const element = document.getElementById(`noise-gate-${param}`);
+            element.addEventListener('change', () => this.#noiseGateUpdate(param, element));
+            element.addEventListener('input', () => this.#noiseGateUpdateUI(param, element));
         }
     }
 
