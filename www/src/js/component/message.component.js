@@ -144,6 +144,25 @@ class MessageComponent extends HTMLElement {
                           max-width: 300px;
                           max-height: 300px;
                         }
+                        .file-type-link {
+                            max-height: 30px;
+                            height: 30px;
+                            display: flex;
+                            align-items: center;
+                            width: 300px;
+                            column-gap: 10px;
+                            padding: 10px;
+                            background-color: var(--ter-bg-color);
+                            border-radius: 10px;
+                            transition: background 0.2s;
+                        }
+                        .file-type-link:hover {
+                            background-color: var(--pri-active-color);
+                        }
+                        svg {
+                            max-height: 24px;
+                            height: 24px;
+                        }
                     </style>
                     <div class="container">
                         <div class="markdown-content" id="content"></div>
@@ -305,21 +324,7 @@ class MessageComponent extends HTMLElement {
     if (this.medias) {
       for (const media of this.medias) {
         if (media.status === "STORED") {
-          const src = `${RVC.mediaUrl}/attachments/${media.id}`;
-          switch (media.type) {
-            case "VIDEO":
-              result += `<video class='media' controls><source src="${src}"></video><br/>`;
-              break;
-            case "AUDIO":
-              result += `<audio class='media' controls><source src="${src}"></audio><br/>`;
-              break;
-            case "PICTURE":
-              result += `<a class='media' href="${src}" target="_blank"><img class='media' src="${src}" alt="${media.name}" loading="lazy"/></a><br/>`;
-              break;
-            default:
-              result += `<a class='media' href="${src}" target="_blank">${media.name}</a><br/>`;
-              break;
-          }
+          result += `<revoice-attachement-message id="${media.id}" name="${media.name}" type="${media.type}"></revoice-attachement-message>`
         }
       }
     }
