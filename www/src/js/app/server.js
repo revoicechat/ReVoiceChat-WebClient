@@ -3,14 +3,16 @@ import ServerSettingsController from "./serverSettingsController.js";
 export default class Server {
     #fetcher;
     #mediaURL;
+    #coreUrl;
     #room;
     id;
     name;
     settings;
 
-    constructor(fetcher, mediaURL, room) {
+    constructor(fetcher, mediaURL, room, coreUrl) {
         this.#fetcher = fetcher;
         this.#mediaURL = mediaURL;
+        this.#coreUrl = coreUrl;
         this.#room = room;
         this.#load();
     }

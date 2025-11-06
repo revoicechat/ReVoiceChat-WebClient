@@ -3,6 +3,7 @@ export default class ServerSettingsController {
     #fetcher;
     #currentTab;
     #mediaUrl;
+    #coreUrl;
 
     constructor(server, fetcher, mediaUrl) {
         this.#server = server;
@@ -178,7 +179,7 @@ export default class ServerSettingsController {
         return DIV;
     }
 
-    async #invitationDelete(data) {
+    #invitationDelete(data) {
         Swal.fire({
             title: `Delete invitation '${data.id}'`,
             animation: false,
@@ -201,7 +202,7 @@ export default class ServerSettingsController {
     }
 
     #invitationCopy(link) {
-        const url = document.location.href.slice(0, -11) + `index.html?register=&invitation=${link}&host=${RVC.coreUrl}`;
+        const url = document.location.href.slice(0, -11) + `index.html?register=&invitation=${link}&host=${this.#coreUrl}`;
         copyToClipboard(url);
     }
 }
