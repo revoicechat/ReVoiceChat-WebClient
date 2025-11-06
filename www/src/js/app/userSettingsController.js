@@ -65,22 +65,22 @@ export default class UserSettingsController {
 
     select(name) {
         if (this.#currentTab) {
-            document.getElementById(`setting-tab-${this.#currentTab}`).classList.remove("active");
-            document.getElementById(`setting-content-${this.#currentTab}`).classList.add("hidden");
+            document.getElementById(`user-setting-tab-${this.#currentTab}`).classList.remove("active");
+            document.getElementById(`user-setting-content-${this.#currentTab}`).classList.add("hidden");
         }
 
         this.#currentTab = name;
-        document.getElementById(`setting-tab-${name}`).classList.add('active');
-        document.getElementById(`setting-content-${name}`).classList.remove('hidden');
+        document.getElementById(`user-setting-tab-${name}`).classList.add('active');
+        document.getElementById(`user-setting-content-${name}`).classList.remove('hidden');
     }
 
     #selectEventHandler() {
         const parameters = ['overview', 'themes', 'emotes', 'audio-input', 'audio-output'];
         for (const param of parameters) {
-            document.getElementById(`setting-tab-${param}`).addEventListener('click', () => this.select(param));
+            document.getElementById(`user-setting-tab-${param}`).addEventListener('click', () => this.select(param));
         }
 
-        document.getElementById(`setting-tab-logout`).addEventListener('click', () => this.#user.logout());
+        document.getElementById(`user-setting-tab-logout`).addEventListener('click', () => this.#user.logout());
     }
 
     #overviewLoad() {
