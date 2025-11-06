@@ -8,46 +8,22 @@ const popupData = {
 };
 
 async function configLoad() {
-    selectConfigItem("overview");
-
-    await loadOverview();
     await loadRoomData();
     await loadRoomStructure();
     await loadServerRoles();
     await loadServerEmotes();
-    await loadMembers();
-    await loadInvitations();    
+    await loadMembers(); 
 }
 
 async function loadServerEmotes() {
     const response = await RVC.fetcher.fetchCore(`/emote/server/${RVC.server.id}`);
-    document.getElementById("emotes-config").innerHTML = `
+    document.getElementById("server-setting-content-emotes").innerHTML = `
         <h1>Emotes</h1>
         <revoice-emoji-manager path="server/${RVC.server.id}" id="setting-emotes-form">
             <script type="application/json" slot="emojis-data">
                 ${JSON.stringify(response)}
             </script>
         </revoice-emoji-manager>`
-}
-
-function selectConfigItem(name) {
-    if (currentConfig.active !== null) {
-        document.getElementById(currentConfig.active).classList.remove("active");
-        document.getElementById(`${currentConfig.active}-config`).classList.add("hidden");
-    }
-
-    currentConfig.active = name;
-    document.getElementById(name).classList.add('active');
-    document.getElementById(`${name}-config`).classList.remove('hidden');
-}
-
-function createContextMenuButton(className, innerHTML, onclick, title = "") {
-    const DIV = document.createElement('div');
-    DIV.className = className;
-    DIV.innerHTML = innerHTML;
-    DIV.onclick = onclick;
-    DIV.title = title;
-    return DIV;
 }
 
 async function loadMembers() {
@@ -91,129 +67,6 @@ async function createItemUser(data) {
 
     return DIV;
 }
-
-async function loadOverview() {
-    const id = RVC.server.id;
-    const serverInfo = await RVC.fetcher.fetchCore(`/server/${id}`, 'GET');
-
-    document.getElementById('config-server-uuid').innerText = serverInfo.id;
-    document.getElementById('config-server-name').value = serverInfo.name;
-}
-
-async function serverSettingsSave() {
-    const spinner = new SpinnerOnButton("save-server-settings-button")
-    spinner.run()
-    await updateServerName(document.getElementById("config-server-name"))
-    spinner.success()
-}
-
-async function updateServerName(input) {
-    const serverName = input.value;
-
-    if (!serverName) {
-        spinner.error();
-        Swal.fire({
-            icon: 'error',
-            title: `Server name invalid`,
-            animation: false,
-            customClass: SwalCustomClass,
-            showCancelButton: false,
-            confirmButtonText: "OK",
-            allowOutsideClick: false,
-        });
-        return;
-    }
-
-    const id = RVC.server.id;
-    const result = await RVC.fetcher.fetchCore(`/server/${id}`, 'PATCH', { name: serverName })
-    if (result) {
-        document.getElementById('config-server-name').value = result.name;
-        global.server.name = result.name
-    }
-}
-
-/* INVITATIONS */
-async function configAddInvitation() {
-    const serverId = RVC.server.id;
-    const result = await RVC.fetcher.fetchCore(`/invitation/server/${serverId}`, 'POST');
-    if (result.status === "CREATED") {
-        loadInvitations();
-        Swal.fire({
-            title: `New invitation`,
-            html: `<input class='swal-input' type='text' value='${result.id}' readonly>`,
-            animation: false,
-            customClass: SwalCustomClass,
-            showCancelButton: false,
-            confirmButtonText: "OK",
-            allowOutsideClick: false,
-        })
-    }
-}
-
-async function createItemInvitation(data) {
-    const DIV = document.createElement('div');
-    DIV.id = data.id;
-    DIV.className = "config-item";
-
-    // Name
-    const DIV_NAME = document.createElement('div');
-    DIV_NAME.className = "name invitation";
-    DIV_NAME.innerText = `${data.id} (${data.status})`;
-    DIV.appendChild(DIV_NAME);
-
-    // Context menu
-    const DIV_CM = document.createElement('div');
-    DIV_CM.className = "context-menu";
-    DIV_CM.appendChild(createContextMenuButton("icon", "<revoice-icon-clipboard></revoice-icon-clipboard>", () => copyInvitation(data.id)));
-    DIV_CM.appendChild(createContextMenuButton("icon", "<revoice-icon-trash></revoice-icon-trash>", () => deleteInvitation(data)));
-    DIV.appendChild(DIV_CM);
-
-    return DIV;
-}
-
-async function loadInvitations() {
-    const serverId = RVC.server.id;
-    const result = await RVC.fetcher.fetchCore(`/invitation/server/${serverId}`, 'GET');
-
-    if (result) {
-        const list = document.getElementById("config-invitations-list");
-        list.innerHTML = "";
-
-        for (const invitation of result) {
-            if (invitation.status === 'CREATED') {
-                list.appendChild(await createItemInvitation(invitation));
-            }
-        }
-    }
-}
-
-async function deleteInvitation(data) {
-    Swal.fire({
-        title: `Delete invitation '${data.id}'`,
-        animation: false,
-        customClass: {
-            title: "swalTitle",
-            popup: "swalPopup",
-            cancelButton: "swalConfirm",
-            confirmButton: "swalCancel", // Swapped on purpose !
-        },
-        showCancelButton: true,
-        focusCancel: true,
-        confirmButtonText: "Delete",
-        allowOutsideClick: false,
-    }).then(async (result) => {
-        if (result.value) {
-            await RVC.fetcher.fetchCore(`/invitation/${data.id}`, 'DELETE');
-            loadInvitations();
-        }
-    });
-}
-
-async function copyInvitation(link) {
-    const url = document.location.href.slice(0, -11) + `index.html?register=&invitation=${link}&host=${RVC.coreUrl}`;
-    copyToClipboard(url);
-}
-
 
 /* ROOMS */
 let structureData = { items: [] };

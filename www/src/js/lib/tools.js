@@ -162,3 +162,12 @@ function statusToDotClassName(status) {
             return "user-dot-offline";
     }
 }
+
+function createContextMenuButton(className, innerHTML, onclick, title = "") {
+    const DIV = document.createElement('div');
+    DIV.className = className;
+    DIV.innerHTML = innerHTML;
+    DIV.onclick = onclick;
+    DIV.title = title;
+    return DIV;
+}

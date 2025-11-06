@@ -142,25 +142,25 @@
                 <div class="category">
                     <h2>Server settings</h2>
                     <!-- Overview -->
-                    <button class="sub-category" id="overview" onclick="selectConfigItem('overview')">
+                    <button class="sub-category" id="server-setting-tab-overview">
                         <revoice-icon-information></revoice-icon-information> Overview
                     </button>
                     <!-- Rooms -->
-                    <button class="sub-category" id="rooms" onclick="selectConfigItem('rooms')">
+                    <button class="sub-category" id="server-setting-tab-rooms">
                         <revoice-icon-chat-bubble></revoice-icon-chat-bubble> Rooms
                     </button>
-                    <button class="sub-category" id="roles" onclick="selectConfigItem('roles')">
+                    <button class="sub-category" id="server-setting-tab-roles">
                         <revoice-icon-role></revoice-icon-role> Roles
                     </button>
-                    <button class="sub-category" id="emotes" onclick="selectConfigItem('emotes')">
+                    <button class="sub-category" id="server-setting-tab-emotes">
                         <revoice-icon-emoji></revoice-icon-emoji> Emotes
                     </button>
                     <!-- Members -->
-                    <button class="sub-category" id="members" onclick="selectConfigItem('members')">
+                    <button class="sub-category" id="server-setting-tab-members">
                         <revoice-icon-users></revoice-icon-users> Members
                     </button>
                     <!-- Invitation -->
-                    <button class="sub-category" id="invitations" onclick="selectConfigItem('invitations')">
+                    <button class="sub-category" id="server-setting-tab-invitations">
                         <revoice-icon-envelope></revoice-icon-envelope> Invitations
                     </button>
                 </div>
@@ -177,16 +177,18 @@
         <div class="config-container-right">
             <div class="config-right">
                 <!-- Overview -->
-                <div class="hidden" id="overview-config">
+                <div class="hidden" id="server-setting-content-overview">
                     <h1>Overview</h1>
-                    <p>Server ID : <span id="config-server-uuid" class="selectable">[SERVER UUID]</span></p>
+                    <p>Server ID : <span id="server-setting-overview-uuid" class="selectable">[SERVER UUID]</span></p>
+
                     <h2>Server name</h2>
-                    <input type="text" id="config-server-name" value="[SERVER NAME]">
-                    <button id="save-server-settings-button" class="config-button" onclick="serverSettingsSave()">Save</button>
+                    <input type="text" id="server-setting-overview-name" value="[SERVER NAME]">
+
+                    <button id="server-setting-overview-save" class="config-button">Save</button>
                 </div>
 
                 <!-- Rooms -->
-                <div class="hidden" id="rooms-config">
+                <div class="hidden" id="server-setting-content-rooms">
                     <h1>Rooms</h1>
 
                     <div class="config-buttons">
@@ -211,16 +213,16 @@
                 </div>
 
                 <!-- Roles -->
-                <div class="hidden" id="roles-config">
+                <div class="hidden" id="server-setting-content-roles">
                     <h1>Roles</h1>
                     <revoice-server-roles id="roles-config-component" server-id=""></revoice-server-roles>
                 </div>
 
                 <!-- Emotes -->
-                <div class="hidden" id="emotes-config"></div>
+                <div class="hidden" id="server-setting-content-emotes"></div>
 
                 <!-- Members -->
-                <div class="hidden" id="members-config">
+                <div class="hidden" id="server-setting-content-members">
                     <h1>Members</h1>
                     <div id="config-members-list" class="config-members-list">
                         <!-- JS -->
@@ -228,9 +230,9 @@
                 </div>
 
                 <!-- Invitations -->
-                <div class="hidden" id="invitations-config">
+                <div class="hidden" id="server-setting-content-invitations">
                     <h1>Invitations</h1>
-                    <button onclick="configAddInvitation()">New invitation</button>
+                    <button id='server-setting-invitation-create'>New invitation</button>
                     <br /><br />
                     <div id="config-invitations-list" class="config-invitation-list">
                         <!-- JS -->

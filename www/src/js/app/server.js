@@ -13,7 +13,6 @@ export default class Server {
         this.#mediaURL = mediaURL;
         this.#room = room;
         this.#load();
-        this.settings = new ServerSettingsController();
     }
 
     async #load() {
@@ -29,6 +28,8 @@ export default class Server {
             const server = result[0]
             this.select(server.id, server.name);
         }
+
+        this.settings = new ServerSettingsController(this, this.#fetcher);
     }
 
     select(id, name) {
