@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   frontend:
     build:
@@ -11,3 +9,6 @@ services:
     volumes:
       - ./www:/usr/share/nginx/html
     restart: unless-stopped
+networks:
+  default:
+    name: app-network
