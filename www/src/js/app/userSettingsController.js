@@ -4,7 +4,7 @@ export default class UserSettingsController {
     #user;
     #mediaUrl;
     #fetcher;
-    voice = structuredClone(VoiceCall.DEFAULT_SETTINGS);
+    #room;
     #inputAdvanced = false;
     #currentTab;
     #password = {
@@ -14,17 +14,23 @@ export default class UserSettingsController {
     }
     #newProfilPictureFile;
 
-    constructor(fetcher, user, mediaUrl) {
-        this.#fetcher = fetcher;
+    voice = structuredClone(VoiceCall.DEFAULT_SETTINGS);
+
+    constructor(user, fetcher, mediaUrl) {
         this.#user = user;
+        this.#fetcher = fetcher;
         this.#mediaUrl = mediaUrl;
 
-        // Tabs
+        // Add events
         this.#selectEventHandler();
-        this.select('overview');
-
         this.#overviewEventHandler();
         this.#audioInputEventHandler();
+
+        this.select('overview');
+    }
+
+    setRoom(room){
+        this.#room = room;
     }
 
     async save() {
@@ -338,7 +344,7 @@ export default class UserSettingsController {
         this.voice.self.volume = Number.parseFloat(data.value)
         this.save();
         this.#inputVolumeLoad();
-        RVC.room.voiceController.setSelfVolume();
+        this.#room.voiceController.setSelfVolume();
     }
 
     // Noise gate
@@ -376,14 +382,14 @@ export default class UserSettingsController {
 
         this.save();
         this.#gateLoad();
-        RVC.room.voiceController.updateGate();
+        this.#room.voiceController.updateGate();
     }
 
     #gateDefault() {
         this.voice.gate = structuredClone(VoiceCall.DEFAULT_SETTINGS.gate);
         this.save();
         this.#gateLoad();
-        RVC.room.voiceController.updateGate();
+        this.#room.voiceController.updateGate();
     }
 
     // Compressor

@@ -11,7 +11,7 @@ export default class User {
         this.#fetcher = fetcher;
         this.#mediaURL = mediaURL;
         this.#load();
-        this.settings = new UserSettingsController(this.#fetcher, this, this.#mediaURL);
+        this.settings = new UserSettingsController(this, this.#fetcher, this.#mediaURL);
     }
 
     async #load() {

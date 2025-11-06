@@ -53,6 +53,9 @@ export default class ReVoiceChat {
         this.server = new Server(this.fetcher, this.mediaUrl, this.room);
         this.state = new State(this);
 
+        // Add missing classes
+        this.user.settings.setRoom(this.room);
+
         // Save state before page unload
         addEventListener("beforeunload", () => {
             this.state.save();
