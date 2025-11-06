@@ -10,24 +10,6 @@ const popupData = {
 async function configLoad() {
     await loadRoomData();
     await loadRoomStructure();
-    await loadServerRoles();
-    await loadServerEmotes();
-}
-
-async function loadServerEmotes() {
-    const response = await RVC.fetcher.fetchCore(`/emote/server/${RVC.server.id}`);
-    document.getElementById("server-setting-content-emotes").innerHTML = `
-        <h1>Emotes</h1>
-        <revoice-emoji-manager path="server/${RVC.server.id}" id="setting-emotes-form">
-            <script type="application/json" slot="emojis-data">
-                ${JSON.stringify(response)}
-            </script>
-        </revoice-emoji-manager>`
-}
-
-async function loadServerRoles() {
-    document.getElementById("roles-config-component")
-            .setAttribute("server-id", RVC.server.id)
 }
 
 /* ROOMS */

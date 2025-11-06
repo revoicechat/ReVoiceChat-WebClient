@@ -12,6 +12,8 @@ export default class ServerSettingsController {
 
         // Load
         this.#overviewLoad();
+        this.#rolesLoad();
+        this.#emotesLoad();
         this.#invitationLoad();
         this.#memberLoad();
 
@@ -82,6 +84,23 @@ export default class ServerSettingsController {
         }
     }
 
+    // ROLES
+    #rolesLoad() {
+        document.getElementById("server-setting-roles-component").setAttribute("server-id", this.#server.id)
+    }
+
+    // EMOTES
+    async #emotesLoad() {
+        const response = await this.#fetcher.fetchCore(`/emote/server/${this.#server.id}`);
+        document.getElementById("server-setting-content-emotes").innerHTML = `
+            <h1>Emotes</h1>
+            <revoice-emoji-manager path="server/${this.#server.id}" id="setting-emotes-form">
+                <script type="application/json" slot="emojis-data">
+                    ${JSON.stringify(response)}
+                </script>
+            </revoice-emoji-manager>`;
+    }
+
     // MEMBERS
     async #memberLoad() {
         const result = await this.#fetcher.fetchCore(`/server/${this.#server.id}/user`, 'GET');
@@ -130,7 +149,7 @@ export default class ServerSettingsController {
         const result = await this.#fetcher.fetchCore(`/invitation/server/${serverId}`, 'GET');
 
         if (result) {
-            const list = document.getElementById("config-invitations-list");
+            const list = document.getElementById("server-setting-invitation");
             list.innerHTML = "";
 
             for (const invitation of result) {

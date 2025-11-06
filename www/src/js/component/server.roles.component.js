@@ -70,6 +70,7 @@ class ServerRolesWebComponent extends HTMLElement {
             <link href="src/css/tailwind.css" rel="stylesheet" />
             <link href="src/css/main.css" rel="stylesheet" />
             <link href="src/css/emoji.css" rel="stylesheet" />
+            <link href="src/css/themes.css" rel="stylesheet" />
             <style>
                 .role-settings-main {
                     display: flex;
@@ -79,7 +80,7 @@ class ServerRolesWebComponent extends HTMLElement {
                 .role-settings-sidebar {
                     display: flex;
                     flex-direction: column;
-                    width: 20rem;
+                    width: 15rem;
                     height: -webkit-fill-available;
                     background-color: var(--sec-bg-color);
                 }
@@ -168,7 +169,7 @@ class ServerRolesWebComponent extends HTMLElement {
 
             <div class="config config-right">            
                 <div class="config-buttons">
-                    <button class="btn-primary" id="createRoleBtn"><revoice-icon-circle-plus></revoice-icon-circle-plus> New</button>
+                    <button id="createRoleBtn"><revoice-icon-circle-plus></revoice-icon-circle-plus> New</button>
                 </div>
                 <div class="role-settings-main">
                     <div class="role-settings-sidebar">
