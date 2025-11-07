@@ -45,13 +45,9 @@ export default class Fetcher {
         }
     }
 
-    async fetchMedia(path, method = null, data = null) {
+    async fetchMedia(path, method = null, rawData = null) {
         if (method === null) {
             method = 'GET';
-        }
-
-        if (data) {
-            data = JSON.stringify(data);
         }
 
         try {
@@ -61,7 +57,7 @@ export default class Fetcher {
                 headers: {
                     'Authorization': `Bearer ${this.#token}`
                 },
-                body: data
+                body: rawData
             });
 
             if (method !== "DELETE") {
