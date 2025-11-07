@@ -1,6 +1,5 @@
 import ReVoiceChat from './app/revoicechat.js';
 import RoomTextController from './app/roomTextController.js';
-import {getEmojisGlobal} from './emoji.js';
 
 const RVC = new ReVoiceChat();
 
@@ -26,8 +25,6 @@ document.addEventListener('DOMContentLoaded', function () {
     RVC.state.load();
     RVC.openSSE();
     RVC.router.routeTo(getQueryVariable('r'));
-    
-    getEmojisGlobal();
 });
 
 // Event listener

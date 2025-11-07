@@ -97,12 +97,19 @@ class EmojiPicker {
 }
 
 async function initCustomGeneral(picker) {
+    const emojis = await RVC.fetcher.fetchCore(`/emote/global`);
     initCustomEmojiCategory(picker,
         'custom_general',
         '<img src="src/img/favicon.png" alt="revoice"/>',
-        global.chat.emojisGlobal.map(emote => {
-            return {link: emote, content: emote, description: emote, names: [emote]}
-        }))
+        Array.from(emojis).map(emoji => {
+            return {
+                link: emoji.id,
+                content: emoji.name,
+                description: emoji.name,
+                names: emoji.keywords
+            }
+        })
+    )
 }
 
 async function initCustomServer(picker) {

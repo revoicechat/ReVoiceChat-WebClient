@@ -15,33 +15,15 @@ picker.init().then(async () => initPicker())
 
     })
 
-async function getEmojisGlobal() {
-    try {
-        const response = await fetch(`${RVC.mediaUrl}/emojis/global/all`, {
-            signal: AbortSignal.timeout(5000),
-        });
-
-        if (!response.ok) {
-            throw new Error("Not OK");
-        }
-
-        global.chat.emojisGlobal = await response.json();
-    } catch (error) {
-        console.error(`An error occurred while processing your request \n${error}\nHost : ${RVC.mediaUrl}\n`);
-        return null;
-    }
-}
-
 async function reloadEmojis() {
     await picker.init()
     await initPicker()
 }
 
 async function initPicker() {
-    await getEmojisGlobal();
     await initCustomGeneral(picker)
-    await initCustomUser(picker)
     await initCustomServer(picker)
+    await initCustomUser(picker)
     const pickerContainer = document.getElementById('emoji-picker');
     pickerContainer.querySelector('#emoji-picker-content')?.remove();
     pickerContainer.appendChild(picker.create());
@@ -58,4 +40,4 @@ async function initPicker() {
     };
 }
 
-export {getEmojisGlobal, reloadEmojis}
+export {reloadEmojis}
