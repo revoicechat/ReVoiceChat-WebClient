@@ -142,14 +142,7 @@ export default class RoomTextController {
                 for (const media of result.medias) {
                     const formData = new FormData();
                     formData.append("file", attachments[media.name]);
-                    await fetch(`${RVC.mediaUrl}/attachments/${media.id}`, {
-                        method: "POST",
-                        signal: AbortSignal.timeout(5000),
-                        headers: {
-                            'Authorization': `Bearer ${RVC.getToken()}`
-                        },
-                        body: formData
-                    });
+                    await this.#fetcher.fetchMedia(`/attachments/${media.id}`, 'POST', formData);
                 }
             }
 

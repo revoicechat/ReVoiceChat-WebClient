@@ -131,14 +131,8 @@ class EmojiManager extends HTMLElement {
             );
             const formData = new FormData();
             formData.append('file', file);
-            await fetch(`${RVC.mediaUrl}/emojis/${emojiData.id}`, {
-                method: "POST",
-                signal: AbortSignal.timeout(5000),
-                headers: {
-                    'Authorization': `Bearer ${RVC.getToken()}`
-                },
-                body: formData
-            });
+
+            await RVC.fetcher.fetchMedia(`/emote/${emojiData.id}`, 'POST', formData);
 
             // Temporary: Store image locally until API is integrated
             const reader = new FileReader();
