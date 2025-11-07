@@ -15,6 +15,10 @@ export default class UserSettingsController {
     #newProfilPictureFile;
 
     voice = structuredClone(VoiceCall.DEFAULT_SETTINGS);
+    #audioOutput = {
+        main: 1,
+        notification: 0.25
+    }
 
     constructor(user, fetcher, mediaUrl) {
         this.#user = user;
@@ -25,11 +29,12 @@ export default class UserSettingsController {
         this.#selectEventHandler();
         this.#overviewEventHandler();
         this.#audioInputEventHandler();
+        this.#audioOutputEventHandler();
 
         this.select('overview');
     }
 
-    setRoom(room){
+    setRoom(room) {
         this.#room = room;
     }
 
@@ -61,6 +66,7 @@ export default class UserSettingsController {
         this.#gateLoad();
         this.#compressorLoad();
         this.#inputVolumeLoad();
+        this.#audioOutputLoad();
     }
 
     select(name) {
@@ -323,7 +329,7 @@ export default class UserSettingsController {
     #audioInputApplyParameter(param, element) {
         switch (param.split('-')[0]) {
             case 'input':
-                document.getElementById('input-volume').addEventListener('change', () => this.#inputVolumeUpdate(element));
+                this.#inputVolumeUpdate(element);
                 break;
             case 'gate':
                 this.#gateApplyParameter(param, element);
@@ -462,5 +468,57 @@ export default class UserSettingsController {
         this.voice.compressor = structuredClone(VoiceCall.DEFAULT_SETTINGS.compressor);
         this.save();
         this.#compressorLoad();
+    }
+
+    // Audio Output
+    getNotificationVolume() {
+        return this.#audioOutput.main * this.#audioOutput.notification;
+    }
+
+    getVoiceVolume() {
+        return this.#audioOutput.main * this.#audioOutput.voice;
+    }
+
+    #audioOutputEventHandler() {
+        const parameters = [
+            'output-main-volume',
+            'output-notification-volume',
+        ]
+
+        for (const param of parameters) {
+            const element = document.getElementById(param);
+            element.addEventListener('input', () => this.#audioOutputUpdateUI(param, element.value));
+            element.addEventListener('change', () => this.#audioOutputApplyParameter(param, element.value));
+        }
+    }
+
+    #audioOutputLoad() {
+        document.getElementById('output-main-volume').value = this.#audioOutput.main;
+        this.#audioOutputUpdateUI('output-main-volume', this.#audioOutput.main);
+
+        document.getElementById('output-notification-volume').value = this.#audioOutput.notification;
+        this.#audioOutputUpdateUI('output-notification-volume', this.#audioOutput.notification);
+    }
+
+    #audioOutputUpdateUI(param, value) {
+        switch (param) {
+            case 'output-main-volume':
+                document.getElementById('output-main-label').innerText = `Volume ${Number.parseInt(value * 100)}%`;
+                break;
+            case 'output-notification-volume':
+                document.getElementById('output-notification-label').innerText = `Volume ${Number.parseInt(value * 100)}%`;
+                break;
+        }
+    }
+
+    #audioOutputApplyParameter(param, value) {
+        switch (param) {
+            case 'output-main-volume':
+                this.#audioOutput.main = value;
+                break;
+            case 'output-notification-volume':
+                this.#audioOutput.notification = value;
+                break;
+        }
     }
 }

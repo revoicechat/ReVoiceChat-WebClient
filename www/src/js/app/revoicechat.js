@@ -8,7 +8,7 @@ import Server from './server.js';
 import { reloadEmojis } from '../emoji.js';
 
 export default class ReVoiceChat {
-    alert = new Alert();
+    alert;
     router = new Router();
     fetcher;
     user;
@@ -52,6 +52,7 @@ export default class ReVoiceChat {
         this.room = new Room(this.fetcher, this.alert, this.user, this.voiceUrl, this.#token);
         this.server = new Server(this.fetcher, this.mediaUrl, this.room);
         this.state = new State(this);
+        this.alert = new Alert(this.user);
 
         // Add missing classes
         this.user.settings.setRoom(this.room);

@@ -59,14 +59,14 @@
         <!-- Room Container -->
         <div class="room">
 
-          <!-- Room Header -->
+            <!-- Room Header -->
             <div class="room-header">
                 <button class="mobile-btn" id="toggleSidebar"><revoice-icon-menu-burger></revoice-icon-menu-burger></button>
                 <div style="display: flex; column-gap: 0.5rem">
-                  <span id="room-icon"></span>
-                  <h3 class="room-name" id="room-name">[ROOM-NAME]</h3>
+                    <span id="room-icon"></span>
+                    <h3 class="room-name" id="room-name">[ROOM-NAME]</h3>
                 </div>
-              <button class="mobile-btn" id="toggleUsers"><revoice-icon-users></revoice-icon-users></button>
+                <button class="mobile-btn" id="toggleUsers"><revoice-icon-users></revoice-icon-users></button>
             </div>
 
             <!-- Text Container -->
@@ -404,22 +404,21 @@
 
                     <h2>Main</h2>
                     <form class="voice-settings">
-                        <label for="input-volume" id="output-volume-label">[MAIN]</label>
-                        <input type="range" id="output-volume" min="0" max="1" step="0.01">
+                        <label for="input-volume" id="output-main-label">[MAIN]</label>
+                        <input type="range" id="output-main-volume" min="0" max="1" step="0.01">
                     </form>
 
                     <h2>Alert</h2>
                     <form class="voice-settings">
-                        <label for="input-volume" id="alert-volume-label">[ALERT]</label>
-                        <input type="range" id="alert-volume" min="0" max="1" step="0.01">
+                        <label for="input-volume" id="output-notification-label">[NOTIFICATION]</label>
+                        <input type="range" id="output-notification-volume" min="0" max="1" step="0.01">
                     </form>
                 </div>
-
             </div>
         </div>
     </div>
 
-  <!-- Libraries -->
+    <!-- Libraries -->
     <script src="src/js/lib/sweetalert2.min.js"></script>
     <script src="src/js/lib/marked.min.js"></script>
     <script src="src/js/lib/highlight.min.js"></script>
