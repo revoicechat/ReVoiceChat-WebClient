@@ -554,13 +554,11 @@ export default class ServerSettingsController {
     // EMOTES
     async #emotesLoad() {
         const response = await this.#fetcher.fetchCore(`/emote/server/${this.#server.id}`);
-        document.getElementById("server-setting-content-emotes").innerHTML = `
-            <h1>Emotes</h1>
-            <revoice-emoji-manager path="server/${this.#server.id}" id="setting-emotes-form">
-                <script type="application/json" slot="emojis-data">
-                    ${JSON.stringify(response)}
-                </script>
-            </revoice-emoji-manager>`;
+        const emoji_manager = document.createElement('revoice-emoji-manager');
+        emoji_manager.setAttribute('path', `server/${this.#server.id}`);
+        emoji_manager.id = "setting-emotes-form";
+        emoji_manager.innerHTML = `<script type="application/json" slot="emojis-data">${JSON.stringify(response)}</script>`;
+        document.getElementById("server-setting-content-emotes").appendChild(emoji_manager);
     }
 
     // MEMBERS
