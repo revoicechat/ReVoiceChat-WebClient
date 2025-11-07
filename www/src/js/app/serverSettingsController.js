@@ -556,7 +556,7 @@ export default class ServerSettingsController {
         const response = await this.#fetcher.fetchCore(`/emote/server/${this.#server.id}`);
         const emoji_manager = document.createElement('revoice-emoji-manager');
         emoji_manager.setAttribute('path', `server/${this.#server.id}`);
-        emoji_manager.id = "setting-emotes-form";
+        emoji_manager.id = "server-setting-emotes-form";
         emoji_manager.innerHTML = `<script type="application/json" slot="emojis-data">${JSON.stringify(response)}</script>`;
         document.getElementById("server-setting-content-emotes").appendChild(emoji_manager);
     }

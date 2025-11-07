@@ -216,7 +216,7 @@ export default class UserSettingsController {
 
     #emoteLoad() {
         this.#fetcher.fetchCore(`/emote/me`).then(response => {
-            const emoteForm = document.getElementById("setting-emotes-form");
+            const emoteForm = document.getElementById("user-setting-emotes-form");
             emoteForm.innerHTML = `
             <script type="application/json" slot="emojis-data">
                 ${JSON.stringify(response)}
