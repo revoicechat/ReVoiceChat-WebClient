@@ -152,7 +152,7 @@ function initCustomEmojiCategory(picker, name, icon, emojis) {
     }
     for (const emote of emojis) {
         emojiCategory.emojis.push({
-            content: `<img class="emoji" src="${RVC.mediaUrl}/emojis/${emote.link}" alt="${emote.content}" title=":${emote.content}:"/>`,
+            content: `<img class="emoji" src="${RVC.mediaUrl}/emote/${emote.link}" alt="${emote.content}" title=":${emote.content}:"/>`,
             data: `:${emote.content}:`,
             description: emote.description,
             names: emote.names

@@ -251,7 +251,7 @@ class EmojiManager extends HTMLElement {
                 editEmojiFile.value = '';
 
                 const editPreview = popup.querySelector('#editPreview');
-                editPreview.innerHTML = `<img src="${RVC.mediaUrl}/emojis/${id}" alt="${emoji.name}">`;
+                editPreview.innerHTML = `<img src="${RVC.mediaUrl}/emote/${id}" alt="${emoji.name}">`;
                 editPreview.style.display = 'flex';
 
                 editEmojiFile.addEventListener('change', (e) => {
@@ -308,7 +308,7 @@ class EmojiManager extends HTMLElement {
                     if (result.file) {
                         const formData = new FormData();
                         formData.append('file', result.file);
-                        await fetch(`${RVC.mediaUrl}/emojis/${this.currentEditId}`, {
+                        await fetch(`${RVC.mediaUrl}/emote/${this.currentEditId}`, {
                             method: "POST",
                             signal: AbortSignal.timeout(5000),
                             headers: {
@@ -368,7 +368,7 @@ class EmojiManager extends HTMLElement {
             <div class="config-item">
                 <div class="emoji-header">
                     <div class="emoji-preview">
-                        <img src="${RVC.mediaUrl}/emojis/${emoji.id}" alt="${emoji.name}">
+                        <img src="${RVC.mediaUrl}/emote/${emoji.id}" alt="${emoji.name}">
                     </div>
                     <div class="emoji-info">
                         <div class="emoji-name">:${emoji.name}:</div>
