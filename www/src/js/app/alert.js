@@ -7,7 +7,9 @@ export default class Alert {
         voiceConnected: 'src/audio/userConnectedMale.mp3',
         voiceDisconnected: 'src/audio/userDisconnectedMale.mp3',
         microphoneMuted: 'src/audio/microphoneMutedMale.mp3',
-        microphoneActivated: 'src/audio/microphoneActivatedMale.mp3'
+        microphoneActivated: 'src/audio/microphoneActivatedMale.mp3',
+        soundMuted: 'src/audio/soundMutedMale.mp3',
+        soundActivated: 'src/audio/soundActivatedMale.mp3',
     }
 
     constructor(userSettings){
