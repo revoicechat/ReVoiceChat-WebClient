@@ -58,15 +58,15 @@ export default class VoiceCall {
     #gateState = false;
     #outputGain;
 
-    constructor(user, settings) {
+    constructor(user) {
         if (!user) {
             throw new Error('user is null or undefined');
         }
 
         this.#user = user;
 
-        if (settings) {
-            this.#settings = settings;
+        if (user.settings) {
+            this.#settings = user.settings.voice;
         }
         else {
             this.#settings = DEFAULT_SETTINGS;
@@ -100,7 +100,7 @@ export default class VoiceCall {
 
         // Setup main output gain
         this.#outputGain = this.#audioContext.createGain();
-        this.#outputGain.setValueAtTime(this.#settings, this.#audioContext.currentTime);
+        this.#outputGain.gain.setValueAtTime(this.#user.settings.getVoiceVolume(), this.#audioContext.currentTime);
 
         // Socket states
         this.#socket.onclose = async () => { await this.close(); };
@@ -311,7 +311,7 @@ export default class VoiceCall {
 
         // Setup Encoder
         this.#encoder = new AudioEncoder({
-            output: (chunk) => { this.#sendPacket(chunk, this.#audioTimestamp, this.#socket, this.#packetEncode, this.#user, this.#gateState); },
+            output: (chunk) => { this.#sendPacket(chunk, this.#audioTimestamp, this.#socket, this.#packetEncode, this.#user.id, this.#gateState); },
             error: (error) => { throw new Error(`Encoder setup failed:\n${error.name}\nCurrent codec :${this.#codecSettings.codec}`) },
         });
 

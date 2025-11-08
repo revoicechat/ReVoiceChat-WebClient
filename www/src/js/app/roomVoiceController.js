@@ -28,7 +28,7 @@ export default class RoomVoiceController {
         this.#activeRoom = roomId;
 
         try {
-            this.#voiceCall = new VoiceCall(this.#user.id, this.#user.settings.voice, this.#user.settings.getVoiceVolume());
+            this.#voiceCall = new VoiceCall(this.#user);
             await this.#voiceCall.open(this.#voiceURL, roomId, this.#token);
 
             // Update users in room
