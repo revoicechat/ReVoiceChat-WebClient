@@ -271,16 +271,21 @@ export default class RoomVoiceController {
         }
 
         const button = document.getElementById("voice-self-deaf");
+        const muteButton = document.getElementById("voice-self-mute");
         if (this.#voiceCall) {
             if (this.#voiceCall.getSelfDeaf()) {
                 // Muted
                 button.classList.add('active');
                 this.#alert.play('soundMuted');
+                this.#voiceCall.setSelfMute(true);
+                muteButton.classList.add('active');
             }
             else {
                 // Unmuted
                 button.classList.remove('active');
                 this.#alert.play('soundActivated');
+                this.#voiceCall.setSelfMute(false);
+                muteButton.classList.remove('active');
             }
         }
     }
