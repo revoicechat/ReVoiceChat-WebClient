@@ -10,3 +10,9 @@ Proof of concept RevoiceChat Webclient
 ### [How to install as a WebClient](INSTALL.md)
 
 ### [How to build as desktop application](BUILD.md)
+
+## License
+
+This project is licensed under the GNU General Public License v3.0 - see the [LICENSE](LICENSE) file for details.
+
+Copyright (C) 2025 RevoiceChat.fr
