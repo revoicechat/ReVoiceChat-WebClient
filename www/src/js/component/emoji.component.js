@@ -1,7 +1,7 @@
 class EmojiPicker {
 
     async init() {
-        this.categories = await fetch("src/js/component/general.emoji.json").then(res => res.json());
+        this.categories = await apiFetch("src/js/component/general.emoji.json").then(res => res.json());
         this.currentCategory = 'smileys';
         this.onEmojiSelect = null;
     }

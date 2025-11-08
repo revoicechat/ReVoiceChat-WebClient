@@ -1397,6 +1397,11 @@ input[type=file]::file-selector-button {
     display: block;
 }
 
+.main.login {
+    background: #43434D;
+    background: radial-gradient(circle, rgba(67, 67, 77, 1) 0%, rgba(18, 18, 20, 1) 100%);
+}
+
 /* Mobile responsive */
 @media (max-width: 768px) {
 
@@ -1433,6 +1438,13 @@ input[type=file]::file-selector-button {
         display: flex;
         align-items: center;
         justify-content: space-between;
+        padding-top: 4rem;
+        padding-bottom: 2rem;
+    }
+
+    .login-box {
+        width: -webkit-fill-available;
+        display: flex
     }
 }
 

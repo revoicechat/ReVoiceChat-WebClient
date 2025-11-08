@@ -1,4 +1,14 @@
 const tauriActive = typeof window.__TAURI__ !== 'undefined';
+let tauriFetch = null;
+if (tauriActive) {
+    import('@tauri-apps/plugin-http')
+        .then(module => {
+            tauriFetch = module.fetch;
+        })
+        .catch(() => {
+            console.warn('Tauri HTTP plugin not available, using standard fetch');
+        });
+}
 
 const SwalCustomClass = {
     title: "swalTitle",
@@ -170,4 +180,12 @@ function createContextMenuButton(className, innerHTML, onclick, title = "") {
     DIV.onclick = onclick;
     DIV.title = title;
     return DIV;
+}
+
+/** Fetch wrapper */
+async function apiFetch(url, options = {}) {
+    if (tauriActive && tauriFetch) {
+        return tauriFetch(url, options);
+    }
+    return fetch(url, options);
 }

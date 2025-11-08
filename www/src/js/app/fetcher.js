@@ -19,7 +19,7 @@ export default class Fetcher {
         }
 
         try {
-            const response = await fetch(`${this.#coreURL}/api${path}`, {
+            const response = await apiFetch(`${this.#coreURL}/api${path}`, {
                 method: method,
                 signal: AbortSignal.timeout(5000),
                 headers: {
@@ -51,7 +51,7 @@ export default class Fetcher {
         }
 
         try {
-            const response = await fetch(`${this.#mediaURL}${path}`, {
+            const response = await apiFetch(`${this.#mediaURL}${path}`, {
                 method: method,
                 signal: AbortSignal.timeout(5000),
                 headers: {

@@ -308,7 +308,7 @@ class EmojiManager extends HTMLElement {
                     if (result.file) {
                         const formData = new FormData();
                         formData.append('file', result.file);
-                        await fetch(`${RVC.mediaUrl}/emote/${this.currentEditId}`, {
+                        await apiFetch(`${RVC.mediaUrl}/emote/${this.currentEditId}`, {
                             method: "POST",
                             signal: AbortSignal.timeout(5000),
                             headers: {
