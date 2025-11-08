@@ -254,7 +254,7 @@ export default class VoiceCall {
 
     setOutputVolume(volume) {
         if (this.#outputGain) {
-            this.#outputGain.setValueAtTime(volume, this.#audioContext.currentTime);
+            this.#outputGain.gain.setValueAtTime(volume, this.#audioContext.currentTime);
         }
     }
 
