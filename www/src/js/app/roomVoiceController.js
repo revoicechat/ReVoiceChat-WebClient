@@ -75,7 +75,7 @@ export default class RoomVoiceController {
         // User joining this is NOT self and current user is connected to voice room
         if (userData.id !== this.#user.id && this.#voiceCall !== null && this.#voiceCall.getState() === VoiceCall.OPEN) {
             this.#voiceCall.addUser(userData.id);
-           this.#updateUserControls(userData.id);
+            this.#updateUserControls(userData.id);
             this.#alert.play('voiceUserJoin');
         }
     }
@@ -150,7 +150,7 @@ export default class RoomVoiceController {
     }
 
     // <voiceUpdateJoinedUsers> and <voiceUserJoining> call this to update control on given user
-   #updateUserControls(userId) {
+    #updateUserControls(userId) {
         const userDiv = document.getElementById(`voice-${userId}`);
 
         switch (this.#voiceCall.getState()) {
@@ -242,15 +242,17 @@ export default class RoomVoiceController {
         }
 
         const muteButton = document.getElementById("voice-self-mute");
-        if (this.#voiceCall.getSelfMute()) {
-            // Muted
-            console.debug("VOICE : Self mute");
-            muteButton.classList.add('active');
-        }
-        else {
-            // Unmuted
-            console.debug("VOICE : Self unmute");
-            muteButton.classList.remove('active');
+        if (this.#voiceCall) {
+            if (this.#voiceCall.getSelfMute()) {
+                // Muted
+                muteButton.classList.add('active');
+                this.#alert.play('microphoneMuted');
+            }
+            else {
+                // Unmuted
+                muteButton.classList.remove('active');
+                this.#alert.play('microphoneActivated');
+            }
         }
     }
 
@@ -260,8 +262,8 @@ export default class RoomVoiceController {
         }
     }
 
-    setOutputVolume(value){
-        if (this.#voiceCall){
+    setOutputVolume(value) {
+        if (this.#voiceCall) {
             this.#voiceCall.setOutputVolume(value);
         }
     }
@@ -271,7 +273,7 @@ export default class RoomVoiceController {
             this.#user.settings.voice = this.#voiceCall.getSettings();
         }
 
-        this.#user.saveSettings();
+        this.#user.settings.save();
     }
 
     updateGate() {
@@ -283,6 +285,7 @@ export default class RoomVoiceController {
     // Update user controls and UI
     updateSelf() {
         const voiceAction = document.getElementById("voice-join-action");
+        const muteButton = document.getElementById("voice-self-mute");
         const instanceState = this.#voiceCall ? this.#voiceCall.getState() : VoiceCall.CLOSE;
 
         switch (instanceState) {
@@ -303,6 +306,7 @@ export default class RoomVoiceController {
                 voiceAction.title = "Join the room";
                 voiceAction.innerHTML = `<revoice-icon-phone></revoice-icon-phone>`;
                 voiceAction.onclick = () => this.join(this.#room.id);
+                muteButton.classList.add('hidden');
                 break;
 
             case VoiceCall.OPEN:
@@ -312,6 +316,7 @@ export default class RoomVoiceController {
                 voiceAction.title = "Leave the room";
                 voiceAction.innerHTML = `<revoice-icon-phone-x></revoice-icon-phone-x>`;
                 voiceAction.onclick = () => this.leave();
+                muteButton.classList.remove('hidden');
                 break;
         }
     }
@@ -350,7 +355,7 @@ export default class RoomVoiceController {
 
             // Not self
             if (this.#user.id !== userId) {
-               this.#updateUserControls(userId);
+                this.#updateUserControls(userId);
             }
         }
     }
