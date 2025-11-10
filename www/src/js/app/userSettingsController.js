@@ -7,6 +7,7 @@ export default class UserSettingsController {
     #room;
     #inputAdvanced = false;
     #currentTab;
+    #theme = 'dark';
     #password = {
         password: '',
         newPassword: '',
@@ -43,6 +44,7 @@ export default class UserSettingsController {
         const settings = {
             voice: this.voice,
             inputAdvanced: this.#inputAdvanced,
+            theme: this.#theme,
         }
         await this.#fetcher.fetchCore(`/settings/me`, 'PATCH', JSON.stringify(settings));
     }
@@ -58,11 +60,17 @@ export default class UserSettingsController {
                 this.voice.compressor = storedSettings.voice.compressor ? storedSettings.voice.compressor : defaultVoice.compressor;
                 this.voice.gate = storedSettings.voice.gate ? storedSettings.voice.gate : defaultVoice.gate;
             }
+
+            if(storedSettings.theme) {
+                this.#theme = storedSettings.theme;
+            }
         }
+
+        document.documentElement.dataset.theme = this.#theme;
 
         // Load UI
         this.#overviewLoad();
-        this.#themeLoad();
+        this.#themeLoadPreviews();
         this.#emoteLoad();
         this.#gateLoad();
         this.#compressorLoad();
@@ -198,7 +206,7 @@ export default class UserSettingsController {
         document.getElementById("overview-picture-new").click();
     }
 
-    #themeLoad() {
+    #themeLoadPreviews() {
         const themeForm = document.getElementById("setting-themes-form");
         for (const theme of getAllDeclaredDataThemes()) {
             const button = document.createElement('button');
@@ -210,7 +218,8 @@ export default class UserSettingsController {
     }
 
     #themeChange(theme) {
-        localStorage.setItem("Theme", theme);
+        this.#theme = theme;
+        this.save();
         for (const elt of document.querySelectorAll("revoice-message")) {
             elt.dataset.theme = theme;
         }

@@ -19,8 +19,6 @@ window.RVC = RVC;
 
 // Ready state
 document.addEventListener('DOMContentLoaded', function () {
-    document.documentElement.dataset.theme = localStorage.getItem("Theme") || "dark";
-
     RVC.user.settings.load();
     RVC.state.load();
     RVC.openSSE();
