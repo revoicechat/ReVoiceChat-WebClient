@@ -127,9 +127,11 @@ export default class ReVoiceChat {
                 case "EMOTE_UPDATE":
                     reloadEmojis();
                     return;
+
                 case "RISK_MANAGEMENT":
-                    // TODO - manage risk update
+                    this.server.settings.riskModify();
                     return;
+
                 default:
                     console.error("SSE type unknowned: ", type);
                     return;

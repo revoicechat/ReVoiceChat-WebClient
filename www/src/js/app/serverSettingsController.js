@@ -23,14 +23,21 @@ export default class ServerSettingsController {
         this.#memberLoad();
     }
 
-    async #loadRisks() {
+    riskModify() {
+        this.#loadRisks(false);
+    }
+
+    async #loadRisks(select = true) {
         const me = await this.#fetcher.fetchCore(`/user/me`);
         const isAdmin = me.type === "ADMIN";
         const flattenRisks = await this.#fetcher.fetchCore(`/user/server/${this.#server.id}/risks`);
 
-        console.log(flattenRisks)
         this.#selectEventHandler(flattenRisks, isAdmin);
         this.#attachEventsFromRisks(flattenRisks, isAdmin);
+
+        if(select){
+            this.#select('overview');
+        }
     }
 
     async #attachEventsFromRisks(flattenRisks, isAdmin) {
@@ -43,15 +50,24 @@ export default class ServerSettingsController {
         if (isAdmin || flattenRisks.some(elem => overviewRisks.includes(elem))) {
             this.#overviewEventHandler();
         }
+        else {
+            this.#overviewEventHandler(true);
+        }
 
         if (isAdmin || flattenRisks.some(elem => roomRisks.includes(elem))) {
             this.#structureLoad();
             this.#roomLoad();
             this.#roomEventHandler();
         }
+        else {
+            this.#roomEventHandler(true);
+        }
 
         if (isAdmin || flattenRisks.some(elem => rolesRisks.includes(elem))) {
             this.#rolesLoad();
+        }
+        else {
+            this.#rolesLoad(true);
         }
 
         if (isAdmin || flattenRisks.some(elem => emoteRisks.includes(elem))) {
@@ -61,6 +77,9 @@ export default class ServerSettingsController {
         if (isAdmin || flattenRisks.some(elem => invitationRisks.includes(elem))) {
             this.#invitationLoad();
             this.#invitationEventHandler();
+        }
+        else {
+            this.#invitationEventHandler(true);
         }
     }
 
@@ -98,8 +117,6 @@ export default class ServerSettingsController {
                 button.addEventListener('click', () => this.#select(param.button));
             }
         }
-
-        this.#select('overview');
     }
 
     // OVERVIEW
@@ -109,12 +126,21 @@ export default class ServerSettingsController {
         document.getElementById('server-setting-overview-name-input').value = this.#server.name;
     }
 
-    #overviewEventHandler() {
-        document.getElementById('server-setting-overview-name').classList.add('hidden');
-        document.getElementById('server-setting-overview-name-input').classList.remove('hidden');
-        const button = document.getElementById(`server-setting-overview-save`);
-        button.classList.remove('hidden');
-        button.addEventListener('click', () => this.#overviewSave());
+    #overviewEventHandler(remove) {
+        if (remove) {
+            document.getElementById('server-setting-overview-name').classList.remove('hidden');
+            document.getElementById('server-setting-overview-name-input').classList.add('hidden');
+            const button = document.getElementById(`server-setting-overview-save`);
+            button.classList.add('hidden');
+            button.removeEventListener('click', null);
+        }
+        else {
+            document.getElementById('server-setting-overview-name').classList.add('hidden');
+            document.getElementById('server-setting-overview-name-input').classList.remove('hidden');
+            const button = document.getElementById(`server-setting-overview-save`);
+            button.classList.remove('hidden');
+            button.addEventListener('click', () => this.#overviewSave());
+        }
     }
 
     async #overviewSave() {
@@ -149,11 +175,19 @@ export default class ServerSettingsController {
     }
 
     // ROOMS AND STRUCTURE
-    #roomEventHandler() {
-        document.getElementById(`server-setting-tab-rooms`).classList.remove('hidden');
-        document.getElementById(`server-setting-structure-save`).addEventListener('click', () => this.#structureSave());
-        document.getElementById(`server-setting-room-add`).addEventListener('click', () => this.#roomAdd());
-        document.getElementById(`server-setting-category-add`).addEventListener('click', () => this.#categoryAdd());
+    #roomEventHandler(remove) {
+        if (remove) {
+            document.getElementById(`server-setting-tab-rooms`).classList.add('hidden');
+            document.getElementById(`server-setting-structure-save`).removeEventListener('click', null);
+            document.getElementById(`server-setting-room-add`).removeEventListener('click', null);
+            document.getElementById(`server-setting-category-add`).removeEventListener('click', null);
+        }
+        else {
+            document.getElementById(`server-setting-tab-rooms`).classList.remove('hidden');
+            document.getElementById(`server-setting-structure-save`).addEventListener('click', () => this.#structureSave());
+            document.getElementById(`server-setting-room-add`).addEventListener('click', () => this.#roomAdd());
+            document.getElementById(`server-setting-category-add`).addEventListener('click', () => this.#categoryAdd());
+        }
     }
 
     async #roomLoad() {
@@ -654,8 +688,13 @@ export default class ServerSettingsController {
     }
 
     // INVITATION
-    #invitationEventHandler() {
-        document.getElementById('server-setting-invitation-create').addEventListener('click', () => this.#invitationCreate());
+    #invitationEventHandler(remove) {
+        if (remove) {
+            document.getElementById('server-setting-invitation-create').removeEventListener('click', null);
+        }
+        else {
+            document.getElementById('server-setting-invitation-create').addEventListener('click', () => this.#invitationCreate());
+        }
     }
 
     async #invitationLoad() {
