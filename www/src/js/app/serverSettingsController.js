@@ -35,7 +35,7 @@ export default class ServerSettingsController {
         this.#selectEventHandler(flattenRisks, isAdmin);
         this.#attachEventsFromRisks(flattenRisks, isAdmin);
 
-        if(select){
+        if (select) {
             this.#select('overview');
         }
     }
@@ -642,6 +642,12 @@ export default class ServerSettingsController {
     // EMOTES
     async #emotesLoad() {
         const response = await this.#fetcher.fetchCore(`/emote/server/${this.#server.id}`);
+        
+        const old_manager = document.getElementById("server-setting-emotes-form");
+        if (old_manager) {
+            document.getElementById('server-setting-content-emotes').removeChild(old_manager);
+        }
+
         const emoji_manager = document.createElement('revoice-emoji-manager');
         emoji_manager.setAttribute('path', `server/${this.#server.id}`);
         emoji_manager.id = "server-setting-emotes-form";
