@@ -449,8 +449,10 @@ svg {
     justify-content: space-between;
     align-items: flex-start;
     cursor: pointer;
-    padding: 0.5rem;
+    padding: 0.3rem;
     min-width: 0;
+    margin: 0.15rem;
+    border-radius: 5px
 }
 
 .sidebar-room-separator {
