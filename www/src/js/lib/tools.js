@@ -1,4 +1,4 @@
-const tauriActive = typeof window.__TAURI__ !== 'undefined';
+const tauriActive = window.isTauri;
 let tauriFetch = null;
 if (tauriActive) {
     import('@tauri-apps/plugin-http')
