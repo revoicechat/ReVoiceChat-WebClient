@@ -56,10 +56,11 @@ class AttachementMessageComponent extends HTMLElement {
     }
 
     #link(src, name, svgType) {
-      return `<a class='media file-type-link' href="${src}" target="_blank">
-                  ${svgType}
-                  <div>${name}</div>
-              </a>`
+        const handler = window.isTauri ? `onclick="__TAURI__.opener.openUrl('${src}');"` : '';
+        return `<a class='media file-type-link' href="${src}" ${handler}>
+                    ${svgType}
+                    <div>${name}</div>
+                </a>`
     }
 
     #SVG_ICON = `
