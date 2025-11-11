@@ -1,34 +1,34 @@
 class MessageComponent extends HTMLElement {
-  constructor() {
-    super();
-    this.attachShadow({ mode: 'open' });
-    this.markdown = '';
-  }
-
-  static get observedAttributes() {
-    return ['markdown', 'theme', 'data-theme'];
-  }
-
-  /** generate the data in slot */
-  connectedCallback() {
-    this.#setupShadowDOM();
-    this.#render();
-    this.#updateTheme()
-  }
-
-  /** update the data in slot */
-  attributeChangedCallback(name, oldValue, newValue) {
-    if (name === 'markdown' && oldValue !== newValue) {
-      this.markdown = newValue || '';
-      this.#render();
-    } else if ((name === 'theme' || name === 'data-theme') && oldValue !== newValue) {
-      this.#updateTheme();
+    constructor() {
+        super();
+        this.attachShadow({ mode: 'open' });
+        this.markdown = '';
     }
-  }
 
-  #setupShadowDOM() {
-    // Create the shadow DOM structure
-    this.shadowRoot.innerHTML = `
+    static get observedAttributes() {
+        return ['markdown', 'theme', 'data-theme'];
+    }
+
+    /** generate the data in slot */
+    connectedCallback() {
+        this.#setupShadowDOM();
+        this.#render();
+        this.#updateTheme()
+    }
+
+    /** update the data in slot */
+    attributeChangedCallback(name, oldValue, newValue) {
+        if (name === 'markdown' && oldValue !== newValue) {
+            this.markdown = newValue || '';
+            this.#render();
+        } else if ((name === 'theme' || name === 'data-theme') && oldValue !== newValue) {
+            this.#updateTheme();
+        }
+    }
+
+    #setupShadowDOM() {
+        // Create the shadow DOM structure
+        this.shadowRoot.innerHTML = `
                     <style>
                         /*@import url("https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.11.1/build/styles/github-dark-dimmed.min.css");*/
 
@@ -172,164 +172,169 @@ class MessageComponent extends HTMLElement {
                     </div>
                 `;
 
-    // Listen for slotchange events
-    this.shadowRoot.addEventListener('slotchange', (e) => {
-      if (e.target.name === 'medias') {
+        // Listen for slotchange events
+        this.shadowRoot.addEventListener('slotchange', (e) => {
+            if (e.target.name === 'medias') {
+                this.#handleSlottedMedias();
+            }
+            if (e.target.name === 'content') {
+                this.#handleSlottedContent();
+            }
+            if (e.target.name === 'emotes') {
+                this.#handleSlottedEmotes();
+            }
+        });
+    }
+
+    #handleSlottedMedias() {
+        const mediasSlot = this.shadowRoot.querySelector('slot[name="medias"]');
+        const slottedElements = mediasSlot.assignedElements();
+        for (const element of slottedElements) {
+            if (element.tagName === 'SCRIPT' && element.type === 'application/json') {
+                this.medias = JSON.parse(element.textContent)
+                break;
+            }
+        }
+    }
+
+    #handleSlottedContent() {
+        const contentSlot = this.shadowRoot.querySelector('slot[name="content"]');
+        const slottedElements = contentSlot.assignedElements();
+
+        for (const element of slottedElements) {
+            if (element.tagName === 'SCRIPT' && element.type === 'text/markdown') {
+                this.markdown = element.textContent.trim();
+
+                if (this.markdown) {
+                    this.#render();
+                }
+
+                break;
+            }
+        }
+    }
+
+    #handleSlottedEmotes() {
+        const emotesSlot = this.shadowRoot.querySelector('slot[name="emotes"]');
+        const slottedElements = emotesSlot.assignedElements();
+        for (const element of slottedElements) {
+            if (element.tagName === 'SCRIPT' && element.type === 'application/json') {
+                this.emotes = JSON.parse(element.textContent)
+                break;
+            }
+        }
+    }
+
+    #hideSlots() {
+        this.shadowRoot.querySelector('.container').className = 'container';
+    }
+
+    #updateTheme() {
+        let theme = getComputedStyle(this).getPropertyValue("--hljs-theme").trim();
+        theme = theme.substring(1, theme.length - 1)
+        const link = document.createElement("link");
+        link.id = "highlightjs-theme";
+        link.rel = "stylesheet";
+        link.href = theme;
+        this.shadowRoot.appendChild(link);
+    }
+
+    #render() {
+        const contentDiv = this.shadowRoot.getElementById('content');
+
+        // Check if there's slotted content
+        if (!this.markdown) {
+            this.#handleSlottedContent();
+        }
         this.#handleSlottedMedias();
-      }
-      if (e.target.name === 'content') {
-        this.#handleSlottedContent();
-      }
-      if (e.target.name === 'emotes') {
         this.#handleSlottedEmotes();
-      }
-    });
-  }
 
-  #handleSlottedMedias() {
-    const mediasSlot = this.shadowRoot.querySelector('slot[name="medias"]');
-    const slottedElements = mediasSlot.assignedElements();
-    for (const element of slottedElements) {
-      if (element.tagName === 'SCRIPT' && element.type === 'application/json') {
-        this.medias = JSON.parse(element.textContent)
-        break;
-      }
-    }
-  }
-
-  #handleSlottedContent() {
-    const contentSlot = this.shadowRoot.querySelector('slot[name="content"]');
-    const slottedElements = contentSlot.assignedElements();
-
-    for (const element of slottedElements) {
-      if (element.tagName === 'SCRIPT' && element.type === 'text/markdown') {
-        this.markdown = element.textContent.trim();
-        this.#render();
-        break;
-      }
-    }
-  }
-
-  #handleSlottedEmotes() {
-    const emotesSlot = this.shadowRoot.querySelector('slot[name="emotes"]');
-    const slottedElements = emotesSlot.assignedElements();
-    for (const element of slottedElements) {
-      if (element.tagName === 'SCRIPT' && element.type === 'application/json') {
-        this.emotes = JSON.parse(element.textContent)
-        break;
-      }
-    }
-  }
-
-  #hideSlots() {
-    this.shadowRoot.querySelector('.container').className = 'container';
-  }
-
-  #updateTheme() {
-    let theme = getComputedStyle(this).getPropertyValue("--hljs-theme").trim();
-    theme = theme.substring(1, theme.length - 1)
-    const link = document.createElement("link");
-    link.id = "highlightjs-theme";
-    link.rel = "stylesheet";
-    link.href = theme;
-    this.shadowRoot.appendChild(link);
-  }
-
-  #render() {
-    const contentDiv = this.shadowRoot.getElementById('content');
-
-    if (!this.markdown) {
-      // Check if there's slotted content
-      this.#handleSlottedContent();
-      this.#handleSlottedMedias();
-      this.#handleSlottedEmotes();
-      if (!this.markdown) {
-        contentDiv.innerHTML = '<p style="color: #8b949e; font-style: italic;">No markdown content provided</p>';
-        return;
-      }
-    }
-
-    if (typeof marked === 'undefined') {
-      contentDiv.innerHTML = '<p style="color: #ff6b6b;">marked.js library not loaded</p>';
-      return;
-    }
-    try {
-      this.#setupMarked()
-      this.#hideSlots();
-      contentDiv.innerHTML = this.#injectMedias();
-      contentDiv.innerHTML += this.#injectEmojis(marked.parse(this.#removeTags(this.markdown)));
-      this.#renderCodeTemplate(contentDiv);
-    } catch (error) {
-      console.error('Markdown parsing error:', error);
-      contentDiv.innerHTML = `<p style="color: #ff6b6b;">Error parsing markdown: ${error.message}</p>`;
-    }
-  }
-
-  #renderCodeTemplate(contentDiv) {
-    for (const block of contentDiv.querySelectorAll('pre code')) {
-      hljs.highlightElement(block);
-    }
-  }
-
-  /** Identify HTML tags in the input string. Replacing the identified HTML tag with a null string.*/
-  #removeTags(str) {
-    if (!str) return "";
-    const div = document.createElement("div");
-    div.innerHTML = String(str);
-    return div.textContent || "";
-  }
-
-  #injectEmojis(inputText) {
-    return inputText.replace(/:([A-Za-z0-9\-_]+):/g, (_, emoji) => {
-      if (global.chat.emojisGlobal.includes(emoji)) {
-        return `<img class="emoji" src="${RVC.mediaUrl}/emote/${emoji}" alt="${emoji}" title=":${emoji}:">`;
-      }
-      if (this.emotes) {
-        const emote = Array.from(this.emotes).find(item => item.name === emoji);
-        if (emote) {
-          return `<img class="emoji" src="${RVC.mediaUrl}/emote/${emote.id}" alt="${emoji}" title=":${emoji}:">`;
+        if (typeof marked === 'undefined') {
+            contentDiv.innerHTML = '<p style="color: #ff6b6b;">marked.js library not loaded</p>';
+            return;
         }
-      }
-      return `:${emoji}:`
-    });
-  }
+        try {
+            this.#setupMarked()
+            this.#hideSlots();
 
-  #setupMarked() {
-    const renderer = new marked.Renderer();
-    renderer.heading = function ({ tokens: e, depth: t }) {
-      const text = this.parser.parse(e);
-      const DIV = document.createElement('div');
-      DIV.innerHTML = text
-      const p = DIV.children.item(0)
-      p.innerHTML = '#'.repeat(t) + " " + p.innerHTML;
-      return p.innerHTML;
-    }
-    renderer.link = function ({ href: e, title: t, tokens: n }) {
-      // Allow only http(s), www, or IP-style links
-      if (/^(https?:\/\/|www\.|(\d{1,3}\.){3}\d{1,3})/.test(e)) {
-        return `<a href="${e}" target="_blank" rel="noopener noreferrer">${e}</a>`;
-      }
-      return this.parser.parse(n);
-    }
+            contentDiv.innerHTML = this.#injectMedias();
 
-    marked.use({ renderer })
-    marked.use({
-      breaks: true,
-      gfm: true
-    });
-  }
+            if (this.markdown) {
+                contentDiv.innerHTML += this.#injectEmojis(marked.parse(this.#removeTags(this.markdown)));
+            }
 
-  #injectMedias() {
-    let result = "";
-    if (this.medias) {
-      for (const media of this.medias) {
-        if (media.status === "STORED") {
-          result += `<revoice-attachement-message id="${media.id}" name="${media.name}" type="${media.type}"></revoice-attachement-message>`
+            this.#renderCodeTemplate(contentDiv);
+        } catch (error) {
+            console.error('Markdown parsing error:', error);
+            contentDiv.innerHTML = `<p style="color: #ff6b6b;">Error parsing markdown: ${error.message}</p>`;
         }
-      }
     }
-    return result;
-  }
+
+    #renderCodeTemplate(contentDiv) {
+        for (const block of contentDiv.querySelectorAll('pre code')) {
+            hljs.highlightElement(block);
+        }
+    }
+
+    /** Identify HTML tags in the input string. Replacing the identified HTML tag with a null string.*/
+    #removeTags(str) {
+        if (!str) return "";
+        const div = document.createElement("div");
+        div.innerHTML = String(str);
+        return div.textContent || "";
+    }
+
+    #injectEmojis(inputText) {
+        return inputText.replace(/:([A-Za-z0-9\-_]+):/g, (_, emoji) => {
+            if (global.chat.emojisGlobal.includes(emoji)) {
+                return `<img class="emoji" src="${RVC.mediaUrl}/emote/${emoji}" alt="${emoji}" title=":${emoji}:">`;
+            }
+            if (this.emotes) {
+                const emote = Array.from(this.emotes).find(item => item.name === emoji);
+                if (emote) {
+                    return `<img class="emoji" src="${RVC.mediaUrl}/emote/${emote.id}" alt="${emoji}" title=":${emoji}:">`;
+                }
+            }
+            return `:${emoji}:`
+        });
+    }
+
+    #setupMarked() {
+        const renderer = new marked.Renderer();
+        renderer.heading = function ({ tokens: e, depth: t }) {
+            const text = this.parser.parse(e);
+            const DIV = document.createElement('div');
+            DIV.innerHTML = text
+            const p = DIV.children.item(0)
+            p.innerHTML = '#'.repeat(t) + " " + p.innerHTML;
+            return p.innerHTML;
+        }
+        renderer.link = function ({ href: e, title: t, tokens: n }) {
+            // Allow only http(s), www, or IP-style links
+            if (/^(https?:\/\/|www\.|(\d{1,3}\.){3}\d{1,3})/.test(e)) {
+                return `<a href="${e}" target="_blank" rel="noopener noreferrer">${e}</a>`;
+            }
+            return this.parser.parse(n);
+        }
+
+        marked.use({ renderer })
+        marked.use({
+            breaks: true,
+            gfm: true
+        });
+    }
+
+    #injectMedias() {
+        let result = "";
+        if (this.medias) {
+            for (const media of this.medias) {
+                if (media.status === "STORED") {
+                    result += `<revoice-attachement-message id="${media.id}" name="${media.name}" type="${media.type}"></revoice-attachement-message>`
+                }
+            }
+        }
+        return result;
+    }
 }
 
 customElements.define('revoice-message', MessageComponent);

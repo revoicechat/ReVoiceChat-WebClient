@@ -81,9 +81,11 @@ export default class RoomTextController {
 
     async send() {
         let result = null;
+
+        const attachments_input = document.getElementById("text-attachment");
         let textInput = sanitizeString(document.getElementById('text-input').value);
 
-        if (textInput == "" || textInput == null) {
+        if ((textInput == "" || textInput == null) && !attachments_input) {
             return;
         }
 
@@ -93,10 +95,9 @@ export default class RoomTextController {
         }
 
         // Attachments
-        const input = document.getElementById("text-attachment");
         const attachments = [];
-        if (input && this.mode === RoomTextController.MODE_SEND) {
-            for (const element of input.files) {
+        if (attachments_input && this.mode === RoomTextController.MODE_SEND) {
+            for (const element of attachments_input.files) {
                 if (element.size < this.#attachmentMaxSize) {
                     data.medias.push({ name: element.name });
                     attachments[element.name] = element;
