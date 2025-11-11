@@ -1,18 +1,7 @@
-document.addEventListener('DOMContentLoaded', function () {
-    // Set theme
-    document.documentElement.setAttribute("data-theme", localStorage.getItem("Theme") || "dark");
-
-    // Autologin
-    autoLogin();
-
-    // Clear old session data
+document.addEventListener('DOMContentLoaded', async function () {
     sessionStorage.removeItem('lastState');
-
+    await autoLogin();
     autoHost();
-
-    // Get login from URL (testing)
-    document.getElementById('username').value = getQueryVariable('username') ? getQueryVariable('username') : "";
-    document.getElementById('password').value = getQueryVariable('password') ? getQueryVariable('password') : "";
 
     // Last login
     if (localStorage.getItem("lastUsername")) {
