@@ -173,15 +173,6 @@ function statusToDotClassName(status) {
     }
 }
 
-function createContextMenuButton(className, innerHTML, onclick, title = "") {
-    const DIV = document.createElement('div');
-    DIV.className = className;
-    DIV.innerHTML = innerHTML;
-    DIV.onclick = onclick;
-    DIV.title = title;
-    return DIV;
-}
-
 /** Fetch wrapper */
 async function apiFetch(url, options = {}) {
     if (tauriActive && tauriFetch) {

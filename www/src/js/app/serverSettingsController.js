@@ -771,8 +771,8 @@ export default class ServerSettingsController {
         // Context menu
         const DIV_CM = document.createElement('div');
         DIV_CM.className = "context-menu";
-        DIV_CM.appendChild(createContextMenuButton("icon", "<revoice-icon-clipboard></revoice-icon-clipboard>", () => this.#invitationCopy(data.id)));
-        DIV_CM.appendChild(createContextMenuButton("icon", "<revoice-icon-trash></revoice-icon-trash>", () => this.#invitationDelete(data)));
+        DIV_CM.appendChild(this.#createContextMenuButton("icon", "<revoice-icon-clipboard></revoice-icon-clipboard>", () => this.#invitationCopy(data.id)));
+        DIV_CM.appendChild(this.#createContextMenuButton("icon", "<revoice-icon-trash></revoice-icon-trash>", () => this.#invitationDelete(data)));
         DIV.appendChild(DIV_CM);
 
         return DIV;
@@ -803,5 +803,14 @@ export default class ServerSettingsController {
     #invitationCopy(link) {
         const url = document.location.href.slice(0, -11) + `index.html?register=&invitation=${link}&host=${this.#coreUrl}`;
         copyToClipboard(url);
+    }
+
+    #createContextMenuButton(className, innerHTML, onclick, title = "") {
+        const DIV = document.createElement('div');
+        DIV.className = className;
+        DIV.innerHTML = innerHTML;
+        DIV.onclick = onclick;
+        DIV.title = title;
+        return DIV;
     }
 }
