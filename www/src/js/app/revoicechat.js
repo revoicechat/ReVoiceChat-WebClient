@@ -72,13 +72,21 @@ export default class ReVoiceChat {
         })
     }
 
+    load() {
+        this.user.settings.load();
+        this.state.load();
+        this.#openSSE();
+        this.room.textController.attachEvents();
+        this.router.routeTo(getQueryVariable('r'));
+    }
+
     // Token
     getToken() {
         return this.#token;
     }
 
     // Server Send Event avec JWT en header
-    openSSE() {
+    #openSSE() {
         this.#sse.openSSE()
     }
 

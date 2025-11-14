@@ -2,14 +2,14 @@ export default class RoomTextController {
     static MODE_SEND = 0;
     static MODE_EDIT = 1;
 
+    mode = 0;
+
     #alert;
     #user;
     #fetcher;
     #room;
-    mode = 0;
     #editId;
     #attachmentMaxSize = 0;
-    emojisGlobal;
 
     constructor(fetcher, alert, user, room) {
         this.#fetcher = fetcher;
@@ -17,6 +17,26 @@ export default class RoomTextController {
         this.#user = user;
         this.#room = room;
         this.#getAttachmentMaxSize();
+    }
+
+    attachEvents() {
+        document.getElementById("text-input").addEventListener('keydown', async (event) => await this.#eventHandler(event));
+    }
+
+    async #eventHandler(event) {
+        if (event.key === 'Enter') {
+            if (event.shiftKey) {
+                return;
+            }
+            event.preventDefault();
+            await this.send();
+            return;
+        }
+
+        if (event.key === 'Escape') {
+            document.getElementById("text-input").value = "";
+            this.mode = RoomTextController.MODE_SEND;
+        }
     }
 
     async getAllFrom(roomId) {

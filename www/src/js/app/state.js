@@ -23,7 +23,6 @@ export default class State {
             chat: {
                 mode: "send",
                 editId: null,
-                emojisGlobal: [],
                 attachmentMaxSize: 0,
             }
         }
