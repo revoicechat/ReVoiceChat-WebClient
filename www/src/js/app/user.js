@@ -31,10 +31,24 @@ export default class User {
 
     update(data) {
         const id = data.id;
-        for (const icon of document.querySelectorAll(`.${id} img.icon`)) {
-            icon.src = `${this.#mediaURL}/profiles/${id}?t=${Date.now()}`;
+        const name = data.displayName;
+        const picture = `${this.#mediaURL}/profiles/${id}?t=${Date.now()}`;
+
+        // Static elements for self
+        if(this.id === id){
+            // Main page
+            document.getElementById('user-name').innerText = name;
+            document.getElementById('user-picture').src = picture;
+            // User settings
+            document.getElementById('overview-displayname').value = name;
+            document.getElementById('setting-user-picture').src = picture;
         }
-        for (const name of document.querySelectorAll(`.${id} .name`)) {
+         
+        // Dynamic elements
+        for (const icon of document.getElementsByName(`user-picture-${id}`)) {
+            icon.src = picture;
+        }
+        for (const name of document.getElementsByName(`user-name-${id}`)) {
             name.innerText = data.displayName;
         }
     }

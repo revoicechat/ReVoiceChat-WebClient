@@ -91,17 +91,21 @@ export default class Server {
     }
 
     async #createUser(data) {
+        const id = data.id;
+        const name = data.displayName;
+        const status = data.status;
+        const profilePicture = `${this.#mediaURL}/profiles/${id}`;
+
         const DIV = document.createElement('div');
-        DIV.id = data.id;
-        DIV.className = `${data.id} user-profile`
-        const profilePicture = `${this.#mediaURL}/profiles/${data.id}`;
+        DIV.id = id;
+        DIV.className = `${id} user-profile`
         DIV.innerHTML = `
             <div class="relative">
-                <img src="${profilePicture}" alt="PFP" class="icon ring-2" />
-                <div id="dot-${data.id}" class="user-dot ${statusToDotClassName(data.status)}"></div>
+                <img src="${profilePicture}" alt="PFP" class="icon ring-2" name="user-picture-${id}" />
+                <div id="dot-${id}" class="user-dot ${statusToDotClassName(status)}"></div>
             </div>
             <div class="user">
-                <h2 class="name">${data.displayName}</h2>
+                <h2 class="name" name="user-name-${id}">${name}</h2>
             </div>
         `;
 

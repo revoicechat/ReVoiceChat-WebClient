@@ -138,10 +138,10 @@ export default class RoomVoiceController {
         DIV.innerHTML = `
             <div class='block-user' id='voice-gate-${userId}'>
                 <div class='relative'>
-                    <img src='${profilePicture}' alt='PFP' class='icon' />
+                    <img src='${profilePicture}' alt='PFP' class='icon' name='user-picture-${userId}'/>
                 </div>
                 <div class='user'>
-                    <h2 class='name'>${userData.displayName}</h2>
+                    <h2 class='name' name='user-name-${userId}'>${userData.displayName}</h2>
                 </div>
             </div>
         `;
