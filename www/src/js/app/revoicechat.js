@@ -117,7 +117,7 @@ export default class ReVoiceChat {
                 case "DIRECT_MESSAGE":
                     return;
 
-                case "USER_STATUS":
+                case "USER_STATUS_UPDATE":
                     this.user.setStatus(eventData.id, eventData.status);
                     return;
 
