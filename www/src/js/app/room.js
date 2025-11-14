@@ -9,10 +9,10 @@ export default class Room {
     name;
     type;
 
-    constructor(fetcher, alert, user, voiceURL, token) {
+    constructor(fetcher, alert, user, voiceURL, token, mediaUrl) {
         this.#fetcher = fetcher;
         this.textController = new RoomTextController(fetcher, alert, user, this);
-        this.voiceController = new RoomVoiceController(fetcher, voiceURL, token, user, alert, this);
+        this.voiceController = new RoomVoiceController(fetcher, voiceURL, token, user, alert, this, mediaUrl);
     }
 
     async load(serverId) {

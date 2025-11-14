@@ -63,7 +63,7 @@ export default class RoomTextController {
             this.#alert.play('messageNew');
         }
 
-        if (data.message.roomId !== RVC.room.id) {
+        if (data.message.roomId !== this.#room.id) {
             return;
         }
 

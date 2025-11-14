@@ -4,19 +4,21 @@ export default class RoomVoiceController {
     #alert;
     #fetcher;
     #voiceURL;
+    #mediaUrl
     #token;
     #voiceCall;
     #activeRoom;
     #user;
     #room;
 
-    constructor(fetcher, voiceURL, token, user, alert, room) {
+    constructor(fetcher, voiceURL, token, user, alert, room, mediaUrl) {
         this.#fetcher = fetcher;
         this.#voiceURL = voiceURL;
         this.#token = token;
         this.#user = user;
         this.#alert = alert;
         this.#room = room;
+        this.#mediaUrl = mediaUrl;
     }
 
     // <user> call this to join a call in a room
@@ -133,7 +135,7 @@ export default class RoomVoiceController {
         DIV.id = `voice-${userId}`;
         DIV.className = "voice-profile";
 
-        const profilePicture = `${RVC.mediaUrl}/profiles/${userId}`;
+        const profilePicture = `${this.#mediaUrl}/profiles/${userId}`;
 
         DIV.innerHTML = `
             <div class='block-user' id='voice-gate-${userId}'>

@@ -209,7 +209,7 @@ export default class ServerSettingsController {
     }
 
     async #roomLoad() {
-        const roomResult = await RVC.fetcher.fetchCore(`/server/${RVC.server.id}/room`, 'GET');
+        const roomResult = await this.#fetcher.fetchCore(`/server/${this.#server.id}/room`, 'GET');
         if (roomResult) {
             this.#roomsData = {};
             for (const room of roomResult) {
@@ -220,7 +220,7 @@ export default class ServerSettingsController {
     }
 
     async #structureLoad() {
-        const struct = await RVC.fetcher.fetchCore(`/server/${RVC.server.id}/structure`, 'GET');
+        const struct = await this.#fetcher.fetchCore(`/server/${this.#server.id}/structure`, 'GET');
         if (struct) {
             this.#structureData = struct;
             this.#render();

@@ -51,7 +51,7 @@ export default class ReVoiceChat {
         this.fetcher = new Fetcher(this.#token, this.coreUrl, this.mediaUrl);
         this.user = new User(this.fetcher, this.mediaUrl, this.coreUrl);
         this.alert = new Alert(this.user.settings);
-        this.room = new Room(this.fetcher, this.alert, this.user, this.voiceUrl, this.#token);
+        this.room = new Room(this.fetcher, this.alert, this.user, this.voiceUrl, this.#token, this.mediaUrl);
         this.server = new Server(this.fetcher, this.mediaUrl, this.room);
         this.state = new State(this);
 
