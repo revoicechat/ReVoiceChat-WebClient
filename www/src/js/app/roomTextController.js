@@ -20,7 +20,12 @@ export default class RoomTextController {
     }
 
     attachEvents() {
-        document.getElementById("text-input").addEventListener('keydown', async (event) => await this.#eventHandler(event));
+        const textInput = document.getElementById("text-input");
+        textInput.addEventListener('keydown', async (event) => await this.#eventHandler(event));
+        textInput.addEventListener('oninput', () => this.oninput(textInput));
+
+        document.getElementById("attachment-button-add").addEventListener('click', () => this.#addAttachment());
+        document.getElementById("attachment-button-remove").addEventListener('click', () => this.#removeAttachment());
     }
 
     async #eventHandler(event) {
@@ -87,13 +92,13 @@ export default class RoomTextController {
         room.scrollTop = room.scrollHeight;
     }
 
-    joinAttachment() {
+    #addAttachment() {
         const fileInput = document.getElementById("text-attachment");
         fileInput.click();
         document.getElementById("text-attachment-div").classList.remove('hidden');
     }
 
-    removeAttachment() {
+    #removeAttachment() {
         const fileInput = document.getElementById("text-attachment");
         fileInput.value = "";
         document.getElementById("text-attachment-div").classList.add('hidden');
@@ -168,7 +173,7 @@ export default class RoomTextController {
             }
 
             // Clean file input
-            this.removeAttachment();
+            this.#removeAttachment();
 
             // Clean text input
             const textarea = document.getElementById("text-input");

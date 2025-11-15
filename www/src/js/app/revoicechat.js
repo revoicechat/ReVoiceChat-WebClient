@@ -80,6 +80,8 @@ export default class ReVoiceChat {
         this.state.load();
         this.#openSSE();
         this.room.textController.attachEvents();
+        this.room.voiceController.attachEvents();
+        this.alert.attachEvents();
         this.router.routeTo(getQueryVariable('r'));
     }
 

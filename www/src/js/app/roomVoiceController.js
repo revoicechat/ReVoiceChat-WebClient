@@ -21,6 +21,11 @@ export default class RoomVoiceController {
         this.#mediaUrl = mediaUrl;
     }
 
+    attachEvents(){
+        document.getElementById("voice-self-mute").addEventListener('click', () => this.#controlSelfMute());
+        document.getElementById("voice-self-deaf").addEventListener('click', () => this.#controlSelfDeaf());
+    }
+
     // <user> call this to join a call in a room
     async join(roomId) {
         if (this.#activeRoom) {
@@ -235,7 +240,7 @@ export default class RoomVoiceController {
     }
 
     // <user> call this to mute himself
-    controlSelfMute(updateState = true) {
+    #controlSelfMute(updateState = true) {
         if (updateState) {
             if (this.#voiceCall) {
                 this.#voiceCall.toggleSelfMute();
@@ -264,7 +269,7 @@ export default class RoomVoiceController {
         }
     }
 
-    controlSelfDeaf(updateState = true) {
+    #controlSelfDeaf(updateState = true) {
         if (updateState) {
             if (this.#voiceCall) {
                 this.#voiceCall.toggleSelfDeaf();

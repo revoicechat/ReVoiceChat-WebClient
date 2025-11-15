@@ -20,6 +20,11 @@ export default class Alert {
         this.#userSettings = userSettings;
     }
 
+    attachEvents(){
+        document.getElementById("audio-output-try-voicechat").addEventListener('click', () => this.#playTest('voiceChat'));
+        document.getElementById("audio-output-try-notification").addEventListener('click', () => this.#playTest('notification'));
+    }
+
     play(type) {
         if (!this.#defaultSounds[type]) {
             console.error('Notification type is null or undefined');
@@ -30,7 +35,7 @@ export default class Alert {
         audio.play();
     }
 
-    playTest(type) {
+    #playTest(type) {
         if (!this.#testSounds[type]) {
             console.error('Notification type is null or undefined');
         }

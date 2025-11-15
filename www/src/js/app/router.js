@@ -1,7 +1,9 @@
 export default class Router {
     constructor(){
-        document.getElementById(`user-setting-tab-exit`).addEventListener('click', () => this.routeTo('app'));
-        document.getElementById(`server-setting-tab-exit`).addEventListener('click', () => this.routeTo('app'));
+        document.getElementById('user-setting-open').addEventListener('click', () => this.routeTo('user-settings'));
+        document.getElementById('user-setting-close').addEventListener('click', () => this.routeTo('app'));
+        document.getElementById('server-setting-open').addEventListener('click', () => this.routeTo('server-settings'));
+        document.getElementById('server-setting-close').addEventListener('click', () => this.routeTo('app'));
     }
 
     routeTo(destination) {
@@ -10,14 +12,14 @@ export default class Router {
         }
 
         switch (destination) {
-            case "setting":
-                this.#pushState('setting');
-                document.getElementById('route-setting').classList.remove('hidden');
+            case "user-settings":
+                this.#pushState('user-settings');
+                document.getElementById('route-user-settings').classList.remove('hidden');
                 break;
 
-            case "config":
-                this.#pushState('config');
-                document.getElementById('route-config').classList.remove('hidden');
+            case "server-settings":
+                this.#pushState('server-settings');
+                document.getElementById('route-server-settings').classList.remove('hidden');
                 break;
 
             case "app":

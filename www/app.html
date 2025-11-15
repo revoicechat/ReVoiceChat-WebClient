@@ -28,7 +28,7 @@
                     </div>
 
                     <div class="block-right">
-                        <button onclick="RVC.router.routeTo('config')"><revoice-icon-cog-6></revoice-icon-cog-6></button>
+                        <button id="server-setting-open"><revoice-icon-cog-6></revoice-icon-cog-6></button>
                     </div>
                 </div>
             </div>
@@ -52,7 +52,7 @@
                     </div>
                 </div>
                 <div class="block-right">
-                    <button onclick="RVC.router.routeTo('setting')"><revoice-icon-cog-6></revoice-icon-cog-6></button>
+                    <button id="user-setting-open"><revoice-icon-cog-6></revoice-icon-cog-6></button>
                 </div>
             </div>
         </div>
@@ -71,9 +71,7 @@
 
             <!-- Text Container -->
             <div class="room-container" id="text-container">
-                <div class="room-content scrollbar" id="text-content">
-                    <!-- JS -->
-                </div>
+                <div class="room-content scrollbar" id="text-content"></div>
 
                 <!-- Chat Control -->
                 <div class="room-control-container">
@@ -81,11 +79,11 @@
                     <div class="text-control">
                         <div class="text-control-file hidden" id="text-attachment-div">
                             <input type="file" id="text-attachment" multiple>
-                            <button class="emoji-btn" id="attachment-button" onclick="RVC.room.textController.removeAttachment()"><revoice-icon-trash></revoice-icon-trash></button>
+                            <button class="emoji-btn" id="attachment-button-remove"><revoice-icon-trash></revoice-icon-trash></button>
                         </div>
                         <div class="text-control-text">
-                            <textarea rows="1" id="text-input" oninput="RVC.room.textController.oninput(this)"></textarea>
-                            <button class="emoji-btn" id="attachment-button" onclick="RVC.room.textController.joinAttachment()"><revoice-icon-paper-clip></revoice-icon-paper-clip></button>
+                            <textarea rows="1" id="text-input"></textarea>
+                            <button class="emoji-btn" id="attachment-button-add"><revoice-icon-paper-clip></revoice-icon-paper-clip></button>
                             <button class="emoji-btn" id="emoji-picker-button"><revoice-icon-emoji></revoice-icon-emoji></button>
                         </div>
                     </div>
@@ -94,9 +92,7 @@
 
             <!-- Voice Container -->
             <div class="room-container hidden" id="voice-container">
-                <div class="room-content scrollbar" id="voice-content">
-                    <!-- JS -->
-                </div>
+                <div class="room-content scrollbar" id="voice-content"></div>
 
                 <!-- Voice Control -->
                 <div class="room-control-container">
@@ -104,12 +100,12 @@
                         <button id="voice-join-action" class="connect join">[JOIN]</button>
                     </div>
                     <div class="voice-control">
-                        <button id="voice-self-mute" onclick="RVC.room.voiceController.controlSelfMute()" title="Mute" class="mute">
+                        <button id="voice-self-mute" title="Mute" class="mute">
                             <revoice-icon-microphone></revoice-icon-microphone>
                         </button>
                     </div>
                     <div class="voice-control">
-                        <button id="voice-self-deaf" onclick="RVC.room.voiceController.controlSelfDeaf()" title="Mute" class="mute">
+                        <button id="voice-self-deaf" title="Mute" class="mute">
                             <revoice-icon-speaker></revoice-icon-speaker>
                         </button>
                     </div>
@@ -137,7 +133,7 @@
     </div>
 
     <!-- Config Containter -->
-    <div class="main config hidden" id="route-config">
+    <div class="main config hidden" id="route-server-settings">
         <div class="config-container-left">
             <div class="config-left">
                 <div class="category">
@@ -176,7 +172,7 @@
 
                 <!-- Exit -->
                 <div class="category">
-                    <button class="sub-category" id="server-setting-tab-exit">
+                    <button class="sub-category" id="server-setting-close">
                         <revoice-icon-circle-x></revoice-icon-circle-x> Exit
                     </button>
                 </div>
@@ -253,7 +249,7 @@
     </div>
 
     <!-- User Settings Container -->
-    <div class="main config hidden" id="route-setting">
+    <div class="main config hidden" id="route-user-settings">
         <div class="config-container-left">
             <div class="config-left">
                 <div class="category">
@@ -300,7 +296,7 @@
 
                 <!-- Exit -->
                 <div class="category">
-                    <button class="sub-category" id="user-setting-tab-exit">
+                    <button class="sub-category" id="user-setting-close">
                         <revoice-icon-circle-x></revoice-icon-circle-x>
                         Exit
                     </button>
@@ -420,7 +416,7 @@
                         <input type="range" id="output-voice-volume" min="0" max="1" step="0.01">
                     </form>
                     <div class="config-buttons">
-                        <button class="config-button" type="button" onclick="RVC.alert.playTest('voiceChat')">Try out !</button>
+                        <button class="config-button" type="button" id="audio-output-try-voicechat">Try out !</button>
                     </div>
 
                     <h2>Notification</h2>
@@ -429,7 +425,7 @@
                         <input type="range" id="output-notification-volume" min="0" max="1" step="0.01">
                     </form>
                     <div class="config-buttons">
-                        <button class="config-button" type="button" onclick="RVC.alert.playTest('notification')">Try out !</button>
+                        <button class="config-button" type="button" id="audio-output-try-notification">Try out !</button>
                     </div>
                 </div>
             </div>
