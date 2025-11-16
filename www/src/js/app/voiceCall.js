@@ -1,4 +1,4 @@
-import { PacketEncoder, PacketDecoder } from "./packet.js";
+import { PacketDecoder, PacketSender } from "./packet.js";
 
 export default class VoiceCall {
     "use strict";
@@ -60,8 +60,8 @@ export default class VoiceCall {
     #settings = {};
     #gateState = false;
     #outputGain;
-    #packetEncoder = new PacketEncoder();
     #packetDecoder = new PacketDecoder();
+    #packetSender;
 
     constructor(user) {
         if (!user) {
@@ -96,6 +96,9 @@ export default class VoiceCall {
         // Create WebSocket
         this.#socket = new WebSocket(`${voiceUrl}/${roomId}`, ["Bearer." + token]);
         this.#socket.binaryType = "arraybuffer";
+
+        // Setup PacketSender
+        this.#packetSender = new PacketSender(this.#socket);
 
         // Setup encoder and transmitter
         await this.#encodeAudio();
@@ -299,7 +302,17 @@ export default class VoiceCall {
 
         // Setup Encoder
         this.#encoder = new AudioEncoder({
-            output: (chunk) => { this.#sendPacket(chunk, this.#audioTimestamp, this.#socket, this.#packetEncoder.encode, this.#user.id, this.#gateState); },
+            output: (chunk) => {
+                this.#packetSender.send(
+                    {
+                        timestamp: Date.now(),
+                        audioTimestamp: this.#audioTimestamp / 1000, // audioTimestamp is in µs but sending ms is enough
+                        user: this.#user.id,
+                        gateState: this.#gateState,
+                    },
+                    chunk
+                );
+            },
             error: (error) => { throw new Error(`Encoder setup failed:\n${error.name}\nCurrent codec :${this.#codecSettings.codec}`) },
         });
 
@@ -429,27 +442,6 @@ export default class VoiceCall {
             if (currentUser.decoder !== null && currentUser.decoder.state === "configured") {
                 currentUser.decoder.decode(audioChunk);
             }
-        }
-    }
-
-    #sendPacket(audioChunk, audioTimestamp, socket, packetEncode, user, gateState) {
-        // Get a copy of audioChunk and audioTimestamp
-        const audioChunkCopy = new ArrayBuffer(audioChunk.byteLength);
-        audioChunk.copyTo(audioChunkCopy);
-
-        // Create Header to send with audioChunk
-        const header = JSON.stringify({
-            timestamp: Date.now(),
-            audioTimestamp: audioTimestamp / 1000, // audioTimestamp is in µs but sending ms is enough
-            user: user,
-            gateState: gateState,
-        })
-
-        const packet = packetEncode(header, audioChunkCopy);
-
-        // Finally send it ! (but socket need to be open)
-        if (socket.readyState === WebSocket.OPEN) {
-            socket.send(packet);
         }
     }
 

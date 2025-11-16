@@ -30,3 +30,20 @@ export class PacketDecoder {
         return { header: JSON.parse(headerJSON), data: data.slice(headerEnd) };
     }
 }
+
+export class PacketSender {
+    #socket;
+    #packetEncoder = new PacketEncoder();
+
+    constructor(socket) {
+        this.#socket = socket
+    }
+
+    send(header, data) {
+        if (this.#socket.readyState === WebSocket.OPEN) {
+            const dataCopy = new ArrayBuffer(data.byteLength);
+            data.copyTo(dataCopy);
+            this.#socket.send(this.#packetEncoder.encode(JSON.stringify(header), dataCopy));
+        }
+    }
+}
