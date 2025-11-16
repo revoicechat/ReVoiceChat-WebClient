@@ -21,7 +21,7 @@ export default class RoomVoiceController {
         this.#mediaUrl = mediaUrl;
     }
 
-    attachEvents(){
+    attachEvents() {
         document.getElementById("voice-self-mute").addEventListener('click', () => this.#controlSelfMute());
         document.getElementById("voice-self-deaf").addEventListener('click', () => this.#controlSelfDeaf());
     }
@@ -80,7 +80,7 @@ export default class RoomVoiceController {
         voiceContent.appendChild(this.#createUserElement(userData));
 
         // User joining this is NOT self and current user is connected to voice room
-        if (userData.id !== this.#user.id && this.#voiceCall !== null && this.#voiceCall.getState() === VoiceCall.OPEN) {
+        if (userData.id !== this.#user.id && this.#voiceCall && this.#voiceCall.getState() === VoiceCall.OPEN) {
             this.#voiceCall.addUser(userData.id);
             this.#updateUserControls(userData.id);
             this.#alert.play('voiceUserJoin');
@@ -96,10 +96,13 @@ export default class RoomVoiceController {
         const userId = data.userId;
 
         // Remove user from UI
-        document.getElementById(`voice-${userId}`).remove();
+        const userElement = document.getElementById(`voice-${userId}`)
+        if (userElement) {
+            userElement.remove();
+        }
 
         // User leaving is NOT self
-        if (userId !== this.#user.id && this.#voiceCall !== null && this.#voiceCall.state === VoiceCall.OPEN) {
+        if (userId !== this.#user.id && this.#voiceCall && this.#voiceCall.getState() === VoiceCall.OPEN) {
             this.#voiceCall.removeUser(userId);
             this.#alert.play('voiceUserLeft');
         }
