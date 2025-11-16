@@ -1,3 +1,5 @@
+import { PacketEncoder, PacketDecoder } from "./packet.js";
+
 export default class VoiceCall {
     "use strict";
 
@@ -58,6 +60,8 @@ export default class VoiceCall {
     #settings = {};
     #gateState = false;
     #outputGain;
+    #packetEncoder = new PacketEncoder();
+    #packetDecoder = new PacketDecoder();
 
     constructor(user) {
         if (!user) {
@@ -97,7 +101,7 @@ export default class VoiceCall {
         await this.#encodeAudio();
 
         // Setup receiver and decoder
-        this.#socket.onmessage = (message) => { this.#receivePacket(message, this.#packetDecode) };
+        this.#socket.onmessage = (message) => { this.#receivePacket(message, this.#packetDecoder.decode) };
 
         // Setup main output gain
         this.#outputGain = this.#audioContext.createGain();
@@ -287,39 +291,6 @@ export default class VoiceCall {
         }
     }
 
-    #packetEncode(header, data) {
-        const headerBytes = new TextEncoder().encode(header);
-
-        // Calculate length of packet
-        const packetLength = 2 + headerBytes.length + data.byteLength;
-
-        // Create packet of that length
-        const packet = new Uint8Array(packetLength);
-
-        // Fill packet
-        const view = new DataView(packet.buffer);
-        view.setUint16(0, headerBytes.length);
-        packet.set(headerBytes, 2);
-        packet.set(new Uint8Array(data), 2 + headerBytes.length);
-
-        return packet;
-    }
-
-    #packetDecode(packet) {
-        const data = packet.data;
-        const view = new DataView(data);
-
-        const headerEnd = 2 + view.getUint16(0);
-        const headerBytes = new Uint8Array(data.slice(2, headerEnd));
-        const headerJSON = new TextDecoder().decode(headerBytes);
-
-        const result = { header: null, data: null };
-        result.header = JSON.parse(headerJSON);
-        result.data = data.slice(headerEnd);
-
-        return result;
-    }
-
     async #encodeAudio() {
         const supported = await AudioEncoder.isConfigSupported(this.#codecSettings);
         if (!supported.supported) {
@@ -328,7 +299,7 @@ export default class VoiceCall {
 
         // Setup Encoder
         this.#encoder = new AudioEncoder({
-            output: (chunk) => { this.#sendPacket(chunk, this.#audioTimestamp, this.#socket, this.#packetEncode, this.#user.id, this.#gateState); },
+            output: (chunk) => { this.#sendPacket(chunk, this.#audioTimestamp, this.#socket, this.#packetEncoder.encode, this.#user.id, this.#gateState); },
             error: (error) => { throw new Error(`Encoder setup failed:\n${error.name}\nCurrent codec :${this.#codecSettings.codec}`) },
         });
 
