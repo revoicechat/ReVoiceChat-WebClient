@@ -119,8 +119,8 @@ export default class VoiceCall {
 
     async close() {
         // Close WebSocket
-        if (this.#socket && this.#socket.readyState != WebSocket.OPEN) {
-            this.#socket.close();
+        if (this.#socket && (this.#socket.readyState === WebSocket.OPEN || this.#socket.readyState === WebSocket.CONNECTING)) {
+            await this.#socket.close();
             this.#socket = null;
         }
 
