@@ -64,6 +64,7 @@ export default class ReVoiceChat {
             (data) => this.#handleSSEMessage(data),
             () => this.#handleSSEError()
         )
+        this.sseHandlers = new SSEHandlers(this);
 
         // Save state before page unload
         addEventListener("beforeunload", () => {
@@ -98,58 +99,8 @@ export default class ReVoiceChat {
     #handleSSEMessage(data) {
         try {
             const event = JSON.parse(data);
-            const type = event.type;
-            const eventData = event.data;
-
             console.debug("SSE : ", event);
-
-            switch (type) {
-                case "PING":
-                    return;
-
-                case "SERVER_UPDATE":
-                    this.server.update(eventData);
-                    return;
-
-                case "ROOM_UPDATE":
-                    this.room.update(eventData, this.server.id);
-                    return;
-
-                case "ROOM_MESSAGE":
-                    this.room.textController.message(eventData);
-                    return;
-
-                case "DIRECT_MESSAGE":
-                    return;
-
-                case "USER_STATUS_UPDATE":
-                    this.user.setStatus(eventData.id, eventData.status);
-                    return;
-
-                case "USER_UPDATE":
-                    this.user.update(eventData);
-                    return;
-
-                case "VOICE_JOINING":
-                    this.room.voiceController.userJoining(eventData);
-                    return;
-
-                case "VOICE_LEAVING":
-                    this.room.voiceController.userLeaving(eventData);
-                    return;
-
-                case "EMOTE_UPDATE":
-                    reloadEmojis();
-                    return;
-
-                case "RISK_MANAGEMENT":
-                    this.server.settings.riskModify();
-                    return;
-
-                default:
-                    console.error("SSE type unknowned: ", type);
-                    return;
-            }
+            this.sseHandlers.handle(event.type, event.data);
         } catch (error) {
             console.error('Error parsing SSE message:', error, data);
         }
@@ -161,6 +112,37 @@ export default class ReVoiceChat {
             this.openSSE();
             this.room.textController.getAllFrom(this.room.id);
         }, 10000);
+    }
+}
+
+class SSEHandlers {
+    constructor(context) {
+        this.context = context;
+        this.server = context.server;
+        this.room = context.room;
+        this.user = context.user;
+
+        this.handlers = {
+            'PING':               ()     => {},
+            'SERVER_UPDATE':      (data) => this.context.server.update(data),
+            'ROOM_UPDATE':        (data) => this.context.room.update(data, this.server.id),
+            'ROOM_MESSAGE':       (data) => this.context.room.textController.message(data),
+            'DIRECT_MESSAGE':     ()     => {},
+            'USER_STATUS_UPDATE': (data) => this.context.user.setStatus(data.id, data.status),
+            'USER_UPDATE':        (data) => this.context.user.update(data),
+            'VOICE_JOINING':      (data) => this.context.room.voiceController.userJoining(data),
+            'VOICE_LEAVING':      (data) => this.context.room.voiceController.userLeaving(data),
+            'EMOTE_UPDATE':       ()     => reloadEmojis(),
+            'RISK_MANAGEMENT':    ()     => this.context.server.settings.riskModify(),
+        };
+    }
+
+    handle(type, data) {
+        const handler = this.handlers[type];
+        if (handler) {
+            handler(data);
+        }
+        console.error("SSE type unknown: ", type);
     }
 }
 
