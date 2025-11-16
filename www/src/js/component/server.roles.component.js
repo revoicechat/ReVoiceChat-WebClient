@@ -352,7 +352,7 @@ class ServerRolesWebComponent extends HTMLElement {
         // Context menu
         const DIV_CM = document.createElement('div');
         DIV_CM.className = "context-menu";
-        DIV_CM.appendChild(this.#createContextMenuButton("icon", "<revoice-icon-circle-x></revoice-icon-circle-x>", () => this.#updateRoleOfMember(roleId, data.id, 'DELETE')));
+        DIV_CM.appendChild(this.#createContextMenuButton("icon", "<revoice-icon-circle-x></revoice-icon-circle-x>", () => this.#updateRoleOfMember(roleId, [data.id], 'DELETE')));
         DIV.appendChild(DIV_CM);
 
         return DIV;
