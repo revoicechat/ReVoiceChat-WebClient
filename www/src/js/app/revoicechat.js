@@ -124,16 +124,16 @@ class SSEHandlers {
 
         this.handlers = {
             'PING': () => { },
-            'SERVER_UPDATE': (data) => this.context.server.update(data),
-            'ROOM_UPDATE': (data) => this.context.room.update(data, this.server.id),
-            'ROOM_MESSAGE': (data) => this.context.room.textController.message(data),
+            'SERVER_UPDATE': (data) => this.server.update(data),
+            'ROOM_UPDATE': (data) => this.room.update(data, this.server.id),
+            'ROOM_MESSAGE': (data) => this.room.textController.message(data),
             'DIRECT_MESSAGE': () => { },
-            'USER_STATUS_UPDATE': (data) => this.context.user.setStatus(data),
-            'USER_UPDATE': (data) => this.context.user.update(data),
-            'VOICE_JOINING': (data) => this.context.room.voiceController.userJoining(data),
-            'VOICE_LEAVING': (data) => this.context.room.voiceController.userLeaving(data),
+            'USER_STATUS_UPDATE': (data) => this.user.setStatus(data),
+            'USER_UPDATE': (data) => this.user.update(data),
+            'VOICE_JOINING': (data) => this.room.voiceController.userJoining(data),
+            'VOICE_LEAVING': (data) => this.room.voiceController.userLeaving(data),
             'EMOTE_UPDATE': () => reloadEmojis(),
-            'RISK_MANAGEMENT': () => this.context.server.settings.riskModify(),
+            'RISK_MANAGEMENT': () => this.server.settings.riskModify(),
         };
     }
 
