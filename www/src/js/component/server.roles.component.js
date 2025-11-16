@@ -409,7 +409,7 @@ class ServerRolesWebComponent extends HTMLElement {
             confirmButtonText: "Add",
             allowOutsideClick: false,
             html: `
-            < form class='popup' >
+            <form class='popup'>
                 <div class="server-structure-form-group">
                     <label for="roleName">Role Name</label>
                     <input type="text" id="roleName" placeholder="Enter role name">
