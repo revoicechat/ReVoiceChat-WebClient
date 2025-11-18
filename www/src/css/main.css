@@ -1411,16 +1411,12 @@ input[type=file]::file-selector-button {
 
 /* Mobile responsive */
 @media (max-width: 768px) {
-    :root {
-        --vh: 1vh;
-    }
-
     .sidebar,
     .sidebar-right {
         position: fixed;
         left: -100%;
         top: 0;
-        height: calc(var(--vh, 1vh) * 100);
+        height: 100dvh;
         z-index: 100;
         transition: left 0.3s;
         width: 15rem;
@@ -1458,19 +1454,17 @@ input[type=file]::file-selector-button {
     }
 
     body {
-        height: calc(var(--vh, 1vh) * 100);
+        height: 100dvh;
         overflow: hidden;
-        position: fixed;
-        width: 100%;
     }
 
     .main {
-        height: calc(var(--vh, 1vh) * 100);
-        max-height: calc(var(--vh, 1vh) * 100);
+        height: 100dvh;
+        max-height: 100dvh;
     }
 
     .room {
-        height: calc(var(--vh, 1vh) * 100);
+        height: 100dvh;
         display: flex;
         flex-direction: column;
     }
@@ -1496,16 +1490,26 @@ input[type=file]::file-selector-button {
         flex-shrink: 0;
         display: flex;
         padding: 0.5rem;
-        min-height: auto;
+        min-height: 4rem;
         border-top-width: 1px;
     }
 
     .text-control {
         width: 100%;
-        padding-bottom: 0;
+        padding-bottom: 0.5rem;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .text-control textarea,
+    .text-control input {
+        width: 100%;
+        padding: 0.5rem 1rem;
+        min-height: 2rem;
     }
 
     .text-control textarea {
+        resize: vertical;
         max-height: 8rem;
     }
 }
