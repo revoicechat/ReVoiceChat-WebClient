@@ -1416,7 +1416,7 @@ input[type=file]::file-selector-button {
         position: fixed;
         left: -100%;
         top: 0;
-        height: 100vh;
+        height: 100dvh;
         z-index: 100;
         transition: left 0.3s;
         width: 15rem;
@@ -1450,6 +1450,16 @@ input[type=file]::file-selector-button {
     .login-box {
         width: -webkit-fill-available;
         display: flex
+    }
+
+    body {
+        height: 100dvh;
+        overflow: hidden;
+    }
+
+    .main, .room-container {
+        height: 100dvh;
+        max-height: 100dvh;
     }
 }
 
