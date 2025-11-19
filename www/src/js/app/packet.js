@@ -14,18 +14,12 @@ export class PacketEncoder {
         packet.set(headerBytes, 2);
         packet.set(new Uint8Array(data), 2 + headerBytes.length);
 
-        // Debug
-        //console.debug(`Packet encode, size : ${packet.byteLength}`);
-
         return packet;
     }
 }
 
 export class PacketDecoder {
     decode(packet) {
-        // Debug
-        //console.debug(`Packet encode, size : ${packet.byteLength}`);
-
         const view = new DataView(packet);
 
         const headerEnd = 2 + view.getUint16(0);

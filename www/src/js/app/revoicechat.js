@@ -37,6 +37,7 @@ export default class ReVoiceChat {
         this.coreUrl = `${core.protocol}//${core.host}`;
         this.mediaUrl = `${core.protocol}//${core.host}/media`;
         this.voiceUrl = `${core.protocol}//${core.host}/api/voice`;
+        this.streamUrl = `${core.protocol}//${core.host}/api/stream`;
 
         // Store token
         const storedToken = getCookie("jwtToken");
@@ -51,7 +52,7 @@ export default class ReVoiceChat {
         this.fetcher = new Fetcher(this.#token, this.coreUrl, this.mediaUrl);
         this.user = new User(this.fetcher, this.mediaUrl, this.coreUrl);
         this.alert = new Alert(this.user.settings);
-        this.room = new Room(this.fetcher, this.alert, this.user, this.voiceUrl, this.#token, this.mediaUrl);
+        this.room = new Room(this.fetcher, this.alert, this.user, this.voiceUrl, this.#token, this.mediaUrl, this.streamUrl);
         this.server = new Server(this.fetcher, this.mediaUrl, this.room);
         this.state = new State(this);
 
