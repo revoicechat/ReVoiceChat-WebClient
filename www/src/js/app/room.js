@@ -1,5 +1,6 @@
-import RoomTextController from './roomTextController.js';
-import RoomVoiceController  from './roomVoiceController.js';
+import TextController from './textController.js';
+import VoiceController  from './voiceController.js';
+import StreamController from './streamController.js';
 
 export default class Room {
     #fetcher;
@@ -9,10 +10,11 @@ export default class Room {
     name;
     type;
 
-    constructor(fetcher, alert, user, voiceURL, token, mediaUrl) {
+    constructor(fetcher, alert, user, voiceUrl, token, mediaUrl, streamUrl) {
         this.#fetcher = fetcher;
-        this.textController = new RoomTextController(fetcher, alert, user, this);
-        this.voiceController = new RoomVoiceController(fetcher, voiceURL, token, user, alert, this, mediaUrl);
+        this.textController = new TextController(fetcher, alert, user, this);
+        this.voiceController = new VoiceController(fetcher, alert, user, this, token, voiceUrl, mediaUrl);
+        this.streamController = new StreamController(fetcher, alert, user, this, token, streamUrl);
     }
 
     async load(serverId) {

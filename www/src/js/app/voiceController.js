@@ -1,6 +1,6 @@
 import VoiceCall from "./voiceCall.js";
 
-export default class RoomVoiceController {
+export default class VoiceController {
     #alert;
     #fetcher;
     #voiceURL;
@@ -11,7 +11,7 @@ export default class RoomVoiceController {
     #user;
     #room;
 
-    constructor(fetcher, voiceURL, token, user, alert, room, mediaUrl) {
+    constructor(fetcher, alert, user, room, token, voiceURL, mediaUrl) {
         this.#fetcher = fetcher;
         this.#voiceURL = voiceURL;
         this.#token = token;

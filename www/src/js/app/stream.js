@@ -1,6 +1,6 @@
 import { PacketDecoder, PacketSender } from "./packet.js";
 
-export default class VideoStream {
+export default class Stream {
     static CLOSE = 0;
     static CONNECTING = 1;
     static OPEN = 2;
@@ -27,9 +27,9 @@ export default class VideoStream {
         this.#user = user;
     }
 
-    async start(videoUrl, roomId, token) {
-        if (!videoUrl) {
-            throw new Error('videoUrl is null or undefined');
+    async start(streamUrl, roomId, token) {
+        if (!streamUrl) {
+            throw new Error('streamUrl is null or undefined');
         }
 
         if (!roomId) {
@@ -40,10 +40,10 @@ export default class VideoStream {
             throw new Error('token is null or undefined');
         }
 
-        this.#state = VideoStream.CONNECTING;
+        this.#state = Stream.CONNECTING;
 
         // Create WebSocket
-        this.#socket = new WebSocket(`${videoUrl}/${roomId}`, ["Bearer." + token]);
+        this.#socket = new WebSocket(`${streamUrl}/${roomId}`, ["Bearer." + token]);
         this.#socket.binaryType = "arraybuffer";
 
         // Setup packet sender
@@ -54,9 +54,9 @@ export default class VideoStream {
 
         // Socket states
         this.#socket.onclose = async () => { await this.close(); };
-        this.#socket.onerror = async (e) => { await this.close(); console.error('VideoStream : WebSocket error:', e) };
+        this.#socket.onerror = async (e) => { await this.close(); console.error('Stream : WebSocket error:', e) };
 
-        this.#state = VideoStream.OPEN;
+        this.#state = Stream.OPEN;
     }
 
     stop(){
