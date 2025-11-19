@@ -196,7 +196,7 @@ export default class UserSettingsController {
         if (settingUserPictureNewPath.value && this.#newProfilPictureFile) {
             const formData = new FormData();
             formData.append("file", this.#newProfilPictureFile);
-            await this.#fetcher.fetchMedia(`/profiles/${this.#user.id}`, formData);
+            await this.#fetcher.fetchMedia(`/profiles/${this.#user.id}`, 'POST', formData);
             this.#newProfilPictureFile = null
             settingUserPictureNewPath.value = null
         }
