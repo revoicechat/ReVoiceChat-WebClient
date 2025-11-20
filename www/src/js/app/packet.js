@@ -46,3 +46,22 @@ export class PacketSender {
         }
     }
 }
+
+export class PacketReceiver {
+    #socket;
+    #packetDecoder = new PacketDecoder();
+
+    constructor(socket, callback) {
+        this.#socket = socket;
+        this.#socket.onmessage = (message) => {this.#receive(message.data, callback)}
+    }
+
+    #receive(packet, callback) {
+        if (this.#socket.readyState === WebSocket.OPEN) {
+            const result = this.#packetDecoder.decode(packet);
+            const header = result.header;
+            const data = result.data;
+            callback(header, data);
+        }
+    }
+}
