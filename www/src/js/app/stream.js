@@ -196,9 +196,13 @@ export default class Stream {
 
                 this.#decoder = new VideoDecoder({
                     output: (frame) => {
-                        this.#canvas.width = frame.codedWidth;
-                        this.#canvas.height = frame.codedHeight;
-                        this.#context.drawImage(frame, 0, 0);
+                        const videoRemote = document.getElementById('videoRemote');
+                        const ratio =  frame.codedHeight / frame.codedWidth;
+                        const width = videoRemote.clientWidth;
+                        const height = width * ratio;
+                        this.#canvas.width = width;
+                        this.#canvas.height = height;
+                        this.#context.drawImage(frame, 0, 0, width, height);
                         frame.close();
                     },
                     error: (error) => { throw new Error(`VideoDecoder error:\n${error.name}\nCurrent codec :${this.#codecSettings.codec}`) }
@@ -231,7 +235,7 @@ export default class Stream {
         }
     }
 
-    #decodeVideo(header, data){
+    #decodeVideo(header, data) {
         const chunk = new EncodedVideoChunk({
             type: "key",
             timestamp: header.timestamp,

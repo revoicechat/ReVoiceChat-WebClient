@@ -11,7 +11,7 @@ export default class VoiceController {
     #activeRoom;
     #user;
     #room;
-    #streamController;
+    streamController;
 
     constructor(fetcher, alert, user, room, token, voiceURL, mediaUrl, streamUrl) {
         this.#fetcher = fetcher;
