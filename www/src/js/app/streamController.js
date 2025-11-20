@@ -84,5 +84,7 @@ export default class StreamController {
     async stopAll() {
         this.#stopStream("webcam");
         this.#stopStream("display");
+        this.#displayEnabled = false;
+        this.#webcamEnabled = false;
     }
 }
