@@ -266,17 +266,17 @@ body {
     background-color: var(--sec-bg-color);
 }
 
-.voice-control .mute:hover,
-.voice-profile .mute:hover {
+.voice-control .voice-button:hover,
+.voice-profile .voice-button:hover {
     background-color: var(--sec-button-hover-color);
 }
 
-.voice-control .mute.active,
-.voice-profile .mute.active {
+.voice-control .voice-button.active,
+.voice-profile .voice-button.red {
     color: #ff0000;
 }
 
-.voice-control .mute.gate-active{
+.voice-control .voice-button.green{
     color: #22c55e;
 }
 

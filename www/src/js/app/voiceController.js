@@ -150,10 +150,10 @@ export default class VoiceController {
 
     #setSelfGlow(enabled) {
         if (enabled) {
-            document.getElementById(`voice-self-mute`).classList.add('gate-active');
+            document.getElementById(`voice-self-mute`).classList.add('green');
         }
         else {
-            document.getElementById(`voice-self-mute`).classList.remove('gate-active');
+            document.getElementById(`voice-self-mute`).classList.remove('green');
         }
     }
 
@@ -347,7 +347,7 @@ export default class VoiceController {
         const muteButton = document.getElementById("voice-self-mute");
         const deafButton = document.getElementById("voice-self-deaf");
         const webcamButton = document.getElementById("stream-webcam");
-        const screenButton = document.getElementById("stream-screen");
+        const displayButton = document.getElementById("stream-display");
         const instanceState = this.#voiceCall ? this.#voiceCall.getState() : VoiceCall.CLOSE;
 
         switch (instanceState) {
@@ -371,7 +371,7 @@ export default class VoiceController {
                 muteButton.classList.add('hidden');
                 deafButton.classList.add('hidden');
                 webcamButton.classList.add('hidden');
-                screenButton.classList.add('hidden');
+                displayButton.classList.add('hidden');
                 break;
 
             case VoiceCall.OPEN:
@@ -384,7 +384,7 @@ export default class VoiceController {
                 muteButton.classList.remove('hidden');
                 deafButton.classList.remove('hidden');
                 webcamButton.classList.remove('hidden');
-                screenButton.classList.remove('hidden');
+                displayButton.classList.remove('hidden');
                 break;
         }
     }
