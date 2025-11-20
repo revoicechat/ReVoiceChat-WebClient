@@ -140,7 +140,7 @@ export default class Stream {
             // Fallback
             this.#encoderInterval = setInterval(async () => {
                 const frame = new VideoFrame(this.#video, { timestamp: performance.now() * 1000 });;
-                this.#checkEncoderResolution(frame);
+                this.#reconfigureEncoderResolution(frame);
                 this.#encoder.encode(frame, { keyFrame: true });
                 frame.close();
             }, 1000 / this.#codecConfig.framerate)
@@ -153,7 +153,7 @@ export default class Stream {
         this.#state = Stream.OPEN;
     }
 
-    #checkEncoderResolution(frame) {
+    #reconfigureEncoderResolution(frame) {
         let changed = false;
 
         if (frame.codedHeight && frame.codedHeight != this.#encoderConfig.height && frame.codedHeight <= this.#codecConfig.height) {
