@@ -708,7 +708,7 @@ svg {
 }
 
 .voice-profile .gate.active .icon {
-    border-color: rgb(37, 211, 102);
+    border-color: #22c55e;
     border-width: 3px;
 }
 

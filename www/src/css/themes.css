@@ -276,6 +276,10 @@ body {
     color: #ff0000;
 }
 
+.voice-control .mute.gate-active{
+    color: #22c55e;
+}
+
 .config-button.disabled {
     background-color: #ff0000;
 }

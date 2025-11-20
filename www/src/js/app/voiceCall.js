@@ -62,6 +62,8 @@ export default class VoiceCall {
     #outputGain;
     #packetSender;
     #packetReceiver;
+    #setUserGlow;
+    #setSelfGlow;
 
     constructor(user) {
         if (!user) {
@@ -78,7 +80,7 @@ export default class VoiceCall {
         }
     }
 
-    async open(voiceUrl, roomId, token) {
+    async open(voiceUrl, roomId, token, setUserGlow, setSelfGlow) {
         if (!voiceUrl) {
             throw new Error('VoiceUrl is null or undefined');
         }
@@ -92,6 +94,9 @@ export default class VoiceCall {
         }
 
         this.#state = VoiceCall.CONNECTING;
+
+        this.#setUserGlow = setUserGlow;
+        this.#setSelfGlow = setSelfGlow;
 
         // Create WebSocket
         this.#socket = new WebSocket(`${voiceUrl}/${roomId}`, ["Bearer." + token]);
@@ -118,27 +123,12 @@ export default class VoiceCall {
     }
 
     async close() {
+        this.#state = VoiceCall.CLOSE;
+
         // Close WebSocket
         if (this.#socket && (this.#socket.readyState === WebSocket.OPEN || this.#socket.readyState === WebSocket.CONNECTING)) {
             await this.#socket.close();
             this.#socket = null;
-        }
-
-        // For all users
-        for (const [, user] of Object.entries(this.#users)) {
-            // Flush and close all decoders
-            if (user?.decoder && user.decoder.state === 'configured') {
-                try {
-                    await user.decoder.flush();
-                    await user.decoder.close();
-                    user.decoder = null;
-                }
-                catch (error) {
-                    console.error(error);
-                }
-            }
-            // Remove gate active
-            document.getElementById(user.gateHtmlId).classList.remove('active');
         }
 
         // Close self encoder
@@ -153,7 +143,24 @@ export default class VoiceCall {
             this.#audioContext = null;
         }
 
-        this.#state = VoiceCall.CLOSE;
+        // For all users
+        for (const [userId, user] of Object.entries(this.#users)) {
+            // Flush and close all decoders
+            if (user?.decoder && user.decoder.state === 'configured') {
+                try {
+                    await user.decoder.flush();
+                    await user.decoder.close();
+                    user.decoder = null;
+                }
+                catch (error) {
+                    console.error(error);
+                }
+            }
+            // Remove glow
+            this.#setUserGlow(userId, false);
+        }
+
+        this.#setSelfGlow(false);
     }
 
     getState() {
@@ -336,7 +343,13 @@ export default class VoiceCall {
         });
 
         this.#gateNode.port.onmessage = (event) => {
-            this.#gateState = event.data.open;
+            const opened = event.data.open
+            this.#gateState = opened;
+
+            if (!this.#settings.self.muted) {
+                this.#setUserGlow(this.#user.id, opened);
+                this.#setSelfGlow(opened);
+            }
         }
 
         // Connect gain to gate
@@ -426,15 +439,7 @@ export default class VoiceCall {
             }
 
             // User gate open/close
-            const userGateHtml = document.getElementById(currentUser.gateHtmlId);
-            if (userGateHtml) {
-                if (header.gateState) {
-                    userGateHtml.classList.add('active');
-                }
-                else {
-                    userGateHtml.classList.remove('active');
-                }
-            }
+            this.#setUserGlow(header.user, header.gateState);
 
             // Decode and read audio
             const audioChunk = new EncodedAudioChunk({
@@ -454,9 +459,7 @@ export default class VoiceCall {
     async #createUserDecoder(userId) {
         const isSupported = await AudioDecoder.isConfigSupported(this.#codecSettings);
         if (isSupported.supported) {
-            this.#users[userId] = { decoder: null, playhead: 0, muted: false, gainNode: null, source: null, gateHtml: null };
-
-            this.#users[userId].gateHtmlId = `voice-gate-${userId}`;
+            this.#users[userId] = { decoder: null, playhead: 0, muted: false, gainNode: null, source: null };
 
             if (!this.#settings.users[userId]) {
                 this.#settings.users[userId] = { muted: false, volume: 1 };

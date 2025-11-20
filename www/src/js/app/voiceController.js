@@ -36,7 +36,7 @@ export default class VoiceController {
 
         try {
             this.#voiceCall = new VoiceCall(this.#user);
-            await this.#voiceCall.open(this.#voiceURL, roomId, this.#token);
+            await this.#voiceCall.open(this.#voiceURL, roomId, this.#token, this.#setUserGlow, this.#setSelfGlow);
 
             // Update users in room
             await this.#updateJoinedUsers();
@@ -133,6 +133,27 @@ export default class VoiceController {
         // Room is currently active
         if (this.#activeRoom === this.#room.id) {
             this.#updateJoinedUsers();
+        }
+    }
+
+    #setUserGlow(userId, enabled) {
+        const gate = document.getElementById(`voice-gate-${userId}`);
+        if (gate) {
+            if (enabled) {
+                gate.classList.add('active');
+            }
+            else {
+                gate.classList.remove('active');
+            }
+        }
+    }
+
+    #setSelfGlow(enabled) {
+        if (enabled) {
+            document.getElementById(`voice-self-mute`).classList.add('gate-active');
+        }
+        else {
+            document.getElementById(`voice-self-mute`).classList.remove('gate-active');
         }
     }
 
@@ -407,7 +428,7 @@ export default class VoiceController {
         }
     }
 
-    isCallActive(){
+    isCallActive() {
         if (this.#activeRoom) {
             return true;
         }
