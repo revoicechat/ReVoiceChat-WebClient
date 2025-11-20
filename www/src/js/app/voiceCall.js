@@ -303,6 +303,11 @@ export default class VoiceCall {
         this.#audioContext = new AudioContext({ sampleRate: this.#codecSettings.sampleRate });
         await this.#audioContext.audioWorklet.addModule('src/js/app/voiceProcessor.js');
 
+        /**
+         * Audio routing 
+         * microphone -> gainNode -> gateNode -> compressorNode (optional) -> buffer -> encoder -> send
+         */
+
         // Init Mic capture
         const micSource = this.#audioContext.createMediaStreamSource(await navigator.mediaDevices.getUserMedia({ audio: true }));
 
