@@ -18,10 +18,10 @@ export default class Stream {
     #roomId;
     #codecSettings = {
         codec: "vp8",
-        framerate: 5,
+        framerate: 30,
         width: 1280,
         height: 720,
-        bitrate: 1_000_000
+        bitrate: 2_000_000
     }
     #displayMediaOptions = {
         video: {
@@ -122,21 +122,13 @@ export default class Stream {
             const processor = new MediaStreamTrackProcessor({ track });
             const reader = processor.readable.getReader();
 
-            async function encodeLoop(encoder) {
-                while (true) {
-                    const result = await reader.read();
-                    if (result.done) break;
-
-                    const frame = result.value;
-                    try {
-                        encoder.encode(frame, { keyFrame: true });
-                    } finally {
-                        frame.close(); // free memory
-                    }
-                }
-            }
-
-            encodeLoop(this.#encoder);
+            // Grab frame
+            setInterval(async () => {
+                const result = await reader.read();
+                const frame = result.value;
+                this.#encoder.encode(frame, { keyFrame: true });
+                frame.close();
+            }, 1000 / this.#codecSettings.framerate)
         }
         else {
             // Fallback
