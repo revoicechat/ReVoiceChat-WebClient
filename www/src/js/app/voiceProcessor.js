@@ -45,7 +45,7 @@ class NoiseGate extends AudioWorkletProcessor {
 
         // Bypass TO DO : Fix this
         for (let i = 0; i < input.length; i++) {
-            output[i] = input[i] * this.gain;
+            output[i] = input[i];
         }
         return true;
 
