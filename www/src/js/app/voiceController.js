@@ -390,6 +390,8 @@ export default class VoiceController {
                 deafButton.classList.remove('hidden');
                 webcamButton.classList.remove('hidden');
                 displayButton.classList.remove('hidden');
+                this.#controlSelfMute(false);
+                this.#controlSelfDeaf(false);
                 break;
         }
     }
