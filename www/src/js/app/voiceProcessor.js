@@ -21,10 +21,7 @@ class NoiseGate extends AudioWorkletProcessor {
     constructor() {
         super();
         this.gain = 0;
-        this.sampleRate = sampleRate;
-        this.smoothRms = 0;
         this.gateFloor = this.dBToLinear(-100);
-        this.smoothing = 0.9;
     }
 
     dBToLinear(db) {
@@ -40,26 +37,22 @@ class NoiseGate extends AudioWorkletProcessor {
     }
 
     process(inputs, outputs, parameters) {
-        const input = inputs[0][0]; // mono
-        const output = outputs[0][0]; // mono
+        const input = inputs[0][0];
+        const output = outputs[0][0];
 
-        // Bypass TO DO : Fix this
-        for (let i = 0; i < input.length; i++) {
-            output[i] = input[i];
+        if (!inputs || !inputs[0] || !inputs[0][0]) {
+            // MUST output silence or Firefox may break the graph
+            output.fill(0);
+            return true;
         }
-        return true;
-
+    
         const threshold = this.dBToLinear(parameters.threshold[0]);
-        const attackCoeff = Math.exp(-1 / (parameters.attack[0] * this.sampleRate / 1000));
-        const releaseCoeff = Math.exp(-1 / (parameters.release[0] * this.sampleRate / 1000));
+        const attackCoeff = Math.exp(-1 / (parameters.attack[0] * globalThis.sampleRate / 1000));
+        const releaseCoeff = Math.exp(-1 / (parameters.release[0] * globalThis.sampleRate / 1000));
         const rms = this.rmsLevel(input);
 
-        //this.smoothRms = (this.smoothRms ** 2) + (rms * (1 - this.smoothing));
-        const smoothFactor = 0.9;
-        this.rms = smoothFactor * this.rms + (1 - smoothFactor) * rms;
-
         // Gate logic
-        if (this.smoothRms > threshold) {
+        if (rms > threshold * 1.1) {
             // Gate open
             this.gain = 1 - (1 - this.gain) * attackCoeff;
         } else {
@@ -77,7 +70,7 @@ class NoiseGate extends AudioWorkletProcessor {
         }
 
         // Determine open/close state (with hysteresis to avoid flicker)
-        const openNow = this.smoothRms > threshold * 1.1; // 10% hysteresis
+        const openNow = rms > threshold * 1.1; // 10% hysteresis
         if (openNow !== this.isOpen) {
             this.isOpen = openNow;
             this.port.postMessage({ open: this.isOpen });
