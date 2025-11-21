@@ -46,13 +46,14 @@ export default class UserSettingsController {
             inputAdvanced: this.#inputAdvanced,
             theme: this.#theme,
         }
-        await this.#fetcher.fetchCore(`/settings/me`, 'PATCH', JSON.stringify(settings));
+        await this.#fetcher.fetchCore(`/settings/me`, 'PATCH', settings);
     }
 
     async load() {
         const result = await this.#fetcher.fetchCore(`/settings/me`, 'GET');
+        console.log(result);
         if (result !== null) {
-            const storedSettings = JSON.parse(result);
+            const storedSettings = result;
 
             if (storedSettings.voice) {
                 this.voice.self = storedSettings.voice.self ? storedSettings.voice.self : defaultVoice.self;
