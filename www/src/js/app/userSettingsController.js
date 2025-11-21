@@ -50,11 +50,8 @@ export default class UserSettingsController {
     }
 
     async load() {
-        const result = await this.#fetcher.fetchCore(`/settings/me`, 'GET');
-        console.log(result);
-        if (result !== null) {
-            const storedSettings = result;
-
+        const storedSettings = await this.#fetcher.fetchCore(`/settings/me`, 'GET');
+        if (storedSettings !== null) {
             if (storedSettings.voice) {
                 this.voice.self = storedSettings.voice.self ? storedSettings.voice.self : defaultVoice.self;
                 this.voice.users = storedSettings.voice.users ? storedSettings.voice.users : {};
