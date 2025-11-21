@@ -150,7 +150,7 @@ export default class VoiceCall {
                 try {
                     await user.decoder.flush();
                     await user.decoder.close();
-                    
+
                 }
                 catch (error) {
                     console.error(error);
@@ -353,7 +353,7 @@ export default class VoiceCall {
             if (this.#settings.self.muted) {
                 this.#setUserGlow(this.#user.id, false);
                 this.#setSelfGlow(false);
-            }else{
+            } else {
                 this.#setUserGlow(this.#user.id, state);
                 this.#setSelfGlow(state);
             }
@@ -468,7 +468,10 @@ export default class VoiceCall {
         if (isSupported.supported) {
             this.#users[userId] = { decoder: null, playhead: 0, muted: false, gainNode: null, source: null };
 
-            if (!this.#settings.users[userId]) {
+            if (this.#settings.users[userId]) {
+                this.#users[userId].muted = this.#settings.users[userId].muted;
+            }
+            else {
                 this.#settings.users[userId] = { muted: false, volume: 1 };
             }
 

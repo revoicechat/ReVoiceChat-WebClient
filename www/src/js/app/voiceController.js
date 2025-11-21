@@ -219,7 +219,7 @@ export default class VoiceController {
                 this.#controlUserVolume(userId, INPUT_VOLUME);
 
                 const BUTTON_MUTE = document.createElement('button');
-                BUTTON_MUTE.className = "mute";
+                BUTTON_MUTE.className = "voice-button";
                 BUTTON_MUTE.title = "Mute";
                 BUTTON_MUTE.onclick = () => this.#controlUserMute(userId, BUTTON_MUTE);
                 BUTTON_MUTE.innerHTML = `<revoice-icon-speaker></revoice-icon-speaker>`;
@@ -244,11 +244,11 @@ export default class VoiceController {
         }
 
         if (this.#voiceCall.getUserMute(userId)) {
-            muteButton.classList.add('active');
+            muteButton.classList.add('red');
             muteButton.innerHTML = "<revoice-icon-speaker-x></revoice-icon-speaker-x>";
         }
         else {
-            muteButton.classList.remove('active');
+            muteButton.classList.remove('red');
             muteButton.innerHTML = "<revoice-icon-speaker></revoice-icon-speaker>";
         }
 
