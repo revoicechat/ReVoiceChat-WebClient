@@ -676,11 +676,10 @@ svg {
 .voice-profile {
     display: flex;
     cursor: pointer;
-    margin-left: 1.5rem;
-    margin-bottom: 0.25rem;
-    padding: 0.25rem;
-    height: 2rem;
-    width:inherit;
+    margin: 0.1rem;
+    margin-left: 2rem;
+    padding: 0.3rem;
+    width: 16.75rem;
     border-radius: 5px;
 }
 
