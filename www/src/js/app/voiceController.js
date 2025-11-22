@@ -27,8 +27,8 @@ export default class VoiceController {
     }
 
     attachEvents() {
-        document.getElementById("voice-self-mute").addEventListener('click', async () => await this.#controlSelfMute());
-        document.getElementById("voice-self-deaf").addEventListener('click', async () => await this.#controlSelfDeaf());
+        document.getElementById("voice-self-mute").addEventListener('click', async () => await this.#toggleSelfMute());
+        document.getElementById("voice-self-deaf").addEventListener('click', async () => await this.#toggleSelfDeaf());
         this.streamController.attachEvents();
     }
 
@@ -229,25 +229,30 @@ export default class VoiceController {
     }
 
     // <user> call this to mute himself
-    async #controlSelfMute(updateState = true) {
-        if (updateState) {
-            if (this.#voiceCall) {
-                await this.#voiceCall.toggleSelfMute();
-            }
-            this.#saveSettings();
+    async #toggleSelfMute() {
+        if (this.#voiceCall) {
+            await this.#voiceCall.toggleSelfMute();
         }
+        this.#updateSelfMute(true);
+        this.#saveSettings();
+    }
 
+    #updateSelfMute(alert = true) {
         const muteButton = document.getElementById("voice-self-mute");
         if (this.#voiceCall) {
             if (this.#voiceCall.getSelfMute()) {
                 // Muted
                 muteButton.classList.add('active');
-                this.#alert.play('microphoneMuted');
+                if (alert) {
+                    this.#alert.play('microphoneMuted');
+                }
             }
             else {
                 // Unmuted
                 muteButton.classList.remove('active');
-                this.#alert.play('microphoneActivated');
+                if (alert) {
+                    this.#alert.play('microphoneActivated');
+                }
             }
         }
     }
@@ -258,30 +263,35 @@ export default class VoiceController {
         }
     }
 
-    async #controlSelfDeaf(updateState = true) {
-        if (updateState) {
-            if (this.#voiceCall) {
-                await this.#voiceCall.toggleSelfDeaf();
-            }
-            this.#saveSettings();
+    async #toggleSelfDeaf() {
+        if (this.#voiceCall) {
+            await this.#voiceCall.toggleSelfDeaf();
         }
+        this.#updateSelfDeaf(true);
+        this.#saveSettings();
+    }
 
+    #updateSelfDeaf(alert = true) {
         const button = document.getElementById("voice-self-deaf");
         const muteButton = document.getElementById("voice-self-mute");
         if (this.#voiceCall) {
             if (this.#voiceCall.getSelfDeaf()) {
                 // Muted
                 button.classList.add('active');
-                this.#alert.play('soundMuted');
                 this.#voiceCall.setSelfMute(true);
                 muteButton.classList.add('active');
+                if (alert) {
+                    this.#alert.play('soundMuted');
+                }
             }
             else {
                 // Unmuted
                 button.classList.remove('active');
-                this.#alert.play('soundActivated');
                 this.#voiceCall.setSelfMute(false);
                 muteButton.classList.remove('active');
+                if (alert) {
+                    this.#alert.play('soundActivated');
+                }
             }
         }
     }
@@ -358,6 +368,8 @@ export default class VoiceController {
                         deafButton.classList.add('red');
                     }
                 }
+                this.#updateSelfDeaf(false);
+                this.#updateSelfMute(false);
                 break;
         }
     }
