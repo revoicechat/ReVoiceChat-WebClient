@@ -190,7 +190,7 @@ export default class VoiceCall {
 
     async updateUserMute(userId) {
         if (this.#settings.users[userId]) {
-            this.#users[userId].muted = this.#settings.users[userId];
+            this.#users[userId].muted = this.#settings.users[userId].muted;
         }
     }
 
@@ -420,6 +420,7 @@ export default class VoiceCall {
             const currentUser = this.#users[header.user];
             // If user sending packet is muted OR we are deaf, we stop
             if (currentUser.muted || this.#settings.self.deaf) {
+                this.#setUserGlow(header.user, false);
                 return;
             }
 
