@@ -90,6 +90,9 @@ export default class VoiceController {
         const voiceContent = document.getElementById(`voice-users-${data.roomId}`);
         voiceContent.appendChild(this.#createUserElement(userData));
 
+        // NOT our room
+        if (data.roomId !== this.#room.id) { return; }
+
         // User joining this is NOT self and current user is connected to voice room
         if (userData.id !== this.#user.id && this.#voiceCall && this.#voiceCall.getState() === VoiceCall.OPEN) {
             this.#voiceCall.addUser(userData.id);
@@ -109,6 +112,9 @@ export default class VoiceController {
         if (userElement) {
             userElement.remove();
         }
+
+        // NOT our room
+        if (data.roomId !== this.#room.id) { return; }
 
         // User leaving is NOT self
         if (userId !== this.#user.id && this.#voiceCall && this.#voiceCall.getState() === VoiceCall.OPEN) {
