@@ -74,10 +74,12 @@ class VoiceContextMenu extends HTMLElement {
         this.#userSettings.save();
     }
 
-    load(userSettings, userId, voicecall) {
-        this.#userSettings = userSettings
-        this.#voiceCall = voicecall;
+    setVoiceCall(voiceCall){
+        this.#voiceCall = voiceCall;
+    }
 
+    load(userSettings, userId) {
+        this.#userSettings = userSettings
         const voiceSettings = userSettings.voice.users[userId];
 
         // Volume

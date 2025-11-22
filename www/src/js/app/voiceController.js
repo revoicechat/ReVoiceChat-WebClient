@@ -11,6 +11,7 @@ export default class VoiceController {
     #activeRoom;
     #user;
     #room;
+    #contextMenu
     streamController;
 
     constructor(fetcher, alert, user, room, token, voiceURL, mediaUrl, streamUrl) {
@@ -22,6 +23,7 @@ export default class VoiceController {
         this.#room = room;
         this.#mediaUrl = mediaUrl;
         this.streamController = new StreamController(fetcher, alert, user, room, token, streamUrl);
+        this.#contextMenu = document.getElementById('voice-context-menu');
     }
 
     attachEvents() {
@@ -51,6 +53,9 @@ export default class VoiceController {
             // Update counter
             this.#updateUserCounter(roomId);
 
+            // Update context menu
+            this.#contextMenu.setVoiceCall(this.#voiceCall);
+
             // Audio alert
             this.#alert.play('voiceConnected');
         }
@@ -69,6 +74,9 @@ export default class VoiceController {
         this.updateSelf();
 
         this.#activeRoom = null;
+
+        // Update context menu
+        this.#contextMenu.setVoiceCall(null);
 
         // Audio alert
         this.#alert.play('voiceDisconnected');
@@ -185,11 +193,11 @@ export default class VoiceController {
         if (userId !== this.#user.id) {
             DIV.addEventListener('contextmenu', (event) => {
                 event.preventDefault();
-                document.getElementById('voice-context-menu').load(this.#user.settings, userId, this.#voiceCall);
-                document.getElementById('voice-context-menu').open(event.clientX, event.clientY);
+                this.#contextMenu.load(this.#user.settings, userId);
+                this.#contextMenu.open(event.clientX, event.clientY);
             }, false);
         }
-        else{
+        else {
             DIV.addEventListener('contextmenu', (event) => { event.preventDefault(); }, false);
         }
 
