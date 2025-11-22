@@ -68,13 +68,12 @@ export default class VoiceController {
     // <user> call this to leave a call in a room
     async leave() {
         this.#voiceCall.close();
+        this.updateSelf();
         this.streamController.stopAll();
         await this.#updateJoinedUsers();
         this.#updateUserCounter(this.#activeRoom);
-        this.updateSelf();
-
         this.#activeRoom = null;
-
+        
         // Update context menu
         this.#contextMenu.setVoiceCall(null);
 
@@ -339,12 +338,12 @@ export default class VoiceController {
 
             case VoiceCall.CLOSE:
                 // Set connect actions
-                document.getElementById(this.#room.id).classList.remove('active-voice');
+                document.getElementById(this.#activeRoom).classList.remove('active-voice');
                 voiceAction.className = "join";
                 voiceAction.classList.add('disconnected');
                 voiceAction.title = "Join the room";
                 voiceAction.innerHTML = `<revoice-icon-phone></revoice-icon-phone>`;
-                voiceAction.onclick = () => this.join(this.#room.id);
+                voiceAction.onclick = () => this.join(this.#activeRoom);
                 muteButton.classList.add('hidden');
                 deafButton.classList.add('hidden');
                 webcamButton.classList.add('hidden');
