@@ -34,13 +34,18 @@ class VoiceContextMenu extends HTMLElement {
                     flex: 1 1 0%;
                     justify-content: space-between;
                     align-items: stretch;
-
-                    
+                    width: 100%;
                     cursor: pointer;
                     margin-top: 0.25rem;
                     border-radius: 0.25rem;
                     padding: 0.5rem;
                     font-weight: 700;
+                }
+
+                .right{
+                    display:flex;
+                    margin-left: auto;
+                    margin-right: 0px;
                 }
 
                 .slider{
@@ -64,8 +69,7 @@ class VoiceContextMenu extends HTMLElement {
                 </div>
                 
                 <button class="item voice-button" id="mute" title="Mute">
-                    <div>Mute</div>
-                    <revoice-icon-speaker></revoice-icon-speaker>
+                    Mute <revoice-icon-speaker class="right"></revoice-icon-speaker>
                 </button>
             </slot>
         `;
@@ -114,10 +118,10 @@ class VoiceContextMenu extends HTMLElement {
             voiceSettings.muted = !voiceSettings.muted;
 
             if (voiceSettings.muted) {
-                muteButton.innerHTML = `Mute <revoice-icon-speaker-x class="red"></revoice-icon-speaker-x>`;
+                muteButton.innerHTML = `Unmute <revoice-icon-speaker-x class="right red"></revoice-icon-speaker-x>`;
             }
             else {
-                muteButton.innerHTML = `Mute <revoice-icon-speaker></revoice-icon-speaker>`;
+                muteButton.innerHTML = `Mute <revoice-icon-speaker  class="right"></revoice-icon-speaker>`;
             }
 
             if (this.#voiceCall) {
