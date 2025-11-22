@@ -9,66 +9,15 @@ class VoiceContextMenu extends HTMLElement {
         this.shadowRoot.innerHTML = `
             <link href="src/css/main.css" rel="stylesheet" />
             <link href="src/css/themes.css" rel="stylesheet" />
-            <style>
-                :host {
-                    display: none;
-                    position: fixed;
-                    z-index: 9999;
-                    width: 13rem;
-                    background: var(--qua-bg-color);
-                    color: white;
-                    border-radius: 10px;
-                    padding: 0.5rem;
-                    font-family: sans-serif;
-                    user-select: none;
-                }
-
-                .menu{
-                    flex: 1 1 0%;
-                    overflow-y: auto;
-                }
-                
-                .item{
-                    display: flex;
-                    position: relative;
-                    flex: 1 1 0%;
-                    justify-content: space-between;
-                    align-items: stretch;
-                    width: 100%;
-                    cursor: pointer;
-                    margin-top: 0.25rem;
-                    border-radius: 0.25rem;
-                    padding: 0.5rem;
-                    font-weight: 700;
-                }
-
-                .right{
-                    display:flex;
-                    margin-left: auto;
-                    margin-right: 0px;
-                }
-
-                .slider{
-                    flex-direction: column;
-                }
-
-                .item:hover{
-                    background-color: var(--pri-active-color);
-                }
-
-                .item-title{
-                }
-
-            </style>
+            <link href="src/js/component/context.menu.css" rel="stylesheet" />
 
             <div class="menu">
-
                 <div class="item slider">
                     <label id="volume-label">Volume</label>
                     <input id="volume" type="range" min="0" max="2" step="0.01"></input>
                 </div>
                 
-                <button class="item voice-button" id="mute" title="Mute">
+                <button class="item" id="mute" title="Mute">
                     Mute <revoice-icon-speaker class="right"></revoice-icon-speaker>
                 </button>
             </slot>

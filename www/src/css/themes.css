@@ -272,7 +272,8 @@ body {
 }
 
 .voice-control .voice-button.active,
-.voice-button .red {
+.voice-button .red,
+.red {
     color: #ff0000;
 }
 
