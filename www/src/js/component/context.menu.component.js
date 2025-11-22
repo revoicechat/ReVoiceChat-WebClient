@@ -7,90 +7,84 @@ class VoiceContextMenu extends HTMLElement {
         super();
         this.attachShadow({ mode: "open" });
         this.shadowRoot.innerHTML = `
-        <link href="src/css/main.css" rel="stylesheet" />
-        <link href="src/css/themes.css" rel="stylesheet" />
-        <style>
-            :host {
-                position: fixed;
-                z-index: 9999;
-                display: none;
-                min-width: 180px;
-                background: var(--qua-bg-color);
-                color: white;
-                border-radius: 8px;
-                padding: 6px;
-                font-family: sans-serif;
-                user-select: none;
-            }
+            <link href="src/css/main.css" rel="stylesheet" />
+            <link href="src/css/themes.css" rel="stylesheet" />
+            <style>
+                :host {
+                    position: fixed;
+                    z-index: 9999;
+                    display: none;
+                    min-width: 180px;
+                    background: var(--qua-bg-color);
+                    color: white;
+                    border-radius: 8px;
+                    padding: 6px;
+                    font-family: sans-serif;
+                    user-select: none;
+                }
 
-            ::slotted([role="menuitem"]) {
-                padding: 10px 14px;
-                cursor: pointer;
-                border-radius: 6px;
-                outline: none;
-                display: block;
-            }
+                ::slotted([role="menuitem"]) {
+                    padding: 10px 14px;
+                    cursor: pointer;
+                    border-radius: 6px;
+                    outline: none;
+                    display: block;
+                }
 
-            ::slotted([role="menuitem"]:hover),
-            ::slotted([role="menuitem"][data-active="true"]) {
-                background: red;
-            }
+                ::slotted([role="menuitem"]:hover),
+                ::slotted([role="menuitem"][data-active="true"]) {
+                    background: red;
+                }
 
-            ::slotted(hr[role="separator"]) {
-                border: none;
-                height: 1px;
-                margin: 6px 0;
-                background: yellow;
-            }
+                ::slotted(hr[role="separator"]) {
+                    border: none;
+                    height: 1px;
+                    margin: 6px 0;
+                    background: yellow;
+                }
 
-            slot{
-                flex: 1 1 0%;
-                overflow-y: auto;
-            }
-            
-            .item{
-                display: flex;
-                position: relative;
-                flex: 1 1 0%;
-                justify-content: space-between;
-                align-items: flex-start;
-                cursor: pointer;
-                width: 100%
-            }
+                slot{
+                    flex: 1 1 0%;
+                    overflow-y: auto;
+                }
+                
+                .item{
+                    display: flex;
+                    position: relative;
+                    flex: 1 1 0%;
+                    justify-content: space-between;
+                    align-items: flex-start;
+                    cursor: pointer;
+                    width: 100%
+                }
 
-            .voice-control {
-                height: 3rem;
-            }
+                .voice-control {
+                    height: 3rem;
+                }
 
-            .voice-control button,
-            .voice-control input {
-                display: block;
-                cursor: pointer;
-                margin-top: 0.25rem;
-                border-radius: 0.25rem;
-                padding: 0.5rem;
-                font-weight: 700;
-            }
-        </style>
+                .voice-control button,
+                .voice-control input {
+                    display: block;
+                    cursor: pointer;
+                    margin-top: 0.25rem;
+                    border-radius: 0.25rem;
+                    padding: 0.5rem;
+                    font-weight: 700;
+                }
+            </style>
 
-        <slot>
-            <label class="item">Volume</label>
-            <input class="item" id="volume" type="range" min="0" max="2" step="0.01"></input>
+            <slot>
+                <label class="item">Volume</label>
+                <input class="item" id="volume" type="range" min="0" max="2" step="0.01"></input>
 
-            <button class="voice-button" id="mute" title="Mute">
-                <revoice-icon-speaker></revoice-icon-speaker>
-            </button>
-        </slot>
-    `;
+                <button class="voice-button" id="mute" title="Mute">
+                    <revoice-icon-speaker></revoice-icon-speaker>
+                </button>
+            </slot>
+        `;
 
-        this._items = [];
-        this._activeIndex = -1;
         this._onClickOutside = this._onClickOutside.bind(this);
-        this._onKeyDown = this._onKeyDown.bind(this);
     }
-
-
-
 
     #saveSettings() {
         if (this.#voiceCall) {
@@ -144,7 +138,6 @@ class VoiceContextMenu extends HTMLElement {
     }
 
     open(x, y) {
-        this._refreshItems();
         this.style.display = "block";
 
         requestAnimationFrame(() => {
@@ -160,71 +153,17 @@ class VoiceContextMenu extends HTMLElement {
             this.style.left = left + "px";
             this.style.top = top + "px";
 
-            this._setActive(0);
-
             document.addEventListener("pointerdown", this._onClickOutside, true);
-            document.addEventListener("keydown", this._onKeyDown);
         });
     }
 
     close() {
         this.style.display = "none";
-        this._clearActive();
         document.removeEventListener("pointerdown", this._onClickOutside, true);
-        document.removeEventListener("keydown", this._onKeyDown);
     }
 
     _onClickOutside(e) {
         if (!this.contains(e.target)) this.close();
-    }
-
-    _onKeyDown(e) {
-        if (e.key === "ArrowDown") {
-            e.preventDefault();
-            this._setActive(this._activeIndex + 1);
-        }
-        if (e.key === "ArrowUp") {
-            e.preventDefault();
-            this._setActive(this._activeIndex - 1);
-        }
-        if (e.key === "Enter" || e.key === " ") {
-            e.preventDefault();
-            this._trigger(this._items[this._activeIndex]);
-        }
-        if (e.key === "Escape") {
-            e.preventDefault();
-            this.close();
-        }
-    }
-
-    _setActive(index) {
-        if (!this._items.length) return;
-        index = (index + this._items.length) % this._items.length;
-        this._clearActive();
-        this._activeIndex = index;
-        const item = this._items[index];
-        item.dataset.active = "true";
-        item.focus({ preventScroll: true });
-    }
-
-    _clearActive() {
-        this._items.forEach((el) => delete el.dataset.active);
-        this._activeIndex = -1;
-    }
-
-    _trigger(item) {
-        if (!item) return;
-        const action = item.dataset.action;
-        this.close();
-        this.dispatchEvent(new CustomEvent("context-action", {
-            bubbles: true,
-            detail: { action }
-        }));
-    }
-
-    _refreshItems() {
-        this._items = [...this.querySelectorAll("[role='menuitem']")];
-        this._items.forEach((el) => { el.tabIndex = -1 });
     }
 }
 
