@@ -76,7 +76,7 @@ export default class StreamController {
 
     async leaveStream(streamName) {
         if (this.#viewer[streamName]) {
-            await this.#viewer[streamName].stop();
+            await this.#viewer[streamName].leave();
         }
     }
 

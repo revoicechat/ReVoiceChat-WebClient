@@ -251,7 +251,7 @@ export default class Stream {
 
         // Close playback
         if (this.#canvas && this.#context) {
-            this.#context.clearRect(0, 0, this.#canvas.width, this.#canvas.height);
+            this.#canvas.remove();
             this.#canvas = null;
             this.#context = null;
         }
