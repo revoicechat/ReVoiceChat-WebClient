@@ -33,31 +33,38 @@ class VoiceContextMenu extends HTMLElement {
                     position: relative;
                     flex: 1 1 0%;
                     justify-content: space-between;
-                    align-items: flex-start;
-                    cursor: pointer;
-                    width: 100%
-                }
+                    align-items: stretch;
 
-                .voice-control {
-                    height: 3rem;
-                }
-
-                .voice-control button,
-                .voice-control input {
-                    display: block;
+                    
                     cursor: pointer;
                     margin-top: 0.25rem;
                     border-radius: 0.25rem;
                     padding: 0.5rem;
                     font-weight: 700;
                 }
+
+                .slider{
+                    flex-direction: column;
+                }
+
+                .item:hover{
+                    background-color: var(--pri-active-color);
+                }
+
+                .item-title{
+                }
+
             </style>
 
             <div class="menu">
-                <label class="item">Volume</label>
-                <input class="item" id="volume" type="range" min="0" max="2" step="0.01"></input>
 
-                <button class="voice-button" id="mute" title="Mute">
+                <div class="item slider">
+                    <label id="volume-label">Volume</label>
+                    <input id="volume" type="range" min="0" max="2" step="0.01"></input>
+                </div>
+                
+                <button class="item voice-button" id="mute" title="Mute">
+                    <div>Mute</div>
                     <revoice-icon-speaker></revoice-icon-speaker>
                 </button>
             </slot>
@@ -84,10 +91,14 @@ class VoiceContextMenu extends HTMLElement {
 
         // Volume
         const volumeInput = this.shadowRoot.getElementById("volume");
+        const volumeLabel = this.shadowRoot.getElementById("volume-label");
+
         volumeInput.value = voiceSettings.volume;
         volumeInput.title = parseInt(voiceSettings.volume * 100) + "%";
+        volumeLabel.innerText = `Volume ${volumeInput.title}`;
         volumeInput.oninput = () => {
             volumeInput.title = parseInt(volumeInput.value * 100) + "%";
+            volumeLabel.innerText = `Volume ${volumeInput.title}`;
             voiceSettings.volume = volumeInput.value;
             if (this.#voiceCall) {
                 this.#voiceCall.updateUserVolume(userId);
@@ -103,12 +114,10 @@ class VoiceContextMenu extends HTMLElement {
             voiceSettings.muted = !voiceSettings.muted;
 
             if (voiceSettings.muted) {
-                muteButton.classList.add('red');
-                muteButton.innerHTML = "<revoice-icon-speaker-x></revoice-icon-speaker-x>";
+                muteButton.innerHTML = `Mute <revoice-icon-speaker-x class="red"></revoice-icon-speaker-x>`;
             }
             else {
-                muteButton.classList.remove('red');
-                muteButton.innerHTML = "<revoice-icon-speaker></revoice-icon-speaker>";
+                muteButton.innerHTML = `Mute <revoice-icon-speaker></revoice-icon-speaker>`;
             }
 
             if (this.#voiceCall) {
@@ -128,8 +137,8 @@ class VoiceContextMenu extends HTMLElement {
         const vh = innerHeight;
 
         // clamp inside viewport
-        const left = Math.min(x, vw - w - 8);
-        const top = Math.min(y, vh - h - 8);
+        const left = Math.min(x, vw - w);
+        const top = Math.min(y, vh - h);
 
         this.style.left = left + "px";
         this.style.top = top + "px";
