@@ -188,42 +188,20 @@ export default class VoiceCall {
         }
     }
 
-    toggleUserMute(userId) {
+    async updateUserMute(userId) {
         if (this.#settings.users[userId]) {
-            this.#users[userId].muted = !this.#users[userId].muted;
-            this.#settings.users[userId].muted = this.#users[userId].muted;
+            this.#users[userId].muted = this.#settings.users[userId];
         }
     }
 
-    setUserMute(userId, muted) {
+    updateUserVolume(userId) {
         if (this.#settings.users[userId]) {
-            this.#users[userId].muted = muted;
-            this.#settings.users[userId].muted = muted;
-        }
-    }
-
-    getUserMute(userId) {
-        if (this.#settings.users[userId]) {
-            return this.#settings.users[userId].muted;
-        }
-    }
-
-    setUserVolume(userId, volume) {
-        if (this.#settings.users[userId]) {
-            this.#settings.users[userId].volume = volume;
-
             if (this.#users[userId]) {
                 const userGainNode = this.#users[userId].gainNode;
                 if (userGainNode) {
-                    userGainNode.gain.setValueAtTime(volume, this.#audioContext.currentTime);
+                    userGainNode.gain.setValueAtTime(this.#settings.users[userId].volume, this.#audioContext.currentTime);
                 }
             }
-        }
-    }
-
-    getUserVolume(userId) {
-        if (this.#settings.users[userId]) {
-            return this.#settings.users[userId].volume;
         }
     }
 

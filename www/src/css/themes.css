@@ -176,20 +176,20 @@ body {
 }
 
 /* Room */
-.sidebar-room-separator,
-.sidebar-room-element {
+.sidebar-room.separator,
+.sidebar-room.element {
     border-color: var(--pri-bd-color);
 }
 
-.sidebar-room-separator {
+.sidebar-room.separator {
     font-weight: 600;
 }
 
-.sidebar-room-element:hover {
+.sidebar-room.element:hover {
     background-color: var(--pri-hover-color);
 }
 
-.sidebar-room-element.active {
+.sidebar-room.active {
     background-color: var(--pri-active-color);
     font-weight: 600;
 }
@@ -272,7 +272,7 @@ body {
 }
 
 .voice-control .voice-button.active,
-.voice-profile .voice-button.red {
+.voice-button.red {
     color: #ff0000;
 }
 

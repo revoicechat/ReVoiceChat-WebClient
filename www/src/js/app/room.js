@@ -74,35 +74,48 @@ export default class Room {
         }
     }
 
-    async #createElement(data) {
-        const DIV = document.createElement('div');
-
-        if (data === undefined || data === null) {
+    async #createElement(room) {
+        if (room === undefined || room === null) {
             return;
         }
 
-        const icon = this.#icon(data.type);
+        const root = document.createElement('div');
 
-        DIV.id = data.id;
-        DIV.className = "sidebar-room-element";
-        DIV.onclick = () => this.#select(data.id, data.name, data.type);
+        const DIV = document.createElement('div');
+        root.appendChild(DIV);
 
-        let extension = "";
-        if (data.type === "VOICE") {
-            DIV.ondblclick = () => { this.voiceController.join(data.id); }
-            let userCount = await this.voiceController.usersCount(data.id);
-            extension = `${userCount}<revoice-icon-user></revoice-icon-user>`;
+        DIV.id = room.id;
+        DIV.className = "sidebar-room element";
+        DIV.onclick = () => this.#select(room.id, room.name, room.type);
+
+        const title = document.createElement('h3');
+        title.className = "room-title";
+        title.innerHTML = this.#icon(room.type);
+        DIV.appendChild(title);
+
+        const name = document.createElement('div');
+        name.className = "room-title-name";
+        name.innerText = room.name;
+        title.appendChild(name);
+
+        const extension = document.createElement('div');
+        extension.className = "room-title-extension";
+        extension.id = `room-extension-${room.id}`;
+        title.appendChild(extension);
+
+
+        if (room.type === "VOICE") {
+            DIV.ondblclick = () => { this.voiceController.join(room.id); }
+            let userCount = await this.voiceController.usersCount(room.id);
+            extension.innerHTML = `${userCount}<revoice-icon-user></revoice-icon-user>`;
+
+            const users = document.createElement('div');
+            users.id = `voice-users-${room.id}`;
+            users.className = "sidebar-room users";
+            root.appendChild(users);
         }
 
-        DIV.innerHTML = `
-            <h3 class="room-title">
-            ${icon}
-            <div class="room-title-name">${data.name}</div>
-            <div class="room-title-extension" id="room-extension-${data.id}">${extension}</div>
-            </h3>
-        `;
-
-        return DIV;
+        return root;
     }
 
     #select(id, name, type) {
@@ -169,7 +182,7 @@ export default class Room {
 
     #roomCreateSeparator(data) {
         const DIV = document.createElement('div');
-        DIV.className = "sidebar-room-separator";
+        DIV.className = "sidebar-room separator";
         DIV.innerHTML = `<h3 class="room-title">${data.name.toUpperCase()}</h3>`;
         return DIV;
     }

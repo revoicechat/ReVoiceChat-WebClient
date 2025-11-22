@@ -442,28 +442,29 @@ svg {
     overflow-y: auto;
 }
 
-.sidebar-room-element {
+.sidebar-room {
     display: flex;
     position: relative;
     flex: 1 1 0%;
     justify-content: space-between;
     align-items: flex-start;
     cursor: pointer;
+}
+
+.sidebar-room.element {
     padding: 0.3rem;
     min-width: 0;
     margin: 0.15rem;
     border-radius: 5px
 }
 
-.sidebar-room-separator {
-    display: flex;
-    position: relative;
-    flex: 1 1 0%;
-    justify-content: space-between;
-    align-items: flex-start;
-    cursor: pointer;
+.sidebar-room.separator {
     padding: 0.5rem;
     min-width: 0;
+}
+
+.sidebar-room.users {
+    flex-direction: column;
 }
 
 /* SIDEBAR USERS (right) */
@@ -675,8 +676,13 @@ svg {
 .voice-profile {
     display: flex;
     cursor: pointer;
-    padding: 0.5rem;
-    height: 3rem;
+    margin-left: 1.5rem;
+    margin-bottom: 0.25rem;
+    padding: 0.25rem;
+    height: 2rem;
+    width:inherit;
+    border-radius: 5px;
+    width: 90%;
 }
 
 .voice-profile .block-user {
@@ -688,14 +694,10 @@ svg {
     font-size: 1rem;
 }
 
-.voice-profile .block-action {
-    margin-left: auto;
-}
-
 .voice-profile .icon {
     border-radius: 9999px;
-    width: 2rem;
-    height: 2rem;
+    width: 1.5rem;
+    height: 1.5rem;
 }
 
 .voice-profile .gate .icon {
@@ -714,15 +716,6 @@ svg {
 
 .voice-profile .gate.active .user .name {
     color: var(--pri-text-color);
-}
-
-.block-action .volume {
-    width: 60%;
-}
-
-.block-action .mute {
-    margin-left: 0.25rem;
-    padding: 0.25rem;
 }
 
 /* STATUS */
@@ -762,7 +755,6 @@ svg {
     font-weight: 600;
 }
 
-.voice-profile .user .name,
 .sidebar-user-list .user .name {
     padding-top: 0.25rem;
     font-weight: 500;

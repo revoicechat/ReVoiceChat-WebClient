@@ -81,7 +81,7 @@ export default class VoiceController {
         if (data.roomId !== this.#room.id) { return; }
 
         const userData = data.user;
-        const voiceContent = document.getElementById("voice-content");
+        const voiceContent = document.getElementById(`voice-users-${data.roomId}`);
         voiceContent.appendChild(this.#createUserElement(userData));
 
         // User joining this is NOT self and current user is connected to voice room
@@ -128,7 +128,7 @@ export default class VoiceController {
             return a.displayName.localeCompare(b.displayName);
         });
 
-        const voiceContent = document.getElementById("voice-content");
+        const voiceContent = document.getElementById(`voice-users-${this.#room.id}`);
         voiceContent.innerHTML = "";
 
         for (const user of sortedByDisplayName) {
@@ -177,18 +177,27 @@ export default class VoiceController {
                     <img src='${profilePicture}' alt='PFP' class='icon' name='user-picture-${userId}'/>
                 </div>
                 <div class='user'>
-                    <h2 class='name' name='user-name-${userId}'>${userData.displayName}</h2>
+                    <div class='name' name='user-name-${userId}'>${userData.displayName}</div>
                 </div>
             </div>
         `;
+
+        if (userId !== this.#user.id) {
+            DIV.addEventListener('contextmenu', (event) => {
+                event.preventDefault();
+                document.getElementById('voice-context-menu').load(this.#user.settings, userId, this.#voiceCall);
+                document.getElementById('voice-context-menu').open(event.clientX, event.clientY);
+            }, false);
+        }
+        else{
+            DIV.addEventListener('contextmenu', (event) => { event.preventDefault(); }, false);
+        }
 
         return DIV;
     }
 
     // <voiceUpdateJoinedUsers> and <voiceUserJoining> call this to update control on given user
     #updateUserControls(userId) {
-        const userDiv = document.getElementById(`voice-${userId}`);
-
         switch (this.#voiceCall.getState()) {
             case VoiceCall.CLOSE: {
                 if (document.getElementById(`voice-controls-${userId}`) !== null) {
@@ -206,66 +215,9 @@ export default class VoiceController {
                     this.#user.settings.voice.users[userId] = { volume: 1, muted: false };
                 }
 
-                // Add controls
-                const INPUT_VOLUME = document.createElement('input');
-                INPUT_VOLUME.type = "range";
-                INPUT_VOLUME.className = "volume";
-                INPUT_VOLUME.step = "0.01";
-                INPUT_VOLUME.value = this.#user.settings.voice.users[userId].volume;
-                INPUT_VOLUME.min = "0";
-                INPUT_VOLUME.max = "2";
-                INPUT_VOLUME.title = parseInt(INPUT_VOLUME.value * 100) + "%";
-                INPUT_VOLUME.oninput = () => this.#controlUserVolume(userId, INPUT_VOLUME);
-                this.#controlUserVolume(userId, INPUT_VOLUME);
-
-                const BUTTON_MUTE = document.createElement('button');
-                BUTTON_MUTE.className = "voice-button";
-                BUTTON_MUTE.title = "Mute";
-                BUTTON_MUTE.onclick = () => this.#controlUserMute(userId, BUTTON_MUTE);
-                BUTTON_MUTE.innerHTML = `<revoice-icon-speaker></revoice-icon-speaker>`;
-                this.#controlUserMute(userId, BUTTON_MUTE, false);
-
-                const DIV_ACTION = document.createElement('div');
-                DIV_ACTION.id = `voice-controls-${userId}`;
-                DIV_ACTION.className = "block-action";
-                DIV_ACTION.appendChild(INPUT_VOLUME);
-                DIV_ACTION.appendChild(BUTTON_MUTE);
-
-                userDiv.appendChild(DIV_ACTION);
                 break;
             }
         }
-    }
-
-    // <user> call this to mute other user
-    #controlUserMute(userId, muteButton, updateState = true) {
-        if (updateState) {
-            this.#voiceCall.toggleUserMute(userId);
-        }
-
-        if (this.#voiceCall.getUserMute(userId)) {
-            muteButton.classList.add('red');
-            muteButton.innerHTML = "<revoice-icon-speaker-x></revoice-icon-speaker-x>";
-        }
-        else {
-            muteButton.classList.remove('red');
-            muteButton.innerHTML = "<revoice-icon-speaker></revoice-icon-speaker>";
-        }
-
-        this.#saveSettings();
-    }
-
-    // <user> call this to change volume of other user
-    #controlUserVolume(userId, volumeInput) {
-        const volume = volumeInput.value;
-
-        volumeInput.title = parseInt(volume * 100) + "%";
-
-        if (this.#voiceCall) {
-            this.#voiceCall.setUserVolume(userId, volume);
-        }
-
-        this.#saveSettings();
     }
 
     // <user> call this to mute himself
@@ -390,11 +342,11 @@ export default class VoiceController {
                 deafButton.classList.remove('hidden');
                 webcamButton.classList.remove('hidden');
                 displayButton.classList.remove('hidden');
-                if(voiceSettings){
-                    if(voiceSettings.muted){
+                if (voiceSettings) {
+                    if (voiceSettings.muted) {
                         muteButton.classList.add('red');
                     }
-                    if(voiceSettings.deaf){
+                    if (voiceSettings.deaf) {
                         deafButton.classList.add('red');
                     }
                 }
