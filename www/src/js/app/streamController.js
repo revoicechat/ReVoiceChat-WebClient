@@ -81,6 +81,8 @@ export default class StreamController {
     }
 
     async stopAll() {
+        document.getElementById("stream-webcam").classList.remove("green");
+        document.getElementById("stream-display").classList.remove("green");
         this.#stopStream("webcam");
         this.#stopStream("display");
         this.#displayEnabled = false;

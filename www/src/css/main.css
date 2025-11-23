@@ -717,6 +717,34 @@ svg {
     color: var(--pri-text-color);
 }
 
+
+/* STREAM */
+
+.stream.container{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
+    width: 100%;
+}
+
+.stream.item{
+    flex: 0 0 48%;
+    margin: 0.5rem;
+    border-color: var(--pri-bd-color);
+    border-radius: 10px;
+    border-width: 2px;
+    align-self: stretch;
+    overflow: hidden;
+}
+
+.stream.item .content{
+    background-color: black;
+    height: 100%;
+    width: 100%;
+}
+
 /* STATUS */
 
 .status-container {

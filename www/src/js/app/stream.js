@@ -18,7 +18,8 @@ export default class Stream {
     #streamUrl;
     #token;
     #roomId;
-    #video;
+    #videoPlayer;
+    #videoItem;
     #context;
     #canvas;
     #codecConfig = {
@@ -102,28 +103,37 @@ export default class Stream {
             error: (error) => { throw new Error(`Encoder setup failed:\n${error.name}\nCurrent codec :${this.#codecConfig.codec}`) },
         });
 
+        // Encoder
         this.#encoderConfig = structuredClone(this.#codecConfig);
         this.#encoder.configure(this.#encoderConfig);
 
-        this.#video = document.createElement('video');
+        // Video player
+        this.#videoPlayer = document.createElement('video');
+        this.#videoPlayer.className = "content";
+
+        // Video item (box)
+        this.#videoItem = document.createElement('div');
+        this.#videoItem.className = "stream item";
+        this.#videoItem.appendChild(this.#videoPlayer);
+
+        // Stream container
+        const streamContainter = document.getElementById('stream-container')
+        streamContainter.appendChild(this.#videoItem);
 
         switch (type) {
             case "webcam":
-                this.#video.srcObject = await navigator.mediaDevices.getUserMedia({ video: true });
+                this.#videoPlayer.srcObject = await navigator.mediaDevices.getUserMedia({ video: true });
                 break;
             case "display":
-                this.#video.srcObject = await navigator.mediaDevices.getDisplayMedia(this.#displayMediaOptions);
+                this.#videoPlayer.srcObject = await navigator.mediaDevices.getDisplayMedia(this.#displayMediaOptions);
                 break;
         }
 
-        const videoPlayback = document.getElementById('videoPlayback')
-        videoPlayback.appendChild(this.#video);
-
-        await this.#video.play();
+        await this.#videoPlayer.play();
 
         if (window.MediaStreamTrackProcessor) {
             // Faster but not available everywhere
-            const track = this.#video.srcObject.getVideoTracks()[0];
+            const track = this.#videoPlayer.srcObject.getVideoTracks()[0];
             const processor = new MediaStreamTrackProcessor({ track });
             const reader = processor.readable.getReader();
 
@@ -139,7 +149,7 @@ export default class Stream {
         else {
             // Fallback
             this.#encoderInterval = setInterval(async () => {
-                const frame = new VideoFrame(this.#video, { timestamp: performance.now() * 1000 });;
+                const frame = new VideoFrame(this.#videoPlayer, { timestamp: performance.now() * 1000 });;
                 this.#reconfigureEncoderResolution(frame);
                 this.#encoder.encode(frame, { keyFrame: true });
                 frame.close();
@@ -166,7 +176,7 @@ export default class Stream {
             changed = true;
         }
 
-        if(changed){
+        if (changed) {
             this.#encoder.configure(this.#encoderConfig);
         }
     }
@@ -191,10 +201,11 @@ export default class Stream {
         }
 
         // Close playback
-        if (this.#video) {
-            await this.#video.pause();
-            this.#video.remove();
-            this.#video = null;
+        if (this.#videoPlayer) {
+            await this.#videoPlayer.pause();
+            this.#videoItem.remove();
+            this.#videoItem = null;
+            this.#videoPlayer = null;
         }
 
         this.#state = Stream.CLOSE;
@@ -210,17 +221,23 @@ export default class Stream {
                 this.#socket.binaryType = "arraybuffer";
                 this.#packetReceiver = new PacketReceiver(this.#socket, (header, data) => this.#decodeVideo(header, data));
 
+                // Video player
                 this.#canvas = document.createElement("canvas");
                 this.#context = this.#canvas.getContext("2d");
-                const videoRemote = document.getElementById('videoRemote');
 
-                videoRemote.appendChild(this.#canvas);
+                // Video item (box)
+                this.#videoItem = document.createElement('div');
+                this.#videoItem.className = "stream item";
+                this.#videoItem.appendChild(this.#canvas);
+
+                // Stream container
+                const streamContainter = document.getElementById('stream-container')
+                streamContainter.appendChild(this.#videoItem);
 
                 this.#decoder = new VideoDecoder({
                     output: (frame) => {
-                        const videoRemote = document.getElementById('videoRemote');
                         const ratio = frame.codedHeight / frame.codedWidth;
-                        const width = videoRemote.clientWidth;
+                        const width = this.#videoItem.clientWidth;
                         const height = width * ratio;
                         this.#canvas.width = width;
                         this.#canvas.height = height;
