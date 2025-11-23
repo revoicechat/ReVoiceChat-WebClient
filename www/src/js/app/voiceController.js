@@ -11,7 +11,8 @@ export default class VoiceController {
     #activeRoom;
     #user;
     #room;
-    #contextMenu
+    #contextMenu;
+    #lastStateSelfMute = false;
     streamController;
 
     constructor(fetcher, alert, user, room, token, voiceURL, mediaUrl, streamUrl) {
@@ -180,7 +181,7 @@ export default class VoiceController {
         extension.className = "extension";
         extension.id = `voice-user-extension-${userId}`;
 
-        if(this.#user.settings.voice.users[userId]?.muted){
+        if (this.#user.settings.voice.users[userId]?.muted) {
             const userMuted = document.createElement("div");
             userMuted.innerHTML = "<revoice-icon-speaker-x></revoice-icon-speaker-x>";
             userMuted.className = "red";
@@ -242,12 +243,12 @@ export default class VoiceController {
         }
     }
 
-    updateUserExtension(userId){
+    updateUserExtension(userId) {
         const userExtension = document.getElementById(`voice-user-extension-${userId}`);
         userExtension.innerHTML = "";
-        
+
         // User muted
-        if(this.#user.settings.voice.users[userId]?.muted){
+        if (this.#user.settings.voice.users[userId]?.muted) {
             const userMuted = document.createElement("div");
             userMuted.name = "extension-mute";
             userMuted.innerHTML = "<revoice-icon-speaker-x></revoice-icon-speaker-x>";
@@ -260,24 +261,24 @@ export default class VoiceController {
     async #toggleSelfMute() {
         if (this.#voiceCall) {
             await this.#voiceCall.toggleSelfMute();
+            await this.#updateSelfMute(true);
+            this.#saveSettings();
         }
-        this.#updateSelfMute(true);
-        this.#saveSettings();
     }
 
-    #updateSelfMute(alert = true) {
+    async #updateSelfMute(alert = true) {
         const muteButton = document.getElementById("voice-self-mute");
         if (this.#voiceCall) {
-            if (this.#voiceCall.getSelfMute()) {
+            if (await this.#voiceCall.getSelfMute()) {
                 // Muted
-                muteButton.classList.add('active');
+                muteButton.classList.add('red');
                 if (alert) {
                     this.#alert.play('microphoneMuted');
                 }
             }
             else {
                 // Unmuted
-                muteButton.classList.remove('active');
+                muteButton.classList.remove('red');
                 if (alert) {
                     this.#alert.play('microphoneActivated');
                 }
@@ -294,29 +295,31 @@ export default class VoiceController {
     async #toggleSelfDeaf() {
         if (this.#voiceCall) {
             await this.#voiceCall.toggleSelfDeaf();
+            if (await this.#voiceCall.getSelfDeaf()) {
+                this.#lastStateSelfMute = await this.#voiceCall.getSelfMute();
+                await this.#voiceCall.setSelfMute(true);
+            }else{
+                await this.#voiceCall.setSelfMute(this.#lastStateSelfMute);
+            }
+            await this.#updateSelfDeaf(true);
+            await this.#updateSelfMute(false);
+            this.#saveSettings();
         }
-        this.#updateSelfDeaf(true);
-        this.#saveSettings();
     }
 
-    #updateSelfDeaf(alert = true) {
+    async #updateSelfDeaf(alert = true) {
         const button = document.getElementById("voice-self-deaf");
-        const muteButton = document.getElementById("voice-self-mute");
         if (this.#voiceCall) {
-            if (this.#voiceCall.getSelfDeaf()) {
+            if (await this.#voiceCall.getSelfDeaf()) {
                 // Muted
-                button.classList.add('active');
-                this.#voiceCall.setSelfMute(true);
-                muteButton.classList.add('active');
+                button.classList.add('red');
                 if (alert) {
                     this.#alert.play('soundMuted');
                 }
             }
             else {
                 // Unmuted
-                button.classList.remove('active');
-                this.#voiceCall.setSelfMute(false);
-                muteButton.classList.remove('active');
+                button.classList.remove('red');
                 if (alert) {
                     this.#alert.play('soundActivated');
                 }

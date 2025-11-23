@@ -215,7 +215,8 @@ export default class VoiceCall {
         this.#settings.self.muted = muted;
     }
 
-    getSelfMute() {
+    async getSelfMute() {
+        // Need to be async !
         return this.#settings.self.muted;
     }
 
@@ -229,7 +230,8 @@ export default class VoiceCall {
         this.#settings.self.deaf = deaf;
     }
 
-    getSelfDeaf() {
+    async getSelfDeaf() {
+        // Need to be async !
         return this.#settings.self.deaf;
     }
 
