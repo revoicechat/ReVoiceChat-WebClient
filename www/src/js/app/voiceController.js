@@ -33,6 +33,10 @@ export default class VoiceController {
         this.streamController.attachEvents();
     }
 
+    getActiveRoom(){
+        return this.#activeRoom;
+    }
+
     // <user> call this to join a call in a room
     async join(roomId) {
         if (this.#activeRoom && this.#activeRoom != roomId) {

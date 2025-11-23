@@ -267,8 +267,9 @@ export default class Stream {
         }
 
         // Close playback
-        if (this.#canvas && this.#context) {
-            this.#canvas.remove();
+        if (this.#videoItem && this.#canvas && this.#context) {
+            this.#videoItem.remove();
+            this.#videoItem = null;
             this.#canvas = null;
             this.#context = null;
         }
