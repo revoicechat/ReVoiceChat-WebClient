@@ -151,18 +151,16 @@ export default class Room {
     }
 
     #selectText() {
+        document.getElementById('sidebar-users').classList.remove('hidden');
         document.getElementById("room-icon").innerHTML = `<revoice-icon-chat-bubble></revoice-icon-chat-bubble>`;
-
         document.getElementById("voice-container").classList.add('hidden');
+        document.getElementById("text-container").classList.remove('hidden');
+        document.getElementById("text-input").placeholder = `Send a message in ${this.name}`;
+        document.getElementById("text-input").focus();
 
         if(!this.voiceController.isCallActive()){
             document.getElementById("voice-control-panel").classList.add('hidden');
         }
-        
-        document.getElementById("text-container").classList.remove('hidden');
-
-        document.getElementById("text-input").placeholder = `Send a message in ${this.name}`;
-        document.getElementById("text-input").focus();
 
         this.textController.getAllFrom(this.id);
     }
@@ -172,8 +170,8 @@ export default class Room {
     }
 
     #selectVoice() {
+        document.getElementById('sidebar-users').classList.add('hidden');
         document.getElementById("room-icon").innerHTML = `<revoice-icon-phone></revoice-icon-phone>`;
-
         document.getElementById("text-container").classList.add('hidden');
         document.getElementById("voice-container").classList.remove('hidden');
         document.getElementById("voice-control-panel").classList.remove('hidden');
