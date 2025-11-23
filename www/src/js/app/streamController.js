@@ -71,18 +71,15 @@ export default class StreamController {
 
     async join(userId, streamName) {
         if (this.#room.voiceController.getActiveRoom() && userId != this.#user.id) {
-            if(!this.#viewer[userId]){
-                this.#viewer[userId] = [];
-            }
-            this.#viewer[userId][streamName] = new Stream(this.#streamUrl, this.#user, this.#token, this.#room.id);
-            await this.#viewer[userId][streamName].join(userId, streamName);
+            this.#viewer[`${userId}-${streamName}`] = new Stream(this.#streamUrl, this.#user, this.#token, this.#room.id);
+            await this.#viewer[`${userId}-${streamName}`].join(userId, streamName);
         }
     }
 
     async leave(userId, streamName) {
         if (this.#room.voiceController.getActiveRoom() && userId != this.#user.id) {
-            if (this.#viewer[userId] && this.#viewer[userId][streamName]) {
-                await this.#viewer[userId][streamName].leave();
+            if (this.#viewer[`${userId}-${streamName}`]) {
+                await this.#viewer[`${userId}-${streamName}`].leave();
             }
         }
     }
