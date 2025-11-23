@@ -114,6 +114,7 @@ export default class Stream {
         // Video item (box)
         this.#videoItem = document.createElement('div');
         this.#videoItem.className = "stream item";
+        this.#videoItem.onclick = () => {this.focus(this.#videoItem)}
         this.#videoItem.appendChild(this.#videoPlayer);
 
         // Stream container
@@ -228,6 +229,7 @@ export default class Stream {
                 // Video item (box)
                 this.#videoItem = document.createElement('div');
                 this.#videoItem.className = "stream item";
+                this.#videoItem.onclick = () => {this.focus(this.#videoItem)}
                 this.#videoItem.appendChild(this.#canvas);
 
                 // Stream container
@@ -275,6 +277,23 @@ export default class Stream {
         }
     }
 
+    focus(element){
+        for(const child of element.parentElement.children){
+            child.classList.add("hidden");
+        }
+        element.classList.remove("hidden");
+        element.parentElement.style.display = "block";
+        element.onclick = () => {this.unfocus(element);}
+    }
+
+    unfocus(element){
+        for(const child of element.parentElement.children){
+            child.classList.remove("hidden");
+        }
+        element.parentElement.style.display = "flex";
+        element.onclick = () => {this.focus(element);}
+    }
+
     #decodeVideo(header, data) {
         const chunk = new EncodedVideoChunk({
             type: "key",
@@ -283,7 +302,6 @@ export default class Stream {
         });
 
         if (this.#decoder.state === "unconfigured") {
-            console.log(header.encoderMetadata);
             this.#decoder.configure(header.encoderMetadata.decoderConfig);
         }
 
