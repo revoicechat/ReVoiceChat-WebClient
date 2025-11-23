@@ -179,7 +179,6 @@ export default class Room {
         document.getElementById("voice-control-panel").classList.remove('hidden');
 
         this.voiceController.updateSelf(this.id);
-        this.voiceController.showJoinedUsers(this.id);
         this.voiceController.updateJoinButton(this.id);
     }
 
