@@ -1,4 +1,4 @@
-export class PacketEncoder {
+class PacketEncoder {
     encode(header, data) {
         const headerBytes = new TextEncoder().encode(header);
 
@@ -18,7 +18,7 @@ export class PacketEncoder {
     }
 }
 
-export class PacketDecoder {
+class PacketDecoder {
     decode(packet) {
         const view = new DataView(packet);
 
