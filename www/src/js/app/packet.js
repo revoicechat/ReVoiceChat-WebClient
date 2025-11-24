@@ -65,7 +65,7 @@ export class PacketReceiver {
 }
 
 export class BigPacketSender{
-    static chunkMaxSize = 61440; // 60KB data (4KB reserved)
+    static chunkMaxSize = 52 * 1024; // 52KB data (12KB reserved for header)
 
     #packetEncoder = new PacketEncoder();
     #socket;
@@ -86,8 +86,7 @@ export class BigPacketSender{
                 const chunk = fullPacket.slice(start, end);
 
                 // Header : index of chunk, total of chunk, total size
-                const header = new Uint16Array([i, totalChunks, fullPacket.byteLength]);
-
+                const header = new Uint32Array([fullPacket.byteLength, i, totalChunks]);
                 const packet = new Uint8Array(header.byteLength + chunk.byteLength);
                 packet.set(new Uint8Array(header.buffer), 0);
                 packet.set(new Uint8Array(chunk), header.byteLength);
@@ -113,12 +112,12 @@ export class BigPacketReceiver{
         const array = new Uint8Array(data);
         const view = new DataView(array.buffer);
 
-        const index = view.getUint16(0, true);
-        const total = view.getUint16(2, true);
-        const byteLength = view.getUint16(4, true);
-        const chunkData = array.slice(6);
+        const byteLength = view.getUint32(0, true);
+        const index = view.getUint32(4, true);
+        const total = view.getUint32(8, true);
+        const chunkData = array.slice(12);
 
-        this.#buffer[index] = chunkData;
+        this.#buffer[index] = chunkData; 
         this.#received++;
 
         if(this.#received === total){
