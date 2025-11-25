@@ -1,4 +1,4 @@
-import { BigPacketSender, BigPacketReceiver } from "./packet.js";
+import { LargePacketSender, LargePacketReceiver } from "./packet.js";
 
 export default class Stream {
     static CLOSE = 0;
@@ -88,7 +88,7 @@ export default class Stream {
         this.#socket.binaryType = "arraybuffer";
 
         // Setup packet sender
-        this.#packetSender = new BigPacketSender(this.#socket);
+        this.#packetSender = new LargePacketSender(this.#socket);
 
         // Setup Encoder
         this.#encoder = new VideoEncoder({
@@ -236,7 +236,7 @@ export default class Stream {
                 // Create WebSocket
                 this.#socket = new WebSocket(`${this.#streamUrl}/${userId}/${streamName}`, ["Bearer." + this.#token]);
                 this.#socket.binaryType = "arraybuffer";
-                this.#packetReceiver = new BigPacketReceiver(this.#socket, (header, data) => this.#decodeVideo(header, data));
+                this.#packetReceiver = new LargePacketReceiver(this.#socket, (header, data) => this.#decodeVideo(header, data));
 
                 // Video player
                 this.#canvas = document.createElement("canvas");

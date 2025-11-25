@@ -64,7 +64,7 @@ export class PacketReceiver {
     }
 }
 
-export class BigPacketSender{
+export class LargePacketSender{
     static headerByteLength = 16;
     static maxPayloadByteLength = 64 * 1024 - 16; // 64KB - 16B (reserved for header)
 
@@ -78,19 +78,19 @@ export class BigPacketSender{
     send(header, data){
         if (this.#socket.readyState === WebSocket.OPEN) {
             const fullPayload = this.#packetEncoder.encode(JSON.stringify(header), data);
-            const total = Math.ceil(fullPayload.byteLength / BigPacketSender.maxPayloadByteLength);
+            const total = Math.ceil(fullPayload.byteLength / LargePacketSender.maxPayloadByteLength);
 
             for(let index = 0; index < total; index++){
-                const start = index * BigPacketSender.maxPayloadByteLength;
-                const end = Math.min(start + BigPacketSender.maxPayloadByteLength, fullPayload.byteLength);
+                const start = index * LargePacketSender.maxPayloadByteLength;
+                const end = Math.min(start + LargePacketSender.maxPayloadByteLength, fullPayload.byteLength);
                 const payload = fullPayload.slice(start, end);
 
                 // Header 16B (4x 4B) : fullPayload byte length | index of payload | total of payload | reserved 
                 const header = new Uint32Array([fullPayload.byteLength, index, total]);
-                const packet = new Uint8Array(BigPacketSender.headerByteLength + payload.byteLength);
+                const packet = new Uint8Array(LargePacketSender.headerByteLength + payload.byteLength);
 
                 packet.set(new Uint8Array(header.buffer), 0);
-                packet.set(new Uint8Array(payload), BigPacketSender.headerByteLength);
+                packet.set(new Uint8Array(payload), LargePacketSender.headerByteLength);
 
                 this.#socket.send(packet);
             }
@@ -98,7 +98,7 @@ export class BigPacketSender{
     }
 }
 
-export class BigPacketReceiver{
+export class LargePacketReceiver{
     #packetDecoder = new PacketDecoder();
     #socket;
     #buffer = [];
@@ -116,7 +116,7 @@ export class BigPacketReceiver{
         const fullPayloadByteLength = view.getUint32(0, true);
         const index = view.getUint32(4, true);
         const total = view.getUint32(8, true);
-        const chunkData = array.slice(BigPacketSender.headerByteLength);
+        const chunkData = array.slice(LargePacketSender.headerByteLength);
 
         this.#buffer[index] = chunkData; 
         this.#received++;
