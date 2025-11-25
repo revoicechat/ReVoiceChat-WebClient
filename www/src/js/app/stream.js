@@ -137,6 +137,7 @@ export default class Stream {
             this.#encoderInterval = setInterval(async () => {
                 const result = await reader.read();
                 const frame = result.value;
+                this.#reconfigureEncoderResolution(frame);
                 if (this.#encoder) {
                     this.#encoder.encode(frame, { keyFrame: this.#isKeyframe() });
                 }
@@ -186,6 +187,8 @@ export default class Stream {
 
         if (changed) {
             this.#encoder.configure(this.#encoderConfig);
+            this.#encoderMetadata.decoderMetadata.codedHeight = this.#encoderConfig.height;
+            this.#encoderMetadata.decoderMetadata.codedWidth = this.#encoderConfig.width;
         }
     }
 
@@ -266,7 +269,7 @@ export default class Stream {
     #determineResolution(frame, videoItem) {
         let result = { width: 0, height: 0 };
 
-        if (true || frame.codedWidth > videoItem.clientWidth) {
+        if (frame.codedWidth > videoItem.clientWidth) {
             // Clamp by width
             const ratioHW = frame.codedHeight / frame.codedWidth;
             result.width = videoItem.clientWidth;
