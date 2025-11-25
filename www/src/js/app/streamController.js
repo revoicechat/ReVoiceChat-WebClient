@@ -3,7 +3,7 @@ import Stream from "./stream.js";
 export default class StreamController {
     #streamUrl;
     #token;
-    #streamer = [];
+    #streamer = {};
     #viewer = [];
     #room;
     #user;
@@ -85,11 +85,17 @@ export default class StreamController {
     }
 
     async stopAll() {
+        // Stop streaming
         document.getElementById("stream-webcam").classList.remove("green");
         document.getElementById("stream-display").classList.remove("green");
         this.#stopStream("webcam");
         this.#stopStream("display");
         this.#displayEnabled = false;
         this.#webcamEnabled = false;
-    }
+
+        // Stop watching
+        for(const key of Object.keys(this.#viewer)){
+            this.#viewer[key].leave();
+        }
+     }
 }
