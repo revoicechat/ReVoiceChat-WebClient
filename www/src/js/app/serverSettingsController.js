@@ -765,7 +765,7 @@ export default class ServerSettingsController {
         // Name
         const DIV_NAME = document.createElement('div');
         DIV_NAME.className = "name invitation";
-        DIV_NAME.innerText = `${data.id} (${data.status})`;
+        DIV_NAME.innerText = `${data.id}`;
         DIV.appendChild(DIV_NAME);
 
         // Context menu
@@ -801,8 +801,7 @@ export default class ServerSettingsController {
     }
 
     #invitationCopy(link) {
-        const url = document.location.href.slice(0, -11) + `index.html?register=&invitation=${link}&host=${this.#coreUrl}`;
-        copyToClipboard(url);
+        copyToClipboard(link);
     }
 
     #createContextMenuButton(className, innerHTML, onclick, title = "") {
