@@ -134,7 +134,7 @@ function userRegister() {
     const REGISTER = {
         'username': FORM.username.value,
         'password': FORM.password.value,
-        'email': FORM.email.value,
+        'email': null,
         'invitationLink': FORM.invitation.value
     };
 
