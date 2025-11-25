@@ -130,7 +130,7 @@ class SSEHandlers {
             'VOICE_LEAVING': (data) => this.room.voiceController.userLeaving(data),
             'EMOTE_UPDATE': () => reloadEmojis(),
             'RISK_MANAGEMENT': () => this.server.settings.riskModify(),
-            'STREAM_START': (data) => this.room.voiceController?.streamController?.join(data.user, data.name),
+            'STREAM_START': (data) => this.room.voiceController?.streamController?.joinModal(data.user, data.name),
             'STREAM_STOP': (data) => this.room.voiceController?.streamController?.leave(data.user, data.name)
         };
     }

@@ -9,8 +9,10 @@ export default class StreamController {
     #user;
     #webcamEnabled = false;
     #displayEnabled = false;
+    #fetcher;
 
     constructor(fetcher, alert, user, room, token, streamUrl) {
+        this.#fetcher = fetcher;
         this.#streamUrl = streamUrl;
         this.#token = token;
         this.#room = room;
@@ -69,6 +71,18 @@ export default class StreamController {
         }
     }
 
+    async joinModal(userId, streamName) {
+        if (this.#room.voiceController.getActiveRoom() && this.#user.id != userId) {
+            const displayName = (await this.#fetcher.fetchCore(`/user/${userId}`)).displayName;
+            const streamContainter = document.getElementById('stream-container');
+            const modal = document.createElement('div');
+            modal.className = "stream item join";
+            modal.innerHTML = `Click to join "${displayName}" stream`
+            modal.onclick = () => { modal.remove(); this.join(userId, streamName) }
+            streamContainter.appendChild(modal);
+        }
+    }
+
     async join(userId, streamName) {
         if (this.#room.voiceController.getActiveRoom() && userId != this.#user.id) {
             this.#viewer[`${userId}-${streamName}`] = new Stream(this.#streamUrl, this.#user, this.#token);
@@ -94,8 +108,8 @@ export default class StreamController {
         this.#webcamEnabled = false;
 
         // Stop watching
-        for(const key of Object.keys(this.#viewer)){
+        for (const key of Object.keys(this.#viewer)) {
             this.#viewer[key].leave();
         }
-     }
+    }
 }

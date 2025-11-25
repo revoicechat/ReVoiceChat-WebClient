@@ -745,6 +745,13 @@ svg {
     width: 100%;
 }
 
+.stream.item.join {
+    width: 10rem;
+    height: 5rem;
+    text-align: center;
+    align-content: center;
+}
+
 /* STATUS */
 
 .status-container {
