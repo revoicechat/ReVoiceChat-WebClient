@@ -9,9 +9,8 @@ document.addEventListener('DOMContentLoaded', async function () {
     }
 
     // Got here from invitation link
-    if (getQueryVariable('register') === "") {
-        document.getElementById('register-invitation').value = getQueryVariable('invitation') ? getQueryVariable('invitation') : "";
-        document.getElementById('register-host').value = getQueryVariable('host') ? getQueryVariable('host') : "";
+    if (getQueryVariable('register')) {
+        document.getElementById('register-invitation').value = getQueryVariable('register') ? getQueryVariable('register') : "";
         switchToRegister();
     }
 });
