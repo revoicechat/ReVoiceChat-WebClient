@@ -1,6 +1,6 @@
 class PacketEncoder {
     encode(header, data) {
-        const headerBytes = new TextEncoder().encode(header);
+        const headerBytes = new TextEncoder().encode(JSON.stringify(header));
         const dataCopy = new ArrayBuffer(data.byteLength);
         data.copyTo(dataCopy);
 
@@ -42,7 +42,7 @@ export class PacketSender {
 
     send(header, data) {
         if (this.#socket.readyState === WebSocket.OPEN) {
-            this.#socket.send(this.#packetEncoder.encode(JSON.stringify(header), data));
+            this.#socket.send(this.#packetEncoder.encode(header, data));
         }
     }
 }
@@ -85,7 +85,7 @@ export class LargePacketSender{
 
     send(header, data){
         if (this.#socket.readyState === WebSocket.OPEN) {
-            const fullPayload = this.#packetEncoder.encode(JSON.stringify(header), data);
+            const fullPayload = this.#packetEncoder.encode(header, data);
             const total = Math.ceil(fullPayload.byteLength / LargePacketSender.maxPayloadByteLength);
 
             for(let index = 0; index < total; index++){
