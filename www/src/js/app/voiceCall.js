@@ -1,4 +1,4 @@
-import { PacketSender, PacketReceiver } from "./packet.js";
+import { EncodedPacket, DecodedPacket } from "./packet.js";
 
 export default class VoiceCall {
     "use strict";
@@ -60,8 +60,6 @@ export default class VoiceCall {
     #settings = {};
     #gateState = false;
     #outputGain;
-    #packetSender;
-    #packetReceiver;
     #setUserGlow;
     #setSelfGlow;
 
@@ -102,14 +100,11 @@ export default class VoiceCall {
         this.#socket = new WebSocket(`${voiceUrl}/${roomId}`, ["Bearer." + token]);
         this.#socket.binaryType = "arraybuffer";
 
-        // Setup PacketSender
-        this.#packetSender = new PacketSender(this.#socket);
-
         // Setup encoder and transmitter
         await this.#encodeAudio();
 
         // Setup receiver and decoder
-        this.#packetReceiver = new PacketReceiver(this.#socket, (header, data) => this.#decodeAudio(header, data));
+        this.#socket.onmessage = (message) => { this.#decodeAudio(new DecodedPacket(message.data)) }
 
         // Setup main output gain
         this.#outputGain = this.#audioContext.createGain();
@@ -283,15 +278,15 @@ export default class VoiceCall {
         // Setup Encoder
         this.#encoder = new AudioEncoder({
             output: (chunk) => {
-                this.#packetSender.send(
-                    {
-                        timestamp: Date.now(),
-                        audioTimestamp: this.#audioTimestamp / 1000, // audioTimestamp is in µs but sending ms is enough
-                        user: this.#user.id,
-                        gateState: this.#gateState,
-                    },
-                    chunk
-                );
+                const header = {
+                    timestamp: Date.now(),
+                    audioTimestamp: this.#audioTimestamp / 1000, // audioTimestamp is in µs but sending ms is enough
+                    user: this.#user.id,
+                    gateState: this.#gateState,
+                }
+                if (this.#socket.readyState === WebSocket.OPEN) {
+                    this.#socket.send(new EncodedPacket(header, chunk).data);
+                }
             },
             error: (error) => { throw new Error(`Encoder setup failed:\n${error.name}\nCurrent codec :${this.#codecSettings.codec}`) },
         });
@@ -417,7 +412,10 @@ export default class VoiceCall {
         }
     }
 
-    #decodeAudio(header, data) {
+    #decodeAudio(decodedPacket) {
+        const header = decodedPacket.header;
+        const data = decodedPacket.data;
+
         if (this.#users[header.user]) {
             const currentUser = this.#users[header.user];
             // If user sending packet is muted OR we are deaf, we stop

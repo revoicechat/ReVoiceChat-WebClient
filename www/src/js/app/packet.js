@@ -1,5 +1,7 @@
-export class PacketEncoder {
-    encode(header, data) {
+export class EncodedPacket {
+    data;
+
+    constructor(header, data){
         const headerBytes = new TextEncoder().encode(JSON.stringify(header));
         const dataCopy = new ArrayBuffer(data.byteLength);
         data.copyTo(dataCopy);
@@ -16,51 +18,23 @@ export class PacketEncoder {
         packet.set(headerBytes, 2);
         packet.set(new Uint8Array(dataCopy), 2 + headerBytes.length);
 
-        return packet;
+        this.data = packet;
     }
 }
 
-export class PacketDecoder {
-    decode(packet) {
-        const view = new DataView(packet);
+export class DecodedPacket {
+    header = null;
+    data = null;
+
+    constructor(encodedPacket){
+        const view = new DataView(encodedPacket);
 
         const headerEnd = 2 + view.getUint16(0);
-        const headerBytes = new Uint8Array(packet.slice(2, headerEnd));
+        const headerBytes = new Uint8Array(encodedPacket.slice(2, headerEnd));
         const headerJSON = new TextDecoder().decode(headerBytes);
 
-        return { header: JSON.parse(headerJSON), data: packet.slice(headerEnd) };
-    }
-}
-
-export class PacketSender {
-    #socket;
-    #packetEncoder = new PacketEncoder();
-
-    constructor(socket) {
-        this.#socket = socket
-    }
-
-    send(header, data) {
-        if (this.#socket.readyState === WebSocket.OPEN) {
-            this.#socket.send(this.#packetEncoder.encode(header, data));
-        }
-    }
-}
-
-export class PacketReceiver {
-    #socket;
-    #packetDecoder = new PacketDecoder();
-
-    constructor(socket, callback) {
-        this.#socket = socket;
-        this.#socket.onmessage = (message) => {this.#receive(message.data, callback)}
-    }
-
-    #receive(packet, callback) {
-        if (this.#socket.readyState === WebSocket.OPEN) {
-            const result = this.#packetDecoder.decode(packet);
-            callback(result.header, result.data);
-        }
+        this.header = JSON.parse(headerJSON);
+        this.data = encodedPacket.slice(headerEnd);
     }
 }
 

@@ -1,4 +1,4 @@
-import { LargePacketSender, LargePacketReceiver, PacketEncoder, PacketDecoder } from "./packet.js";
+import { LargePacketSender, LargePacketReceiver, EncodedPacket, DecodedPacket } from "./packet.js";
 
 export default class Stream {
     static CLOSE = 0;
@@ -13,9 +13,7 @@ export default class Stream {
     #encoderInterval;
     #encoderConfig;
     #decoder;
-    #packetEncoder;
     #packetSender;
-    #packetDecoder;
     #packetReceiver;
     #streamUrl;
     #token;
@@ -90,7 +88,6 @@ export default class Stream {
         this.#socket.binaryType = "arraybuffer";
 
         // Setup packet sender
-        this.#packetEncoder = new PacketEncoder();
         this.#packetSender = new LargePacketSender(this.#socket);
 
         // Setup Encoder
@@ -99,13 +96,11 @@ export default class Stream {
                 if (!this.#encoderMetadata) {
                     this.#encoderMetadata = metadata;
                 }
-                this.#packetSender.send(
-                    this.#packetEncoder.encode({
-                        timestamp: performance.now(),
-                        encoderMetadata: this.#encoderMetadata,
-                    },
-                        frame)
-                );
+                const header = {
+                    timestamp: performance.now(),
+                    encoderMetadata: this.#encoderMetadata,
+                }
+                this.#packetSender.send(new EncodedPacket(header, frame).data);
             },
             error: (error) => { throw new Error(`Encoder setup failed:\n${error.name}\nCurrent codec :${this.#codecConfig.codec}`) },
         });
@@ -240,8 +235,7 @@ export default class Stream {
                 this.#socket = new WebSocket(`${this.#streamUrl}/${userId}/${streamName}`, ["Bearer." + this.#token]);
                 this.#socket.binaryType = "arraybuffer";
 
-                this.#packetDecoder = new PacketDecoder();
-                this.#packetReceiver = new LargePacketReceiver(this.#socket, (rawData) => { this.#decodeVideo(this.#packetDecoder.decode(rawData)) });
+                this.#packetReceiver = new LargePacketReceiver(this.#socket, (rawData) => { this.#decodeVideo(new DecodedPacket(rawData)) });
 
                 // Video player
                 this.#canvas = document.createElement("canvas");
@@ -334,9 +328,9 @@ export default class Stream {
         element.onclick = () => { this.focus(element); }
     }
 
-    #decodeVideo(decodedData) {
-        const header = decodedData.header;
-        const data = decodedData.data;
+    #decodeVideo(decodedPacket) {
+        const header = decodedPacket.header;
+        const data = decodedPacket.data;
 
         const chunk = new EncodedVideoChunk({
             type: "key",
