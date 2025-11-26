@@ -76,10 +76,18 @@ export default class StreamController {
             const displayName = (await this.#fetcher.fetchCore(`/user/${userId}`)).displayName;
             const streamContainter = document.getElementById('stream-container');
             const modal = document.createElement('div');
+            modal.id = `stream-modal-${userId}-${streamName}`;
             modal.className = "stream item join";
             modal.innerHTML = `Click to join "${displayName}" stream`
             modal.onclick = () => { modal.remove(); this.join(userId, streamName) }
             streamContainter.appendChild(modal);
+        }
+    }
+
+    removeModal(userId, streamName) {
+        const modal = document.getElementById(`stream-modal-${userId}-${streamName}`);
+        if (modal) {
+            modal.remove();
         }
     }
 
@@ -95,6 +103,9 @@ export default class StreamController {
             if (this.#viewer[`${userId}-${streamName}`]) {
                 await this.#viewer[`${userId}-${streamName}`].leave();
             }
+            else {
+                this.removeModal(userId, streamName);
+            }
         }
     }
 
@@ -109,7 +120,22 @@ export default class StreamController {
 
         // Stop watching
         for (const key of Object.keys(this.#viewer)) {
-            this.#viewer[key].leave();
+            await this.#viewer[key].leave();
+        }
+    }
+
+    async availableStream(roomId) {
+        const result = await this.#fetcher.fetchCore(`/room/${roomId}/user`, 'GET');
+
+        if (result.connectedUser === null) {
+            console.debug("Stream : No user in room");
+            return;
+        }
+
+        for (const user of result.connectedUser) {
+            for (const stream of user.streams) {
+                this.joinModal(stream.user, stream.streamName);
+            }
         }
     }
 }

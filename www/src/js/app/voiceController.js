@@ -61,6 +61,9 @@ export default class VoiceController {
             // Update context menu
             this.#contextMenu.setVoiceCall(this.#voiceCall);
 
+            // Check for available stream
+            this.streamController.availableStream(roomId);
+
             // Audio alert
             this.#alert.play('voiceConnected');
         }
