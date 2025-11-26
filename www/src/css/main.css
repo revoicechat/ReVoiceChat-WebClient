@@ -752,6 +752,12 @@ svg {
     width: 100%;
 }
 
+.stream.item canvas{
+    height: 100%;
+    width: 100%;
+    object-fit: contain;
+}
+
 .stream.item.join {
     width: 10rem;
     height: 5rem;
