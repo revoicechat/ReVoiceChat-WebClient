@@ -9,7 +9,7 @@
     <link href="src/css/main.css" rel="stylesheet">
     <link href="src/css/themes.css" rel="stylesheet">
     <link rel="shortcut icon" type="image/png" href="src/img/favicon.png" />
-    <title>ReVoiceChat - Login</title>
+    <title data-i18n="login.title">ReVoiceChat - Login</title>
 </head>
 
 <body>
@@ -18,47 +18,48 @@
             <!-- Login form-->
             <form id="login-form" class="login-form">
                 <div class="login-element">
-                    <label for="login-host">Host</label>
+                    <label for="login-host" data-i18n="login.host">Host</label>
                     <input type="text" name="host" id="login-host">
                 </div>
                 <div class="login-element">
-                    <label for="username">Username</label>
+                    <label for="username" data-i18n="login.username">Username</label>
                     <input type="text" name="username" id="username">
                 </div>
                 <div class="login-element">
-                    <label for="password">Password</label>
+                    <label for="password" data-i18n="login.password">Password</label>
                     <input type="password" name="password" id="password">
                 </div>
-                <button id="login-button" type="button" onclick="userLogin()">Login</button>
-                <button type="button" class='switch' onclick="switchToRegister()">Register instead ?</button>
+                <button id="login-button" type="button" onclick="userLogin()" data-i18n="login.login">Login</button>
+                <button type="button" class='switch' onclick="switchToRegister()" data-i18n="login.register.go.to.page">Register instead ?</button>
             </form>
 
             <!-- Register form-->
             <form id="register-form" class="login-form hidden">
                 <div class="login-element">
-                    <label for="register-host">Host</label>
+                    <label for="register-host" data-i18n="login.host">Host</label>
                     <input type="text" name="host" id="register-host">
                 </div>
                 <div class="login-element">
-                    <label for="register-invitation">Invitation code</label>
+                    <label for="register-invitation" data-i18n="login.invitation">Invitation code</label>
                     <input type="text" name="invitation" id="register-invitation">
                 </div>
                 <div class="login-element">
-                    <label for="register-username">Username</label>
+                    <label for="register-username" data-i18n="login.username">Username</label>
                     <input type="text" name="username" id="register-username">
                 </div>
                 <div class="login-element">
-                    <label for="register-password">Password</label>
+                    <label for="register-password" data-i18n="login.password">Password</label>
                     <input type="password" name="password" id="register-password">
                 </div>
-                <button type="button" onclick="userRegister()">Register</button>
-                <button type="button" class='switch' onclick="switchToLogin()">Login instead ?</button>
+                <button type="button" onclick="userRegister()" data-i18n="login.register">Register</button>
+                <button type="button" class='switch' onclick="switchToLogin()" data-i18n="login.login.go.to.page">Login instead ?</button>
             </form>
         </div>
     </div>
 
     <script src="src/js/lib/sweetalert2.min.js"></script>
     <script src="src/js/index.js"></script>
+    <script src="src/js/lib/i18n.js"></script>
     <script src="src/js/lib/tools.js"></script>
     <script src="src/js/component/icon.component.js" type="module"></script>
     <script src="src/js/component/button.spinner.component.js"></script>

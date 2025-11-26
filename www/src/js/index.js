@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         document.getElementById('register-invitation').value = getQueryVariable('register') ? getQueryVariable('register') : "";
         switchToRegister();
     }
+    await i18n.translate('fr')
 });
 
 document.getElementById("login-form").addEventListener('keydown', function (e) {
