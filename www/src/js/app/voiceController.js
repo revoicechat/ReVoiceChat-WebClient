@@ -139,14 +139,14 @@ export default class VoiceController {
         const connectedUser = result.connectedUser;
 
         const sortedByDisplayName = [...connectedUser].sort((a, b) => {
-            return a.displayName.localeCompare(b.displayName);
+            return a.user.displayName.localeCompare(b.user.displayName);
         });
 
         const voiceContent = document.getElementById(`voice-users-${roomId}`);
         voiceContent.innerHTML = "";
 
-        for (const user of sortedByDisplayName) {
-            voiceContent.appendChild(this.#createUserElement(user));
+        for (const connectedUser of sortedByDisplayName) {
+            voiceContent.appendChild(this.#createUserElement(connectedUser.user));
         }
 
         // Room is currently active
@@ -420,10 +420,7 @@ export default class VoiceController {
     // Count user in room
     async usersCount(roomId) {
         const result = await this.#fetcher.fetchCore(`/room/${roomId}/user`, 'GET');
-        if (result.connectedUser === null) {
-            return 0;
-        }
-        return result.connectedUser.length;
+        return result.connectedUser ? result.connectedUser.length : 0;
     }
 
     // Update users counter
@@ -442,10 +439,10 @@ export default class VoiceController {
             return;
         }
 
-        const connectedUser = result.connectedUser;
+        const connectedUsers = result.connectedUser;
 
-        for (const user of connectedUser) {
-            const userId = user.id;
+        for (const connectedUser of connectedUsers) {
+            const userId = connectedUser.user.id;
 
             // Not self
             if (this.#user.id !== userId) {
