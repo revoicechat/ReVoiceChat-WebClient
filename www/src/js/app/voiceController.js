@@ -442,7 +442,7 @@ export default class VoiceController {
         const connectedUsers = result.connectedUser;
 
         for (const connectedUser of connectedUsers) {
-            const userId = connectedUser.user.id;
+            const userId = connectedUser.id;
 
             // Not self
             if (this.#user.id !== userId) {
