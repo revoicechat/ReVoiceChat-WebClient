@@ -80,13 +80,11 @@ class VoiceContextMenu extends HTMLElement {
         muteButton.onclick = async () => {
             voiceSettings.muted = !voiceSettings.muted;
             muteButton.innerHTML = this.#getMuteHTML(voiceSettings);
-
-            if (this.#voiceCall) {
-                await this.#voiceCall.updateUserMute(userId);
-            }
-
             this.#voiceController.updateUserExtension(userId);
             this.#saveSettings();
+            if (this.#voiceCall) {
+                await this.#voiceCall.setUserMute(userId, voiceSettings.muted);
+            }
         }
     }
 

@@ -33,7 +33,7 @@ export default class VoiceController {
         this.streamController.attachEvents();
     }
 
-    getActiveRoom(){
+    getActiveRoom() {
         return this.#activeRoom;
     }
 
@@ -146,7 +146,7 @@ export default class VoiceController {
         voiceContent.innerHTML = "";
 
         for (const connectedUser of sortedByDisplayName) {
-            voiceContent.appendChild(this.#createUserElement(connectedUser));
+            voiceContent.appendChild(this.#createUserElement(connectedUser.user));
         }
 
         // Room is currently active
@@ -249,15 +249,17 @@ export default class VoiceController {
 
     updateUserExtension(userId) {
         const userExtension = document.getElementById(`voice-user-extension-${userId}`);
-        userExtension.innerHTML = "";
+        if (userExtension) {
+            userExtension.innerHTML = "";
 
-        // User muted
-        if (this.#user.settings.voice.users[userId]?.muted) {
-            const userMuted = document.createElement("div");
-            userMuted.name = "extension-mute";
-            userMuted.innerHTML = "<revoice-icon-speaker-x></revoice-icon-speaker-x>";
-            userMuted.className = "red";
-            userExtension.appendChild(userMuted);
+            // User muted
+            if (this.#user.settings.voice.users[userId]?.muted) {
+                const userMuted = document.createElement("div");
+                userMuted.name = "extension-mute";
+                userMuted.innerHTML = "<revoice-icon-speaker-x></revoice-icon-speaker-x>";
+                userMuted.className = "red";
+                userExtension.appendChild(userMuted);
+            }
         }
     }
 
@@ -302,7 +304,7 @@ export default class VoiceController {
             if (await this.#voiceCall.getSelfDeaf()) {
                 this.#lastStateSelfMute = await this.#voiceCall.getSelfMute();
                 await this.#voiceCall.setSelfMute(true);
-            }else{
+            } else {
                 await this.#voiceCall.setSelfMute(this.#lastStateSelfMute);
             }
             await this.#updateSelfDeaf(true);

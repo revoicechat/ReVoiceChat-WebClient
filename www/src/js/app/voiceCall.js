@@ -183,6 +183,12 @@ export default class VoiceCall {
         }
     }
 
+    async setUserMute(userId, enabled) {
+        if (this.#users[userId]) {
+            this.#users[userId].muted = enabled;
+        }
+    }
+
     async updateUserMute(userId) {
         if (this.#settings.users[userId]) {
             this.#users[userId].muted = this.#settings.users[userId].muted;
