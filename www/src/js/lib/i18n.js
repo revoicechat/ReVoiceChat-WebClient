@@ -65,9 +65,10 @@ class I18n {
 
     /**
      * Translate all elements with the data-i18n attribute
+     * @param {Document|HTMLElement} doc
      */
-    translatePage() {
-        const elements = document.querySelectorAll('[data-i18n]');
+    translatePage(doc = document) {
+        const elements = doc.querySelectorAll('[data-i18n]');
 
         for (const element of elements) {
             const key = element.dataset.i18n;
