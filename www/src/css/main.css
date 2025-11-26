@@ -737,9 +737,14 @@ svg {
     border-radius: 10px;
     border-width: 2px;
     overflow: hidden;
-    min-width: 10rem;
-    min-height: 5rem;
     background-color: black;
+    width: 40vw;
+    height: 40vh;
+}
+
+.stream.item:has(> :last-child:nth-child(4)){
+    width: 20vw;
+    height: 20vh;
 }
 
 .stream.item .content{
