@@ -298,18 +298,9 @@ export default class Stream {
     #determineResolution(frame, videoItem) {
         let result = { width: 0, height: 0 };
 
-        if (frame.codedWidth > videoItem.clientWidth) {
-            // Clamp by width
-            const ratioHW = frame.codedHeight / frame.codedWidth;
-            result.width = videoItem.clientWidth;
-            result.height = result.width * ratioHW;
-        }
-        else {
-            // Clamp by height
-            const ratioWH = frame.codedWidth / frame.codedHeight;
-            result.height = videoItem.clientHeight;
-            result.width = result.height * ratioWH;
-        }
+        const ratio = Math.min((videoItem.clientWidth / frame.codedHeight), (videoItem.clientWidth / frame.codedWidth));
+        result.height = frame.codedHeight * ratio;
+        result.width = frame.codedWidth * ratio;
 
         return result;
     }
