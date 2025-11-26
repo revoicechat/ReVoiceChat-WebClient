@@ -754,6 +754,22 @@ svg {
     align-content: center;
 }
 
+.stream.container.fullscreen{
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.stream.container.fullscreen .item{
+    display: block;
+    width: inherit;
+    height: inherit;
+    margin: 0px;
+    border-radius: 0px;
+    border-width: 0px;
+    overflow: hidden;
+}
+
 /* STATUS */
 
 .status-container {

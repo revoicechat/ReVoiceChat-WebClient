@@ -341,7 +341,7 @@ export default class Stream {
             child.classList.add("hidden");
         }
         element.classList.remove("hidden");
-        element.parentElement.style.display = "block";
+        element.parentElement.classList.add("fullscreen");
         element.onclick = () => { this.unfocus(element); }
     }
 
@@ -349,7 +349,7 @@ export default class Stream {
         for (const child of element.parentElement.children) {
             child.classList.remove("hidden");
         }
-        element.parentElement.style.display = "flex";
+        element.parentElement.classList.remove("fullscreen");
         element.onclick = () => { this.focus(element); }
     }
 
