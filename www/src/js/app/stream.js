@@ -13,6 +13,7 @@ export default class Stream {
     #encoderInterval;
     #encoderConfig;
     #decoder;
+    #decoderKeyFrame = false;
     #packetSender;
     #streamUrl;
     #token;
@@ -90,13 +91,19 @@ export default class Stream {
         const streamContainter = document.getElementById('stream-container')
         streamContainter.appendChild(this.#videoItem);
 
-        switch (type) {
-            case "webcam":
-                this.#videoPlayer.srcObject = await navigator.mediaDevices.getUserMedia({ video: true });
-                break;
-            case "display":
-                this.#videoPlayer.srcObject = await navigator.mediaDevices.getDisplayMedia(this.#displayMediaOptions);
-                break;
+        try {
+            switch (type) {
+                case "webcam":
+                    this.#videoPlayer.srcObject = await navigator.mediaDevices.getUserMedia({ video: true });
+                    break;
+                case "display":
+                    this.#videoPlayer.srcObject = await navigator.mediaDevices.getDisplayMedia(this.#displayMediaOptions);
+                    break;
+            }
+        }
+        catch (error) {
+            this.stop();
+            throw new Error(`MediaDevice setup failed:\n${error}`);
         }
 
         await this.#videoPlayer.play();
@@ -115,12 +122,16 @@ export default class Stream {
                     this.#encoderMetadata = metadata;
                 }
                 const header = {
-                    timestamp: performance.now(),
-                    encoderMetadata: this.#encoderMetadata,
+                    timestamp: parseInt(performance.now()),
+                    keyframe: this.#isKeyframe(),
+                    metadata: this.#encoderMetadata,
                 }
                 this.#packetSender.send(new EncodedPacket(header, frame).data);
             },
-            error: (error) => { throw new Error(`Encoder setup failed:\n${error.name}\nCurrent codec :${this.#codecConfig.codec}`) },
+            error: (error) => {
+                this.stop();
+                throw new Error(`Encoder setup failed:\n${error.name}\nCurrent codec :${this.#codecConfig.codec}`);
+            },
         });
 
         // Encoder
@@ -144,8 +155,8 @@ export default class Stream {
                     }
                     await frame.close();
                 }
-                else{
-                    this.close();
+                else {
+                    this.stop();
                 }
             }, 1000 / this.#codecConfig.framerate)
         }
@@ -168,8 +179,10 @@ export default class Stream {
         this.#state = Stream.OPEN;
     }
 
-    #isKeyframe() {
-        this.#keyframeCounter++;
+    #isKeyframe(count = true) {
+        if (count) {
+            this.#keyframeCounter++;
+        }
         if (this.#keyframeCounter > this.#codecConfig.framerate) {
             this.#keyframeCounter = 0;
             return true;
@@ -178,7 +191,7 @@ export default class Stream {
     }
 
     async #reconfigureEncoderResolution(frame) {
-        if(frame.codedHeight === this.#encoderConfig.height && frame.codedWidth === this.#encoderConfig.width){
+        if (frame.codedHeight === this.#encoderConfig.height && frame.codedWidth === this.#encoderConfig.width) {
             // Captured frame and encoderCondig already match in width and height
             return;
         }
@@ -344,6 +357,14 @@ export default class Stream {
         const header = decodedPacket.header;
         const data = decodedPacket.data;
 
+        // Decoder didn't get a keyFrame yet
+        if (!this.#decoderKeyFrame) {
+            if (header.keyframe) {
+                this.#decoderKeyFrame = true;
+            }
+            return;
+        }
+
         const chunk = new EncodedVideoChunk({
             type: "key",
             timestamp: header.timestamp,
@@ -351,7 +372,7 @@ export default class Stream {
         });
 
         if (this.#decoder.state === "unconfigured") {
-            this.#decoder.configure(header.encoderMetadata.decoderConfig);
+            this.#decoder.configure(header.metadata.decoderConfig);
         }
 
         this.#decoder.decode(chunk);
