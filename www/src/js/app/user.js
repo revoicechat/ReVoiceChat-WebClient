@@ -10,11 +10,10 @@ export default class User {
     constructor(fetcher, mediaURL) {
         this.#fetcher = fetcher;
         this.#mediaURL = mediaURL;
-        this.#load();
         this.settings = new UserSettingsController(this, this.#fetcher, this.#mediaURL);
     }
 
-    async #load() {
+    async load() {
         const result = await this.#fetcher.fetchCore(`/user/me`, 'GET');
 
         if (result !== null) {

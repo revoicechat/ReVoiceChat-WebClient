@@ -68,10 +68,10 @@ class I18n {
      * @param {Document|HTMLElement} doc
      */
     translatePage(doc = document) {
+        // Translate text content
         const elements = doc.querySelectorAll('[data-i18n]');
-
-        for (const element of elements) {
-            const key = element.dataset.i18n;
+        elements.forEach(element => {
+            const key = element.getAttribute('data-i18n');
             const translation = this.translations[key];
 
             if (translation) {
@@ -79,7 +79,33 @@ class I18n {
             } else {
                 console.warn(`Missing translation for key: ${key}`);
             }
-        }
+        });
+
+        // Translate title attributes (tooltips)
+        const titledElements = doc.querySelectorAll('[data-i18n-title]');
+        titledElements.forEach(element => {
+            const key = element.getAttribute('data-i18n-title');
+            const translation = this.translations[key];
+
+            if (translation) {
+                element.setAttribute('title', translation);
+            } else {
+                console.warn(`Missing translation for title key: ${key}`);
+            }
+        });
+
+        // Translate placeholder attributes
+        const placeholderElements = doc.querySelectorAll('[data-i18n-placeholder]');
+        placeholderElements.forEach(element => {
+            const key = element.getAttribute('data-i18n-placeholder');
+            const translation = this.translations[key];
+
+            if (translation) {
+                element.setAttribute('placeholder', translation);
+            } else {
+                console.warn(`Missing translation for placeholder key: ${key}`);
+            }
+        });
     }
 
     /**

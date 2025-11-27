@@ -78,6 +78,7 @@ export default class ReVoiceChat {
     }
 
     #load() {
+        this.user.load();
         this.user.settings.load();
         this.state.load();
         this.#sse.openSSE()
@@ -85,6 +86,7 @@ export default class ReVoiceChat {
         this.room.voiceController.attachEvents();
         this.alert.attachEvents();
         this.router.routeTo(getQueryVariable('r'));
+        i18n.translate("en").then(() => {/* do nothing */})
     }
 
     // Token

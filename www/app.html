@@ -39,22 +39,22 @@
             <!-- Voice control -->
             <div class="voice-control-panel hidden" id="voice-control-panel">
                 <div class="voice-control">
-                    <button id="stream-webcam" title="Enable your camera" class="voice-button">
+                    <button id="stream-webcam" title="Enable your camera" class="voice-button" data-i18n-title="voice.camera.enable">
                         <revoice-icon-camera></revoice-icon-camera>
                     </button>
                 </div>
                 <div class="voice-control">
-                    <button id="stream-display" title="Share your screen" class="voice-button">
+                    <button id="stream-display" title="Share your screen" class="voice-button" data-i18n-title="voice.screen.share">
                         <revoice-icon-display></revoice-icon-display>
                     </button>
                 </div>
                 <div class="voice-control">
-                    <button id="voice-self-mute" title="Mute" class="voice-button">
+                    <button id="voice-self-mute" title="Mute" class="voice-button" data-i18n-title="voice.mute">
                         <revoice-icon-microphone></revoice-icon-microphone>
                     </button>
                 </div>
                 <div class="voice-control">
-                    <button id="voice-self-deaf" title="Deaf" class="voice-button">
+                    <button id="voice-self-deaf" title="Deaf" class="voice-button" data-i18n-title="voice.deaf">
                         <revoice-icon-speaker></revoice-icon-speaker>
                     </button>
                 </div>
@@ -127,7 +127,7 @@
                 <div class="sidebar-container">
                     <div class="sidebar-user-title">
                         <revoice-icon-users></revoice-icon-users>
-                        <h2>Users</h2>
+                        <h2 data-i18n="users.title">Users</h2>
                     </div>
                 </div>
             </div>
@@ -145,43 +145,43 @@
         <div class="config-container-left">
             <div class="config-left">
                 <div class="category">
-                    <h2>Server settings</h2>
+                    <h2 data-i18n="server.settings">Server settings</h2>
 
                     <!-- Overview -->
                     <button class="sub-category" id="server-setting-tab-overview">
-                        <revoice-icon-information></revoice-icon-information> Overview
+                        <revoice-icon-information></revoice-icon-information> <span data-i18n="server.overview">Overview</span>
                     </button>
 
                     <!-- Rooms -->
                     <button class="sub-category hidden" id="server-setting-tab-rooms">
-                        <revoice-icon-chat-bubble></revoice-icon-chat-bubble> Rooms
+                        <revoice-icon-chat-bubble></revoice-icon-chat-bubble> <span data-i18n="server.rooms">Rooms</span>
                     </button>
 
                     <!-- Roles -->
                     <button class="sub-category hidden" id="server-setting-tab-roles">
-                        <revoice-icon-role></revoice-icon-role> Roles
+                        <revoice-icon-role></revoice-icon-role> <span data-i18n="server.roles">Roles</span>
                     </button>
 
                     <!-- Emotes -->
                     <button class="sub-category hidden" id="server-setting-tab-emotes">
-                        <revoice-icon-emoji></revoice-icon-emoji> Emotes
+                        <revoice-icon-emoji></revoice-icon-emoji> <span data-i18n="server.emotes">Emotes</span>
                     </button>
 
                     <!-- Members -->
                     <button class="sub-category" id="server-setting-tab-members">
-                        <revoice-icon-users></revoice-icon-users> Members
+                        <revoice-icon-users></revoice-icon-users> <span data-i18n="server.members">Members</span>
                     </button>
 
                     <!-- Invitation -->
                     <button class="sub-category hidden" id="server-setting-tab-invitations">
-                        <revoice-icon-envelope></revoice-icon-envelope> Invitations
+                        <revoice-icon-envelope></revoice-icon-envelope> <span data-i18n="server.invitations">Invitations</span>
                     </button>
                 </div>
 
                 <!-- Exit -->
                 <div class="category">
                     <button class="sub-category" id="server-setting-close">
-                        <revoice-icon-circle-x></revoice-icon-circle-x> Exit
+                        <revoice-icon-circle-x></revoice-icon-circle-x> <span data-i18n="common.exit">Exit</span>
                     </button>
                 </div>
             </div>
@@ -191,26 +191,26 @@
             <div class="config-right">
                 <!-- Overview -->
                 <div class="hidden" id="server-setting-content-overview">
-                    <h1>Overview</h1>
-                    <p>Server ID : <span id="server-setting-overview-uuid" class="selectable">[SERVER UUID]</span></p>
+                    <h1 data-i18n="server.overview">Overview</h1>
+                    <p><span data-i18n="server.id">Server ID</span> : <span id="server-setting-overview-uuid" class="selectable">[SERVER UUID]</span></p>
 
-                    <h2>Server name</h2>
+                    <h2 data-i18n="server.name">Server name</h2>
                     <p><span id="server-setting-overview-name" class="selectable">[SERVER NAME]</span></p>
                     <input type="text" id="server-setting-overview-name-input" value="[SERVER NAME]" class="hidden">
 
-                    <button id="server-setting-overview-save" class="config-button hidden">Save</button>
+                    <button id="server-setting-overview-save" class="config-button hidden" data-i18n="common.save">Save</button>
                 </div>
 
                 <!-- Rooms -->
                 <div class="hidden" id="server-setting-content-rooms">
-                    <h1>Rooms</h1>
+                    <h1 data-i18n="server.rooms">Rooms</h1>
 
                     <div class="config-buttons">
                         <button id="server-setting-room-add">
-                            <revoice-icon-circle-plus></revoice-icon-circle-plus> Room
+                            <revoice-icon-circle-plus></revoice-icon-circle-plus> <span data-i18n="room.add">Room</span>
                         </button>
                         <button id="server-setting-category-add">
-                            <revoice-icon-folder-plus></revoice-icon-folder-plus> Category
+                            <revoice-icon-folder-plus></revoice-icon-folder-plus> <span data-i18n="room.category.add">Category</span>
                         </button>
                     </div>
                     <div class="server-structure-container">
@@ -221,32 +221,32 @@
                         </div>
                     </div>
 
-                    <button id="server-setting-structure-save" class="config-button">Save</button>
+                    <button id="server-setting-structure-save" class="config-button" data-i18n="common.save">Save</button>
                 </div>
 
                 <!-- Roles -->
                 <div class="hidden" id="server-setting-content-roles">
-                    <h1>Roles</h1>
+                    <h1 data-i18n="server.roles">Roles</h1>
                     <revoice-server-roles id="server-setting-roles-component" server-id=""></revoice-server-roles>
                 </div>
 
                 <!-- Emotes -->
                 <div class="hidden" id="server-setting-content-emotes">
-                    <h1>Emotes</h1>
+                    <h1 data-i18n="server.emotes">Emotes</h1>
                 </div>
 
                 <!-- Members -->
                 <div class="hidden" id="server-setting-content-members">
-                    <h1>Members</h1>
+                    <h1 data-i18n="server.members">Members</h1>
                     <div id="server-setting-members" class="config-members-list"></div>
                 </div>
 
                 <!-- Invitations -->
                 <div class="hidden" id="server-setting-content-invitations">
-                    <h1>Invitations</h1>
-                    <button id='server-setting-invitation-create'>New invitation</button>
+                    <h1 data-i18n="server.invitations">Invitations</h1>
+                    <button id='server-setting-invitation-create' data-i18n="invitation.new">New invitation</button>
 
-                    <h2>Valid invitation</h2>
+                    <h2 data-i18n="invitation.valid">Valid invitation</h2>
                     <div id="server-setting-invitation" class="config-invitation-list">
                         <!-- JS -->
                     </div>
@@ -260,45 +260,45 @@
         <div class="config-container-left">
             <div class="config-left">
                 <div class="category">
-                    <h2>User settings</h2>
+                    <h2 data-i18n="user.settings">User settings</h2>
 
                     <!-- Overview -->
                     <button class="sub-category" id="user-setting-tab-overview">
-                        <revoice-icon-information></revoice-icon-information> Overview
+                        <revoice-icon-information></revoice-icon-information> <span data-i18n="user.overview">Overview</span>
                     </button>
 
                     <!-- Themes -->
                     <button class="sub-category" id="user-setting-tab-themes">
-                        <revoice-icon-swatch></revoice-icon-swatch> Themes
+                        <revoice-icon-swatch></revoice-icon-swatch> <span data-i18n="user.themes">Themes</span>
                     </button>
 
-                    <!-- Themes -->
+                    <!-- Emotes -->
                     <button class="sub-category" id="user-setting-tab-emotes">
-                        <revoice-icon-emoji></revoice-icon-emoji> Emotes
+                        <revoice-icon-emoji></revoice-icon-emoji> <span data-i18n="user.emotes">Emotes</span>
                     </button>
 
                     <!-- Input -->
                     <button class="sub-category" id="user-setting-tab-audio-input">
-                        <revoice-icon-microphone></revoice-icon-microphone> Audio input
+                        <revoice-icon-microphone></revoice-icon-microphone> <span data-i18n="user.audio.input">Audio input</span>
                     </button>
 
                     <!-- Output -->
                     <button class="sub-category" id="user-setting-tab-audio-output">
-                        <revoice-icon-speaker></revoice-icon-speaker> Audio output
+                        <revoice-icon-speaker></revoice-icon-speaker> <span data-i18n="user.audio.output">Audio output</span>
                     </button>
                 </div>
 
                 <!-- Logout -->
                 <div class="category">
                     <button class="sub-category danger" id="user-setting-tab-logout">
-                        <revoice-icon-logout></revoice-icon-logout> Logout
+                        <revoice-icon-logout></revoice-icon-logout> <span data-i18n="user.logout">Logout</span>
                     </button>
                 </div>
 
                 <!-- Exit -->
                 <div class="category">
                     <button class="sub-category" id="user-setting-close">
-                        <revoice-icon-circle-x></revoice-icon-circle-x> Exit
+                        <revoice-icon-circle-x></revoice-icon-circle-x> <span data-i18n="common.exit">Exit</span>
                     </button>
                 </div>
 
@@ -309,52 +309,52 @@
             <div class="config-right">
                 <!-- Overview -->
                 <div class="hidden" id="user-setting-content-overview">
-                    <h1>Overview</h1>
-                    <p>User ID : <span id="setting-user-uuid" class="selectable">[USER UUID]</span></p>
+                    <h1 data-i18n="user.overview">Overview</h1>
+                    <p><span data-i18n="user.id">User ID</span> : <span id="setting-user-uuid" class="selectable">[USER UUID]</span></p>
                     <br />
                     <div class="sidebar-container">
                         <input type="file" id="overview-picture-new" accept="image/webp,image/png,image/jpg,image/jpeg,image/gif" style="display:none;">
                         <input type="hidden" id="overview-picture" name="imagePath">
                         <img id="setting-user-picture" src="src/img/default-avatar.webp" alt="Preview PFP" class="icon large-icon ring-2">
                         <span style="width: 10px"></span>
-                        <button class="button" id="overview-select-picture">Upload a profile picture</button>
+                        <button class="button" id="overview-select-picture" data-i18n="user.picture.upload">Upload a profile picture</button>
                     </div>
-                    <h2>Display name</h2>
+                    <h2 data-i18n="user.displayname">Display name</h2>
                     <input type="text" id="overview-displayname" value="[DISPLAYNAME]">
 
                     <br />
                     <br />
                     <div class="sidebar-container">
-                        <button class="button" id="overview-change-password">Change password</button>
+                        <button class="button" id="overview-change-password" data-i18n="user.password.change">Change password</button>
                         <span style="width: 10px"></span>
-                        <button id="overview-save" class="button">Save Settings</button>
+                        <button id="overview-save" class="button" data-i18n="user.save">Save Settings</button>
                     </div>
                 </div>
 
                 <!-- Themes -->
                 <div class="hidden" id="user-setting-content-themes">
-                    <h1>Themes</h1>
+                    <h1 data-i18n="user.themes">Themes</h1>
                     <form id="setting-themes-form" class="theme-form"></form>
                 </div>
 
                 <!-- Emotes -->
                 <div class="hidden" id="user-setting-content-emotes">
-                    <h1>Emotes</h1>
+                    <h1 data-i18n="user.emotes">Emotes</h1>
                     <revoice-emoji-manager path="me" id="user-setting-emotes-form"></revoice-emoji-manager>
                 </div>
 
                 <!-- Audio input -->
                 <div class="hidden" id="user-setting-content-audio-input">
-                    <h1>Audio input</h1>
+                    <h1 data-i18n="audio.input">Audio input</h1>
 
-                    <h2>Volume</h2>
+                    <h2 data-i18n="audio.volume">Volume</h2>
 
                     <form class="voice-settings">
                         <label for="input-volume" id="input-volume-label">[VOLUME]</label>
                         <input type="range" id="input-volume" min="0" max="1.5" step="0.01">
                     </form>
 
-                    <h2 id="voice-sensitivity">Voice detection</h2>
+                    <h2 id="voice-sensitivity" data-i18n="voice.sensitivity">Voice detection</h2>
 
                     <form class="voice-settings">
                         <label class="voice-toggleable hidden" for="gate-attack" id="gate-attack-label">[ATTACK]</label>
@@ -367,11 +367,11 @@
                         <input type="range" id="gate-threshold" min="-100" max="0" step="1">
 
                         <div class="config-buttons">
-                            <button class="config-button voice-toggleable hidden" type="button" id="gate-default">Default</button>
+                            <button class="config-button voice-toggleable hidden" type="button" id="gate-default" data-i18n="voice.default">Default</button>
                         </div>
                     </form>
 
-                    <h2 class="voice-toggleable hidden">Compressor</h2>
+                    <h2 class="voice-toggleable hidden" data-i18n="compressor.title">Compressor</h2>
                     <form class="voice-settings voice-toggleable hidden">
                         <label for="compressor-attack" id="compressor-attack-label">[ATTACK]</label>
                         <input type="range" id="compressor-attack" min="0" max="1" step="0.01">
@@ -389,43 +389,43 @@
                         <input type="range" id="compressor-threshold" min="-100" max="0" step="1">
 
                         <div class="config-buttons">
-                            <button class="config-button" type="button" id="compressor-default">Default</button>
-                            <button class="config-button" type="button" id="compressor-enabled">Enabled</button>
+                            <button class="config-button" type="button" id="compressor-default" data-i18n="compressor.default">Default</button>
+                            <button class="config-button" type="button" id="compressor-enabled" data-i18n="compressor.enabled" data-i18n-title="compressor.enabled.tooltip">Enabled</button>
                         </div>
                     </form>
 
                     <div class="config-buttons">
-                        <button class="config-button" type="button" id="audio-input-default">Default</button>
-                        <button class="config-button" type="button" id="audio-input-advanced">Advanced</button>
+                        <button class="config-button" type="button" id="audio-input-default" data-i18n="voice.default">Default</button>
+                        <button class="config-button" type="button" id="audio-input-advanced" data-i18n="voice.advanced">Advanced</button>
                     </div>
                 </div>
 
                 <!-- Audio output -->
                 <div class="hidden" id="user-setting-content-audio-output">
-                    <h1>Audio output</h1>
+                    <h1 data-i18n="audio.output">Audio output</h1>
 
-                    <h2>Main</h2>
+                    <h2 data-i18n="audio.main">Main</h2>
                     <form class="voice-settings">
                         <label for="input-volume" id="output-main-label">[MAIN]</label>
                         <input type="range" id="output-main-volume" min="0" max="1" step="0.01">
                     </form>
 
-                    <h2>Voice</h2>
+                    <h2 data-i18n="audio.voice">Voice</h2>
                     <form class="voice-settings">
                         <label for="input-volume" id="output-voice-label">[VOICE]</label>
                         <input type="range" id="output-voice-volume" min="0" max="1" step="0.01">
                     </form>
                     <div class="config-buttons">
-                        <button class="config-button" type="button" id="audio-output-try-voicechat">Try out !</button>
+                        <button class="config-button" type="button" id="audio-output-try-voicechat" data-i18n="audio.try.voicechat">Try out !</button>
                     </div>
 
-                    <h2>Notification</h2>
+                    <h2 data-i18n="audio.notification">Notification</h2>
                     <form class="voice-settings">
                         <label for="input-volume" id="output-notification-label">[NOTIFICATION]</label>
                         <input type="range" id="output-notification-volume" min="0" max="1" step="0.01">
                     </form>
                     <div class="config-buttons">
-                        <button class="config-button" type="button" id="audio-output-try-notification">Try out !</button>
+                        <button class="config-button" type="button" id="audio-output-try-notification" data-i18n="audio.try.notification">Try out !</button>
                     </div>
                 </div>
             </div>
@@ -439,6 +439,7 @@
     <script src="src/js/lib/marked.min.js"></script>
     <script src="src/js/lib/highlight.min.js"></script>
     <script src="src/js/lib/tools.js"></script>
+    <script src="src/js/lib/i18n.js"></script>
 
     <!-- Components -->
     <script src="src/js/component/icon.component.js"></script>
