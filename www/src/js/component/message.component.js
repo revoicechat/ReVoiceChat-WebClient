@@ -39,6 +39,10 @@ class MessageComponent extends HTMLElement {
                             box-sizing: border-box;
                         }
                         /* Markdown content styling */
+                        .markdown-content{
+                            user-select: text;
+                        }
+
                         .markdown-content h1,
                         .markdown-content h2,
                         .markdown-content h3,
