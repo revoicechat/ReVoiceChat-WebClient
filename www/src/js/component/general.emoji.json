@@ -1,5 +1,5 @@
 {
-  "smileys": {
+  "04. smileys": {
     "icon": "😀",
     "emojis": [
       {
@@ -3105,7 +3105,7 @@
       }
     ]
   },
-  "animals": {
+  "05. animals": {
     "icon": "🐶",
     "emojis": [
       {
@@ -4846,7 +4846,7 @@
       }
     ]
   },
-  "travel": {
+  "06. travel": {
     "icon": "🚗",
     "emojis": [
       {
@@ -6884,7 +6884,7 @@
       }
     ]
   },
-  "activities": {
+  "07. activities": {
     "icon": "⚽",
     "emojis": [
       {
@@ -7703,7 +7703,7 @@
       }
     ]
   },
-  "objects": {
+  "08. objects": {
     "icon": "📣",
     "emojis": [
       {
@@ -9277,7 +9277,7 @@
       }
     ]
   },
-  "symbols": {
+  "09. symbols": {
     "icon": "❤️",
     "emojis": [
       {
@@ -11078,7 +11078,7 @@
       }
     ]
   },
-  "flags": {
+  "10. flags": {
     "icon": "🏁",
     "emojis": [
       {

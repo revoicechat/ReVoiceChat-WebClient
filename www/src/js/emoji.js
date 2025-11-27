@@ -21,9 +21,9 @@ async function reloadEmojis() {
 }
 
 async function initPicker() {
-    await initCustomGeneral(picker)
-    await initCustomServer(picker)
     await initCustomUser(picker)
+    await initCustomServer(picker)
+    await initCustomGeneral(picker)
     const pickerContainer = document.getElementById('emoji-picker');
     pickerContainer.querySelector('#emoji-picker-content')?.remove();
     pickerContainer.appendChild(picker.create());
