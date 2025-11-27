@@ -159,20 +159,19 @@ body {
     background-color: var(--sec-button-hover-color);
 }
 
-/* Sidebar left */
-.sidebar {
+/* Sidebars */
+.sidebar.left {
     border-color: var(--pri-bd-color);
     background-color: var(--pri-bg-color);
 }
 
-.sidebar-header {
-    border-color: var(--pri-bd-color);
-}
-
-/* Sidebar right */
-.sidebar-right {
+.sidebar.right {
     border-color: var(--pri-bd-color);
     background-color: var(--sec-bg-color);
+}
+
+.sidebar .header {
+    border-color: var(--pri-bd-color);
 }
 
 /* Room */

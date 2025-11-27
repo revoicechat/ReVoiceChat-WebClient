@@ -17,19 +17,15 @@
     <!-- App Container -->
     <div class="main app hidden" id="route-app">
         <!-- Sidebar -->
-        <div class="sidebar">
+        <div class="sidebar left">
             <!-- Server info -->
-            <div class="sidebar-header">
-                <div class="sidebar-container">
-                    <img src="src/img/favicon.png" alt="Server icone" class="sidebar-icone ring-2" />
+            <div class="header">
+                <img src="src/img/favicon.png" alt="Server icone" class="ring-2" />
+                <h2 id="server-name">[SERVER-NAME]</h2>
+                
 
-                    <div class="sidebar-title">
-                        <h2 id="server-name">[SERVER-NAME]</h2>
-                    </div>
-
-                    <div class="block-right">
-                        <button id="server-setting-open"><revoice-icon-cog-6></revoice-icon-cog-6></button>
-                    </div>
+                <div class="block-right">
+                    <button id="server-setting-open"><revoice-icon-cog-6></revoice-icon-cog-6></button>
                 </div>
             </div>
 
@@ -122,18 +118,14 @@
 
         </div>
         <!-- Sidebar users-->
-        <div class="sidebar-right" id="sidebar-users">
-            <div class="sidebar-header">
-                <div class="sidebar-container">
-                    <div class="sidebar-user-title">
-                        <revoice-icon-users></revoice-icon-users>
-                        <h2 data-i18n="users.title">Users</h2>
-                    </div>
-                </div>
+        <div class="sidebar right" id="sidebar-users">
+            <div class="header">
+                <revoice-icon-users></revoice-icon-users>
+                <h2 data-i18n="users.title">Users</h2>
             </div>
 
             <!-- User List -->
-            <div class="sidebar-user-list scrollbar" id="user-list">
+            <div class="content scrollbar" id="user-list">
                 <!-- JS -->
             </div>
         </div>
