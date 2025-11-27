@@ -279,10 +279,7 @@ export default class Stream {
 
                 this.#decoder = new VideoDecoder({
                     output: (frame) => {
-                        // TO DO : Optimise this
-                        const resolution = this.#determineResolution(frame, this.#videoItem);
-                        this.#canvas.width = resolution.width;
-                        this.#canvas.height = resolution.height;
+                        this.#reconfigureCanvasResolution(frame, this.#videoItem);
                         this.#context.drawImage(frame, 0, 0, this.#canvas.width, this.#canvas.height);
                         frame.close();
                     },
@@ -295,14 +292,10 @@ export default class Stream {
         }
     }
 
-    #determineResolution(frame, videoItem) {
-        let result = { width: 0, height: 0 };
-
+    #reconfigureCanvasResolution(frame, videoItem) {
         const ratio = Math.min((videoItem.clientWidth / frame.codedHeight), (videoItem.clientWidth / frame.codedWidth));
-        result.height = frame.codedHeight * ratio;
-        result.width = frame.codedWidth * ratio;
-
-        return result;
+        this.#canvas.height = frame.codedHeight * ratio;
+        this.#canvas.width = frame.codedWidth * ratio;
     }
 
     async leave() {

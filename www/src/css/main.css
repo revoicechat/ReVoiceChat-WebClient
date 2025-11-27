@@ -737,9 +737,15 @@ svg {
     border-radius: 10px;
     border-width: 2px;
     overflow: hidden;
-    min-width: 10rem;
-    min-height: 5rem;
     background-color: black;
+    width: 40vw;
+    height: 40vh;
+    cursor: zoom-in;
+}
+
+.stream.item:has(> :last-child:nth-child(4)){
+    width: 20vw;
+    height: 20vh;
 }
 
 .stream.item .content{
@@ -747,11 +753,19 @@ svg {
     width: 100%;
 }
 
+.stream.item canvas{
+    height: 100%;
+    width: 100%;
+    object-fit: contain;
+    cursor: zoom-in;
+}
+
 .stream.item.join {
     width: 10rem;
     height: 5rem;
     text-align: center;
     align-content: center;
+    cursor: pointer;
 }
 
 .stream.container.fullscreen{
@@ -768,6 +782,7 @@ svg {
     border-radius: 0px;
     border-width: 0px;
     overflow: hidden;
+    cursor: zoom-out;
 }
 
 .stream.container.fullscreen canvas {
@@ -776,6 +791,7 @@ svg {
     margin-left: auto;
     margin-right: auto;
     display: block;
+    cursor: zoom-out;
 }
 
 
