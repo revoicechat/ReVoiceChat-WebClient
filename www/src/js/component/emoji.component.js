@@ -2,7 +2,7 @@ class EmojiPicker {
 
     async init() {
         this.categories = await apiFetch("src/js/component/general.emoji.json").then(res => res.json());
-        this.currentCategory = 'smileys';
+        this.currentCategory = '01. custom_perso';
         this.onEmojiSelect = null;
     }
 
@@ -23,7 +23,7 @@ class EmojiPicker {
         picker.innerHTML = `
           <div class="emoji-picker-header">
             <div class="emoji-picker-categories">
-              ${Object.keys(this.categories).map(key => `
+              ${Object.keys(this.categories).sort().map(key => `
                 <button class="emoji-category-btn ${key === this.currentCategory ? 'active' : ''}"
                         data-category="${key}">
                   ${this.categories[key].icon}
@@ -99,7 +99,7 @@ class EmojiPicker {
 async function initCustomGeneral(picker) {
     const emojis = await RVC.fetcher.fetchCore(`/emote/global`);
     initCustomEmojiCategory(picker,
-        'custom_general',
+        '03. custom_general',
         '<img src="src/img/favicon.png" alt="revoice"/>',
         Array.from(emojis).map(emoji => {
             return {
@@ -114,7 +114,7 @@ async function initCustomGeneral(picker) {
 
 async function initCustomServer(picker) {
     const emojis = await RVC.fetcher.fetchCore(`/emote/server/${RVC.server.id}`);
-    initCustomEmojiCategory(picker, 'custom_server',
+    initCustomEmojiCategory(picker, '02. custom_server',
         '🏠',
         Array.from(emojis).map(emoji => {
             return {
@@ -128,8 +128,8 @@ async function initCustomServer(picker) {
 }
 
 async function initCustomUser(picker) {
-    const emojis = await RVC.fetcher.fetchCore(`/emote/me`);
-    initCustomEmojiCategory(picker, 'custom_perso',
+    const emojis = await RVC.fetcher.fetchCore(`/emote/me`) | [];
+    initCustomEmojiCategory(picker, '01. custom_perso',
         `<img class="emoji ${RVC.user.id}"
                    src="${RVC.mediaUrl}/profiles/${RVC.user.id}"
                    style="border-radius: 9999px;"
