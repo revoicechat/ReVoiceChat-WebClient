@@ -8,6 +8,7 @@ export default class UserSettingsController {
     #inputAdvanced = false;
     #currentTab;
     #theme = 'dark';
+    #lang = 'en';
     #password = {
         password: '',
         newPassword: '',
@@ -45,6 +46,7 @@ export default class UserSettingsController {
             voice: this.voice,
             inputAdvanced: this.#inputAdvanced,
             theme: this.#theme,
+            lang: this.#lang,
         }
         await this.#fetcher.fetchCore(`/settings/me`, 'PATCH', settings);
     }
@@ -62,6 +64,9 @@ export default class UserSettingsController {
             if(storedSettings.theme) {
                 this.#theme = storedSettings.theme;
             }
+            if(storedSettings.lang) {
+                this.#lang = storedSettings.lang;
+            }
         }
 
         document.documentElement.dataset.theme = this.#theme;
@@ -74,6 +79,8 @@ export default class UserSettingsController {
         this.#compressorLoad();
         this.#inputVolumeLoad();
         this.#audioOutputLoad();
+
+        await i18n.loadTranslations(this.#lang)
     }
 
     select(name) {
@@ -132,22 +139,23 @@ export default class UserSettingsController {
             confirmButtonText: "Change",
             allowOutsideClick: false,
             html: `
-            <form class='popup'>
-                <label>Current password</label>
+            <form id="popup-new-password" class='popup'>
+                <label data-i18n="user.password.current">Current password</label>
                 <input type='password' id='popup-current-password'>
                 <br/>
                 <br/>
-                <label>New password</label>
+                <label data-i18n="user.password.new">New password</label>
                 <input type='password' id='popup-new-password'>
                 <br/>
                 <br/>
-                <label>Confirm password</label>
+                <label data-i18n="user.password.new.again">Confirm password</label>
                 <input type='password' id='popup-confirm-password'>
             </form>`,
             didOpen: () => {
                 document.getElementById('popup-current-password').oninput = () => { this.#password.password = document.getElementById('popup-current-password').value };
                 document.getElementById('popup-new-password').oninput = () => { this.#password.newPassword = document.getElementById('popup-new-password').value };
                 document.getElementById('popup-confirm-password').oninput = () => { this.#password.confirmPassword = document.getElementById('popup-confirm-password').value };
+                i18n.translatePage(document.getElementById("popup-new-password"))
             }
             ,
         }).then(async (result) => {
@@ -178,7 +186,7 @@ export default class UserSettingsController {
         else {
             Swal.fire({
                 icon: 'error',
-                title: `Display name invalid`,
+                title: i18n.translateOne("user.name.error"),
                 animation: false,
                 customClass: SwalCustomClass,
                 showCancelButton: false,
@@ -275,12 +283,12 @@ export default class UserSettingsController {
 
         const button = document.getElementById("audio-input-advanced");
         if (this.#inputAdvanced) {
-            button.innerText = "Simple";
+            button.innerText = i18n.translateOne("button.simple");
             document.getElementById('voice-sensitivity').innerText = "Noise gate";
             document.getElementById('gate-threshold-label').innerText = `Threshold : ${this.voice.gate.threshold}dB`;
             document.getElementById('audio-input-default').classList.add("hidden");
         } else {
-            button.innerText = "Advanced";
+            button.innerText = i18n.translateOne("button.advanced");
             document.getElementById('voice-sensitivity').innerText = "Voice detection";
             document.getElementById('gate-threshold-label').innerText = `Sensitivity ${this.voice.gate.threshold}dB`;
             document.getElementById('audio-input-default').classList.remove("hidden");

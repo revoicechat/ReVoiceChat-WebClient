@@ -86,7 +86,7 @@ export default class ReVoiceChat {
         this.room.voiceController.attachEvents();
         this.alert.attachEvents();
         this.router.routeTo(getQueryVariable('r'));
-        i18n.translate("en").then(() => {/* do nothing */})
+        i18n.translatePage()
     }
 
     // Token

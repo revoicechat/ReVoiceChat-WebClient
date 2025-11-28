@@ -177,7 +177,7 @@ export default class ServerSettingsController {
             spinner.error();
             Swal.fire({
                 icon: 'error',
-                title: `Server name invalid`,
+                title: i18n.translateOne("server.settings.name.error"),
                 animation: false,
                 customClass: SwalCustomClass,
                 showCancelButton: false,
@@ -232,7 +232,7 @@ export default class ServerSettingsController {
         this.#popupData.type = 'TEXT';
 
         Swal.fire({
-            title: 'Add a room',
+            title: i18n.translateOne("server.structure.room.add"),
             animation: false,
             customClass: SwalCustomClass,
             showCancelButton: true,
@@ -240,20 +240,21 @@ export default class ServerSettingsController {
             confirmButtonText: "Add",
             allowOutsideClick: false,
             html: `
-            <form class='popup'>
-                <label>Room name</label>
+            <form id="popup-new-room" class='popup'>
+                <label data-i18n="server.structure.room.name">Room name</label>
                 <input type='text' id='popup-name'>
                 <br/>
                 <br/>
-                <label>Room type</label>
+                <label data-i18n="server.structure.room.type">Room type</label>
                 <select id='popup-type'>
-                    <option value='TEXT'>Text</option>
-                    <option value='VOICE'>Voice (Built-in)</option>
+                    <option value='TEXT' data-i18n="server.structure.room.type.text">Text</option>
+                    <option value='VOICE' data-i18n="server.structure.room.type.voice">Voice (Built-in)</option>
                 </select>
             </form>`,
             didOpen: () => {
                 document.getElementById('popup-name').oninput = () => { this.#popupData.name = document.getElementById('popup-name').value };
                 document.getElementById('popup-type').oninput = () => { this.#popupData.type = document.getElementById('popup-type').value };
+                i18n.translatePage(document.getElementById("popup-new-room"))
             }
         }).then(async (result) => {
             if (result.value) {
@@ -268,7 +269,7 @@ export default class ServerSettingsController {
         this.#popupData.name = data.name;
 
         Swal.fire({
-            title: `Edit room '${data.name}'`,
+            title: i18n.translateOne("server.structure.room.edit", [data.name]),
             animation: false,
             customClass: SwalCustomClass,
             showCancelButton: true,
@@ -276,12 +277,13 @@ export default class ServerSettingsController {
             confirmButtonText: "Edit",
             allowOutsideClick: false,
             html: `
-            <form class='popup'>
-                <label>Room name</label>
+            <form id="popup-new-room" class='popup'>
+                <label data-i18n="server.structure.room.name">Room name</label>
                 <input type='text' id='popup-name' value='${data.name}'>
             </form>`,
             didOpen: () => {
                 document.getElementById('popup-name').oninput = () => { this.#popupData.name = document.getElementById('popup-name').value };
+                i18n.translatePage(document.getElementById("popup-new-room"))
             }
         }).then(async (result) => {
             if (result.value) {
@@ -294,7 +296,7 @@ export default class ServerSettingsController {
     async #roomDelete(item) {
         const data = this.#roomsData[item.id];
         Swal.fire({
-            title: `Delete room '${data.name}'`,
+            title: i18n.translateOne("server.structure.room.delete.title", [data.name]),
             animation: false,
             customClass: {
                 title: "swalTitle",
@@ -304,7 +306,7 @@ export default class ServerSettingsController {
             },
             showCancelButton: true,
             focusCancel: true,
-            confirmButtonText: "Delete",
+            confirmButtonText: i18n.translateOne("server.structure.room.delete"),
             allowOutsideClick: false,
         }).then(async (result) => {
             if (result.value) {
@@ -334,7 +336,7 @@ export default class ServerSettingsController {
         this.#popupData.name = item.name;
 
         Swal.fire({
-            title: `Edit category '${item.name}'`,
+            title: i18n.translateOne("server.structure.category.edit", [item.name]),
             animation: false,
             customClass: SwalCustomClass,
             showCancelButton: true,
@@ -342,12 +344,13 @@ export default class ServerSettingsController {
             confirmButtonText: "Edit",
             allowOutsideClick: false,
             html: `
-            <form class='popup'>
-                <label>Category name</label>
+            <form id="popup-new-category" class='popup'>
+                <label data-i18n="server.structure.category.name">Category name</label>
                 <input type='text' id='popup-name' value='${item.name}'>
             </form>`,
             didOpen: () => {
                 document.getElementById('popup-name').oninput = () => { this.#popupData.name = document.getElementById('popup-name').value };
+                i18n.translatePage(document.getElementById("popup-new-category"))
             }
         }).then(async (result) => {
             if (result.value) {
@@ -359,7 +362,7 @@ export default class ServerSettingsController {
 
     #categoryDelete(item, parentItems) {
         Swal.fire({
-            title: `Delete category '${item.name}'`,
+            title: i18n.translateOne("server.structure.category.delete", [item.name]),
             animation: false,
             customClass: {
                 title: "swalTitle",
@@ -369,7 +372,7 @@ export default class ServerSettingsController {
             },
             showCancelButton: true,
             focusCancel: true,
-            confirmButtonText: "Delete",
+            confirmButtonText: i18n.translateOne("server.structure.category.delete.confirm"),
             allowOutsideClick: false,
         }).then(async (result) => {
             if (result.value) {
