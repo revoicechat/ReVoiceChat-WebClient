@@ -23,7 +23,12 @@ const [
     EmojiIconComponent,
     UserIconComponent,
     RoleIconComponent,
-    PaperClipIconComponent
+    PaperClipIconComponent,
+    LogoutIconComponent,
+    MenuBurgerIconComponent,
+    CameraIconComponent,
+    DisplayIconComponent,
+    LanguageIconComponent
 ] = require('./icon.component.js');
 
 
@@ -166,6 +171,31 @@ describe('IconComponent', () => {
 
     describe('PaperClipIconComponent', () => {
         setup(() => new PaperClipIconComponent());
+        shouldRenderAnSVGElement();
+    });
+
+    describe('LogoutIconComponent', () => {
+        setup(() => new LogoutIconComponent());
+        shouldRenderAnSVGElement();
+    });
+
+    describe('MenuBurgerIconComponent', () => {
+        setup(() => new MenuBurgerIconComponent());
+        shouldRenderAnSVGElement();
+    });
+
+    describe('CameraIconComponent', () => {
+        setup(() => new CameraIconComponent());
+        shouldRenderAnSVGElement();
+    });
+
+    describe('DisplayIconComponent', () => {
+        setup(() => new DisplayIconComponent());
+        shouldRenderAnSVGElement();
+    });
+
+    describe('LanguageIconComponent', () => {
+        setup(() => new LanguageIconComponent());
         shouldRenderAnSVGElement();
     });
 });

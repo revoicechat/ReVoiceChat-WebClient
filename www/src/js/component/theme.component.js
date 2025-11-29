@@ -3,7 +3,7 @@ class ThemePreviewComponent extends HTMLElement {
   connectedCallback() {
     const dataTheme = this.getAttribute("theme")
     this.innerHTML = `
-      <link href="src/js/component/theme.component.js" rel="stylesheet" />
+      <link href="src/js/component/theme.component.css" rel="stylesheet" />
       <div class="data-theme-holder">
           <div data-theme="${dataTheme}">
               <div class="data-theme-container">
@@ -19,7 +19,7 @@ class ThemePreviewComponent extends HTMLElement {
                           <div class="data-theme-message">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</div>
                           <div class="data-theme-message">message 2</div>
                           <div class="data-theme-message">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</div>
-                      </div>
+                      </div>git 
                       <div class="data-theme-center-input">
                           <div class="data-theme-message-input">insert message</div>
                       </div>

@@ -97,7 +97,7 @@ export default class UserSettingsController {
     }
 
     #selectEventHandler() {
-        const parameters = ['overview', 'themes', 'emotes', 'audio-input', 'audio-output'];
+        const parameters = ['overview', 'language', 'themes', 'emotes', 'audio-input', 'audio-output'];
         for (const param of parameters) {
             document.getElementById(`user-setting-tab-${param}`).addEventListener('click', () => this.select(param));
         }

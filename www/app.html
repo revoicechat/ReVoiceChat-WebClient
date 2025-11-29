@@ -258,6 +258,11 @@
                         <revoice-icon-information></revoice-icon-information> <span data-i18n="user.overview">Overview</span>
                     </button>
 
+                    <!-- Language -->
+                    <button class="sub-category" id="user-setting-tab-language">
+                        <revoice-icon-language></revoice-icon-language> <span data-i18n="user.language">Language</span>
+                    </button>
+
                     <!-- Themes -->
                     <button class="sub-category" id="user-setting-tab-themes">
                         <revoice-icon-swatch></revoice-icon-swatch> <span data-i18n="user.themes">Themes</span>
@@ -320,6 +325,12 @@
                         <span style="width: 10px"></span>
                         <button id="overview-save" class="button" data-i18n="user.save">Save Settings</button>
                     </div>
+                </div>
+
+                <!-- Language -->
+                <div class="hidden" id="user-setting-content-language">
+                    <h1 data-i18n="user.language">Language</h1>
+                    <form id="setting-language-form" class="theme-form"></form>
                 </div>
 
                 <!-- Themes -->
