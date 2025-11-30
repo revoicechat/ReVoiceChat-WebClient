@@ -147,7 +147,7 @@ class I18n {
      */
     translatePage(doc = document) {
         // Translate text content with dynamic values support
-        const elements = doc.querySelectorAll('[data-i18n]');
+        const elements = this.#querySelectorAllDeep('[data-i18n]', doc);
         for (const element of elements) {
             this.translateElement(element);
 
@@ -182,6 +182,37 @@ class I18n {
                 console.warn(`Missing translation for placeholder key: ${key}`);
             }
         }
+    }
+
+    /**
+     * Translate all elements with the data-i18n attribute
+     * @param {string} selector
+     * @param {Document|HTMLElement} root
+     */
+    #querySelectorAllDeep(selector, root) {
+        const results = [];
+
+        function search(node) {
+            // 1. Normal DOM elements
+            if (node.querySelectorAll) {
+                results.push(...node.querySelectorAll(selector));
+            }
+
+            // 2. Explore shadow DOMs
+            const treeWalker = document.createTreeWalker(node, NodeFilter.SHOW_ELEMENT);
+
+            let current = treeWalker.currentNode;
+            while (current) {
+                if (current.shadowRoot) {
+                    // Search inside the shadow root
+                    search(current.shadowRoot);
+                }
+                current = treeWalker.nextNode();
+            }
+        }
+
+        search(root);
+        return results;
     }
 
     /**

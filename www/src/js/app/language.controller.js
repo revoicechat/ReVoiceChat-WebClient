@@ -9,6 +9,7 @@ export class LanguageController {
             const option = document.createElement('option');
             option.value     = key
             option.innerText = languages[key]
+            option.selected  = (key === RVC.user.settings.getLanguage())
             select.appendChild(option);
         }
         select.addEventListener("change", (event) => {
