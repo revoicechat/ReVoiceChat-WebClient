@@ -1,4 +1,4 @@
-import Stream from "./stream.js";
+import {Streamer, Viewer} from "./stream.js";
 
 export default class StreamController {
     #streamUrl;
@@ -57,8 +57,9 @@ export default class StreamController {
 
     async #startStream(type) {
         try {
-            this.#streamer[type] = new Stream(this.#streamUrl, this.#user, this.#token);
-            await this.#streamer[type].start(type, type);
+            this.#streamer[type] = new Streamer(this.#streamUrl, this.#user, this.#token);
+            const video = await this.#streamer[type].start(type, type);
+            video.onclick = () => { this.focus(video) }
         }
         catch (error) {
             console.error(error);
@@ -95,8 +96,9 @@ export default class StreamController {
 
     async join(userId, streamName) {
         if (this.#room.voiceController.getActiveRoom() && userId != this.#user.id) {
-            this.#viewer[`${userId}-${streamName}`] = new Stream(this.#streamUrl, this.#user, this.#token);
-            await this.#viewer[`${userId}-${streamName}`].join(userId, streamName);
+            this.#viewer[`${userId}-${streamName}`] = new Viewer(this.#streamUrl, this.#token);
+            const video = await this.#viewer[`${userId}-${streamName}`].join(userId, streamName);
+            video.onclick = () => { this.focus(video) }
         }
     }
 
@@ -139,5 +141,22 @@ export default class StreamController {
                 this.joinModal(stream.user, stream.streamName);
             }
         }
+    }
+
+    focus(element) {
+        for (const child of element.parentElement.children) {
+            child.classList.add("hidden");
+        }
+        element.classList.remove("hidden");
+        element.parentElement.classList.add("fullscreen");
+        element.onclick = () => { this.unfocus(element); }
+    }
+
+    unfocus(element) {
+        for (const child of element.parentElement.children) {
+            child.classList.remove("hidden");
+        }
+        element.parentElement.classList.remove("fullscreen");
+        element.onclick = () => { this.focus(element); }
     }
 }
