@@ -3,6 +3,7 @@ import UserSettingsController from "./userSettingsController.js";
 export default class User {
     #fetcher;
     #mediaURL;
+    /** @type {UserSettingsController} */
     settings;
     id;
     displayName;

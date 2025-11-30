@@ -12,6 +12,7 @@ export default class ReVoiceChat {
     alert;
     router = new Router();
     fetcher;
+    /** @type {User} */
     user;
     room;
     server;
@@ -78,8 +79,8 @@ export default class ReVoiceChat {
     }
 
     async #load() {
-        this.user.load();
-        this.user.settings.load();
+        await this.user.load();
+        await this.user.settings.load();
         this.state.load();
         this.#sse.openSSE()
         this.room.textController.attachEvents();

@@ -1,4 +1,5 @@
 import VoiceCall from "./voiceCall.js";
+import {LanguageController} from "./language.controller.js";
 
 export default class UserSettingsController {
     #user;
@@ -79,10 +80,17 @@ export default class UserSettingsController {
         this.#compressorLoad();
         this.#inputVolumeLoad();
         this.#audioOutputLoad();
+        await LanguageController.loadAvailableLanguage();
     }
 
+    /** @return {string} */
     getLanguage() {
         return this.#lang;
+    }
+
+    /** @param {string} lang */
+    setLangage(lang) {
+        this.#lang = lang
     }
 
     select(name) {

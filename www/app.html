@@ -330,7 +330,9 @@
                 <!-- Language -->
                 <div class="hidden" id="user-setting-content-language">
                     <h1 data-i18n="user.language">Language</h1>
-                    <form id="setting-language-form" class="theme-form"></form>
+                    <form id="setting-language-form" class="theme-form">
+                        <select id="setting-language-selection"></select>
+                    </form>
                 </div>
 
                 <!-- Themes -->
@@ -352,20 +354,20 @@
                     <h2 data-i18n="audio.volume">Volume</h2>
 
                     <form class="voice-settings">
-                        <label for="input-volume" data-i18n-value="0" id="input-volume-label">[VOLUME]</label>
+                        <label for="input-volume" data-i18n="audio.volume.label" data-i18n-value="0" id="input-volume-label">[VOLUME]</label>
                         <input type="range" id="input-volume" min="0" max="1.5" step="0.01">
                     </form>
 
                     <h2 id="voice-sensitivity" data-i18n="voice.sensitivity">Voice detection</h2>
 
                     <form class="voice-settings">
-                        <label class="voice-toggleable hidden" for="gate-attack" data-i18n-value="0" id="gate-attack-label">[ATTACK]</label>
+                        <label class="voice-toggleable hidden" for="gate-attack" data-i18n="voice.attack" data-i18n-value="0" id="gate-attack-label">[ATTACK]</label>
                         <input class="voice-toggleable hidden" type="range" id="gate-attack" min="0.01" max="0.05" step="0.001">
 
-                        <label class="voice-toggleable hidden" for="gate-release" data-i18n-value="0" id="gate-release-label">[RELEASE]</label>
+                        <label class="voice-toggleable hidden" for="gate-release" data-i18n="voice.release" data-i18n-value="0" id="gate-release-label">[RELEASE]</label>
                         <input class="voice-toggleable hidden" type="range" id="gate-release" min="0.2" max="0.6" step="0.001">
 
-                        <label for="gate-threshold" data-i18n-value="0" id="gate-threshold-label">[THRESHOLD]</label>
+                        <label for="gate-threshold" data-i18n="voice.threshold" data-i18n-value="0" id="gate-threshold-label">[THRESHOLD]</label>
                         <input type="range" id="gate-threshold" min="-100" max="0" step="1">
 
                         <div class="config-buttons">
@@ -375,19 +377,19 @@
 
                     <h2 class="voice-toggleable hidden" data-i18n="compressor.title">Compressor</h2>
                     <form class="voice-settings voice-toggleable hidden">
-                        <label for="compressor-attack" data-i18n-value="0" id="compressor-attack-label">[ATTACK]</label>
+                        <label for="compressor-attack" data-i18n="compressor.attack" data-i18n-value="0" id="compressor-attack-label">[ATTACK]</label>
                         <input type="range" id="compressor-attack" min="0" max="1" step="0.01">
 
-                        <label for="compressor-ratio" data-i18n-value="0" id="compressor-ratio-label">[RATIO]</label>
+                        <label for="compressor-ratio" data-i18n="compressor.ratio" data-i18n-value="0" id="compressor-ratio-label">[RATIO]</label>
                         <input type="range" id="compressor-ratio" min="1" max="20" step="1">
 
-                        <label for="compressor-reduction" data-i18n-value="0" id="compressor-reduction-label">[REDUCTION]</label>
+                        <label for="compressor-reduction" data-i18n="compressor.reduction" data-i18n-value="0" id="compressor-reduction-label">[REDUCTION]</label>
                         <input type="range" id="compressor-reduction" min="-20" max="0" step="1">
 
-                        <label for="compressor-release" data-i18n-value="0" id="compressor-release-label">[RELEASE]</label>
+                        <label for="compressor-release" data-i18n="compressor.release" data-i18n-value="0" id="compressor-release-label">[RELEASE]</label>
                         <input type="range" id="compressor-release" min="0" max="1" step="0.01">
 
-                        <label for="compressor-threshold" data-i18n-value="0" id="compressor-threshold-label">[THRESHOLD]</label>
+                        <label for="compressor-threshold" data-i18n="compressor.threshold"  data-i18n-value="0" id="compressor-threshold-label">[THRESHOLD]</label>
                         <input type="range" id="compressor-threshold" min="-100" max="0" step="1">
 
                         <div class="config-buttons">
