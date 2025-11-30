@@ -78,7 +78,7 @@ export default class StreamController {
             const streamContainter = document.getElementById('stream-container');
             const modal = document.createElement('div');
             modal.id = `stream-modal-${userId}-${streamName}`;
-            modal.className = "stream item join";
+            modal.className = "player join";
             modal.dataset.i18n = "stream.join.button"
             modal.dataset.i18nValue = displayName
             modal.innerText = i18n.translateOne(modal.dataset.i18n, [displayName])
