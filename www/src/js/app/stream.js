@@ -1,6 +1,6 @@
 import { LargePacketSender, LargePacketReceiver, EncodedPacket, DecodedPacket } from "./packet.js";
 
-export default class Stream {
+export class Streamer {
     static CLOSE = 0;
     static CONNECTING = 1;
     static OPEN = 2;
@@ -12,15 +12,11 @@ export default class Stream {
     #encoderMetadata;
     #encoderInterval;
     #encoderConfig;
-    #decoder;
-    #decoderKeyFrame = false;
     #packetSender;
     #streamUrl;
     #token;
     #videoPlayer;
     #videoItem;
-    #context;
-    #canvas;
     #keyframeCounter = 0;
     #codecConfig = {
         codec: "vp8",
@@ -68,7 +64,7 @@ export default class Stream {
             throw new Error('streamName is null or undefined');
         }
 
-        this.#state = Stream.CONNECTING;
+        this.#state = Streamer.CONNECTING;
 
         // Setup encoder and transmitter 
         // First so we don't open socket for no reason
@@ -84,10 +80,9 @@ export default class Stream {
         // Video player (box)
         this.#videoItem = document.createElement('div');
         this.#videoItem.className = "player";
-        this.#videoItem.onclick = () => { this.focus(this.#videoItem) }
         this.#videoItem.appendChild(this.#videoPlayer);
 
-        // Stream container
+        // Streamer container
         const streamContainter = document.getElementById('stream-container')
         streamContainter.appendChild(this.#videoItem);
 
@@ -174,9 +169,10 @@ export default class Stream {
 
         // Socket states
         this.#socket.onclose = async () => { };
-        this.#socket.onerror = async (e) => { console.error('Stream : WebSocket error:', e) };
+        this.#socket.onerror = async (e) => { console.error('Streamer : WebSocket error:', e) };
 
-        this.#state = Stream.OPEN;
+        this.#state = Streamer.OPEN;
+        return this.#videoItem;
     }
 
     #isKeyframe(count = true) {
@@ -237,7 +233,7 @@ export default class Stream {
 
         // Close encoder
         if (this.#encoder && this.#encoder.state !== "closed") {
-            this.#encoder.close();
+            await this.#encoder.close();
             this.#encoder = null;
         }
 
@@ -249,7 +245,46 @@ export default class Stream {
             this.#videoPlayer = null;
         }
 
-        this.#state = Stream.CLOSE;
+        this.#state = Streamer.CLOSE;
+    }
+}
+
+export class Viewer {
+    #socket;
+    #decoder;
+    #decoderKeyFrame = false;
+    #streamUrl;
+    #token;
+    #videoItem;
+    #context;
+    #canvas;
+    #codecConfig = {
+        codec: "vp8",
+        framerate: 30,
+        width: 1280,
+        height: 720,
+        bitrate: 4_000_000,
+        //hardwareAcceleration: "prefer-hardware",
+        latencyMode: "realtime",
+    }
+    #lastFrame = {
+        clientWidth: 0,
+        clientHeight: 0,
+        codedWidth: 0,
+        codedHeight: 0
+    }
+
+    constructor(streamUrl, token) {
+        if (!streamUrl) {
+            throw new Error('streamUrl is null or undefined');
+        }
+
+        if (!token) {
+            throw new Error('token is null or undefined');
+        }
+
+        this.#streamUrl = streamUrl;
+        this.#token = token;
     }
 
     async join(userId, streamName) {
@@ -270,10 +305,9 @@ export default class Stream {
                 // Video player (box)
                 this.#videoItem = document.createElement('div');
                 this.#videoItem.className = "player";
-                this.#videoItem.onclick = () => { this.focus(this.#videoItem) }
                 this.#videoItem.appendChild(this.#canvas);
 
-                // Stream container
+                // Streamer container
                 const streamContainter = document.getElementById('stream-container')
                 streamContainter.appendChild(this.#videoItem);
 
@@ -286,16 +320,24 @@ export default class Stream {
                     error: (error) => { throw new Error(`VideoDecoder error:\n${error.name}\nCurrent codec :${this.#codecConfig.codec}`) }
                 });
 
-                return true;
+                return this.#videoItem;
             }
-            return false;
+            return null;
         }
     }
 
     #reconfigureCanvasResolution(frame, videoItem) {
-        const ratio = Math.min((videoItem.clientWidth / frame.codedHeight), (videoItem.clientWidth / frame.codedWidth));
-        this.#canvas.height = frame.codedHeight * ratio;
-        this.#canvas.width = frame.codedWidth * ratio;
+        if (this.#lastFrame.clientWidth != videoItem.clientWidth || this.#lastFrame.clientHeight != videoItem.clientHeight ||
+            this.#lastFrame.codedWidth != frame.codedWidth || this.#lastFrame.codedHeight != frame.codedHeight) {
+            const ratio = Math.min((videoItem.clientHeight / frame.codedHeight), (videoItem.clientWidth / frame.codedWidth));
+            this.#canvas.height = frame.codedHeight * ratio;
+            this.#canvas.width = frame.codedWidth * ratio;
+
+            this.#lastFrame.clientHeight = videoItem.clientHeight;
+            this.#lastFrame.clientWidth = videoItem.clientWidth;
+            this.#lastFrame.codedHeight = frame.codedHeight;
+            this.#lastFrame.codedWidth = frame.codedWidth;
+        }
     }
 
     async leave() {
@@ -307,7 +349,7 @@ export default class Stream {
 
         // Close decoder
         if (this.#decoder && this.#decoder.state !== "closed") {
-            this.#decoder.close();
+            await this.#decoder.close();
             this.#decoder = null;
         }
 
@@ -318,23 +360,6 @@ export default class Stream {
             this.#canvas = null;
             this.#context = null;
         }
-    }
-
-    focus(element) {
-        for (const child of element.parentElement.children) {
-            child.classList.add("hidden");
-        }
-        element.classList.remove("hidden");
-        element.parentElement.classList.add("fullscreen");
-        element.onclick = () => { this.unfocus(element); }
-    }
-
-    unfocus(element) {
-        for (const child of element.parentElement.children) {
-            child.classList.remove("hidden");
-        }
-        element.parentElement.classList.remove("fullscreen");
-        element.onclick = () => { this.focus(element); }
     }
 
     #decodeVideo(decodedPacket) {
@@ -349,16 +374,14 @@ export default class Stream {
             return;
         }
 
-        const chunk = new EncodedVideoChunk({
-            type: "key",
-            timestamp: header.timestamp,
-            data: new Uint8Array(data)
-        });
-
         if (this.#decoder.state === "unconfigured") {
             this.#decoder.configure(header.metadata.decoderConfig);
         }
 
-        this.#decoder.decode(chunk);
+        this.#decoder.decode(new EncodedVideoChunk({
+            type: "key",
+            timestamp: header.timestamp,
+            data: new Uint8Array(data)
+        }));
     }
 }
