@@ -8,8 +8,16 @@ export class Streamer {
         codec: "opus",
         sampleRate: 48000,
         numberOfChannels: 2,
-        bitrate: 128_000,
-        bitrateMode: "variable"
+        bitrate: 256_000,
+        bitrateMode: "variable",
+        opus: {
+            application: "audio",
+            complexity: 9,
+            signal: "music",
+            usedtx: true,
+            frameDuration: 20_000, //20ms
+            useinbanddec: true,
+        }
     }
     static DEFAULT_VIDEO_CODEC = {
         codec: "vp8",
@@ -330,6 +338,8 @@ export class Viewer {
     #audioDecoder;
     #audioGain;
     #audioVolume = 0.5;
+    #audioSource;
+    #audioPlayhead = 0;
 
     // Video decoder
     #videoCodec = structuredClone(Streamer.DEFAULT_VIDEO_CODEC);
@@ -386,16 +396,16 @@ export class Viewer {
             // AudioContext
             this.#audioContext = new AudioContext({ sampleRate: this.#audioCodec.sampleRate });
 
-            // Audio decoder
-            this.#audioDecoder = new AudioDecoder({
-                output: (chunk) => { this.#playbackAudio(chunk, this.#audioContext) },
-                error: (error) => { throw new Error(`AudioDecoder setup failed:\n${error.name}\nCurrent codec :${this.#audioCodec.codec}`) },
-            });
-            this.#audioDecoder.configure(this.#audioCodec);
-
             // Audio gain (volume)
             this.#audioGain = this.#audioContext.createGain();
             this.#audioGain.gain.setValueAtTime(this.#audioVolume, this.#audioContext.currentTime);
+
+            // Audio decoder
+            this.#audioDecoder = new AudioDecoder({
+                output: (chunk) => { this.#playbackAudio(chunk) },
+                error: (error) => { throw new Error(`AudioDecoder setup failed:\n${error.name}\nCurrent codec :${this.#audioCodec.codec}`) },
+            });
+            await this.#audioDecoder.configure(this.#audioCodec);
 
             // Video decoder
             this.#videoDecoder = new VideoDecoder({
@@ -491,8 +501,8 @@ export class Viewer {
         }
     }
 
-    #playbackAudio(audioData, audioContext) {
-        const buffer = audioContext.createBuffer(
+    #playbackAudio(audioData) {
+        const buffer = this.#audioContext.createBuffer(
             audioData.numberOfChannels,
             audioData.numberOfFrames,
             audioData.sampleRate
@@ -510,15 +520,15 @@ export class Viewer {
             buffer.copyToChannel(channelData, ch);
         }
 
-        const source = audioContext.createBufferSource();
+        const source = this.#audioContext.createBufferSource();
         source.buffer = buffer;
 
         // Routing : decodedAudio -> gain (volume) -> output 
         source.connect(this.#audioGain);
-        this.#audioGain.connect(audioContext);
+        this.#audioGain.connect(this.#audioContext.destination);
 
-        const playhead = audioContext.currentTime + buffer.duration;
-        source.start(playhead);
+        this.#audioPlayhead = Math.max(this.#audioPlayhead, this.#audioContext.currentTime) + buffer.duration;
+        source.start(this.#audioPlayhead);
         audioData.close();
     }
 
