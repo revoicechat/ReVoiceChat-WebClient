@@ -52,11 +52,11 @@ export class Streamer {
     #playerDiv;
 
     // Audio Encoder
+    #audioCodec = structuredClone(Streamer.DEFAULT_AUDIO_CODEC);
     #audioBuffer = [];
-    #audioBufferMaxLength = 1920; // 2ch x 48000Hz × 0.020 sec = 1920 samples (should be compute from sample rate and frame duration)
+    #audioBufferMaxLength = parseInt(this.#audioCodec.sampleRate * this.#audioCodec.numberOfChannels * (this.#audioCodec.opus.frameDuration / 1_000_000)); // 2ch x 48000Hz × 0.020 sec = 1920 samples
     #audioCollector;
     #audioContext;
-    #audioCodec = structuredClone(Streamer.DEFAULT_AUDIO_CODEC);
     #audioEncoder;
     #audioTimestamp = 0;
 
@@ -149,7 +149,7 @@ export class Streamer {
         this.#videoEncoder = new VideoEncoder({
             output: (frame, metadata) => {
                 if (!this.#videoMetadata) {
-                    this.#videoMetadata = metadata;
+                    this.#videoMetadata = metadata.decoderConfig;
                 }
                 const header = {
                     timestamp: parseInt(performance.now()),
@@ -196,7 +196,7 @@ export class Streamer {
 
                 while (this.#audioBuffer.length >= this.#audioBufferMaxLength) {
                     const frames = this.#audioBuffer.slice(0, this.#audioBufferMaxLength);
-                    const numberOfFrames = parseInt(frames.length / channels)
+                    const numberOfFrames = parseInt(frames.length / channels);
                     this.#audioBuffer = this.#audioBuffer.slice(this.#audioBufferMaxLength);
 
                     const audioFrame = new AudioData({
@@ -508,7 +508,7 @@ export class Viewer {
         }
 
         if (this.#videoDecoder.state === "unconfigured") {
-            this.#videoDecoder.configure(header.metadata.decoderConfig);
+            this.#videoDecoder.configure(header.metadata);
         }
 
         this.#videoDecoder.decode(new EncodedVideoChunk({

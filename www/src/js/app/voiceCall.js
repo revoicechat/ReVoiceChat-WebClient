@@ -29,7 +29,7 @@ export default class VoiceCall {
         users: {}
     }
 
-    #codecSettings = {
+    #codec = {
         codec: "opus",
         sampleRate: 48_000, // 48kHz
         numberOfChannels: 1, // Mono
@@ -51,7 +51,7 @@ export default class VoiceCall {
     #audioTimestamp = 0;
     #compressorNode;
     #buffer = [];
-    #bufferMaxLength = 960; // 48000Hz × 0.020 sec = 960 samples (should be compute from sample rate and frame duration)
+    #bufferMaxLength = parseInt(this.#codec.sampleRate * (this.#codec.opus.frameDuration / 1_000_000)); // 48000Hz × 0.020 sec = 960 samples
     #gainNode;
     #gateNode;
     #user;
@@ -270,7 +270,7 @@ export default class VoiceCall {
     }
 
     async #encodeAudio() {
-        const supported = await AudioEncoder.isConfigSupported(this.#codecSettings);
+        const supported = await AudioEncoder.isConfigSupported(this.#codec);
         if (!supported.supported) {
             throw new Error("Encoder Codec not supported");
         }
@@ -288,13 +288,13 @@ export default class VoiceCall {
                     this.#socket.send(new EncodedPacket(header, chunk).data);
                 }
             },
-            error: (error) => { throw new Error(`Encoder setup failed:\n${error.name}\nCurrent codec :${this.#codecSettings.codec}`) },
+            error: (error) => { throw new Error(`Encoder setup failed:\n${error.name}\nCurrent codec :${this.#codec.codec}`) },
         });
 
-        this.#encoder.configure(this.#codecSettings)
+        this.#encoder.configure(this.#codec)
 
         // Init AudioContext
-        this.#audioContext = new AudioContext({ sampleRate: this.#codecSettings.sampleRate });
+        this.#audioContext = new AudioContext({ sampleRate: this.#codec.sampleRate });
         await this.#audioContext.audioWorklet.addModule('src/js/app/audioProcessor.js');
 
         /**
@@ -381,15 +381,15 @@ export default class VoiceCall {
             // While buffer is full
             while (this.#buffer.length >= this.#bufferMaxLength) {
                 // Get 1 audio frames
-                const frame = this.#buffer.slice(0, 960);
+                const frame = this.#buffer.slice(0, this.#bufferMaxLength);
 
                 // Remove this frame from buffer
-                this.#buffer = this.#buffer.slice(960);
+                this.#buffer = this.#buffer.slice(this.#bufferMaxLength);
 
                 // Create audioData object to feed encoder
                 const audioData = new AudioData({
                     format: "f32-planar",
-                    sampleRate: this.#codecSettings.sampleRate,
+                    sampleRate: this.#codec.sampleRate,
                     numberOfFrames: frame.length,
                     numberOfChannels: 1,
                     timestamp: this.#audioTimestamp,
@@ -450,7 +450,7 @@ export default class VoiceCall {
     }
 
     async #createUserDecoder(userId) {
-        const isSupported = await AudioDecoder.isConfigSupported(this.#codecSettings);
+        const isSupported = await AudioDecoder.isConfigSupported(this.#codec);
         if (isSupported.supported) {
             this.#users[userId] = { decoder: null, playhead: 0, muted: false, gainNode: null, source: null };
 
@@ -462,10 +462,10 @@ export default class VoiceCall {
             // Set user decoder
             this.#users[userId].decoder = new AudioDecoder({
                 output: (chunk) => { this.#playbackAudio(chunk, this.#audioContext, this.#users, userId) },
-                error: (error) => { throw new Error(`Decoder setup failed:\n${error.name}\nCurrent codec :${this.#codecSettings.codec}`) },
+                error: (error) => { throw new Error(`Decoder setup failed:\n${error.name}\nCurrent codec :${this.#codec.codec}`) },
             });
 
-            this.#users[userId].decoder.configure(this.#codecSettings);
+            this.#users[userId].decoder.configure(this.#codec);
             this.#users[userId].playhead = 0;
         }
     }
