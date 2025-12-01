@@ -78,10 +78,9 @@ export default class StreamController {
      * @return {Promise<void>}
      */
     async joinModal(stream) {
-        await this.joinModal(stream.user, stream.name)
-    }
+        const userId = stream.user;
+        const streamName = stream.name;
 
-    async joinModal(userId, streamName) {
         if (this.#room.voiceController.getActiveRoom() && this.#user.id != userId) {
             const displayName = (await this.#fetcher.fetchCore(`/user/${userId}`)).displayName;
             const streamContainter = document.getElementById('stream-container');
@@ -116,10 +115,9 @@ export default class StreamController {
      * @return {Promise<void>}
      */
     async leave(stream) {
-        await this.leave(stream.user, stream.name)
-    }
+        const userId = stream.user;
+        const streamName = stream.name;
 
-    async leave(userId, streamName) {
         if (this.#room.voiceController.getActiveRoom() && userId != this.#user.id) {
             if (this.#viewer[`${userId}-${streamName}`]) {
                 await this.#viewer[`${userId}-${streamName}`].leave();
