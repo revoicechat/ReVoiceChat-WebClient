@@ -8,16 +8,9 @@ export class Streamer {
     #state;
     #socket;
     #user;
-    #encoder;
-    #encoderMetadata;
-    #encoderInterval;
-    #encoderConfig;
     #packetSender;
     #streamUrl;
     #token;
-    #videoPlayer;
-    #videoItem;
-    #keyframeCounter = 0;
     #codecConfig = {
         codec: "vp8",
         framerate: 30,
@@ -28,18 +21,30 @@ export class Streamer {
         latencyMode: "realtime",
     }
     #displayMediaOptions = {
-        video: {
-            displaySurface: "browser",
-        },
+        video: true,
         audio: {
             suppressLocalAudioPlayback: true,
         },
         preferCurrentTab: false,
-        selfBrowserSurface: "exclude",
-        systemAudio: "exclude",
+        selfBrowserSurface: "include",
+        systemAudio: "include",
         surfaceSwitching: "include",
         monitorTypeSurfaces: "include",
     }
+
+    // Local playback
+    #player;
+    #playerDiv;
+
+    // Audio Encoder
+    #audioEncoder;
+
+    // Video Encoder
+    #videoMetadata;
+    #videoEncoder;
+    #videoEncoderInterval;
+    #videoEncoderConfig;
+    #keyframeCounter = 0;
 
     constructor(streamUrl, user, token) {
         if (!streamUrl) {
@@ -74,25 +79,25 @@ export class Streamer {
         }
 
         // Video player
-        this.#videoPlayer = document.createElement('video');
-        this.#videoPlayer.className = "content";
+        this.#player = document.createElement('video');
+        this.#player.className = "content";
 
         // Video player (box)
-        this.#videoItem = document.createElement('div');
-        this.#videoItem.className = "player";
-        this.#videoItem.appendChild(this.#videoPlayer);
+        this.#playerDiv = document.createElement('div');
+        this.#playerDiv.className = "player";
+        this.#playerDiv.appendChild(this.#player);
 
         // Streamer container
         const streamContainter = document.getElementById('stream-container')
-        streamContainter.appendChild(this.#videoItem);
+        streamContainter.appendChild(this.#playerDiv);
 
         try {
             switch (type) {
                 case "webcam":
-                    this.#videoPlayer.srcObject = await navigator.mediaDevices.getUserMedia({ video: true });
+                    this.#player.srcObject = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
                     break;
                 case "display":
-                    this.#videoPlayer.srcObject = await navigator.mediaDevices.getDisplayMedia(this.#displayMediaOptions);
+                    this.#player.srcObject = await navigator.mediaDevices.getDisplayMedia(this.#displayMediaOptions);
                     break;
             }
         }
@@ -101,7 +106,7 @@ export class Streamer {
             throw new Error(`MediaDevice setup failed:\n${error}`);
         }
 
-        await this.#videoPlayer.play();
+        await this.#player.play();
 
         // Create WebSocket
         this.#socket = new WebSocket(`${this.#streamUrl}/${this.#user.id}/${streamName}`, ["Bearer." + this.#token]);
@@ -111,15 +116,15 @@ export class Streamer {
         this.#packetSender = new LargePacketSender(this.#socket);
 
         // Setup Encoder
-        this.#encoder = new VideoEncoder({
+        this.#videoEncoder = new VideoEncoder({
             output: (frame, metadata) => {
-                if (!this.#encoderMetadata) {
-                    this.#encoderMetadata = metadata;
+                if (!this.#videoMetadata) {
+                    this.#videoMetadata = metadata;
                 }
                 const header = {
                     timestamp: parseInt(performance.now()),
                     keyframe: this.#isKeyframe(),
-                    metadata: this.#encoderMetadata,
+                    metadata: this.#videoMetadata,
                 }
                 this.#packetSender.send(new EncodedPacket(header, frame).data);
             },
@@ -130,23 +135,23 @@ export class Streamer {
         });
 
         // Encoder
-        this.#encoderConfig = structuredClone(this.#codecConfig);
-        this.#encoder.configure(this.#encoderConfig);
+        this.#videoEncoderConfig = structuredClone(this.#codecConfig);
+        this.#videoEncoder.configure(this.#videoEncoderConfig);
 
         if (window.MediaStreamTrackProcessor) {
             // Faster but not available everywhere
-            const track = this.#videoPlayer.srcObject.getVideoTracks()[0];
+            const track = this.#player.srcObject.getVideoTracks()[0];
             const processor = new MediaStreamTrackProcessor({ track });
             const reader = processor.readable.getReader();
 
             // Grab frame
-            this.#encoderInterval = setInterval(async () => {
+            this.#videoEncoderInterval = setInterval(async () => {
                 const result = await reader.read();
                 const frame = result.value;
                 if (frame) {
                     await this.#reconfigureEncoderResolution(frame);
-                    if (this.#encoder) {
-                        await this.#encoder.encode(frame, { keyFrame: this.#isKeyframe() });
+                    if (this.#videoEncoder) {
+                        await this.#videoEncoder.encode(frame, { keyFrame: this.#isKeyframe() });
                     }
                     await frame.close();
                 }
@@ -157,11 +162,11 @@ export class Streamer {
         }
         else {
             // Fallback
-            this.#encoderInterval = setInterval(async () => {
-                const frame = new VideoFrame(this.#videoPlayer, { timestamp: performance.now() * 1000 });;
+            this.#videoEncoderInterval = setInterval(async () => {
+                const frame = new VideoFrame(this.#player, { timestamp: performance.now() * 1000 });;
                 await this.#reconfigureEncoderResolution(frame);
-                if (this.#encoder) {
-                    await this.#encoder.encode(frame, { keyFrame: this.#isKeyframe() });
+                if (this.#videoEncoder) {
+                    await this.#videoEncoder.encode(frame, { keyFrame: this.#isKeyframe() });
                 }
                 frame.close();
             }, 1000 / this.#codecConfig.framerate)
@@ -172,7 +177,7 @@ export class Streamer {
         this.#socket.onerror = async (e) => { console.error('Streamer : WebSocket error:', e) };
 
         this.#state = Streamer.OPEN;
-        return this.#videoItem;
+        return this.#playerDiv;
     }
 
     #isKeyframe(count = true) {
@@ -187,7 +192,7 @@ export class Streamer {
     }
 
     async #reconfigureEncoderResolution(frame) {
-        if (frame.codedHeight === this.#encoderConfig.height && frame.codedWidth === this.#encoderConfig.width) {
+        if (frame.codedHeight === this.#videoEncoderConfig.height && frame.codedWidth === this.#videoEncoderConfig.width) {
             // Captured frame and encoderCondig already match in width and height
             return;
         }
@@ -205,24 +210,24 @@ export class Streamer {
     }
 
     async #setEncoderResolution(height, width) {
-        this.#encoderConfig.height = height;
-        this.#encoderConfig.width = width;
+        this.#videoEncoderConfig.height = height;
+        this.#videoEncoderConfig.width = width;
 
-        if (this.#encoderMetadata && this.#encoderMetadata.decoderMetadata) {
-            this.#encoderMetadata.decoderMetadata.codedHeight = height;
-            this.#encoderMetadata.decoderMetadata.codedWidth = width;
+        if (this.#videoMetadata && this.#videoMetadata.decoderMetadata) {
+            this.#videoMetadata.decoderMetadata.codedHeight = height;
+            this.#videoMetadata.decoderMetadata.codedWidth = width;
         }
 
-        if (this.#encoder) {
-            await this.#encoder.configure(this.#encoderConfig);
+        if (this.#videoEncoder) {
+            await this.#videoEncoder.configure(this.#videoEncoderConfig);
         }
     }
 
     async stop() {
         // Stop frame grabbing
-        if (this.#encoderInterval) {
-            clearInterval(this.#encoderInterval);
-            this.#encoderInterval = null;
+        if (this.#videoEncoderInterval) {
+            clearInterval(this.#videoEncoderInterval);
+            this.#videoEncoderInterval = null;
         }
 
         // Close WebSocket
@@ -232,17 +237,17 @@ export class Streamer {
         }
 
         // Close encoder
-        if (this.#encoder && this.#encoder.state !== "closed") {
-            await this.#encoder.close();
-            this.#encoder = null;
+        if (this.#videoEncoder && this.#videoEncoder.state !== "closed") {
+            await this.#videoEncoder.close();
+            this.#videoEncoder = null;
         }
 
         // Close playback
-        if (this.#videoPlayer) {
-            await this.#videoPlayer.pause();
-            this.#videoItem.remove();
-            this.#videoItem = null;
-            this.#videoPlayer = null;
+        if (this.#player) {
+            await this.#player.pause();
+            this.#playerDiv.remove();
+            this.#playerDiv = null;
+            this.#player = null;
         }
 
         this.#state = Streamer.CLOSE;
@@ -251,13 +256,9 @@ export class Streamer {
 
 export class Viewer {
     #socket;
-    #decoder;
-    #decoderKeyFrame = false;
+
     #streamUrl;
     #token;
-    #videoItem;
-    #context;
-    #canvas;
     #codecConfig = {
         codec: "vp8",
         framerate: 30,
@@ -267,12 +268,22 @@ export class Viewer {
         //hardwareAcceleration: "prefer-hardware",
         latencyMode: "realtime",
     }
+
+
+    // Local playback
+    #playerDiv;
+    #context;
+    #canvas;
     #lastFrame = {
         clientWidth: 0,
         clientHeight: 0,
         codedWidth: 0,
         codedHeight: 0
     }
+
+    // Video decoder
+    #videoDecoder;
+    #videoDecoderKeyFrame = false;
 
     constructor(streamUrl, token) {
         if (!streamUrl) {
@@ -303,24 +314,24 @@ export class Viewer {
                 this.#context = this.#canvas.getContext("2d");
 
                 // Video player (box)
-                this.#videoItem = document.createElement('div');
-                this.#videoItem.className = "player";
-                this.#videoItem.appendChild(this.#canvas);
+                this.#playerDiv = document.createElement('div');
+                this.#playerDiv.className = "player";
+                this.#playerDiv.appendChild(this.#canvas);
 
                 // Streamer container
                 const streamContainter = document.getElementById('stream-container')
-                streamContainter.appendChild(this.#videoItem);
+                streamContainter.appendChild(this.#playerDiv);
 
-                this.#decoder = new VideoDecoder({
+                this.#videoDecoder = new VideoDecoder({
                     output: (frame) => {
-                        this.#reconfigureCanvasResolution(frame, this.#videoItem);
+                        this.#reconfigureCanvasResolution(frame, this.#playerDiv);
                         this.#context.drawImage(frame, 0, 0, this.#canvas.width, this.#canvas.height);
                         frame.close();
                     },
                     error: (error) => { throw new Error(`VideoDecoder error:\n${error.name}\nCurrent codec :${this.#codecConfig.codec}`) }
                 });
 
-                return this.#videoItem;
+                return this.#playerDiv;
             }
             return null;
         }
@@ -348,15 +359,15 @@ export class Viewer {
         }
 
         // Close decoder
-        if (this.#decoder && this.#decoder.state !== "closed") {
-            await this.#decoder.close();
-            this.#decoder = null;
+        if (this.#videoDecoder && this.#videoDecoder.state !== "closed") {
+            await this.#videoDecoder.close();
+            this.#videoDecoder = null;
         }
 
         // Close playback
-        if (this.#videoItem && this.#canvas && this.#context) {
-            this.#videoItem.remove();
-            this.#videoItem = null;
+        if (this.#playerDiv && this.#canvas && this.#context) {
+            this.#playerDiv.remove();
+            this.#playerDiv = null;
             this.#canvas = null;
             this.#context = null;
         }
@@ -367,18 +378,18 @@ export class Viewer {
         const data = decodedPacket.data;
 
         // Decoder didn't get a keyFrame yet
-        if (!this.#decoderKeyFrame) {
+        if (!this.#videoDecoderKeyFrame) {
             if (header.keyframe) {
-                this.#decoderKeyFrame = true;
+                this.#videoDecoderKeyFrame = true;
             }
             return;
         }
 
-        if (this.#decoder.state === "unconfigured") {
-            this.#decoder.configure(header.metadata.decoderConfig);
+        if (this.#videoDecoder.state === "unconfigured") {
+            this.#videoDecoder.configure(header.metadata.decoderConfig);
         }
 
-        this.#decoder.decode(new EncodedVideoChunk({
+        this.#videoDecoder.decode(new EncodedVideoChunk({
             type: "key",
             timestamp: header.timestamp,
             data: new Uint8Array(data)
