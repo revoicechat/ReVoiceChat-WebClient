@@ -280,7 +280,7 @@ export default class VoiceCall {
             output: (chunk) => {
                 const header = {
                     timestamp: Date.now(),
-                    audioTimestamp: this.#audioTimestamp / 1000, // audioTimestamp is in µs but sending ms is enough
+                    audioTimestamp: parseInt(this.#audioTimestamp / 1000), // audioTimestamp is in µs but sending ms is enough
                     user: this.#user.id,
                     gateState: this.#gateState,
                 }
@@ -440,7 +440,7 @@ export default class VoiceCall {
         if (currentUser.decoder !== null && currentUser.decoder.state === "configured") {
             currentUser.decoder.decode(new EncodedAudioChunk({
                 type: "key",
-                timestamp: header.audioTimestamp * 1000,
+                timestamp: parseInt(header.audioTimestamp * 1000),
                 data: new Uint8Array(data),
             }));
         } else {
