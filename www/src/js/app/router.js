@@ -6,6 +6,7 @@ export default class Router {
         document.getElementById('server-setting-close').addEventListener('click', () => this.routeTo('app'));
     }
 
+    /** @param {string} destination */
     routeTo(destination) {
         for (const element of document.querySelectorAll('.main')) {
             element.classList.add('hidden');
@@ -30,6 +31,7 @@ export default class Router {
         }
     }
 
+    /** @param {string} destination */
     #pushState(destination) {
         const url = new URL(location);
         url.searchParams.delete('r');

@@ -27,6 +27,10 @@ export default class Room {
         this.voiceController = new VoiceController(fetcher, alert, user, this, token, voiceUrl, mediaUrl, streamUrl);
     }
 
+    /**
+     * @param {string} serverId
+     * @return {Promise<void>}
+     */
     async load(serverId) {
         /** @type {RoomRepresentation[]} */
         const roomResult = await this.#fetcher.fetchCore(`/server/${serverId}/room`, 'GET');
@@ -34,8 +38,8 @@ export default class Room {
         const structResult = await this.#fetcher.fetchCore(`/server/${serverId}/structure`, 'GET');
 
         if (structResult?.items && roomResult) {
-            /** @type {RoomRepresentation[]} */
-            const rooms = [];
+            /** @type {Record<string, RoomRepresentation>} */
+            const rooms = {};
             for (const room of roomResult) {
                 rooms[room.id] = room;
             }
@@ -55,15 +59,23 @@ export default class Room {
         }
     }
 
+    /**
+     * @param {HTMLElement} roomList
+     * @param {Record<string, RoomRepresentation>} roomData
+     * @param {ServerItem[]} data
+     * @return {Promise<void>}
+     */
     async #create(roomList, roomData, data) {
         for (const item of data) {
             if (item.type === 'CATEGORY') {
-                roomList.appendChild(this.#roomCreateSeparator(item));
-                await this.#create(roomList, roomData, item.items)
+                const category = /** @type {ServerCategory} */ (item)
+                roomList.appendChild(this.#roomCreateSeparator(category));
+                await this.#create(roomList, roomData, category.items)
             }
 
             if (item.type === 'ROOM') {
-                const elementData = roomData[item.id];
+                const room = /** @type {ServerRoom} */ (item);
+                const elementData = roomData[room.id];
 
                 if (this.id === null) {
                     this.id = elementData.id;
@@ -79,6 +91,10 @@ export default class Room {
         }
     }
 
+    /**
+     * @param {string} type
+     * @return {string}
+     */
     #icon(type) {
         switch (type) {
             case "TEXT":
@@ -89,6 +105,9 @@ export default class Room {
         }
     }
 
+    /**
+     * @param {RoomRepresentation} room
+     */
     async #createElement(room) {
         if (room === undefined || room === null) {
             return;
@@ -129,7 +148,7 @@ export default class Room {
             users.className = "users";
             root.appendChild(users);
 
-            this.voiceController.showJoinedUsers(room.id);
+            void this.voiceController.showJoinedUsers(room.id);
         }
 
         return root;
@@ -177,7 +196,7 @@ export default class Room {
             document.getElementById("voice-control-panel").classList.add('hidden');
         }
 
-        this.textController.getAllFrom(this.id);
+        void this.textController.getAllFrom(this.id);
     }
 
     #selectWebRtc() {

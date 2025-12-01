@@ -1,5 +1,3 @@
-/** @typedef {ServerCategory|ServerRoom} ServerItem */
-
 class ServerRepresentation {
   /** @type {string} */
   id
@@ -29,14 +27,19 @@ class NewUserInServer {
   user
 }
 
-class ServerCategory {
+class ServerItem {
+  /** @type {"CATEGORY"|"ROOM"} */
+  type
+}
+
+class ServerCategory extends ServerItem{
   /** @type {string} */
   name
   /** @type {ServerItem[]} */
   items
 }
 
-class ServerRoom {
+class ServerRoom extends ServerItem {
   /** @type {string} */
   id
 }

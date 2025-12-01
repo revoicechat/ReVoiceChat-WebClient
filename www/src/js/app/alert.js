@@ -25,6 +25,7 @@ export default class Alert {
         document.getElementById("audio-output-try-notification").addEventListener('click', () => this.#playTest('notification'));
     }
 
+    /** @type {string} type */
     play(type) {
         if (!this.#defaultSounds[type]) {
             console.error('Notification type is null or undefined');
@@ -35,6 +36,7 @@ export default class Alert {
         void audio.play();
     }
 
+    /** @type {string} type */
     #playTest(type) {
         if (!this.#testSounds[type]) {
             console.error('Notification type is null or undefined');

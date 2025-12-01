@@ -1,4 +1,4 @@
-import ServerSettingsController from "./serverSettingsController.js";
+import ServerSettingsController from "./server.settings.controller.js";
 
 export default class Server {
     /** @type {Fetcher} */
@@ -23,7 +23,7 @@ export default class Server {
         this.#fetcher = fetcher;
         this.#mediaURL = mediaURL;
         this.#room = room;
-        this.#load();
+        void this.#load();
     }
 
     async #load() {
@@ -74,9 +74,7 @@ export default class Server {
         }
     }
 
-    /**
-     * @param {NewUserInServer} data
-     */
+    /** @param {NewUserInServer} data */
     updateUserInServer(data) {
         if (this.id === data.server) {
             void this.#usersLoad();
@@ -115,6 +113,10 @@ export default class Server {
         }
     }
 
+    /**
+     * @param  {UserRepresentation} data
+     * @return {Promise<HTMLDivElement>}
+     */
     async #createUser(data) {
         const id = data.id;
         const name = data.displayName;

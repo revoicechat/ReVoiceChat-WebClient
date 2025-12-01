@@ -61,7 +61,7 @@ export default class ReVoiceChat {
 
         // Instantiate other classes
         this.fetcher = new Fetcher(this.#token, this.coreUrl, this.mediaUrl);
-        this.user = new UserController(this.fetcher, this.mediaUrl, this.coreUrl);
+        this.user = new UserController(this.fetcher, this.mediaUrl);
         this.alert = new Alert(this.user.settings);
         this.room = new Room(this.fetcher, this.alert, this.user, this.voiceUrl, this.#token, this.mediaUrl, this.streamUrl);
         this.server = new Server(this.fetcher, this.mediaUrl, this.room);
@@ -120,7 +120,7 @@ export default class ReVoiceChat {
         console.error(`An error occurred while attempting to connect to "${this.coreUrl}/api/sse".\nRetry in 10 seconds`);
         setTimeout(() => {
             this.#sse.openSSE();
-            this.room.textController.getAllFrom(this.room.id);
+            void this.room.textController.getAllFrom(this.room.id);
         }, 10000);
     }
 }

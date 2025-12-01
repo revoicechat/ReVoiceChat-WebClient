@@ -7,6 +7,11 @@ export default class Fetcher {
     #mediaURL;
     #token;
 
+    /**
+     * @param {string} token
+     * @param {string} coreURL
+     * @param {string} mediaURL
+     */
     constructor(token, coreURL, mediaURL) {
         this.#coreURL = coreURL;
         this.#mediaURL = mediaURL;
@@ -56,7 +61,6 @@ export default class Fetcher {
     }
 
     /**
-     *
      * @param {string} path
      * @param {HTTPMethod} method
      * @param {*} rawData
