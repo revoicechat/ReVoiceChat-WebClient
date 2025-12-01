@@ -3,7 +3,9 @@ import VoiceController  from './voiceController.js';
 
 export default class Room {
     #fetcher;
+    /** @type {TextController} */
     textController;
+    /** @type {VoiceController} */
     voiceController;
     id;
     name;
@@ -187,6 +189,10 @@ export default class Room {
         return DIV;
     }
 
+    /**
+     * @param {RoomNotification} data
+     * @param {string} currentServerId
+     */
     update(data, currentServerId) {
         const room = data.room;
 

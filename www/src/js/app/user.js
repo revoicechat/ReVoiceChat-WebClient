@@ -29,6 +29,7 @@ export default class User {
         }
     }
 
+    /** @param {UserRepresentation} data */
     update(data) {
         const id = data.id;
         const name = data.displayName;
@@ -53,8 +54,9 @@ export default class User {
         }
     }
 
+    /** @param {UserStatusUpdate} data */
     setStatus(data){
-        const id = data.id;
+        const id = data.userId;
         const status = data.status;
 
         const className = `user-dot ${statusToDotClassName(status)}`;

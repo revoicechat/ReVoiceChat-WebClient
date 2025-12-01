@@ -63,6 +63,7 @@ export default class TextController {
         }
     }
 
+    /** @param {MessageNotification} data */
     message(data) {
         if (data.action === "ADD" && this.#user.id != data.message.user.id) {
             this.#alert.play('messageNew');
@@ -209,6 +210,7 @@ export default class TextController {
         }
     }
 
+    /** @param {MessageRepresentation} messageData */
     #create(messageData) {
         const CONTAINER = document.createElement('div');
         CONTAINER.id = `container-${messageData.id}`;
@@ -229,6 +231,7 @@ export default class TextController {
         return CONTAINER;
     }
 
+    /** @param {MessageRepresentation} messageData */
     #createContent(messageData) {
         const CONTENT = document.createElement('revoice-message');
         CONTENT.id = messageData.id;

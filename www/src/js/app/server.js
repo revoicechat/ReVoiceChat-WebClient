@@ -46,17 +46,24 @@ export default class Server {
         this.#room.load(id);
     }
 
+    /** @param {ServerUpdateNotification} data */
     update(data) {
         switch (data.action) {
-            case "MODIFY":
+          case "ADD":
+            break;
+          case "REMOVE":
+            break;
+          case "MODIFY":
                 this.#room.load(this.id);
                 return;
-
             default:
                 return;
         }
     }
 
+    /**
+     * @param {NewUserInServer} data
+     */
     updateUserInServer(data) {
         if (this.id === data.server) {
             this.#usersLoad().then(() => {/* do nothing */});

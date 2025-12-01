@@ -6,6 +6,13 @@ export class Sse {
     #handleSSEError;
     #sseAbortController
 
+    /**
+     *
+     * @param {string} token
+     * @param {string} coreUrl
+     * @param {(data) => void} handleSSEMessage
+     * @param {() => void} handleSSEError
+     */
     constructor(token, coreUrl, handleSSEMessage, handleSSEError) {
         this.#token = token
         this.coreUrl = coreUrl
