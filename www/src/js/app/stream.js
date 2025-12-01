@@ -8,7 +8,7 @@ export class Streamer {
         codec: "opus",
         sampleRate: 48000,
         numberOfChannels: 2,
-        bitrate: 256_000,
+        bitrate: 128_000,
         bitrateMode: "variable",
         opus: {
             application: "audio",
@@ -52,7 +52,8 @@ export class Streamer {
     #playerDiv;
 
     // Audio Encoder
-    #audioBuffer;
+    #audioBuffer = [];
+    #audioBufferMaxLength = 1920; // 2ch x 48000Hz × 0.020 sec = 1920 samples (should be compute from sample rate and frame duration)
     #audioCollector;
     #audioContext;
     #audioCodec = structuredClone(Streamer.DEFAULT_AUDIO_CODEC);
@@ -172,36 +173,45 @@ export class Streamer {
         if (audioTracks.length != 0) {
             // Init AudioContext
             this.#audioContext = new AudioContext({ sampleRate: this.#audioCodec.sampleRate });
+            this.#audioContext.channelCountMode = "explicit";
+            this.#audioContext.channelInterpretation = "discrete";
+            this.#audioContext.channelCount = 2;
+
             await this.#audioContext.audioWorklet.addModule('src/js/app/audioProcessor.js');
 
             const audioStream = this.#audioContext.createMediaStreamSource(this.#player.srcObject);
 
             this.#audioCollector = new AudioWorkletNode(this.#audioContext, "StereoCollector");
+            this.#audioCollector.channelCountMode = "explicit";
+            this.#audioCollector.channelInterpretation = "discrete";
+            this.#audioCollector.channelCount = 2;
+
             audioStream.connect(this.#audioCollector);
 
             this.#audioCollector.port.onmessage = (event) => {
-                const { samples, channels, frames } = event.data;
+                const { samples, channels } = event.data;
 
                 this.#audioBuffer.push(...samples);
 
-                while (this.#audioBuffer.length >= 960) {
-                    const frame = this.#audioBuffer.slice(0, 960);
-                    this.#audioBuffer = this.#audioBuffer.slice(960);
+                while (this.#audioBuffer.length >= this.#audioBufferMaxLength) {
+                    const frames = this.#audioBuffer.slice(0, this.#audioBufferMaxLength);
+                    const numberOfFrames = parseInt(frames.length / channels)
+                    this.#audioBuffer = this.#audioBuffer.slice(this.#audioBufferMaxLength);
 
                     const audioFrame = new AudioData({
                         format: "f32",
                         sampleRate: this.#audioContext.sampleRate,
-                        numberOfFrames: frames.length,
+                        numberOfFrames: numberOfFrames,
                         numberOfChannels: channels,
                         timestamp: this.#audioTimestamp,
-                        data: new Float32Array(frame).buffer
+                        data: new Float32Array(frames).buffer
                     });
 
                     if (this.#audioEncoder !== null && this.#audioEncoder.state === "configured") {
                         this.#audioEncoder.encode(audioFrame);
                     }
                     audioFrame.close();
-                    this.#audioTimestamp += 20_000;
+                    this.#audioTimestamp += (numberOfFrames / this.#audioContext.sampleRate) * 1_000_000;
                 }
             }
         }
@@ -312,6 +322,12 @@ export class Streamer {
             this.#videoEncoder = null;
         }
 
+        // Close audioContext
+        if (this.#audioContext && this.#audioContext.state !== "closed") {
+            this.#audioContext.close();
+            this.#audioContext = null;
+        }
+
         // Close playback
         if (this.#player) {
             await this.#player.pause();
@@ -408,6 +424,9 @@ export class Viewer {
             // Audio gain (volume)
             this.#audioGain = this.#audioContext.createGain();
             this.#audioGain.gain.setValueAtTime(this.#audioVolume, this.#audioContext.currentTime);
+            this.#audioGain.channelCountMode = "explicit";
+            this.#audioGain.channelInterpretation = "discrete";
+
 
             // Audio decoder
             this.#audioDecoder = new AudioDecoder({
@@ -530,6 +549,9 @@ export class Viewer {
         }
 
         const source = this.#audioContext.createBufferSource();
+        source.channelCount = buffer.numberOfChannels;
+        source.channelCountMode = "explicit";
+        source.channelInterpretation = "discrete";
         source.buffer = buffer;
 
         // Routing : decodedAudio -> gain (volume) -> output 
