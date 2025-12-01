@@ -82,7 +82,8 @@ export default class StreamController {
     async joinModal(stream) {
         const userId = stream.user;
         const streamName = stream.streamName;
-        if (this.#room.voiceController.getActiveRoom() && this.#user.id != userId) {
+
+        if (this.#room.voiceController.getActiveRoom() && this.#user.id != userId && !this.#viewer[`${userId}-${streamName}`]) {
             const displayName = (await this.#fetcher.fetchCore(`/user/${userId}`)).displayName;
             const streamContainter = document.getElementById('stream-container');
             const modal = document.createElement('div');
@@ -110,10 +111,10 @@ export default class StreamController {
 
             const video = await stream.join(userId, streamName);
             video.onclick = () => { this.focus(video) }
-            video.oncontextmenu = (event) => { 
-                event.preventDefault(); 
-                this.#contextMenu.load(stream);
-                this.#contextMenu.open(event.clientX, event.clientY) 
+            video.oncontextmenu = (event) => {
+                event.preventDefault();
+                this.#contextMenu.load(stream, this, userId, streamName);
+                this.#contextMenu.open(event.clientX, event.clientY)
             }
         }
     }
@@ -129,11 +130,14 @@ export default class StreamController {
         if (this.#room.voiceController.getActiveRoom() && userId != this.#user.id) {
             if (this.#viewer[`${userId}-${streamName}`]) {
                 await this.#viewer[`${userId}-${streamName}`].leave();
+                this.#viewer[`${userId}-${streamName}`] = null;
             }
             else {
                 this.removeModal(userId, streamName);
             }
         }
+
+        this.availableStream(this.#room.voiceController.getActiveRoom());
     }
 
     async stopAll() {

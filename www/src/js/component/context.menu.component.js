@@ -126,6 +126,7 @@ class VoiceContextMenu extends ContextMenu {
 
 class StreamContextMenu extends ContextMenu {
     #stream;
+    #streamController;
 
     constructor() {
         super();
@@ -145,17 +146,21 @@ class StreamContextMenu extends ContextMenu {
         `;
     }
 
-    load(stream){
+    load(stream, streamController, userId, streamName) {
         this.#stream = stream;
+        this.#streamController = streamController;
 
         // Stop watching
-        this.shadowRoot.getElementById('stop').onclick = () => {this.#stop()}
+        this.shadowRoot.getElementById('stop').onclick = async () => {
+            await this.#streamController.leave({ user: userId, name: streamName });
+            this.close();
+        }
 
         // Volume
         const volumeInput = this.shadowRoot.getElementById("volume");
         const volumeLabel = this.shadowRoot.getElementById("volume-label");
 
-        if(this.#stream){
+        if (this.#stream) {
             volumeInput.dataset.i18nValue = parseInt(this.#stream.getVolume() * 100) + "%";
         }
 
@@ -170,13 +175,6 @@ class StreamContextMenu extends ContextMenu {
             volumeInput.title = "100%";
             volumeLabel.dataset.i18nValue = volumeInput.title;
             volumeInput.value = 1;
-        }
-    }
-
-    #stop(){
-        if(this.#stream){
-            this.#stream.leave();
-            this.close();
         }
     }
 }
