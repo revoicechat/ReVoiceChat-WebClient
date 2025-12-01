@@ -22,8 +22,8 @@ export default class StreamController {
     }
 
     attachEvents() {
-        document.getElementById("stream-webcam").addEventListener('click', () => this.#toggleStream("webcam"));
-        document.getElementById("stream-display").addEventListener('click', () => this.#toggleStream("display"));
+        document.getElementById("stream-webcam").onclick = () => this.#toggleStream("webcam");
+        document.getElementById("stream-display").onclick = () => this.#toggleStream("display");
         addEventListener("beforeunload", () => { this.stopAll() })
     }
 
@@ -63,6 +63,7 @@ export default class StreamController {
             this.#streamer[type] = new Streamer(this.#streamUrl, this.#user, this.#token);
             const video = await this.#streamer[type].start(type, type);
             video.onclick = () => { this.focus(video) }
+            video.oncontextmenu = (event) => {event.preventDefault();}
         }
         catch (error) {
             console.error(error);
