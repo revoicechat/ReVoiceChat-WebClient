@@ -74,13 +74,12 @@ export default class StreamController {
     }
 
     /**
-     * @param {StreamRepresentation} stream
+     * @param {StreamingRepresentation|StreamRepresentation} stream
      * @return {Promise<void>}
      */
     async joinModal(stream) {
         const userId = stream.user;
         const streamName = stream.name;
-
         if (this.#room.voiceController.getActiveRoom() && this.#user.id != userId) {
             const displayName = (await this.#fetcher.fetchCore(`/user/${userId}`)).displayName;
             const streamContainter = document.getElementById('stream-container');
@@ -111,7 +110,7 @@ export default class StreamController {
     }
 
     /**
-     * @param {StreamRepresentation} stream
+     * @param {StreamingRepresentation} stream
      * @return {Promise<void>}
      */
     async leave(stream) {
@@ -144,6 +143,7 @@ export default class StreamController {
     }
 
     async availableStream(roomId) {
+        /** @type {RoomPresence} */
         const result = await this.#fetcher.fetchCore(`/room/${roomId}/user`, 'GET');
 
         if (result.connectedUser === null) {
@@ -153,7 +153,7 @@ export default class StreamController {
 
         for (const user of result.connectedUser) {
             for (const stream of user.streams) {
-                this.joinModal(stream.user, stream.streamName);
+                this.joinModal(stream);
             }
         }
     }

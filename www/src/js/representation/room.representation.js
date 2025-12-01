@@ -45,3 +45,14 @@ class MessageNotification {
   /** @type {NotificationActionType} */
   action
 }
+
+class RoomPresence {
+  /** @type {string} */
+  id
+  /** @type {string} */
+  name
+  /** @type {UserRepresentation[]} */
+  allUser
+  /** @type {ConnectedUserRepresentation[]} */
+  connectedUser
+}

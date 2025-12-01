@@ -30,11 +30,11 @@ class UserStatusUpdate {
 /**
  * for "STREAM_START" and "STREAM_STOP" notifications
  */
-class StreamRepresentation {
+class StreamingRepresentation {
   /** @type {string} */
   user
   /** @type {string} */
-  name
+  streamName
 }
 
 /**
@@ -50,18 +50,45 @@ class ViewerRepresentation {
 }
 
 /**
- * for "VOICE_LEAVING" and "VOICE_LEAVING" notifications
+ * for "VOICE_JOINING" notifications
  */
-class VoiceNotification {
+class VoiceJoiningNotification {
+  /** @type {UserNotificationRepresentation} */
+  user
+  /** @type {string} */
+  roomId
+}
+
+/**
+ * for "VOICE_LEAVING" notifications
+ */
+class VoiceLeavingNotification {
   /** @type {string} */
   user
   /** @type {string} */
   roomId
 }
 
+
 class UserNotificationRepresentation {
   /** @type {string} */
   id
   /** @type {string} */
   displayName
+}
+
+class StreamRepresentation {
+  /** @type {string} */
+  user
+  /** @type {string} */
+  streamName
+  /** @type {string[]} */
+  viewers
+}
+
+class ConnectedUserRepresentation {
+  /** @type {UserRepresentation} */
+  user
+  /** @type {StreamRepresentation[]} */
+  streams
 }

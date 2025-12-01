@@ -91,7 +91,7 @@ export default class VoiceController {
 
     /**
      * <server.js> call this when a new user join the room
-     * @param {VoiceNotification} data
+     * @param {VoiceJoiningNotification} data
      * @return {Promise<void>}
      */
     async userJoining(data) {
@@ -113,7 +113,7 @@ export default class VoiceController {
 
     /**
      * <server.js> call this when a user leave the room
-     * @param {VoiceNotification} data
+     * @param {VoiceLeavingNotification} data
      * @return {Promise<void>}
      */
     async userLeaving(data) {

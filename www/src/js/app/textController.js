@@ -45,6 +45,7 @@ export default class TextController {
     }
 
     async getAllFrom(roomId) {
+        /** @type {PageResult<MessageRepresentation>} */
         const result = await this.#fetcher.fetchCore(`/room/${roomId}/message`, 'GET');
 
         if (result !== null) {

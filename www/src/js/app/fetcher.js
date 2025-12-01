@@ -1,3 +1,7 @@
+/**
+ * @typedef {"GET"|"POST"|"PATCH"|"PUT"|"DELETE"|"OPTION"} HTTPMethod
+ */
+
 export default class Fetcher {
     #coreURL;
     #mediaURL;
@@ -9,7 +13,13 @@ export default class Fetcher {
         this.#token = token;
     }
 
-    async fetchCore(path, method = null, data = null) {
+    /**
+     * @param {string} path
+     * @param {HTTPMethod} method
+     * @param {*} data
+     * @return {Promise<null|any|boolean>}
+     */
+    async fetchCore(path, method = "GET", data = null) {
         if (method === null) {
             method = 'GET';
         }
@@ -45,7 +55,15 @@ export default class Fetcher {
         }
     }
 
-    async fetchMedia(path, method = null, rawData = null, timeout = true) {
+    /**
+     *
+     * @param {string} path
+     * @param {HTTPMethod} method
+     * @param {*} rawData
+     * @param {boolean} timeout
+     * @return {Promise<null|any|boolean>}
+     */
+    async fetchMedia(path, method = 'GET', rawData = null, timeout = true) {
         if (method === null) {
             method = 'GET';
         }
