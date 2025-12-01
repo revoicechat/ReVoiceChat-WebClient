@@ -1,4 +1,4 @@
-class AudioCollector extends AudioWorkletProcessor {
+class MonoCollector extends AudioWorkletProcessor {
     process(inputs) {
         const input = inputs[0][0]; // mono
         if (input) {
@@ -80,5 +80,5 @@ class NoiseGate extends AudioWorkletProcessor {
     }
 }
 
-registerProcessor("AudioCollector", AudioCollector);
+registerProcessor("MonoCollector", MonoCollector);
 registerProcessor('NoiseGate', NoiseGate);

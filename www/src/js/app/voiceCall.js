@@ -295,7 +295,7 @@ export default class VoiceCall {
 
         // Init AudioContext
         this.#audioContext = new AudioContext({ sampleRate: this.#codecSettings.sampleRate });
-        await this.#audioContext.audioWorklet.addModule('src/js/app/voiceProcessor.js');
+        await this.#audioContext.audioWorklet.addModule('src/js/app/audioProcessor.js');
 
         /**
          * Audio routing 
@@ -338,7 +338,7 @@ export default class VoiceCall {
         this.#gainNode.connect(this.#gateNode);
 
         // Create AudioCollector
-        this.#audioCollector = new AudioWorkletNode(this.#audioContext, "AudioCollector", {
+        this.#audioCollector = new AudioWorkletNode(this.#audioContext, "MonoCollector", {
             channelCount: 1,
             channelCountMode: "explicit",
             channelInterpretation: "speakers"
