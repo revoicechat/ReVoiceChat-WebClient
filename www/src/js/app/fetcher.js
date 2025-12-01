@@ -45,15 +45,21 @@ export default class Fetcher {
         }
     }
 
-    async fetchMedia(path, method = null, rawData = null) {
+    async fetchMedia(path, method = null, rawData = null, timeout = true) {
         if (method === null) {
             method = 'GET';
+        }
+
+        let signal = null;
+        
+        if(timeout){
+            signal = AbortSignal.timeout(5000);
         }
 
         try {
             const response = await apiFetch(`${this.#mediaURL}${path}`, {
                 method: method,
-                signal: AbortSignal.timeout(5000),
+                signal: signal,
                 headers: {
                     'Authorization': `Bearer ${this.#token}`
                 },

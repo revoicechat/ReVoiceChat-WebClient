@@ -165,12 +165,12 @@ export default class TextController {
 
         if (result) {
 
-            // Send attachements
+            // Send attachments
             if (this.mode === TextController.MODE_SEND) {
                 for (const media of result.medias) {
                     const formData = new FormData();
                     formData.append("file", attachments[media.name]);
-                    await this.#fetcher.fetchMedia(`/attachments/${media.id}`, 'POST', formData);
+                    await this.#fetcher.fetchMedia(`/attachments/${media.id}`, 'POST', formData, false);
                 }
             }
 
