@@ -321,6 +321,16 @@ class LanguageIconComponent extends HTMLElement {
     }
 }
 
+class StopComponent extends HTMLElement {
+    constructor(){
+        super();
+        this.innerHTML = `
+            <svg data-slot="icon" aria-hidden="true" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path clip-rule="evenodd" d="M4.5 7.5a3 3 0 0 1 3-3h9a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3h-9a3 3 0 0 1-3-3v-9Z" fill-rule="evenodd"></path>
+            </svg>`
+    }
+}
+
 customElements.define('revoice-icon-pencil', PencilIconComponent);
 customElements.define('revoice-icon-trash', TrashIconComponent);
 customElements.define('revoice-icon-chat-bubble', ChatBubbleIconComponent);
@@ -350,6 +360,7 @@ customElements.define('revoice-icon-menu-burger', MenuBurgerIconComponent);
 customElements.define('revoice-icon-camera', CameraIconComponent);
 customElements.define('revoice-icon-display', DisplayIconComponent);
 customElements.define('revoice-icon-language', LanguageIconComponent);
+customElements.define('revoice-icon-stop', StopComponent);
 
 if (typeof module !== 'undefined') {
     module.exports = [
@@ -380,6 +391,7 @@ if (typeof module !== 'undefined') {
         MenuBurgerIconComponent,
         CameraIconComponent,
         DisplayIconComponent,
-        LanguageIconComponent
+        LanguageIconComponent,
+        StopCircleComponent
     ];
 }

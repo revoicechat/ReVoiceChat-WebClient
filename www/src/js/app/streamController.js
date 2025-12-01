@@ -10,6 +10,7 @@ export default class StreamController {
     #webcamEnabled = false;
     #displayEnabled = false;
     #fetcher;
+    #contextMenu;
 
     constructor(fetcher, alert, user, room, token, streamUrl) {
         this.#fetcher = fetcher;
@@ -17,6 +18,7 @@ export default class StreamController {
         this.#token = token;
         this.#room = room;
         this.#user = user;
+        this.#contextMenu = document.getElementById('stream-context-menu');
     }
 
     attachEvents() {
@@ -104,8 +106,15 @@ export default class StreamController {
     async join(userId, streamName) {
         if (this.#room.voiceController.getActiveRoom() && userId != this.#user.id) {
             this.#viewer[`${userId}-${streamName}`] = new Viewer(this.#streamUrl, this.#token);
-            const video = await this.#viewer[`${userId}-${streamName}`].join(userId, streamName);
+            const stream = this.#viewer[`${userId}-${streamName}`];
+
+            const video = await stream.join(userId, streamName);
             video.onclick = () => { this.focus(video) }
+            video.oncontextmenu = (event) => { 
+                event.preventDefault(); 
+                this.#contextMenu.load(stream);
+                this.#contextMenu.open(event.clientX, event.clientY) 
+            }
         }
     }
 

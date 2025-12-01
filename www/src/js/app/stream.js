@@ -328,6 +328,8 @@ export class Viewer {
     #audioCodec = structuredClone(Streamer.DEFAULT_AUDIO_CODEC);
     #audioContext;
     #audioDecoder;
+    #audioGain;
+    #audioVolume = 0.5;
 
     // Video decoder
     #videoCodec = structuredClone(Streamer.DEFAULT_VIDEO_CODEC);
@@ -390,6 +392,10 @@ export class Viewer {
                 error: (error) => { throw new Error(`AudioDecoder setup failed:\n${error.name}\nCurrent codec :${this.#audioCodec.codec}`) },
             });
             this.#audioDecoder.configure(this.#audioCodec);
+
+            // Audio gain (volume)
+            this.#audioGain = this.#audioContext.createGain();
+            this.#audioGain.gain.setValueAtTime(this.#audioVolume, this.#audioContext.currentTime);
 
             // Video decoder
             this.#videoDecoder = new VideoDecoder({
@@ -507,11 +513,22 @@ export class Viewer {
         const source = audioContext.createBufferSource();
         source.buffer = buffer;
 
-        source.connect(audioContext.destination); // connect audio source to output
+        // Routing : decodedAudio -> gain (volume) -> output 
+        source.connect(this.#audioGain);
+        this.#audioGain.connect(audioContext);
 
         const playhead = audioContext.currentTime + buffer.duration;
         source.start(playhead);
         audioData.close();
+    }
+
+    setVolume(value){
+        this.#audioVolume = value;
+        this.#audioGain.gain.setValueAtTime(this.#audioVolume, this.#audioContext.currentTime);
+    }
+
+    getVolume(){
+        return this.#audioVolume;
     }
 }
 
