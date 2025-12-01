@@ -152,6 +152,7 @@ export default class StreamController {
         // Stop watching
         for (const key of Object.keys(this.#viewer)) {
             await this.#viewer[key].leave();
+            this.#viewer[key] = null;
         }
     }
 
