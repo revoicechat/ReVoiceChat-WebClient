@@ -36,8 +36,7 @@ class StereoCollector extends AudioWorkletProcessor {
 
         this.port.postMessage({
             samples: interleaved,
-            channels,
-            frames
+            channels : channels
         });
 
         return true;
