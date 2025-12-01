@@ -123,6 +123,7 @@ class EmojiManager extends HTMLElement {
             .filter(k => k.length > 0);
 
         try {
+            /** @type {EmoteRepresentation} */
             const emojiData = await RVC.fetcher.fetchCore(`/emote/${this.path}`, 'PUT', {
                     fileName: file.name,
                     content: nameInput.value.trim(),

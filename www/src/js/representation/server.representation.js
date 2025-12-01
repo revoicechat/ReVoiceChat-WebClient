@@ -1,3 +1,5 @@
+/** @typedef {ServerCategory|ServerRoom} ServerItem */
+
 class ServerRepresentation {
   /** @type {string} */
   id
@@ -25,4 +27,21 @@ class NewUserInServer {
   server
   /** @type {string} */
   user
+}
+
+class ServerCategory {
+  /** @type {string} */
+  name
+  /** @type {ServerItem[]} */
+  items
+}
+
+class ServerRoom {
+  /** @type {string} */
+  id
+}
+
+class ServerStructure {
+  /** @type {ServerItem[]} */
+  items
 }

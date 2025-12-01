@@ -4,13 +4,24 @@ export default class TextController {
 
     mode = 0;
 
+    /** @type {Alert} */
     #alert;
+    /** @type {User} */
     #user;
+    /** @type {Fetcher} */
     #fetcher;
+    /** @type {Room} */
     #room;
+    /** @type {string|null} */
     #editId;
     #attachmentMaxSize = 0;
 
+    /**
+     * @param {Fetcher} fetcher
+     * @param {Alert} alert
+     * @param {User} user
+     * @param {Room} room
+     */
     constructor(fetcher, alert, user, room) {
         this.#fetcher = fetcher;
         this.#alert = alert;

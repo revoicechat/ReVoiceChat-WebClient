@@ -2,6 +2,7 @@ import TextController from './textController.js';
 import VoiceController  from './voiceController.js';
 
 export default class Room {
+    /** @type {Fetcher} */
     #fetcher;
     /** @type {TextController} */
     textController;
@@ -11,6 +12,15 @@ export default class Room {
     name;
     type;
 
+    /**
+     * @param {Fetcher} fetcher
+     * @param {Alert} alert
+     * @param {User} user
+     * @param {string} voiceUrl
+     * @param {string} token
+     * @param {string} mediaUrl
+     * @param {string} streamUrl
+     */
     constructor(fetcher, alert, user, voiceUrl, token, mediaUrl, streamUrl) {
         this.#fetcher = fetcher;
         this.textController = new TextController(fetcher, alert, user, this);
@@ -18,10 +28,13 @@ export default class Room {
     }
 
     async load(serverId) {
+        /** @type {RoomRepresentation[]} */
         const roomResult = await this.#fetcher.fetchCore(`/server/${serverId}/room`, 'GET');
+        /** @type {ServerStructure} */
         const structResult = await this.#fetcher.fetchCore(`/server/${serverId}/structure`, 'GET');
 
         if (structResult?.items && roomResult) {
+            /** @type {RoomRepresentation[]} */
             const rooms = [];
             for (const room of roomResult) {
                 rooms[room.id] = room;

@@ -15,6 +15,7 @@ export default class User {
     }
 
     async load() {
+        /** @type {UserRepresentation} */
         const result = await this.#fetcher.fetchCore(`/user/me`, 'GET');
 
         if (result !== null) {

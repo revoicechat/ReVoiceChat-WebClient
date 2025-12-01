@@ -1,13 +1,24 @@
 import ServerSettingsController from "./serverSettingsController.js";
 
 export default class Server {
+    /** @type {Fetcher} */
     #fetcher;
+    /** @type {string} */
     #mediaURL;
+    /** @type {Room} */
     #room;
+    /** @type {string} */
     id;
+    /** @type {string} */
     name;
+    /** @type {ServerSettingsController} */
     settings;
 
+    /**
+     * @param {Fetcher} fetcher
+     * @param {string} mediaURL
+     * @param {Room} room
+     */
     constructor(fetcher, mediaURL, room) {
         this.#fetcher = fetcher;
         this.#mediaURL = mediaURL;
@@ -16,6 +27,7 @@ export default class Server {
     }
 
     async #load() {
+        /** @type {ServerRepresentation[]} */
         const result = await this.#fetcher.fetchCore("/server", 'GET');
 
         if (result === null) {
@@ -30,6 +42,7 @@ export default class Server {
         }
 
         this.settings = new ServerSettingsController(this, this.#fetcher, this.#mediaURL);
+        this.settings.load()
     }
 
     select(id, name) {
@@ -71,6 +84,7 @@ export default class Server {
     }
 
     async #usersLoad() {
+        /** @type {UserRepresentation[]} */
         const result = await this.#fetcher.fetchCore(`/server/${this.id}/user`, 'GET');
 
         if (result !== null) {

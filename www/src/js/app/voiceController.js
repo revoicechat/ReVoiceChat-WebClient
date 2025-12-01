@@ -2,19 +2,40 @@ import VoiceCall from "./voiceCall.js";
 import StreamController from './streamController.js';
 
 export default class VoiceController {
+    /** @type {Alert} */
     #alert;
+    /** @type {Fetcher} */
     #fetcher;
+    /** @type {string} */
     #voiceURL;
+    /** @type {string} */
     #mediaUrl
+    /** @type {string} */
     #token;
+    /** @type {VoiceCall|null} */
     #voiceCall;
+    /** @type {string|null} */
     #activeRoom;
+    /** @type {User} */
     #user;
+    /** @type {Room} */
     #room;
+    /** @type {HTMLElement} */
     #contextMenu;
     #lastStateSelfMute = false;
+    /** @type {StreamController} */
     streamController;
 
+    /**
+     * @param {Fetcher} fetcher
+     * @param {Alert} alert
+     * @param {User} user
+     * @param {Room} room
+     * @param {string} voiceURL
+     * @param {string} token
+     * @param {string} mediaUrl
+     * @param {string} streamUrl
+     */
     constructor(fetcher, alert, user, room, token, voiceURL, mediaUrl, streamUrl) {
         this.#fetcher = fetcher;
         this.#voiceURL = voiceURL;
