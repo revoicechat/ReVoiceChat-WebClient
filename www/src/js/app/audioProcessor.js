@@ -2,9 +2,44 @@ class MonoCollector extends AudioWorkletProcessor {
     process(inputs) {
         const input = inputs[0][0]; // mono
         if (input) {
-            // Send Float32Array (128 samples) to main thread
             this.port.postMessage(new Float32Array(input));
         }
+        return true;
+    }
+}
+
+class StereoCollector extends AudioWorkletProcessor {
+    process(inputs) {
+        const input = inputs[0];
+
+        // If there is no input data yet, continue
+        if (input.length === 0 || input[0].length === 0) return true;
+
+        const left = input[0];   // Float32Array
+        const right = input[1];  // Float32Array (may be undefined if mono)
+
+        const frames = left.length;
+        const channels = input.length;
+
+        // Interleave channels: LRLRLR...
+        const interleaved = new Float32Array(frames * channels);
+
+        if (channels === 2 && right) {
+            for (let i = 0; i < frames; i++) {
+                interleaved[i * 2] = left[i];
+                interleaved[i * 2 + 1] = right[i];
+            }
+        } else {
+            // Mono fallback
+            interleaved.set(left);
+        }
+
+        this.port.postMessage({
+            samples: interleaved,
+            channels,
+            frames
+        });
+
         return true;
     }
 }
@@ -45,7 +80,7 @@ class NoiseGate extends AudioWorkletProcessor {
             output.fill(0);
             return true;
         }
-    
+
         const threshold = this.dBToLinear(parameters.threshold[0]);
         const attackCoeff = Math.exp(-1 / (parameters.attack[0] * globalThis.sampleRate / 1000));
         const releaseCoeff = Math.exp(-1 / (parameters.release[0] * globalThis.sampleRate / 1000));
@@ -81,4 +116,5 @@ class NoiseGate extends AudioWorkletProcessor {
 }
 
 registerProcessor("MonoCollector", MonoCollector);
+registerProcessor("StereoCollector", StereoCollector);
 registerProcessor('NoiseGate', NoiseGate);
