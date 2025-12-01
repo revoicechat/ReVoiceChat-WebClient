@@ -1,6 +1,8 @@
 export default class State {
+    /** @type {ReVoiceChat} */
     #rvc;
 
+    /** @param {ReVoiceChat} rvc */
     constructor(rvc) {
         this.#rvc = rvc;
     }

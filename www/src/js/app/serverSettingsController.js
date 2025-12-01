@@ -3,7 +3,6 @@ export default class ServerSettingsController {
     #fetcher;
     #currentTab;
     #mediaUrl;
-    #coreUrl;
     #popupData = {
         name: null,
         type: null
@@ -19,10 +18,12 @@ export default class ServerSettingsController {
         this.#server = server;
         this.#fetcher = fetcher;
         this.#mediaUrl = mediaUrl;
+    }
 
-        this.#loadRisks();
+    load() {
+        this.#loadRisks().then();
         this.#overviewLoad();
-        this.#memberLoad();
+        this.#memberLoad().then();
     }
 
     riskModify() {
@@ -46,59 +47,67 @@ export default class ServerSettingsController {
     }
 
     async #attachEventsFromRisks(flattenRisks, isAdmin) {
-        const overviewRisks = ['SERVER_UPDATE'];
-        const roomRisks = ['SERVER_ROOM_UPDATE', 'SERVER_ROOM_DELETE'];
-        const rolesRisks = ['ADD_ROLE', 'UPDATE_ROLE', 'ADD_USER_ROLE'];
-        const emoteRisks = ['ADD_EMOTE', 'UPDATE_EMOTE', 'REMOVE_EMOTE'];
-        const invitationRisks = ['SERVER_INVITATION_ADD', 'SERVER_INVITATION_FETCH'];
+        this.#handleOverviewRisks(isAdmin, flattenRisks);
+        this.#handleRoomRisks(isAdmin, flattenRisks);
+        this.#handleRoleRisks(isAdmin, flattenRisks);
+        this.#handleEmoteRisks(isAdmin, flattenRisks);
+        this.#handleInvitationRisks(isAdmin, flattenRisks);
+    }
 
-        if (isAdmin || flattenRisks.some(elem => overviewRisks.includes(elem))) {
-            this.#overviewEventHandler();
-        }
-        else {
-            this.#overviewEventHandler(true);
-        }
-
-        if (isAdmin || flattenRisks.some(elem => roomRisks.includes(elem))) {
-            this.#structureLoad();
-            this.#roomLoad();
-            this.#roomEventHandler();
-        }
-        else {
-            this.#roomEventHandler(true);
-            if (this.#currentTab === "rooms") {
+    #handleInvitationRisks(isAdmin, flattenRisks) {
+        const invitationRisks = new Set(['SERVER_INVITATION_ADD', 'SERVER_INVITATION_FETCH']);
+        if (isAdmin || flattenRisks.some(elem => invitationRisks.has(elem))) {
+            this.#invitationLoad().then();
+            this.#invitationEventHandler();
+        } else {
+            this.#invitationEventHandler(true);
+            if (this.#currentTab === "invitations") {
                 this.#select('overview');
             }
         }
+    }
 
-        if (isAdmin || flattenRisks.some(elem => rolesRisks.includes(elem))) {
-            this.#rolesLoad();
+    #handleEmoteRisks(isAdmin, flattenRisks) {
+        const emoteRisks = new Set(['ADD_EMOTE', 'UPDATE_EMOTE', 'REMOVE_EMOTE']);
+        if (isAdmin || flattenRisks.some(elem => emoteRisks.has(elem))) {
+            this.#emotesLoad().then();
+        } else if (this.#currentTab === "emotes") {
+            this.#select('overview');
         }
-        else {
+    }
+
+    #handleRoleRisks(isAdmin, flattenRisks) {
+        const rolesRisks = new Set(['ADD_ROLE', 'UPDATE_ROLE', 'ADD_USER_ROLE']);
+        if (isAdmin || flattenRisks.some(elem => rolesRisks.has(elem))) {
+            this.#rolesLoad();
+        } else {
             this.#rolesLoad(true);
             if (this.#currentTab === "roles") {
                 this.#select('overview');
             }
         }
+    }
 
-        if (isAdmin || flattenRisks.some(elem => emoteRisks.includes(elem))) {
-            this.#emotesLoad();
-        }
-        else {
-            if (this.#currentTab === "emotes") {
+    #handleRoomRisks(isAdmin, flattenRisks) {
+        const roomRisks = new Set(['SERVER_ROOM_UPDATE', 'SERVER_ROOM_DELETE']);
+        if (isAdmin || flattenRisks.some(elem => roomRisks.has(elem))) {
+            this.#structureLoad().then();
+            this.#roomLoad().then();
+            this.#roomEventHandler();
+        } else {
+            this.#roomEventHandler(true);
+            if (this.#currentTab === "rooms") {
                 this.#select('overview');
             }
         }
+    }
 
-        if (isAdmin || flattenRisks.some(elem => invitationRisks.includes(elem))) {
-            this.#invitationLoad();
-            this.#invitationEventHandler();
-        }
-        else {
-            this.#invitationEventHandler(true);
-            if (this.#currentTab === "invitations") {
-                this.#select('overview');
-            }
+    #handleOverviewRisks(isAdmin, flattenRisks) {
+        const overviewRisks = new Set(['SERVER_UPDATE']);
+        if (isAdmin || flattenRisks.some(elem => overviewRisks.has(elem))) {
+            this.#overviewEventHandler();
+        } else {
+            this.#overviewEventHandler(true);
         }
     }
 
@@ -420,7 +429,7 @@ export default class ServerSettingsController {
             return;
         }
 
-        parent.forEach(item => {
+        for (const item of parent) {
             if (item.type === 'CATEGORY') {
                 this.#structureClean(item.items);
             }
@@ -432,7 +441,7 @@ export default class ServerSettingsController {
                     }
                 }
             }
-        })
+        }
     }
 
     #handleDragStart(e, item) {
@@ -443,15 +452,18 @@ export default class ServerSettingsController {
             };
             e.target.classList.add('dragging');
             const dropZones = document.querySelectorAll('.server-structure-drop-zone');
-            dropZones.forEach(dropZone => dropZone.classList.add('active'));
+            for (const dropZone of dropZones) {
+                dropZone.classList.add('active');
+            }
         }
     }
 
     #handleDragEnd(e) {
         e.target.classList.remove('dragging');
-        //this.#draggedElement = null;
         const dropZones = document.querySelectorAll('.server-structure-drop-zone');
-        dropZones.forEach(dropZone => dropZone.classList.remove('active'));
+        for (const dropZone of dropZones) {
+            dropZone.classList.remove('active');
+        }
     }
 
     #handleDragOver(e) {
@@ -602,13 +614,13 @@ export default class ServerSettingsController {
             childrenDiv.className = 'server-structure-item-children';
             childrenDiv.appendChild(this.#renderDropZone(item, 0));
             let posSubCategory = 1
-            item.items.forEach(childItem => {
+            for (const childItem of item.items) {
                 const renderedItem = this.#renderItem(childItem, item.items, level + 1)
                 if (renderedItem) {
                     childrenDiv.appendChild(renderedItem);
                 }
                 childrenDiv.appendChild(this.#renderDropZone(item, posSubCategory++));
-            });
+            }
 
             itemDiv.appendChild(childrenDiv);
         } else if (item.type === 'CATEGORY') {
@@ -635,7 +647,9 @@ export default class ServerSettingsController {
         const container = document.getElementById('treeContainer');
         // Clear existing items but keep root drop zone
         const existingItems = container.querySelectorAll('.server-structure-tree-item, .server-root-zone');
-        existingItems.forEach(item => item.remove());
+        for (const item of existingItems) {
+            item.remove();
+        }
 
         // Setup root drop zone
         const rootDropZone = document.getElementById('rootDropZone');
@@ -650,13 +664,13 @@ export default class ServerSettingsController {
 
         // Render all items in structure
         let posMain = 1
-        this.#structureData.items.forEach(item => {
+        for (const item of this.#structureData.items) {
             const renderedItem = this.#renderItem(item, this.#structureData.items)
             if (renderedItem) {
                 container.appendChild(renderedItem);
             }
             container.appendChild(this.#renderDropZone(this.#structureData, posMain++, "server-root-zone"));
-        });
+        }
 
         // Render remaining rooms
         for (const room of this.#roomsNotRendered) {

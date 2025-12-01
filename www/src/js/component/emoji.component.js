@@ -97,6 +97,7 @@ class EmojiPicker {
 }
 
 async function initCustomGeneral(picker) {
+    /** @type {EmoteRepresentation[]} */
     const emojis = await RVC.fetcher.fetchCore(`/emote/global`);
     initCustomEmojiCategory(picker,
         '03. custom_general',
@@ -113,6 +114,7 @@ async function initCustomGeneral(picker) {
 }
 
 async function initCustomServer(picker) {
+    /** @type {EmoteRepresentation[]} */
     const emojis = await RVC.fetcher.fetchCore(`/emote/server/${RVC.server.id}`);
     initCustomEmojiCategory(picker, '02. custom_server',
         '🏠',
@@ -128,7 +130,8 @@ async function initCustomServer(picker) {
 }
 
 async function initCustomUser(picker) {
-    const emojis = await RVC.fetcher.fetchCore(`/emote/me`) | [];
+    /** @type {EmoteRepresentation[]} */
+    const emojis = await RVC.fetcher.fetchCore(`/emote/me`);
     initCustomEmojiCategory(picker, '01. custom_perso',
         `<img class="emoji ${RVC.user.id}"
                    src="${RVC.mediaUrl}/profiles/${RVC.user.id}"
