@@ -57,6 +57,12 @@ export default class Server {
         }
     }
 
+    updateUserInServer(data) {
+        if (this.id === data.server) {
+            this.#usersLoad().then(() => {/* do nothing */});
+        }
+    }
+
     async #usersLoad() {
         const result = await this.#fetcher.fetchCore(`/server/${this.id}/user`, 'GET');
 

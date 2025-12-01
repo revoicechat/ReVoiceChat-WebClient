@@ -9,13 +9,19 @@ import { reloadEmojis } from '../emoji.js';
 import { Sse } from "./sse.js";
 
 export default class ReVoiceChat {
+    /** @type {Alert} */
     alert;
+    /** @type {Router} */
     router = new Router();
+    /** @type {Fetcher} */
     fetcher;
     /** @type {User} */
     user;
+    /** @type {Room} */
     room;
+    /** @type Server */
     server;
+    /** @type {State} */
     state;
 
     #token;
@@ -115,6 +121,7 @@ export default class ReVoiceChat {
 }
 
 class SSEHandlers {
+    /** @param {ReVoiceChat} context */
     constructor(context) {
         this.context = context;
         this.server = context.server;
@@ -127,6 +134,7 @@ class SSEHandlers {
             'ROOM_UPDATE': (data) => this.room.update(data, this.server.id),
             'ROOM_MESSAGE': (data) => this.room.textController.message(data),
             'DIRECT_MESSAGE': () => { },
+            'NEW_USER_IN_SERVER': (data) => this.server.updateUserInServer(data),
             'USER_STATUS_UPDATE': (data) => this.user.setStatus(data),
             'USER_UPDATE': (data) => this.user.update(data),
             'VOICE_JOINING': (data) => this.room.voiceController.userJoining(data),
