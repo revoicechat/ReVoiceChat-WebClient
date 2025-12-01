@@ -73,6 +73,14 @@ export default class StreamController {
         }
     }
 
+    /**
+     * @param {StreamRepresentation} stream
+     * @return {Promise<void>}
+     */
+    async joinModal(stream) {
+        await this.joinModal(stream.user, stream.name)
+    }
+
     async joinModal(userId, streamName) {
         if (this.#room.voiceController.getActiveRoom() && this.#user.id != userId) {
             const displayName = (await this.#fetcher.fetchCore(`/user/${userId}`)).displayName;
@@ -101,6 +109,14 @@ export default class StreamController {
             const video = await this.#viewer[`${userId}-${streamName}`].join(userId, streamName);
             video.onclick = () => { this.focus(video) }
         }
+    }
+
+    /**
+     * @param {StreamRepresentation} stream
+     * @return {Promise<void>}
+     */
+    async leave(stream) {
+        await this.leave(stream.user, stream.name)
     }
 
     async leave(userId, streamName) {

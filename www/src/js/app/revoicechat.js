@@ -23,11 +23,15 @@ export default class ReVoiceChat {
     server;
     /** @type {State} */
     state;
-
+    /** @type {string} */
     #token;
+    /** @type {Sse} */
     #sse;
+    /** @type {string} */
     coreUrl;
+    /** @type {string} */
     mediaUrl;
+    /** @type {string} */
     voiceUrl;
 
     constructor() {
@@ -72,6 +76,7 @@ export default class ReVoiceChat {
             (data) => this.#handleSSEMessage(data),
             () => this.#handleSSEError()
         )
+        /** @type {SSEHandlers} */
         this.sseHandlers = new SSEHandlers(this);
 
         // Save state before page unload
@@ -96,7 +101,7 @@ export default class ReVoiceChat {
         await i18n.translate(this.user.settings.getLanguage());
     }
 
-    // Token
+    /** @return {string} Token */
     getToken() {
         return this.#token;
     }
@@ -141,8 +146,8 @@ class SSEHandlers {
             'VOICE_LEAVING': (data) => this.room.voiceController.userLeaving(data),
             'EMOTE_UPDATE': () => reloadEmojis(),
             'RISK_MANAGEMENT': () => this.server.settings.riskModify(),
-            'STREAM_START': (data) => this.room.voiceController?.streamController?.joinModal(data.user, data.name),
-            'STREAM_STOP': (data) => this.room.voiceController?.streamController?.leave(data.user, data.name)
+            'STREAM_START': (data) => this.room.voiceController?.streamController?.joinModal(data),
+            'STREAM_STOP': (data) => this.room.voiceController?.streamController?.leave(data)
         };
     }
 

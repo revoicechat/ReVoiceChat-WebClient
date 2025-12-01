@@ -89,7 +89,11 @@ export default class VoiceController {
         this.#alert.play('voiceDisconnected');
     }
 
-    // <server.js> call this when a new user join the room
+    /**
+     * <server.js> call this when a new user join the room
+     * @param {VoiceNotification} data
+     * @return {Promise<void>}
+     */
     async userJoining(data) {
         this.#updateUserCounter(data.roomId);
 
@@ -107,11 +111,15 @@ export default class VoiceController {
         }
     }
 
-    // <server.js> call this when a user leave the room
+    /**
+     * <server.js> call this when a user leave the room
+     * @param {VoiceNotification} data
+     * @return {Promise<void>}
+     */
     async userLeaving(data) {
         this.#updateUserCounter(data.roomId);
 
-        const userId = data.userId;
+        const userId = data.user;
 
         // Remove user from UI
         const userElement = document.getElementById(`voice-${userId}`)

@@ -17,12 +17,16 @@ const SwalCustomClass = {
     confirmButton: "swalConfirm",
 }
 
+/**
+ * @param {string} str
+ * @return {string}
+ */
 const sanitizeString = (str) => str.substring(0, 2000).trim();
 
 
 /**
  * Is the date today
- * @param date Date to check
+ * @param {Date} date Date to check
  * @returns boolean
  */
 function isToday(date) {
@@ -66,9 +70,9 @@ function getQueryVariable(variable) {
 
 /**
  * Set a cookie to browser / tauri
- * @param name Name of cookie
- * @param value Data of cookie
- * @param days Expiration (in days)
+ * @param {string} name Name of cookie
+ * @param {string} value Data of cookie
+ * @param {number} days Expiration (in days)
  */
 function setCookie(name, value, days) {
     if (tauriActive) {
@@ -90,8 +94,8 @@ function setCookie(name, value, days) {
 
 /**
  * Get a cookie from browser / tauri
- * @param name Name of cookie to read/get
- * @returns Data of cookie
+ * @param {string} name Name of cookie to read/get
+ * @returns {string|null} Data of cookie
  */
 function getCookie(name) {
     if (tauriActive) {
@@ -138,7 +142,7 @@ function eraseCookie(name) {
 /**
  * Copy data to user clipboard
  * When available it use the newest API clipboard.writeText()
- * @param data Data to copy to user clipboard
+ * @param {string} data Data to copy to user clipboard
  */
 async function copyToClipboard(data) {
     try {
@@ -163,11 +167,11 @@ async function copyToClipboard(data) {
 /**
  * Format bytes as human-readable text.
  * 
- * @param bytes Number of bytes.
- * @param si True to use metric (SI) units, aka powers of 1000. False to use binary (IEC), aka powers of 1024.
- * @param dp Number of decimal places to display.
+ * @param {number} bytes Number of bytes.
+ * @param {boolean} si True to use metric (SI) units, aka powers of 1000. False to use binary (IEC), aka powers of 1024.
+ * @param {number} dp Number of decimal places to display.
  * 
- * @return Formatted string.
+ * @return {string} Formatted string.
  */
 function humanFileSize(bytes, si = false, dp = 1) {
     const thresh = si ? 1000 : 1024;
@@ -192,8 +196,8 @@ function humanFileSize(bytes, si = false, dp = 1) {
 
 /**
  * Convert user status to className
- * @param status User status
- * @returns Corresponding className
+ * @param {string} status User status
+ * @returns {"background-green"|"background-orange"|"background-red"|"background-gray"} Corresponding className
  */
 function statusToDotClassName(status) {
     switch (status) {
@@ -213,7 +217,7 @@ function statusToDotClassName(status) {
  * Fetch wrapper for Tauri
  * @param url 
  * @param options 
- * @returns function to use
+ * @returns {Promise<Response>} function to use
  */
 async function apiFetch(url, options = {}) {
     if (tauriActive && tauriFetch) {
