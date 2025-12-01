@@ -279,8 +279,7 @@ export default class VoiceCall {
         this.#encoder = new AudioEncoder({
             output: (chunk) => {
                 const header = {
-                    timestamp: Date.now(),
-                    audioTimestamp: parseInt(this.#audioTimestamp / 1000), // audioTimestamp is in µs but sending ms is enough
+                    timestamp: parseInt(this.#audioTimestamp / 1000), // audioTimestamp is in µs but sending ms is enough
                     user: this.#user.id,
                     gateState: this.#gateState,
                 }
@@ -389,7 +388,7 @@ export default class VoiceCall {
                 // Create audioData object to feed encoder
                 const audioData = new AudioData({
                     format: "f32-planar",
-                    sampleRate: this.#codec.sampleRate,
+                    sampleRate: this.#audioContext.sampleRate,
                     numberOfFrames: frame.length,
                     numberOfChannels: 1,
                     timestamp: this.#audioTimestamp,
@@ -407,7 +406,7 @@ export default class VoiceCall {
                 audioData.close();
 
                 // Update audioTimestamp (add 20ms / 20000µs)
-                this.#audioTimestamp += 20_000;
+                this.#audioTimestamp += (frame.length / this.#audioContext.sampleRate) * 1_000_000;
             }
         }
     }
@@ -440,7 +439,7 @@ export default class VoiceCall {
         if (currentUser.decoder !== null && currentUser.decoder.state === "configured") {
             currentUser.decoder.decode(new EncodedAudioChunk({
                 type: "key",
-                timestamp: parseInt(header.audioTimestamp * 1000),
+                timestamp: parseInt(header.timestamp * 1000),
                 data: new Uint8Array(data),
             }));
         } else {
