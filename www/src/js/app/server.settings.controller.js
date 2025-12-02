@@ -6,13 +6,19 @@ import {ServerSettingsRoleController} from "./server.settings.role.controller.js
 import {ServerSettingsMemberController} from "./server.settings.member.controller.js";
 
 export default class ServerSettingsController {
-    /** @type {Server} */
+    /** @type {ServerController} */
     server;
+    /** @type {Fetcher} */
     #fetcher;
     currentTab;
     /** @type {string[]} */
     flattenRisks = [];
 
+    /**
+     * @param {ServerController} server
+     * @param {Fetcher} fetcher
+     * @param {string} mediaUrl
+     */
     constructor(server, fetcher, mediaUrl) {
         this.server = server;
         this.#fetcher = fetcher;
@@ -52,6 +58,7 @@ export default class ServerSettingsController {
         if (select) {
             this.select('overview');
         }
+        void this.server.room.load(this.server.id)
     }
 
     /**

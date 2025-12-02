@@ -4,7 +4,7 @@ import Alert from './alert.js';
 import Router from './router.js';
 import UserController from './user.controller.js';
 import Room from './room.js';
-import Server from './server.js';
+import ServerController from './server.controller.js';
 import { reloadEmojis } from './emoji.js';
 import { Sse } from "./sse.js";
 import {getCookie, getQueryVariable} from "../lib/tools.js";
@@ -20,7 +20,7 @@ export default class ReVoiceChat {
     user;
     /** @type {Room} */
     room;
-    /** @type Server */
+    /** @type ServerController */
     server;
     /** @type {State} */
     state;
@@ -65,7 +65,7 @@ export default class ReVoiceChat {
         this.user = new UserController(this.fetcher, this.mediaUrl);
         this.alert = new Alert(this.user.settings);
         this.room = new Room(this.fetcher, this.alert, this.user, this.voiceUrl, this.#token, this.mediaUrl, this.streamUrl);
-        this.server = new Server(this.fetcher, this.mediaUrl, this.room);
+        this.server = new ServerController(this.fetcher, this.mediaUrl, this.room);
         this.state = new State(this);
 
         // Add missing classes

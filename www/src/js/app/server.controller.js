@@ -1,13 +1,13 @@
 import ServerSettingsController from "./server.settings.controller.js";
 import {statusToDotClassName} from "../lib/tools.js";
 
-export default class Server {
+export default class ServerController {
     /** @type {Fetcher} */
     #fetcher;
     /** @type {string} */
     #mediaURL;
     /** @type {Room} */
-    #room;
+    room;
     /** @type {string} */
     id;
     /** @type {string} */
@@ -23,7 +23,7 @@ export default class Server {
     constructor(fetcher, mediaURL, room) {
         this.#fetcher = fetcher;
         this.#mediaURL = mediaURL;
-        this.#room = room;
+        this.room = room;
         void this.#load();
     }
 
@@ -57,7 +57,7 @@ export default class Server {
         document.getElementById("server-name").innerText = name;
 
         void this.#usersLoad();
-        void this.#room.load(id);
+        void this.room.load(id);
     }
 
     /** @param {ServerUpdateNotification} data */
@@ -68,7 +68,7 @@ export default class Server {
           case "REMOVE":
             break;
           case "MODIFY":
-                this.#room.load(this.id);
+                this.room.load(this.id);
                 return;
             default:
                 return;
