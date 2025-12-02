@@ -294,7 +294,7 @@ export default class VoiceCall {
 
         // Init AudioContext
         this.#audioContext = new AudioContext({ sampleRate: this.#codec.sampleRate });
-        await this.#audioContext.audioWorklet.addModule('src/js/app/audioProcessor.js');
+        await this.#audioContext.audioWorklet.addModule('src/js/app/audio.processors.js');
 
         /**
          * Audio routing 

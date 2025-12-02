@@ -1,5 +1,5 @@
-import VoiceCall from "./voiceCall.js";
-import StreamController from './streamController.js';
+import VoiceCall from "./voice.js";
+import StreamController from './stream.controller.js';
 
 export default class VoiceController {
     /** @type {Alert} */

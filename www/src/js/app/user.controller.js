@@ -1,4 +1,4 @@
-import UserSettingsController from "./userSettingsController.js";
+import UserSettingsController from "./user.settings.controller.js";
 import {eraseCookie, statusToDotClassName} from "../lib/tools.js";
 
 export default class UserController {

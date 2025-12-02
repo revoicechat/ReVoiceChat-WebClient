@@ -2,7 +2,7 @@ import Fetcher from './fetcher.js';
 import State from './state.js';
 import Alert from './alert.js';
 import Router from './router.js';
-import UserController from './userController.js';
+import UserController from './user.controller.js';
 import Room from './room.js';
 import Server from './server.js';
 import { reloadEmojis } from './emoji.js';

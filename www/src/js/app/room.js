@@ -1,5 +1,5 @@
-import TextController from './textController.js';
-import VoiceController  from './voiceController.js';
+import TextController from './text.controller.js';
+import VoiceController  from './voice.controller.js';
 
 export default class Room {
     /** @type {Fetcher} */

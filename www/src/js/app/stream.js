@@ -168,7 +168,7 @@ export class Streamer {
             this.#audioContext.channelInterpretation = "discrete";
             this.#audioContext.channelCount = 2;
 
-            await this.#audioContext.audioWorklet.addModule('src/js/app/audioProcessor.js');
+            await this.#audioContext.audioWorklet.addModule('src/js/app/audio.processors.js');
 
             const audioStream = this.#audioContext.createMediaStreamSource(this.#player.srcObject);
 
