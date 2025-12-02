@@ -56,6 +56,7 @@ class VoiceContextMenu extends ContextMenu {
                 <button class="item" id="mute" title="Mute"></button>
             </div>
         `;
+        i18n.translatePage(this);
     }
 
     #saveSettings() {
@@ -83,7 +84,7 @@ class VoiceContextMenu extends ContextMenu {
         // Initial volume
         volumeInput.value = voiceSettings.volume;
         volumeInput.title = parseInt(voiceSettings.volume * 100) + "%";
-        volumeLabel.innerText = `Volume ${volumeInput.title}`;
+        volumeLabel.dataset.i18nValue = ${volumeInput.title};
 
         volumeInput.oninput = () => {
             volumeInput.title = parseInt(volumeInput.value * 100) + "%";
@@ -154,6 +155,7 @@ class StreamContextMenu extends ContextMenu {
                 </div>
             </div>
         `;
+        i18n.translatePage(this);
     }
 
     load(stream, streamController, userId, streamName) {
