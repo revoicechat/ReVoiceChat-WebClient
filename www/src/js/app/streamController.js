@@ -71,7 +71,7 @@ export default class StreamController {
 
             div.className = "player";
             div.appendChild(player);
-            div.onclick = () => { this.focus(video) }
+            div.onclick = () => { this.focus(div) }
             div.oncontextmenu = (event) => { event.preventDefault(); }
 
             document.getElementById('stream-container').appendChild(div);
@@ -120,16 +120,27 @@ export default class StreamController {
 
     async join(userId, streamName) {
         if (this.#room.voiceController.getActiveRoom() && userId != this.#user.id) {
-            this.#viewer[`${userId}-${streamName}`] = new Viewer(this.#streamUrl, this.#token);
-            const stream = this.#viewer[`${userId}-${streamName}`];
+            const div = document.createElement('div');
 
+            this.#viewer[`${userId}-${streamName}`] = {
+                stream: new Viewer(this.#streamUrl, this.#token),
+                div: div
+            } 
+
+            const stream = this.#viewer[`${userId}-${streamName}`].stream;
             const video = await stream.join(userId, streamName);
-            video.onclick = () => { this.focus(video) }
-            video.oncontextmenu = (event) => {
+
+            div.className = "player";
+            div.appendChild(video);
+            div.onclick = () => { this.focus(div) }
+            div.oncontextmenu = (event) => {
                 event.preventDefault();
                 this.#contextMenu.load(stream, this, userId, streamName);
                 this.#contextMenu.open(event.clientX, event.clientY)
             }
+
+            // Streamer container
+            document.getElementById('stream-container').appendChild(div); 
         }
     }
 
@@ -143,7 +154,8 @@ export default class StreamController {
 
         if (this.#room.voiceController.getActiveRoom() && userId != this.#user.id) {
             if (this.#viewer[`${userId}-${streamName}`]) {
-                await this.#viewer[`${userId}-${streamName}`].leave();
+                await this.#viewer[`${userId}-${streamName}`].stream.leave();
+                this.#viewer[`${userId}-${streamName}`].div.remove();
                 this.#viewer[`${userId}-${streamName}`] = null;
             }
             else {
@@ -165,7 +177,8 @@ export default class StreamController {
 
         // Stop watching
         for (const key of Object.keys(this.#viewer)) {
-            await this.#viewer[key].leave();
+            await this.#viewer[key].stream.leave();
+            this.#viewer[key].div.remove();
             this.#viewer[key] = null;
         }
     }

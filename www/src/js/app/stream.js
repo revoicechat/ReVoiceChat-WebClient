@@ -337,7 +337,6 @@ export class Viewer {
     #token;
 
     // Local playback
-    #playerDiv;
     #context;
     #canvas;
     #lastFrame = {
@@ -399,15 +398,6 @@ export class Viewer {
             this.#canvas = document.createElement("canvas");
             this.#context = this.#canvas.getContext("2d");
 
-            // Video player (box)
-            this.#playerDiv = document.createElement('div');
-            this.#playerDiv.className = "player";
-            this.#playerDiv.appendChild(this.#canvas);
-
-            // Streamer container
-            const streamContainter = document.getElementById('stream-container')
-            streamContainter.appendChild(this.#playerDiv);
-
             // AudioContext
             this.#audioContext = new AudioContext({ sampleRate: this.#audioCodec.sampleRate });
 
@@ -428,14 +418,14 @@ export class Viewer {
             // Video decoder
             this.#videoDecoder = new VideoDecoder({
                 output: (frame) => {
-                    this.#reconfigureCanvasResolution(frame, this.#playerDiv);
+                    this.#reconfigureCanvasResolution(frame, this.#canvas);
                     this.#context.drawImage(frame, 0, 0, this.#canvas.width, this.#canvas.height);
                     frame.close();
                 },
                 error: (error) => { throw new Error(`VideoDecoder error:\n${error.name}\nCurrent codec :${this.#videoCodec.codec}`) }
             });
 
-            return this.#playerDiv;
+            return this.#canvas;
         }
     }
 
@@ -479,9 +469,7 @@ export class Viewer {
         }
 
         // video playback
-        if (this.#playerDiv && this.#canvas && this.#context) {
-            this.#playerDiv.remove();
-            this.#playerDiv = null;
+        if (this.#canvas && this.#context) {
             this.#canvas = null;
             this.#context = null;
         }
