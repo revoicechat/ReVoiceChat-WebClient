@@ -1,3 +1,6 @@
+import Swal from './lib/sweetalert2.esm.all.min.js';
+import {SpinnerOnButton} from './component/button.spinner.component.js';
+
 document.addEventListener('DOMContentLoaded', async function () {
     sessionStorage.removeItem('lastState');
     await autoLogin();
@@ -14,6 +17,11 @@ document.addEventListener('DOMContentLoaded', async function () {
         switchToRegister();
     }
     void i18n.translate("en");
+
+    document.getElementById("login-button").onclick = userLogin
+    document.getElementById("switch-to-register-button").onclick = switchToRegister
+    document.getElementById("user-register-button").onclick = userRegister
+    document.getElementById("switch-to-login-button").onclick = switchToLogin
 });
 
 document.getElementById("login-form").addEventListener('keydown', function (e) {

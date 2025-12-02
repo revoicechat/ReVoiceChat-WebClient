@@ -1,6 +1,5 @@
 class TrashIconComponent extends HTMLElement {
-    constructor() {
-        super()
+    connectedCallback() {
         this.innerHTML = `
             <svg data-slot="icon" aria-hidden="true" fill="currentColor" viewBox="0 0 16 16">
                     <path clip-rule="evenodd"
@@ -11,8 +10,7 @@ class TrashIconComponent extends HTMLElement {
 }
 
 class PencilIconComponent extends HTMLElement {
-    constructor() {
-        super()
+    connectedCallback() {
         this.innerHTML = `
             <svg data-slot="icon" aria-hidden="true" fill="currentColor" viewBox="0 0 16 16">
                 <path clip-rule="evenodd"
@@ -23,8 +21,7 @@ class PencilIconComponent extends HTMLElement {
 }
 
 class ChatBubbleIconComponent extends HTMLElement {
-    constructor() {
-        super()
+    connectedCallback() {
         this.innerHTML = `
             <svg data-slot="icon" aria-hidden="true" fill="currentColor" viewBox="0 0 24 24">
                 <path clip-rule="evenodd"
@@ -35,8 +32,7 @@ class ChatBubbleIconComponent extends HTMLElement {
 }
 
 class PhoneIconComponent extends HTMLElement {
-    constructor() {
-        super()
+    connectedCallback() {
         this.innerHTML = `
             <svg data-slot="icon" aria-hidden="true" fill="currentColor" viewBox="0 0 24 24">
                 <path clip-rule="evenodd"
@@ -47,8 +43,7 @@ class PhoneIconComponent extends HTMLElement {
 }
 
 class PhoneXIconComponent extends HTMLElement {
-    constructor() {
-        super()
+    connectedCallback() {
         this.innerHTML = `
             <svg data-slot="icon" aria-hidden="true" fill="currentColor" viewBox="0 0 24 24">
                 <path clip-rule="evenodd"
@@ -59,8 +54,7 @@ class PhoneXIconComponent extends HTMLElement {
 }
 
 class MicrophoneIconComponent extends HTMLElement {
-    constructor() {
-        super()
+    connectedCallback() {
         this.innerHTML = `
             <svg data-slot="icon" aria-hidden="true" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M8.25 4.5a3.75 3.75 0 1 1 7.5 0v8.25a3.75 3.75 0 1 1-7.5 0V4.5Z"></path>
@@ -70,8 +64,7 @@ class MicrophoneIconComponent extends HTMLElement {
 }
 
 class ClipboardIconComponent extends HTMLElement {
-    constructor() {
-        super()
+    connectedCallback() {
         this.innerHTML = `
             <svg data-slot="icon" aria-hidden="true" fill="none" stroke-width="1.5" stroke="currentColor" viewBox="0 0 24 24">
                 <path d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25ZM6.75 12h.008v.008H6.75V12Zm0 3h.008v.008H6.75V15Zm0 3h.008v.008H6.75V18Z"
@@ -82,8 +75,7 @@ class ClipboardIconComponent extends HTMLElement {
 }
 
 class CirclePlusIconComponent extends HTMLElement {
-    constructor() {
-        super()
+    connectedCallback() {
         this.innerHTML = `
             <svg data-slot="icon" aria-hidden="true" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path clip-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25ZM12.75 9a.75.75 0 0 0-1.5 0v2.25H9a.75.75 0 0 0 0 1.5h2.25V15a.75.75 0 0 0 1.5 0v-2.25H15a.75.75 0 0 0 0-1.5h-2.25V9Z" fill-rule="evenodd"></path>
@@ -92,8 +84,7 @@ class CirclePlusIconComponent extends HTMLElement {
 }
 
 class FolderPlusIconComponent extends HTMLElement {
-    constructor() {
-        super()
+    connectedCallback() {
         this.innerHTML = `
             <svg data-slot="icon" aria-hidden="true" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path clip-rule="evenodd" d="M19.5 21a3 3 0 0 0 3-3V9a3 3 0 0 0-3-3h-5.379a.75.75 0 0 1-.53-.22L11.47 3.66A2.25 2.25 0 0 0 9.879 3H4.5a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3h15Zm-6.75-10.5a.75.75 0 0 0-1.5 0v2.25H9a.75.75 0 0 0 0 1.5h2.25v2.25a.75.75 0 0 0 1.5 0v-2.25H15a.75.75 0 0 0 0-1.5h-2.25V10.5Z" fill-rule="evenodd"></path>
@@ -102,8 +93,7 @@ class FolderPlusIconComponent extends HTMLElement {
 }
 
 class EyeOpenIconComponent extends HTMLElement {
-    constructor() {
-        super()
+    connectedCallback() {
         this.innerHTML = `
             <svg data-slot="icon" aria-hidden="true" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"></path>
@@ -113,8 +103,7 @@ class EyeOpenIconComponent extends HTMLElement {
 }
 
 class FolderIconComponent extends HTMLElement {
-    constructor() {
-        super()
+    connectedCallback() {
         this.innerHTML = `
             <svg data-slot="icon" aria-hidden="true" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path d="M19.5 21a3 3 0 0 0 3-3v-4.5a3 3 0 0 0-3-3h-15a3 3 0 0 0-3 3V18a3 3 0 0 0 3 3h15ZM1.5 10.146V6a3 3 0 0 1 3-3h5.379a2.25 2.25 0 0 1 1.59.659l2.122 2.121c.14.141.331.22.53.22H19.5a3 3 0 0 1 3 3v1.146A4.483 4.483 0 0 0 19.5 9h-15a4.483 4.483 0 0 0-3 1.146Z"></path>
@@ -123,8 +112,7 @@ class FolderIconComponent extends HTMLElement {
 }
 
 class Cog6ToothIconComponent extends HTMLElement {
-    constructor() {
-        super()
+    connectedCallback() {
         this.innerHTML = `
             <svg data-slot="icon" aria-hidden="true" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path clip-rule="evenodd" d="M11.078 2.25c-.917 0-1.699.663-1.85 1.567L9.05 4.889c-.02.12-.115.26-.297.348a7.493 7.493 0 0 0-.986.57c-.166.115-.334.126-.45.083L6.3 5.508a1.875 1.875 0 0 0-2.282.819l-.922 1.597a1.875 1.875 0 0 0 .432 2.385l.84.692c.095.078.17.229.154.43a7.598 7.598 0 0 0 0 1.139c.015.2-.059.352-.153.43l-.841.692a1.875 1.875 0 0 0-.432 2.385l.922 1.597a1.875 1.875 0 0 0 2.282.818l1.019-.382c.115-.043.283-.031.45.082.312.214.641.405.985.57.182.088.277.228.297.35l.178 1.071c.151.904.933 1.567 1.85 1.567h1.844c.916 0 1.699-.663 1.85-1.567l.178-1.072c.02-.12.114-.26.297-.349.344-.165.673-.356.985-.57.167-.114.335-.125.45-.082l1.02.382a1.875 1.875 0 0 0 2.28-.819l.923-1.597a1.875 1.875 0 0 0-.432-2.385l-.84-.692c-.095-.078-.17-.229-.154-.43a7.614 7.614 0 0 0 0-1.139c-.016-.2.059-.352.153-.43l.84-.692c.708-.582.891-1.59.433-2.385l-.922-1.597a1.875 1.875 0 0 0-2.282-.818l-1.02.382c-.114.043-.282.031-.449-.083a7.49 7.49 0 0 0-.985-.57c-.183-.087-.277-.227-.297-.348l-.179-1.072a1.875 1.875 0 0 0-1.85-1.567h-1.843ZM12 15.75a3.75 3.75 0 1 0 0-7.5 3.75 3.75 0 0 0 0 7.5Z" fill-rule="evenodd"></path>
@@ -133,8 +121,7 @@ class Cog6ToothIconComponent extends HTMLElement {
 }
 
 class UsersIconComponent extends HTMLElement {
-    constructor() {
-        super()
+    connectedCallback() {
         this.innerHTML = `
             <svg data-slot="icon" aria-hidden="true" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path d="M4.5 6.375a4.125 4.125 0 1 1 8.25 0 4.125 4.125 0 0 1-8.25 0ZM14.25 8.625a3.375 3.375 0 1 1 6.75 0 3.375 3.375 0 0 1-6.75 0ZM1.5 19.125a7.125 7.125 0 0 1 14.25 0v.003l-.001.119a.75.75 0 0 1-.363.63 13.067 13.067 0 0 1-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 0 1-.364-.63l-.001-.122ZM17.25 19.128l-.001.144a2.25 2.25 0 0 1-.233.96 10.088 10.088 0 0 0 5.06-1.01.75.75 0 0 0 .42-.643 4.875 4.875 0 0 0-6.957-4.611 8.586 8.586 0 0 1 1.71 5.157v.003Z"></path>
@@ -143,8 +130,7 @@ class UsersIconComponent extends HTMLElement {
 }
 
 class InformationIconComponent extends HTMLElement {
-    constructor() {
-        super()
+    connectedCallback() {
         this.innerHTML = `
             <svg data-slot="icon" aria-hidden="true" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path clip-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm8.706-1.442c1.146-.573 2.437.463 2.126 1.706l-.709 2.836.042-.02a.75.75 0 0 1 .67 1.34l-.04.022c-1.147.573-2.438-.463-2.127-1.706l.71-2.836-.042.02a.75.75 0 1 1-.671-1.34l.041-.022ZM12 9a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z" fill-rule="evenodd"></path>
@@ -153,8 +139,7 @@ class InformationIconComponent extends HTMLElement {
 }
 
 class SwatchIconComponent extends HTMLElement {
-    constructor() {
-        super()
+    connectedCallback() {
         this.innerHTML = `
             <svg data-slot="icon" aria-hidden="true" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path clip-rule="evenodd" d="M2.25 4.125c0-1.036.84-1.875 1.875-1.875h5.25c1.036 0 1.875.84 1.875 1.875V17.25a4.5 4.5 0 1 1-9 0V4.125Zm4.5 14.25a1.125 1.125 0 1 0 0-2.25 1.125 1.125 0 0 0 0 2.25Z" fill-rule="evenodd"></path>
@@ -164,8 +149,7 @@ class SwatchIconComponent extends HTMLElement {
 }
 
 class CircleXIconComponent extends HTMLElement {
-    constructor() {
-        super()
+    connectedCallback() {
         this.innerHTML = `
             <svg data-slot="icon" aria-hidden="true" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path clip-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25Zm-1.72 6.97a.75.75 0 1 0-1.06 1.06L10.94 12l-1.72 1.72a.75.75 0 1 0 1.06 1.06L12 13.06l1.72 1.72a.75.75 0 1 0 1.06-1.06L13.06 12l1.72-1.72a.75.75 0 1 0-1.06-1.06L12 10.94l-1.72-1.72Z" fill-rule="evenodd"></path>
@@ -174,8 +158,7 @@ class CircleXIconComponent extends HTMLElement {
 }
 
 class EnvelopeIconComponent extends HTMLElement {
-    constructor() {
-        super()
+    connectedCallback() {
         this.innerHTML = `
             <svg data-slot="icon" aria-hidden="true" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path d="M1.5 8.67v8.58a3 3 0 0 0 3 3h15a3 3 0 0 0 3-3V8.67l-8.928 5.493a3 3 0 0 1-3.144 0L1.5 8.67Z"></path>
@@ -185,8 +168,7 @@ class EnvelopeIconComponent extends HTMLElement {
 }
 
 class ArrowPointingIn extends HTMLElement {
-    constructor() {
-        super()
+    connectedCallback() {
         this.innerHTML = `
             <svg data-slot="icon" aria-hidden="true" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path clip-rule="evenodd" d="M3.22 3.22a.75.75 0 0 1 1.06 0l3.97 3.97V4.5a.75.75 0 0 1 1.5 0V9a.75.75 0 0 1-.75.75H4.5a.75.75 0 0 1 0-1.5h2.69L3.22 4.28a.75.75 0 0 1 0-1.06Zm17.56 0a.75.75 0 0 1 0 1.06l-3.97 3.97h2.69a.75.75 0 0 1 0 1.5H15a.75.75 0 0 1-.75-.75V4.5a.75.75 0 0 1 1.5 0v2.69l3.97-3.97a.75.75 0 0 1 1.06 0ZM3.75 15a.75.75 0 0 1 .75-.75H9a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-2.69l-3.97 3.97a.75.75 0 0 1-1.06-1.06l3.97-3.97H4.5a.75.75 0 0 1-.75-.75Zm10.5 0a.75.75 0 0 1 .75-.75h4.5a.75.75 0 0 1 0 1.5h-2.69l3.97 3.97a.75.75 0 1 1-1.06 1.06l-3.97-3.97v2.69a.75.75 0 0 1-1.5 0V15Z" fill-rule="evenodd"></path>
@@ -195,8 +177,7 @@ class ArrowPointingIn extends HTMLElement {
 }
 
 class SpeakerIconComponent extends HTMLElement {
-    constructor() {
-        super()
+    connectedCallback() {
         this.innerHTML = `
             <svg data-slot="icon" aria-hidden="true" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path d="M13.5 4.06c0-1.336-1.616-2.005-2.56-1.06l-4.5 4.5H4.508c-1.141 0-2.318.664-2.66 1.905A9.76 9.76 0 0 0 1.5 12c0 .898.121 1.768.35 2.595.341 1.24 1.518 1.905 2.659 1.905h1.93l4.5 4.5c.945.945 2.561.276 2.561-1.06V4.06ZM18.584 5.106a.75.75 0 0 1 1.06 0c3.808 3.807 3.808 9.98 0 13.788a.75.75 0 0 1-1.06-1.06 8.25 8.25 0 0 0 0-11.668.75.75 0 0 1 0-1.06Z"></path>
@@ -206,8 +187,7 @@ class SpeakerIconComponent extends HTMLElement {
 }
 
 class SpeakerXIconComponent extends HTMLElement {
-    constructor() {
-        super()
+    connectedCallback() {
         this.innerHTML = `
             <svg data-slot="icon" aria-hidden="true" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path d="M13.5 4.06c0-1.336-1.616-2.005-2.56-1.06l-4.5 4.5H4.508c-1.141 0-2.318.664-2.66 1.905A9.76 9.76 0 0 0 1.5 12c0 .898.121 1.768.35 2.595.341 1.24 1.518 1.905 2.659 1.905h1.93l4.5 4.5c.945.945 2.561.276 2.561-1.06V4.06ZM17.78 9.22a.75.75 0 1 0-1.06 1.06L18.44 12l-1.72 1.72a.75.75 0 1 0 1.06 1.06l1.72-1.72 1.72 1.72a.75.75 0 1 0 1.06-1.06L20.56 12l1.72-1.72a.75.75 0 1 0-1.06-1.06l-1.72 1.72-1.72-1.72Z"></path>
@@ -216,8 +196,7 @@ class SpeakerXIconComponent extends HTMLElement {
 }
 
 class EmojiIconComponent extends HTMLElement {
-    constructor() {
-        super()
+    connectedCallback() {
         this.innerHTML = `
             <svg data-slot="icon" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                 <path clip-rule="evenodd" fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25Zm-2.625 6c-.54 0-.828.419-.936.634a1.96 1.96 0 0 0-.189.866c0 .298.059.605.189.866.108.215.395.634.936.634.54 0 .828-.419.936-.634.13-.26.189-.568.189-.866 0-.298-.059-.605-.189-.866-.108-.215-.395-.634-.936-.634Zm4.314.634c.108-.215.395-.634.936-.634.54 0 .828.419.936.634.13.26.189.568.189.866 0 .298-.059.605-.189.866-.108.215-.395.634-.936.634-.54 0-.828-.419-.936-.634a1.96 1.96 0 0 1-.189-.866c0-.298.059-.605.189-.866Zm2.023 6.828a.75.75 0 1 0-1.06-1.06 3.75 3.75 0 0 1-5.304 0 .75.75 0 0 0-1.06 1.06 5.25 5.25 0 0 0 7.424 0Z"></path>
@@ -226,8 +205,7 @@ class EmojiIconComponent extends HTMLElement {
 }
 
 class UserIconComponent extends HTMLElement {
-    constructor() {
-        super()
+    connectedCallback() {
         this.innerHTML = `
             <svg data-slot="icon" aria-hidden="true" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path clip-rule="evenodd" d="M7.5 6a4.5 4.5 0 1 1 9 0 4.5 4.5 0 0 1-9 0ZM3.751 20.105a8.25 8.25 0 0 1 16.498 0 .75.75 0 0 1-.437.695A18.683 18.683 0 0 1 12 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 0 1-.437-.695Z" fill-rule="evenodd"></path>
@@ -236,8 +214,7 @@ class UserIconComponent extends HTMLElement {
 }
 
 class RoleIconComponent extends HTMLElement {
-    constructor() {
-        super()
+    connectedCallback() {
         this.innerHTML = `
             <svg data-slot="icon" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
               <defs>
@@ -262,8 +239,7 @@ class RoleIconComponent extends HTMLElement {
 }
 
 class PaperClipIconComponent extends HTMLElement {
-    constructor() {
-        super()
+    connectedCallback() {
         this.innerHTML = `
             <svg data-slot="icon" aria-hidden="true" fill="none" stroke-width="1.5" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path d="m18.375 12.739-7.693 7.693a4.5 4.5 0 0 1-6.364-6.364l10.94-10.94A3 3 0 1 1 19.5 7.372L8.552 18.32m.009-.01-.01.01m5.699-9.941-7.81 7.81a1.5 1.5 0 0 0 2.112 2.13" stroke-linecap="round" stroke-linejoin="round"></path>
@@ -272,8 +248,7 @@ class PaperClipIconComponent extends HTMLElement {
 }
 
 class LogoutIconComponent extends HTMLElement {
-    constructor() {
-        super()
+    connectedCallback() {
         this.innerHTML = `
             <svg data-slot="icon" aria-hidden="true" fill="none" stroke-width="1.5" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" stroke-linecap="round" stroke-linejoin="round"></path>
@@ -282,8 +257,7 @@ class LogoutIconComponent extends HTMLElement {
 }
 
 class MenuBurgerIconComponent extends HTMLElement {
-    constructor() {
-        super()
+    connectedCallback() {
         this.innerHTML = `
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
                 <path fill-rule="evenodd" d="M3 5.25a.75.75 0 0 1 .75-.75h16.5a.75.75 0 0 1 0 1.5H3.75A.75.75 0 0 1 3 5.25Zm0 4.5A.75.75 0 0 1 3.75 9h16.5a.75.75 0 0 1 0 1.5H3.75A.75.75 0 0 1 3 9.75Zm0 4.5a.75.75 0 0 1 .75-.75h16.5a.75.75 0 0 1 0 1.5H3.75a.75.75 0 0 1-.75-.75Zm0 4.5a.75.75 0 0 1 .75-.75h16.5a.75.75 0 0 1 0 1.5H3.75a.75.75 0 0 1-.75-.75Z" clip-rule="evenodd" />
@@ -292,8 +266,7 @@ class MenuBurgerIconComponent extends HTMLElement {
 }
 
 class CameraIconComponent extends HTMLElement {
-    constructor() {
-        super()
+    connectedCallback() {
         this.innerHTML = `
             <svg data-slot="icon" aria-hidden="true" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path d="M4.5 4.5a3 3 0 0 0-3 3v9a3 3 0 0 0 3 3h8.25a3 3 0 0 0 3-3v-9a3 3 0 0 0-3-3H4.5ZM19.94 18.75l-2.69-2.69V7.94l2.69-2.69c.944-.945 2.56-.276 2.56 1.06v11.38c0 1.336-1.616 2.005-2.56 1.06Z"></path>
@@ -302,8 +275,7 @@ class CameraIconComponent extends HTMLElement {
 }
 
 class DisplayIconComponent extends HTMLElement {
-    constructor() {
-        super()
+    connectedCallback() {
         this.innerHTML = `
             <svg data-slot="icon" aria-hidden="true" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path clip-rule="evenodd" d="M2.25 6a3 3 0 0 1 3-3h13.5a3 3 0 0 1 3 3v12a3 3 0 0 1-3 3H5.25a3 3 0 0 1-3-3V6Zm18 3H3.75v9a1.5 1.5 0 0 0 1.5 1.5h13.5a1.5 1.5 0 0 0 1.5-1.5V9Zm-15-3.75A.75.75 0 0 0 4.5 6v.008c0 .414.336.75.75.75h.008a.75.75 0 0 0 .75-.75V6a.75.75 0 0 0-.75-.75H5.25Zm1.5.75a.75.75 0 0 1 .75-.75h.008a.75.75 0 0 1 .75.75v.008a.75.75 0 0 1-.75.75H7.5a.75.75 0 0 1-.75-.75V6Zm3-.75A.75.75 0 0 0 9 6v.008c0 .414.336.75.75.75h.008a.75.75 0 0 0 .75-.75V6a.75.75 0 0 0-.75-.75H9.75Z" fill-rule="evenodd"></path>
@@ -312,8 +284,7 @@ class DisplayIconComponent extends HTMLElement {
 }
 
 class LanguageIconComponent extends HTMLElement {
-    constructor() {
-        super();
+    connectedCallback() {
         this.innerHTML = `
             <svg data-slot="icon" fill="none" stroke-width="1.5" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" d="m10.5 21 5.25-11.25L21 21m-9-3h7.5M3 5.621a48.474 48.474 0 0 1 6-.371m0 0c1.12 0 2.233.038 3.334.114M9 5.25V3m3.334 2.364C11.176 10.658 7.69 15.08 3 17.502m9.334-12.138c.896.061 1.785.147 2.666.257m-4.589 8.495a18.023 18.023 0 0 1-3.827-5.802"></path>
@@ -322,8 +293,7 @@ class LanguageIconComponent extends HTMLElement {
 }
 
 class StopComponent extends HTMLElement {
-    constructor(){
-        super();
+    connectedCallback(){
         this.innerHTML = `
             <svg data-slot="icon" aria-hidden="true" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path clip-rule="evenodd" d="M4.5 7.5a3 3 0 0 1 3-3h9a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3h-9a3 3 0 0 1-3-3v-9Z" fill-rule="evenodd"></path>
@@ -361,37 +331,3 @@ customElements.define('revoice-icon-camera', CameraIconComponent);
 customElements.define('revoice-icon-display', DisplayIconComponent);
 customElements.define('revoice-icon-language', LanguageIconComponent);
 customElements.define('revoice-icon-stop', StopComponent);
-
-if (typeof module !== 'undefined') {
-    module.exports = [
-        PencilIconComponent,
-        TrashIconComponent,
-        ChatBubbleIconComponent,
-        PhoneIconComponent,
-        PhoneXIconComponent,
-        MicrophoneIconComponent,
-        ClipboardIconComponent,
-        CirclePlusIconComponent,
-        FolderPlusIconComponent,
-        EyeOpenIconComponent,
-        FolderIconComponent,
-        Cog6ToothIconComponent,
-        UsersIconComponent,
-        InformationIconComponent,
-        SwatchIconComponent,
-        CircleXIconComponent,
-        EnvelopeIconComponent,
-        ArrowPointingIn,
-        SpeakerIconComponent,
-        SpeakerXIconComponent,
-        EmojiIconComponent,
-        UserIconComponent,
-        RoleIconComponent,
-        PaperClipIconComponent,
-        MenuBurgerIconComponent,
-        CameraIconComponent,
-        DisplayIconComponent,
-        LanguageIconComponent,
-        StopCircleComponent
-    ];
-}

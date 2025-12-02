@@ -26,9 +26,9 @@ export class ServerSettingsEmoteController {
     /** @type {EmoteRepresentation[]} */
     const response = await this.fetcher.fetchCore(`/emote/server/${this.serverSettings.server.id}`);
 
-    const old_manager = document.getElementById("server-setting-emotes-form");
-    if (old_manager) {
-      document.getElementById('server-setting-content-emotes').removeChild(old_manager);
+    const oldManager = document.getElementById("server-setting-emotes-form");
+    if (oldManager) {
+      oldManager.remove();
     }
 
     const emoji_manager = document.createElement('revoice-emoji-manager');

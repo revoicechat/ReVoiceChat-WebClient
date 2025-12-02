@@ -1,5 +1,5 @@
-const { beforeEach, afterEach, describe, expect, test} = require('@jest/globals');
-const SpinnerOnButton = require('./button.spinner.component.js');
+import { beforeEach, afterEach, describe, expect, test, vi } from 'vitest';
+import { SpinnerOnButton } from './button.spinner.component.js';
 
 describe('SpinnerOnButton', () => {
   let container;
@@ -19,7 +19,7 @@ describe('SpinnerOnButton', () => {
   afterEach(() => {
     // Cleanup DOM
     document.body.removeChild(container);
-    jest.clearAllTimers();
+    vi.clearAllTimers();
   });
 
   describe('Constructor', () => {
@@ -97,13 +97,13 @@ describe('SpinnerOnButton', () => {
 
   describe('success()', () => {
     beforeEach(() => {
-      jest.useFakeTimers();
+      vi.useFakeTimers();
       spinner = new SpinnerOnButton('test-button');
       spinner.run();
     });
 
     afterEach(() => {
-      jest.useRealTimers();
+      vi.useRealTimers();
     });
 
     test('should hide spinner', () => {
@@ -142,7 +142,7 @@ describe('SpinnerOnButton', () => {
     test('should reset after default delay', () => {
       spinner.success();
 
-      jest.advanceTimersByTime(2000);
+      vi.advanceTimersByTime(2000);
 
       expect(spinner.checkmarkEl.classList.contains('active')).toBe(false);
       expect(button.disabled).toBe(false);
@@ -151,10 +151,10 @@ describe('SpinnerOnButton', () => {
     test('should reset after custom delay', () => {
       spinner.success(3000);
 
-      jest.advanceTimersByTime(2999);
+      vi.advanceTimersByTime(2999);
       expect(spinner.checkmarkEl.classList.contains('active')).toBe(true);
 
-      jest.advanceTimersByTime(1);
+      vi.advanceTimersByTime(1);
       expect(spinner.checkmarkEl.classList.contains('active')).toBe(false);
     });
 
@@ -171,13 +171,13 @@ describe('SpinnerOnButton', () => {
 
   describe('error()', () => {
     beforeEach(() => {
-      jest.useFakeTimers();
+      vi.useFakeTimers();
       spinner = new SpinnerOnButton('test-button');
       spinner.run();
     });
 
     afterEach(() => {
-      jest.useRealTimers();
+      vi.useRealTimers();
     });
 
     test('should hide spinner', () => {
@@ -219,7 +219,7 @@ describe('SpinnerOnButton', () => {
     test('should reset after default delay', () => {
       spinner.error();
 
-      jest.advanceTimersByTime(2000);
+      vi.advanceTimersByTime(2000);
 
       expect(spinner.crossEl.classList.contains('active')).toBe(false);
       expect(button.disabled).toBe(false);
@@ -228,10 +228,10 @@ describe('SpinnerOnButton', () => {
     test('should reset after custom delay', () => {
       spinner.error(5000);
 
-      jest.advanceTimersByTime(4999);
+      vi.advanceTimersByTime(4999);
       expect(spinner.crossEl.classList.contains('active')).toBe(true);
 
-      jest.advanceTimersByTime(1);
+      vi.advanceTimersByTime(1);
       expect(spinner.crossEl.classList.contains('active')).toBe(false);
     });
 
@@ -326,7 +326,7 @@ describe('SpinnerOnButton', () => {
     });
 
     test('should handle complete workflow: run -> success -> run -> error', () => {
-      jest.useFakeTimers();
+      vi.useFakeTimers();
 
       spinner.run();
       expect(button.disabled).toBe(true);
@@ -340,7 +340,7 @@ describe('SpinnerOnButton', () => {
       spinner.error(0);
       expect(spinner.crossEl.classList.contains('active')).toBe(true);
 
-      jest.useRealTimers();
+      vi.useRealTimers();
     });
   });
 });

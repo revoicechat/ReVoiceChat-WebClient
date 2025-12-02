@@ -1,4 +1,4 @@
-class SpinnerOnButton {
+export class SpinnerOnButton {
   constructor(buttonId) {
     this.button = document.getElementById(buttonId);
     if (!this.button) {
@@ -127,8 +127,4 @@ class SpinnerOnButton {
 
     return svg;
   }
-}
-
-if (typeof module !== 'undefined') {
-  module.exports = SpinnerOnButton;
 }

@@ -1,3 +1,5 @@
+import Swal from '../lib/sweetalert2.esm.all.min.js';
+
 export default class TextController {
     static MODE_SEND = 0;
     static MODE_EDIT = 1;

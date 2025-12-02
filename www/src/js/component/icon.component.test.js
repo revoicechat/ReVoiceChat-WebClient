@@ -1,43 +1,15 @@
-const { beforeEach, afterEach, describe, expect, test} = require('@jest/globals');
-const [
-    PencilIconComponent,
-    TrashIconComponent,
-    ChatBubbleIconComponent,
-    PhoneIconComponent,
-    PhoneXIconComponent,
-    MicrophoneIconComponent,
-    ClipboardIconComponent,
-    CirclePlusIconComponent,
-    FolderPlusIconComponent,
-    EyeOpenIconComponent,
-    FolderIconComponent,
-    Cog6ToothIconComponent,
-    UsersIconComponent,
-    InformationIconComponent,
-    SwatchIconComponent,
-    CircleXIconComponent,
-    EnvelopeIconComponent,
-    ArrowPointingIn,
-    SpeakerIconComponent,
-    SpeakerXIconComponent,
-    EmojiIconComponent,
-    UserIconComponent,
-    RoleIconComponent,
-    PaperClipIconComponent,
-    LogoutIconComponent,
-    MenuBurgerIconComponent,
-    CameraIconComponent,
-    DisplayIconComponent,
-    LanguageIconComponent
-] = require('./icon.component.js');
+import { beforeEach, afterEach, describe, expect, test } from 'vitest';
+
+// Import du fichier qui enregistre les custom elements
+import './icon.component.js';
 
 
-function setup(newIcon) {
-    beforeEach(() => {
-        const icon = newIcon();
-        const component = document.createElement("div");
-        component.innerHTML = icon.innerHTML;
-        document.body.appendChild(component);
+function setup(tagName) {
+    beforeEach(async () => {
+        const icon = document.createElement(tagName);
+        document.body.appendChild(icon);
+        // Attendre que le custom element soit complètement initialisé
+        await new Promise(resolve => setTimeout(resolve, 0));
     });
 
     afterEach(() => {
@@ -55,147 +27,152 @@ function shouldRenderAnSVGElement() {
 
 describe('IconComponent', () => {
     describe('TrashIconComponent', () => {
-        setup(() => new TrashIconComponent());
+        setup('revoice-icon-trash');
         shouldRenderAnSVGElement()
     });
 
     describe('PencilIconComponent', () => {
-        setup(() => new PencilIconComponent());
+        setup('revoice-icon-pencil');
         shouldRenderAnSVGElement();
     });
 
     describe('ChatBubbleIconComponent', () => {
-        setup(() => new ChatBubbleIconComponent());
+        setup('revoice-icon-chat-bubble');
         shouldRenderAnSVGElement();
     });
 
     describe('PhoneIconComponent', () => {
-        setup(() => new PhoneIconComponent());
+        setup('revoice-icon-phone');
         shouldRenderAnSVGElement();
     });
 
     describe('PhoneXIconComponent', () => {
-        setup(() => new PhoneXIconComponent());
+        setup('revoice-icon-phone-x');
         shouldRenderAnSVGElement();
     });
 
     describe('MicrophoneIconComponent', () => {
-        setup(() => new MicrophoneIconComponent());
+        setup('revoice-icon-microphone');
         shouldRenderAnSVGElement();
     });
 
     describe('ClipboardIconComponent', () => {
-        setup(() => new ClipboardIconComponent());
+        setup('revoice-icon-clipboard');
         shouldRenderAnSVGElement();
     });
 
     describe('CirclePlusIconComponent', () => {
-        setup(() => new CirclePlusIconComponent());
+        setup('revoice-icon-circle-plus');
         shouldRenderAnSVGElement();
     });
 
     describe('FolderPlusIconComponent', () => {
-        setup(() => new FolderPlusIconComponent());
+        setup('revoice-icon-folder-plus');
         shouldRenderAnSVGElement();
     });
 
     describe('EyeOpenIconComponent', () => {
-        setup(() => new EyeOpenIconComponent());
+        setup('revoice-icon-eye-open');
         shouldRenderAnSVGElement();
     });
 
     describe('FolderIconComponent', () => {
-        setup(() => new FolderIconComponent());
+        setup('revoice-icon-folder');
         shouldRenderAnSVGElement();
     });
 
     describe('Cog6ToothIconComponent', () => {
-        setup(() => new Cog6ToothIconComponent());
+        setup('revoice-icon-cog-6');
         shouldRenderAnSVGElement();
     });
 
     describe('UsersIconComponent', () => {
-        setup(() => new UsersIconComponent());
+        setup('revoice-icon-users');
         shouldRenderAnSVGElement();
     });
 
     describe('InformationIconComponent', () => {
-        setup(() => new InformationIconComponent());
+        setup('revoice-icon-information');
         shouldRenderAnSVGElement();
     });
 
     describe('SwatchIconComponent', () => {
-        setup(() => new SwatchIconComponent());
+        setup('revoice-icon-swatch');
         shouldRenderAnSVGElement();
     });
 
     describe('CircleXIconComponent', () => {
-        setup(() => new CircleXIconComponent());
+        setup('revoice-icon-circle-x');
         shouldRenderAnSVGElement();
     });
 
     describe('EnvelopeIconComponent', () => {
-        setup(() => new EnvelopeIconComponent());
+        setup('revoice-icon-envelope');
         shouldRenderAnSVGElement();
     });
 
     describe('ArrowPointingIn', () => {
-        setup(() => new ArrowPointingIn());
+        setup('revoice-icon-arrow-in');
         shouldRenderAnSVGElement();
     });
 
     describe('SpeakerIconComponent', () => {
-        setup(() => new SpeakerIconComponent());
+        setup('revoice-icon-speaker');
         shouldRenderAnSVGElement();
     });
 
     describe('SpeakerXIconComponent', () => {
-        setup(() => new SpeakerXIconComponent());
+        setup('revoice-icon-speaker-x');
         shouldRenderAnSVGElement();
     });
 
     describe('EmojiIconComponent', () => {
-        setup(() => new EmojiIconComponent());
+        setup('revoice-icon-emoji');
         shouldRenderAnSVGElement();
     });
 
     describe('UserIconComponent', () => {
-        setup(() => new UserIconComponent());
+        setup('revoice-icon-user');
         shouldRenderAnSVGElement();
     });
 
     describe('RoleIconComponent', () => {
-        setup(() => new RoleIconComponent());
+        setup('revoice-icon-role');
         shouldRenderAnSVGElement();
     });
 
     describe('PaperClipIconComponent', () => {
-        setup(() => new PaperClipIconComponent());
+        setup('revoice-icon-paper-clip');
         shouldRenderAnSVGElement();
     });
 
     describe('LogoutIconComponent', () => {
-        setup(() => new LogoutIconComponent());
+        setup('revoice-icon-logout');
         shouldRenderAnSVGElement();
     });
 
     describe('MenuBurgerIconComponent', () => {
-        setup(() => new MenuBurgerIconComponent());
+        setup('revoice-icon-menu-burger');
         shouldRenderAnSVGElement();
     });
 
     describe('CameraIconComponent', () => {
-        setup(() => new CameraIconComponent());
+        setup('revoice-icon-camera');
         shouldRenderAnSVGElement();
     });
 
     describe('DisplayIconComponent', () => {
-        setup(() => new DisplayIconComponent());
+        setup('revoice-icon-display');
         shouldRenderAnSVGElement();
     });
 
     describe('LanguageIconComponent', () => {
-        setup(() => new LanguageIconComponent());
+        setup('revoice-icon-language');
+        shouldRenderAnSVGElement();
+    });
+
+    describe('StopComponent', () => {
+        setup('revoice-icon-stop');
         shouldRenderAnSVGElement();
     });
 });

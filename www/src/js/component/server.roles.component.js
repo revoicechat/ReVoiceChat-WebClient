@@ -1,3 +1,5 @@
+import Swal from '../lib/sweetalert2.esm.all.min.js';
+
 class ServerRolesWebComponent extends HTMLElement {
 
     constructor() {
