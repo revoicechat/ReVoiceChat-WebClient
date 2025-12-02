@@ -1,3 +1,5 @@
+import { i18n } from "../lib/i18n.js";
+
 class ContextMenu extends HTMLElement {
     constructor() {
         super();
@@ -69,6 +71,7 @@ class VoiceContextMenu extends ContextMenu {
     }
 
     load(userSettings, userId, voiceController) {
+        //i18n.translatePage(this);
         this.#userSettings = userSettings;
         this.#voiceController = voiceController;
         const voiceSettings = userSettings.voice.users[userId];
@@ -77,8 +80,15 @@ class VoiceContextMenu extends ContextMenu {
         const volumeInput = this.shadowRoot.getElementById("volume");
         const volumeLabel = this.shadowRoot.getElementById("volume-label");
 
-        volumeInput.dataset.i18nValue = parseInt(voiceSettings.volume * 100) + "%";
+        // Initial volume
+        volumeInput.value = voiceSettings.volume;
+        volumeInput.title = parseInt(voiceSettings.volume * 100) + "%";
+        volumeLabel.innerText = `Volume ${volumeInput.title}`;
+
         volumeInput.oninput = () => {
+            volumeInput.title = parseInt(volumeInput.value * 100) + "%";
+            volumeLabel.innerText = `Volume ${volumeInput.title}`;
+            voiceSettings.volume = volumeInput.value;
             if (this.#voiceCall) {
                 this.#voiceCall.updateUserVolume(userId);
             }
