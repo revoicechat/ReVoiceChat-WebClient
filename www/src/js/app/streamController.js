@@ -1,5 +1,5 @@
 import { Streamer, Viewer } from "./stream.js";
-import {i18n} from "../lib/i18n.js";
+import { i18n } from "../lib/i18n.js";
 
 export default class StreamController {
     #streamUrl;
@@ -61,10 +61,20 @@ export default class StreamController {
 
     async #startStream(type) {
         try {
-            this.#streamer[type] = new Streamer(this.#streamUrl, this.#user, this.#token);
-            const video = await this.#streamer[type].start(type, type);
-            video.onclick = () => { this.focus(video) }
-            video.oncontextmenu = (event) => {event.preventDefault();}
+            const div = document.createElement('div');
+            this.#streamer[type] = {
+                stream: new Streamer(this.#streamUrl, this.#user, this.#token),
+                div: div
+            }
+
+            const player = await this.#streamer[type].stream.start(type, type);
+
+            div.className = "player";
+            div.appendChild(player);
+            div.onclick = () => { this.focus(video) }
+            div.oncontextmenu = (event) => { event.preventDefault(); }
+
+            document.getElementById('stream-container').appendChild(div);
         }
         catch (error) {
             console.error(error);
@@ -73,7 +83,9 @@ export default class StreamController {
 
     async #stopStream(type) {
         if (this.#streamer[type]) {
-            await this.#streamer[type].stop();
+            await this.#streamer[type].stream.stop();
+            this.#streamer[type].div.remove();
+            this.#streamer[type] = null;
         }
     }
 

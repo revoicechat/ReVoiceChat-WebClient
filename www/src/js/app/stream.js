@@ -49,7 +49,6 @@ export class Streamer {
 
     // Local playback
     #player;
-    #playerDiv;
 
     // Audio Encoder
     #audioCodec = structuredClone(Streamer.DEFAULT_AUDIO_CODEC);
@@ -104,11 +103,6 @@ export class Streamer {
         this.#player.className = "content";
         this.#player.volume = 0; // IMPORTANT
 
-        // Video player (box)
-        this.#playerDiv = document.createElement('div');
-        this.#playerDiv.className = "player";
-        this.#playerDiv.appendChild(this.#player);
-
         // Request capture
         try {
             switch (type) {
@@ -125,9 +119,6 @@ export class Streamer {
             throw new Error(`MediaDevice setup failed:\n${error}`);
         }
 
-        // Attach player to stream-container after user allow capture
-        const streamContainter = document.getElementById('stream-container')
-        streamContainter.appendChild(this.#playerDiv);
         await this.#player.play();
 
         // Create WebSocket and LargePacketSender
@@ -260,7 +251,7 @@ export class Streamer {
         this.#socket.onerror = async (e) => { console.error('Streamer : WebSocket error:', e) };
 
         this.#state = Streamer.OPEN;
-        return this.#playerDiv;
+        return this.#player;
     }
 
     #isKeyframe() {
@@ -332,8 +323,6 @@ export class Streamer {
         // Close playback
         if (this.#player) {
             await this.#player.pause();
-            this.#playerDiv.remove();
-            this.#playerDiv = null;
             this.#player = null;
         }
 
