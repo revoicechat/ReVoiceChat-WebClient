@@ -1,8 +1,16 @@
+import {containsOnlyEmotes} from "../lib/emote.utils.js";
+
 class MessageComponent extends HTMLElement {
+    /** @type string */
+    markdown
+    /** @type EmoteRepresentation[] */
+    emotes
+
     constructor() {
         super();
         this.attachShadow({ mode: 'open' });
         this.markdown = '';
+        this.emotes   = []
     }
 
     static get observedAttributes() {
@@ -126,7 +134,12 @@ class MessageComponent extends HTMLElement {
             contentDiv.innerHTML = this.#injectMedias();
 
             if (this.markdown) {
-                contentDiv.innerHTML += this.#injectEmojis(marked.parse(this.#removeTags(this.markdown)));
+                if (containsOnlyEmotes(this.markdown, this.#emotesNames())) {
+                    contentDiv.innerHTML = this.#injectEmojis(this.#removeTags(this.markdown))
+                    contentDiv.style.fontSize = "2rem"
+                } else {
+                    contentDiv.innerHTML += this.#injectEmojis(marked.parse(this.#removeTags(this.markdown)));
+                }
             }
 
             this.#renderCodeTemplate(contentDiv);
@@ -197,6 +210,11 @@ class MessageComponent extends HTMLElement {
             }
         }
         return result;
+    }
+
+    /** @return {string[]} */
+    #emotesNames() {
+        return Array.from(this.emotes).map(item => item.name)
     }
 }
 
