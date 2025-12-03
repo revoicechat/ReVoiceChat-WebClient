@@ -38,6 +38,7 @@ export default class ServerSettingsController {
 
     riskModify() {
         void this.#loadRisks(false);
+        void this.server.room.load(this.server.id)
     }
 
     /**
@@ -58,7 +59,6 @@ export default class ServerSettingsController {
         if (select) {
             this.select('overview');
         }
-        void this.server.room.load(this.server.id)
     }
 
     /**
