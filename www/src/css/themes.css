@@ -225,7 +225,7 @@ body {
     background-color: var(--pri-hover-color);
 }
 
-.rooms .active {
+.rooms .element.active {
     background-color: var(--pri-active-color);
     font-weight: 600;
 }
