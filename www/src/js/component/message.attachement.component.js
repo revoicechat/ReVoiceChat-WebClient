@@ -48,11 +48,11 @@ class AttachementMessageComponent extends HTMLElement {
     }
 
     #video(src, name) {
-      return `<video class='media' controls><source src="${src}"></video>`
+      return `<video class='media' preload="metadata" controls><source src="${src}"></video>`
     }
 
     #audio(src, name) {
-      return `<audio class='media' controls><source src="${src}"></audio>`
+      return `<audio class='media' preload="metadata" controls><source src="${src}"></audio>`
     }
 
     #link(src, name, svgType) {
