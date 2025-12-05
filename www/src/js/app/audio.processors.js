@@ -36,7 +36,7 @@ class StereoCollector extends AudioWorkletProcessor {
 
         this.port.postMessage({
             samples: interleaved,
-            channels : channels
+            channels: channels
         });
 
         return true;
@@ -49,6 +49,7 @@ class NoiseGate extends AudioWorkletProcessor {
             { name: 'attack', defaultValue: 0.01 },   // seconds
             { name: 'release', defaultValue: 0.4 },   // seconds
             { name: 'threshold', defaultValue: -50, minValue: -80, maxValue: 0 }, // dB
+            { name: 'smoothing', defaultValue: 0.9}
         ];
     }
 
@@ -56,6 +57,7 @@ class NoiseGate extends AudioWorkletProcessor {
         super();
         this.gain = 0;
         this.gateFloor = this.dBToLinear(-80);
+        this.smoothRMS = 0;
     }
 
     dBToLinear(db) {
@@ -85,8 +87,11 @@ class NoiseGate extends AudioWorkletProcessor {
         const releaseCoeff = Math.exp(-1 / (parameters.release[0] * globalThis.sampleRate / 1000));
         const rms = this.rmsLevel(input);
 
+        const smoothing = parameters.smoothing[0];
+        this.smoothRMS = this.smoothRMS ? this.smoothRMS * smoothing + rms * (1 - smoothing) : rms;
+
         // Gate logic
-        if (rms > threshold * 1.1) {
+        if (this.smoothRMS > threshold) {
             // Gate open
             this.gain = 1 - (1 - this.gain) * attackCoeff;
         } else {
@@ -104,7 +109,7 @@ class NoiseGate extends AudioWorkletProcessor {
         }
 
         // Determine open/close state (with hysteresis to avoid flicker)
-        const openNow = rms > threshold * 1.1; // 10% hysteresis
+        const openNow = this.smoothRMS > threshold * 1.1; // 10% hysteresis
         if (openNow !== this.isOpen) {
             this.isOpen = openNow;
             this.port.postMessage({ open: this.isOpen });
