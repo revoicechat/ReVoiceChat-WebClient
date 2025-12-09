@@ -60,3 +60,5 @@ sudo a2ensite rvc_client.conf
 ```sh
 sudo systemctl reload apache2
 ```
+
+You can now access this app in your favorite browser
