@@ -1,6 +1,6 @@
 ## How to install ReVoiceChat-WebClient
 
-### Install Apache2
+### Install Apache2 (skip this if you already installed MediaServer)
 ```sh
 sudo apt-get install apache2-utils apache2 -y
 ```
