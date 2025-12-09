@@ -1,7 +1,6 @@
-![logo_black_screen.png#gh-dark-mode-only](logo-dark-mode.png#gh-dark-mode-only)
-![logo_white_screen.png#gh-light-mode-only](logo-light-mode.png#gh-light-mode-only)
+# RevoiceChat - Web Client
 
-![RevoiceChat](https://img.shields.io/badge/RevoiceChat-Web%20Client-1E90E7?style=for-the-badge)
+[<img src="logo.png" width="30"/>](.idea/icon.svg)  ![RevoiceChat](https://img.shields.io/badge/RevoiceChat-Web%20Client-5E8C61?style=for-the-badge)
 
 # ReVoiceChat-WebClient
 
