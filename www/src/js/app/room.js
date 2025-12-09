@@ -237,7 +237,7 @@ export default class Room {
                 return;
 
             case "MODIFY":
-                document.getElementById(room.id).children[0].innerHTML = `${roomIcon(room.type)} ${room.name}`;
+                document.getElementById(room.id).children[0].innerHTML = `${this.#icon(room.type)} ${room.name}`;
                 if (room.id === this.id) {
                     document.getElementById('room-name').innerText = room.name;
                 }
