@@ -171,8 +171,8 @@ describe('IconComponent', () => {
         shouldRenderAnSVGElement();
     });
 
-    describe('StopComponent', () => {
-        setup('revoice-icon-stop');
+    describe('ArrowPointingOut', () => {
+        setup('revoice-icon-arrow-out');
         shouldRenderAnSVGElement();
     });
 });
