@@ -54,7 +54,7 @@ sudo systemctl reload apache2
 
 You can now access this app in your favorite browser
 
-### Troubleshooting
+## Troubleshooting
 
 If you get apache2 default page, you need to disable the default config
 
