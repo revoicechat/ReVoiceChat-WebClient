@@ -1,11 +1,10 @@
+import Alert from "./utils/alert.js";
 import VoiceCall from "./voice.js";
 import StreamController from './stream.controller.js';
 import Swal from '../lib/sweetalert2.esm.all.min.js';
 import { SwalCustomClass } from "../lib/tools.js";
 
 export default class VoiceController {
-    /** @type {Alert} */
-    #alert;
     /** @type {Fetcher} */
     #fetcher;
     /** @type {string} */
@@ -30,7 +29,6 @@ export default class VoiceController {
 
     /**
      * @param {Fetcher} fetcher
-     * @param {Alert} alert
      * @param {UserController} user
      * @param {Room} room
      * @param {string} voiceURL
@@ -38,15 +36,14 @@ export default class VoiceController {
      * @param {string} mediaUrl
      * @param {string} streamUrl
      */
-    constructor(fetcher, alert, user, room, token, voiceURL, mediaUrl, streamUrl) {
+    constructor(fetcher, user, room, token, voiceURL, mediaUrl, streamUrl) {
         this.#fetcher = fetcher;
         this.#voiceURL = voiceURL;
         this.#token = token;
         this.#user = user;
-        this.#alert = alert;
         this.#room = room;
         this.#mediaUrl = mediaUrl;
-        this.streamController = new StreamController(fetcher, alert, user, room, token, streamUrl);
+        this.streamController = new StreamController(fetcher, user, room, token, streamUrl);
         this.#contextMenu = document.getElementById('voice-context-menu');
     }
 
@@ -88,7 +85,7 @@ export default class VoiceController {
             void this.streamController.availableStream(roomId);
 
             // Audio alert
-            this.#alert.play('voiceConnected');
+            Alert.play('voiceConnected');
         }
         catch (error) {
             Swal.fire({
@@ -120,7 +117,7 @@ export default class VoiceController {
 
         // Audio alert
         if (playAlert) {
-            this.#alert.play('voiceDisconnected');
+            Alert.play('voiceDisconnected');
         }
     }
 
@@ -142,7 +139,7 @@ export default class VoiceController {
         // User joining this is NOT self and current user is connected to voice room
         if (userData.id !== this.#user.id && this.#voiceCall && this.#voiceCall.getState() === VoiceCall.OPEN) {
             this.#updateUserControls(userData.id);
-            this.#alert.play('voiceUserJoin');
+            Alert.play('voiceUserJoin');
         }
     }
 
@@ -168,7 +165,7 @@ export default class VoiceController {
         // User leaving is NOT self
         if (userId !== this.#user.id && this.#voiceCall && this.#voiceCall.getState() === VoiceCall.OPEN) {
             void this.#voiceCall.removeUser(userId);
-            this.#alert.play('voiceUserLeft');
+            Alert.play('voiceUserLeft');
         }
     }
 
@@ -325,14 +322,14 @@ export default class VoiceController {
                 // Muted
                 muteButton.classList.add('red');
                 if (alert) {
-                    this.#alert.play('microphoneMuted');
+                    Alert.play('microphoneMuted');
                 }
             }
             else {
                 // Unmuted
                 muteButton.classList.remove('red');
                 if (alert) {
-                    this.#alert.play('microphoneActivated');
+                    Alert.play('microphoneActivated');
                 }
             }
         }
@@ -366,14 +363,14 @@ export default class VoiceController {
                 // Muted
                 button.classList.add('red');
                 if (alert) {
-                    this.#alert.play('soundMuted');
+                    Alert.play('soundMuted');
                 }
             }
             else {
                 // Unmuted
                 button.classList.remove('red');
                 if (alert) {
-                    this.#alert.play('soundActivated');
+                    Alert.play('soundActivated');
                 }
             }
         }

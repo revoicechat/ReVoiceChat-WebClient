@@ -1,6 +1,6 @@
 import Fetcher from './fetcher.js';
 import State from './state.js';
-import Alert from './alert.js';
+import Alert from './utils/alert.js';
 import Router from './router.js';
 import UserController from './user.controller.js';
 import Room from './room.js';
@@ -10,8 +10,6 @@ import { Sse } from "./sse.js";
 import {getCookie, getQueryVariable} from "../lib/tools.js";
 
 export default class ReVoiceChat {
-    /** @type {Alert} */
-    alert;
     /** @type {Router} */
     router = new Router();
     /** @type {Fetcher} */
@@ -63,8 +61,7 @@ export default class ReVoiceChat {
         // Instantiate other classes
         this.fetcher = new Fetcher(this.#token, this.coreUrl, this.mediaUrl);
         this.user = new UserController(this.fetcher, this.mediaUrl);
-        this.alert = new Alert(this.user.settings);
-        this.room = new Room(this.fetcher, this.alert, this.user, this.voiceUrl, this.#token, this.mediaUrl, this.streamUrl);
+        this.room = new Room(this.fetcher, this.user, this.voiceUrl, this.#token, this.mediaUrl, this.streamUrl);
         this.server = new ServerController(this.fetcher, this.mediaUrl, this.room);
         this.state = new State(this);
 
@@ -97,7 +94,7 @@ export default class ReVoiceChat {
         this.#sse.openSSE()
         this.room.textController.attachEvents();
         this.room.voiceController.attachEvents();
-        this.alert.attachEvents();
+        Alert.attachEvents();
         this.router.routeTo(getQueryVariable('r'));
         await i18n.translate(this.user.settings.getLanguage());
     }
@@ -123,6 +120,10 @@ export default class ReVoiceChat {
             this.#sse.openSSE();
             void this.room.textController.getAllFrom(this.room.id);
         }, 10000);
+    }
+
+    userSettings() {
+        return this.user.settings
     }
 }
 

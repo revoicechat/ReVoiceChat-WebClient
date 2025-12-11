@@ -15,7 +15,7 @@ export default class StreamController {
     #fetcher;
     #contextMenu;
 
-    constructor(fetcher, alert, user, room, token, streamUrl) {
+    constructor(fetcher, user, room, token, streamUrl) {
         this.#fetcher = fetcher;
         this.#streamUrl = streamUrl;
         this.#token = token;

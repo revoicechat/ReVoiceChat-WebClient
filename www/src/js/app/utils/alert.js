@@ -1,6 +1,5 @@
 export default class Alert {
-    #userSettings;
-    #defaultSounds = {
+    static #defaultSounds = {
         messageNew: 'src/audio/messageNew.ogg',
         voiceUserJoin: 'src/audio/userJoinMale.mp3',
         voiceUserLeft: 'src/audio/userLeftMale.mp3',
@@ -11,33 +10,29 @@ export default class Alert {
         soundMuted: 'src/audio/soundMutedMale.mp3',
         soundActivated: 'src/audio/soundActivatedMale.mp3',
     }
-    #testSounds = {
+    static #testSounds = {
         notification: 'src/audio/tryNotificationMale.mp3',
         voiceChat: 'src/audio/tryVoiceChatMale.mp3',
     }
 
-    constructor(userSettings) {
-        this.#userSettings = userSettings;
-    }
-
-    attachEvents(){
-        document.getElementById("audio-output-try-voicechat").addEventListener('click', () => this.#playTest('voiceChat'));
-        document.getElementById("audio-output-try-notification").addEventListener('click', () => this.#playTest('notification'));
+    static attachEvents(){
+        document.getElementById("audio-output-try-voicechat").addEventListener('click', () => Alert.#playTest('voiceChat'));
+        document.getElementById("audio-output-try-notification").addEventListener('click', () => Alert.#playTest('notification'));
     }
 
     /** @type {string} type */
-    play(type) {
+    static play(type) {
         if (!this.#defaultSounds[type]) {
             console.error('Notification type is null or undefined');
         }
 
         let audio = new Audio(this.#defaultSounds[type]);
-        audio.volume = this.#userSettings.getNotificationVolume();
+        audio.volume = RVC.userSettings().getNotificationVolume();
         void audio.play();
     }
 
     /** @type {string} type */
-    #playTest(type) {
+    static #playTest(type) {
         if (!this.#testSounds[type]) {
             console.error('Notification type is null or undefined');
         }
@@ -46,10 +41,10 @@ export default class Alert {
 
         switch(type){
             case 'notification':
-                audio.volume = this.#userSettings.getNotificationVolume();
+                audio.volume = RVC.userSettings().getNotificationVolume();
                 break;
             case 'voiceChat':
-                audio.volume = this.#userSettings.getVoiceVolume();
+                audio.volume = RVC.userSettings().getVoiceVolume();
                 break;
         }
         void audio.play();
