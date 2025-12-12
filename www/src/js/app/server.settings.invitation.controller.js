@@ -2,6 +2,7 @@ import Swal from '../lib/sweetalert2.esm.all.min.js';
 import { SwalCustomClass, copyToClipboard } from "../lib/tools.js";
 
 export class ServerSettingsInvitationController {
+    #serverType;
 
     /**
      * @param {ServerSettingsController} serverSettings
@@ -31,8 +32,18 @@ export class ServerSettingsInvitationController {
 
     async #invitationLoad() {
         const serverId = this.serverSettings.server.id;
-        /** @type {InvitationRepresentation[]} */
-        const result = await this.fetcher.fetchCore(`/invitation/server/${serverId}`, 'GET');
+
+        this.#serverType = (await this.fetcher.fetchCore(`/settings`))['global.sever-mode'];
+        console.log(this.#serverType);
+
+        if (this.#serverType === "MONO_SERVER") {
+            /** @type {InvitationRepresentation[]} */
+            result = await this.fetcher.fetchCore(`/invitation/application`, 'GET');
+        }
+        else {
+            /** @type {InvitationRepresentation[]} */
+            result = await this.fetcher.fetchCore(`/invitation/server/${serverId}`, 'GET');
+        }
 
         if (result) {
             const list = document.getElementById("server-setting-invitation");
@@ -48,8 +59,16 @@ export class ServerSettingsInvitationController {
 
     async #invitationCreate() {
         const serverId = this.serverSettings.server.id;
-        /** @type {InvitationRepresentation} */
-        const result = await this.fetcher.fetchCore(`/invitation/server/${serverId}`, 'POST');
+
+        if (this.#serverType === "MONO_SERVER") {
+            /** @type {InvitationRepresentation} */
+            result = await this.fetcher.fetchCore(`/invitation/application`, 'POST');
+        }
+        else {
+            /** @type {InvitationRepresentation} */
+            result = await this.fetcher.fetchCore(`/invitation/server/${serverId}`, 'POST');
+        }
+
         if (result.status === "CREATED") {
             void this.#invitationLoad();
             Swal.fire({
