@@ -1,9 +1,9 @@
-import {ServerSettingsOverviewController} from "./server.settings.overview.controller.js";
-import {ServerSettingsRoomController} from "./server.settings.room.controller.js";
-import {ServerSettingsEmoteController} from "./server.settings.emote.controller.js";
-import {ServerSettingsInvitationController} from "./server.settings.invitation.controller.js";
-import {ServerSettingsRoleController} from "./server.settings.role.controller.js";
-import {ServerSettingsMemberController} from "./server.settings.member.controller.js";
+import { ServerSettingsOverviewController } from "./server.settings.overview.controller.js";
+import { ServerSettingsRoomController } from "./server.settings.room.controller.js";
+import { ServerSettingsEmoteController } from "./server.settings.emote.controller.js";
+import { ServerSettingsInvitationController } from "./server.settings.invitation.controller.js";
+import { ServerSettingsRoleController } from "./server.settings.role.controller.js";
+import { ServerSettingsMemberController } from "./server.settings.member.controller.js";
 
 export default class ServerSettingsController {
     /** @type {ServerController} */
