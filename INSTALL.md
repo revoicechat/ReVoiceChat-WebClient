@@ -8,7 +8,7 @@ For this guide, we will use ```/srv/rvc``` but you can use any directory (don't 
 git clone https://github.com/revoicechat/ReVoiceChat-WebClient
 ```
 ```sh
-cd ReVoiceChat-MediaServer/
+cd ReVoiceChat-WebClient/
 ```
 
 ## Option A : Auto install
