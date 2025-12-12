@@ -98,9 +98,13 @@ export class Streamer {
 
         await this.#player.play();
 
-        // Create WebSocket and LargePacketSender
+        // Create WebSocket
         this.#socket = new WebSocket(`${this.#streamUrl}/${this.#user.id}/${streamName}`, ["Bearer." + this.#token]);
         this.#socket.binaryType = "arraybuffer";
+        this.#socket.onclose = async () => { await this.stop(); };
+        this.#socket.onerror = async (e) => { await this.stop(); console.error('Streamer : WebSocket error:', e) };
+
+        // Create LargePacketSender
         this.#packetSender = new LargePacketSender(this.#socket);
 
         // Create Encoders
@@ -222,10 +226,6 @@ export class Streamer {
                 frame.close();
             }, 1000 / this.#videoCodec.framerate)
         }
-
-        // Socket states
-        this.#socket.onclose = async () => { };
-        this.#socket.onerror = async (e) => { console.error('Streamer : WebSocket error:', e) };
 
         this.#state = Streamer.OPEN;
         return this.#player;
@@ -363,6 +363,8 @@ export class Viewer {
             // Create WebSocket
             this.#socket = new WebSocket(`${this.#streamUrl}/${userId}/${streamName}`, ["Bearer." + this.#token]);
             this.#socket.binaryType = "arraybuffer";
+            this.#socket.onclose = async () => { await this.leave(); };
+            this.#socket.onerror = async (e) => { await this.leave(); console.error('Streamer : WebSocket error:', e) };
 
             this.#demultiplexer = new Demultiplexer(
                 (header, data) => { this.#decodeAudio(header, data) },
