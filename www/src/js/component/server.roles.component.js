@@ -1,5 +1,5 @@
 import Swal from '../lib/sweetalert2.esm.all.min.js';
-import {i18n} from "../lib/i18n.js";
+import { i18n } from "../lib/i18n.js";
 
 class ServerRolesWebComponent extends HTMLElement {
 
@@ -371,7 +371,9 @@ class ServerRolesWebComponent extends HTMLElement {
                     ${this.availableUsers.filter(user => !role.members.includes(user.id)).map(user => this.#memberItem(role, user)).join('')}
                 </div>
             </form>`,
-            didOpen: () => {
+            didOpen: async () => {
+                await this.fetchUsers();
+
                 const filterMemberList = (elt, value) => {
                     const items = Array.from(elt.querySelectorAll(".assigned-user-item"))
                     for (const item of items) {
@@ -382,6 +384,7 @@ class ServerRolesWebComponent extends HTMLElement {
                         }
                     }
                 }
+
                 document.getElementById("add-members-search").addEventListener('input', (e) => {
                     const elt = document.querySelector("#add-members-list")
                     filterMemberList(elt, e.target.value)
