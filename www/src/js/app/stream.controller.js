@@ -221,8 +221,18 @@ export default class StreamController {
         }
     }
 
-    async removeAll() {
-        document.getElementById('stream-container').innerHTML = "";
+    removeAll(exceptWatching = false) {
+        if (exceptWatching) {
+            const children = document.getElementById('stream-container').childNodes;
+            for(const child of children){
+                if(child.className === "player join"){
+                    child.remove();
+                }
+            }
+        }
+        else {
+            document.getElementById('stream-container').innerHTML = "";
+        }
     }
 
     async availableStream(roomId) {
@@ -233,6 +243,8 @@ export default class StreamController {
             console.debug("Stream : No user in room");
             return;
         }
+
+        this.removeAll(true);
 
         for (const user of result.connectedUser) {
             for (const stream of user.streams) {
