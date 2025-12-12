@@ -14,7 +14,7 @@ cd ReVoiceChat-MediaServer/
 ## Option A : Auto install
 ### Run installer (debian)
 ```sh
-sudo install.sh
+sudo ./install.sh
 ```
 
 ## Option B : Manual install
