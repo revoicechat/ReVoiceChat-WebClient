@@ -34,7 +34,6 @@ export class ServerSettingsInvitationController {
         const serverId = this.serverSettings.server.id;
 
         this.#serverType = (await this.fetcher.fetchCore(`/settings`))['global.sever-mode'];
-        console.log(this.#serverType);
 
         if (this.#serverType === "MONO_SERVER") {
             /** @type {InvitationRepresentation[]} */
