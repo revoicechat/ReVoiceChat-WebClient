@@ -5,9 +5,12 @@ import Router from './router.js';
 import UserController from './user.controller.js';
 import Room from './room.js';
 import ServerController from './server.controller.js';
-import { reloadEmojis } from './emoji.js';
-import { Sse } from "./sse.js";
+import MobileController from "./utils/mobile.js";
+import {reloadEmojis} from './emoji.js';
+import {Sse} from "./sse.js";
 import {getCookie, getQueryVariable} from "../lib/tools.js";
+import '../component/components.js';
+import {i18n} from "../lib/i18n.js";
 
 export default class ReVoiceChat {
     /** @type {Router} */
@@ -88,6 +91,7 @@ export default class ReVoiceChat {
     }
 
     async #load() {
+        MobileController.load();
         await this.user.load();
         await this.user.settings.load();
         this.state.load();
@@ -164,5 +168,3 @@ class SSEHandlers {
 }
 
 window.RVC = new ReVoiceChat();
-import '../component/components.js';
-import {i18n} from "../lib/i18n.js";
