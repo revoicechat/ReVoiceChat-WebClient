@@ -17,13 +17,12 @@ export default class ServerSettingsController {
     /**
      * @param {ServerController} server
      * @param {Fetcher} fetcher
-     * @param {string} mediaUrl
      */
-    constructor(server, fetcher, mediaUrl) {
+    constructor(server, fetcher) {
         this.server = server;
         this.#fetcher = fetcher;
         this.overview = new ServerSettingsOverviewController(this, fetcher)
-        this.member = new ServerSettingsMemberController(this, fetcher, mediaUrl)
+        this.member = new ServerSettingsMemberController(this, fetcher)
         this.room = new ServerSettingsRoomController(this, fetcher)
         this.emote = new ServerSettingsEmoteController(this, fetcher)
         this.invitation = new ServerSettingsInvitationController(this, fetcher)

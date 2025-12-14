@@ -1,4 +1,5 @@
 import {apiFetch} from "../lib/tools.js";
+import MediaServer from "../app/media/media.server.js";
 
 class EmojiPicker {
 
@@ -136,7 +137,7 @@ async function initCustomUser(picker) {
     const emojis = await RVC.fetcher.fetchCore(`/emote/me`);
     initCustomEmojiCategory(picker, '01. custom_perso',
         `<img class="emoji ${RVC.user.id}"
-                   src="${RVC.mediaUrl}/profiles/${RVC.user.id}"
+                   src="${MediaServer.profiles(RVC.user.id)}"
                    style="border-radius: 9999px;"
                    alt="user-emote"/>`,
         Array.from(emojis).map(emoji => {
@@ -157,7 +158,7 @@ function initCustomEmojiCategory(picker, name, icon, emojis) {
     }
     for (const emote of emojis) {
         emojiCategory.emojis.push({
-            content: `<img class="emoji" src="${RVC.mediaUrl}/emote/${emote.link}" alt="${emote.content}" title=":${emote.content}:"/>`,
+            content: `<img class="emoji" src="${MediaServer.emote(emote.link)}" alt="${emote.content}" title=":${emote.content}:"/>`,
             data: `:${emote.content}:`,
             description: emote.description,
             names: emote.names

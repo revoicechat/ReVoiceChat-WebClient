@@ -1,14 +1,14 @@
 import Swal from '../lib/sweetalert2.esm.all.min.js';
 import VoiceCall from "./voice.js";
-import { LanguageController } from "./language.controller.js";
-import { SpinnerOnButton } from "../component/button.spinner.component.js";
-import { SwalCustomClass } from "../lib/tools.js";
-import { getAllDeclaredDataThemes } from "../component/theme.component.js";
-import { i18n } from "../lib/i18n.js";
+import {LanguageController} from "./language.controller.js";
+import {SpinnerOnButton} from "../component/button.spinner.component.js";
+import {SwalCustomClass} from "../lib/tools.js";
+import {getAllDeclaredDataThemes} from "../component/theme.component.js";
+import {i18n} from "../lib/i18n.js";
+import MediaServer from "./media/media.server.js";
 
 export default class UserSettingsController {
     #user;
-    #mediaUrl;
     #fetcher;
     #room;
     #inputAdvanced = false;
@@ -32,10 +32,9 @@ export default class UserSettingsController {
         showPicture: true
     }
 
-    constructor(user, fetcher, mediaUrl) {
+    constructor(user, fetcher) {
         this.#user = user;
         this.#fetcher = fetcher;
-        this.#mediaUrl = mediaUrl;
 
         // Add events
         this.#selectEventHandler();
@@ -133,7 +132,7 @@ export default class UserSettingsController {
     #overviewLoad() {
         document.getElementById("setting-user-uuid").innerText = this.#user.id;
         document.getElementById("overview-displayname").value = this.#user.displayName;
-        document.getElementById("setting-user-picture").src = `${this.#mediaUrl}/profiles/${this.#user.id}`;
+        document.getElementById("setting-user-picture").src = MediaServer.profiles(this.#user.id);
 
         const settingUserPictureNewPath = document.getElementById("overview-picture");
         const settingUserPictureNewFile = document.getElementById("overview-picture-new");
@@ -228,7 +227,7 @@ export default class UserSettingsController {
         if (settingUserPictureNewPath.value && this.#newProfilPictureFile) {
             const formData = new FormData();
             formData.append("file", this.#newProfilPictureFile);
-            await this.#fetcher.fetchMedia(`/profiles/${this.#user.id}`, 'POST', formData);
+            await MediaServer.fetch(`/profiles/${this.#user.id}`, 'POST', formData);
             this.#newProfilPictureFile = null
             settingUserPictureNewPath.value = null
         }

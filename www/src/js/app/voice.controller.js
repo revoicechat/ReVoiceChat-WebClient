@@ -3,14 +3,13 @@ import VoiceCall from "./voice.js";
 import StreamController from './stream.controller.js';
 import Swal from '../lib/sweetalert2.esm.all.min.js';
 import { SwalCustomClass } from "../lib/tools.js";
+import MediaServer from "./media/media.server.js";
 
 export default class VoiceController {
     /** @type {Fetcher} */
     #fetcher;
     /** @type {string} */
     #voiceURL;
-    /** @type {string} */
-    #mediaUrl
     /** @type {string} */
     #token;
     /** @type {VoiceCall|null} */
@@ -33,16 +32,14 @@ export default class VoiceController {
      * @param {Room} room
      * @param {string} voiceURL
      * @param {string} token
-     * @param {string} mediaUrl
      * @param {string} streamUrl
      */
-    constructor(fetcher, user, room, token, voiceURL, mediaUrl, streamUrl) {
+    constructor(fetcher, user, room, token, voiceURL, streamUrl) {
         this.#fetcher = fetcher;
         this.#voiceURL = voiceURL;
         this.#token = token;
         this.#user = user;
         this.#room = room;
-        this.#mediaUrl = mediaUrl;
         this.streamController = new StreamController(fetcher, user, room, token, streamUrl);
         this.#contextMenu = document.getElementById('voice-context-menu');
     }
@@ -221,7 +218,7 @@ export default class VoiceController {
     // Create DOM Element / HTML for a given user
     #createUserElement(userData) {
         const userId = userData.id;
-        const profilePicture = `${this.#mediaUrl}/profiles/${userId}`;
+        const profilePicture = MediaServer.profiles(userId);
 
         const extension = document.createElement('div');
         extension.className = "extension";

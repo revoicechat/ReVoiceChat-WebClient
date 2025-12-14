@@ -1,5 +1,6 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
 import {I18n} from "./i18n.js";
+import MediaServer from "../app/media/media.server.js";
 
 describe('I18n', () => {
   let i18n;
@@ -89,7 +90,9 @@ describe('I18n', () => {
       const content = 'url=https://example.com?param=value';
       const result = i18n.parseProperties(content);
 
-      expect(result.url).toBe('https://example.com?param=value');
+      expect(function () {
+          return MediaServer.#instance.url
+      }).toBe('https://example.com?param=value');
     });
   });
 

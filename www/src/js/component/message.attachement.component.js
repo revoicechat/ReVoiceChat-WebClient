@@ -1,3 +1,5 @@
+import MediaServer from "../app/media/media.server.js";
+
 /**
  * This component represent an attachement on a message
  *
@@ -16,7 +18,7 @@ class AttachementMessageComponent extends HTMLElement {
         if (!typeComponentRetriever) {
           typeComponentRetriever = this.#TYPES["OTHER"]
         }
-        const src = `${RVC.mediaUrl}/attachments/${id}`;
+        const src = MediaServer.attachments(id);
         this.innerHTML = `${typeComponentRetriever(src, name)}`
     }
 

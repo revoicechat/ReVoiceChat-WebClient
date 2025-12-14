@@ -1,14 +1,14 @@
+import MediaServer from "./media/media.server.js";
+
 export class ServerSettingsMemberController {
 
     /**
      * @param {ServerSettingsController} serverSettings
      * @param {Fetcher} fetcher
-     * @param {string} mediaUrl
      */
-    constructor(serverSettings, fetcher, mediaUrl) {
+    constructor(serverSettings, fetcher) {
         this.serverSettings = serverSettings
         this.fetcher = fetcher
-        this.mediaUrl = mediaUrl
     }
 
     load() {
@@ -39,7 +39,7 @@ export class ServerSettingsMemberController {
         DIV.id = data.id;
         DIV.className = `${data.id} config-item`;
 
-        const profilePicture = `${this.mediaUrl}/profiles/${data.id}`;
+        const profilePicture = MediaServer.profiles(data.id);
 
         DIV.innerHTML = `
             <div class="relative">

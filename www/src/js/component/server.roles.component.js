@@ -1,5 +1,6 @@
 import Swal from '../lib/sweetalert2.esm.all.min.js';
 import { i18n } from "../lib/i18n.js";
+import MediaServer from "../app/media/media.server.js";
 
 class ServerRolesWebComponent extends HTMLElement {
 
@@ -231,7 +232,7 @@ class ServerRolesWebComponent extends HTMLElement {
         const DIV = document.createElement('div');
         DIV.className = `config-item`;
 
-        const profilePicture = `${RVC.mediaUrl}/profiles/${data.id}`;
+        const profilePicture = MediaServer.profiles(data.id);
 
         DIV.innerHTML = `
             <div class="relative">

@@ -1,6 +1,7 @@
 import Swal from '../lib/sweetalert2.esm.all.min.js';
 import {apiFetch} from "../lib/tools.js";
 import {i18n} from "../lib/i18n.js";
+import MediaServer from "../app/media/media.server.js";
 
 class EmojiManager extends HTMLElement {
     constructor() {
@@ -137,7 +138,7 @@ class EmojiManager extends HTMLElement {
             const formData = new FormData();
             formData.append('file', file);
 
-            await RVC.fetcher.fetchMedia(`/emote/${emojiData.id}`, 'POST', formData);
+            await MediaServer.fetch(`/emote/${emojiData.id}`, 'POST', formData);
 
             // Temporary: Store image locally until API is integrated
             const reader = new FileReader();
@@ -255,7 +256,7 @@ class EmojiManager extends HTMLElement {
                 editEmojiFile.value = '';
 
                 const editPreview = popup.querySelector('#editPreview');
-                editPreview.innerHTML = `<img src="${RVC.mediaUrl}/emote/${id}" alt="${emoji.name}">`;
+                editPreview.innerHTML = `<img src="${MediaServer.emote(id)}" alt="${emoji.name}">`;
                 editPreview.style.display = 'flex';
 
                 editEmojiFile.addEventListener('change', (e) => {
@@ -313,7 +314,7 @@ class EmojiManager extends HTMLElement {
                     if (result.file) {
                         const formData = new FormData();
                         formData.append('file', result.file);
-                        await apiFetch(`${RVC.mediaUrl}/emote/${this.currentEditId}`, {
+                        await apiFetch(MediaServer.emote(this.currentEditId), {
                             method: "POST",
                             signal: AbortSignal.timeout(5000),
                             headers: {
@@ -373,7 +374,7 @@ class EmojiManager extends HTMLElement {
             <div class="config-item">
                 <div class="emoji-header">
                     <div class="emoji-preview">
-                        <img src="${RVC.mediaUrl}/emote/${emoji.id}" alt="${emoji.name}">
+                        <img src="${MediaServer.emote(emoji.id)}" alt="${emoji.name}">
                     </div>
                     <div class="emoji-info">
                         <div class="emoji-name">:${emoji.name}:</div>

@@ -1,11 +1,10 @@
 import ServerSettingsController from "./server.settings.controller.js";
 import {statusToDotClassName} from "../lib/tools.js";
+import MediaServer from "./media/media.server.js";
 
 export default class ServerController {
     /** @type {Fetcher} */
     #fetcher;
-    /** @type {string} */
-    #mediaURL;
     /** @type {Room} */
     room;
     /** @type {string} */
@@ -17,12 +16,10 @@ export default class ServerController {
 
     /**
      * @param {Fetcher} fetcher
-     * @param {string} mediaURL
      * @param {Room} room
      */
-    constructor(fetcher, mediaURL, room) {
+    constructor(fetcher, room) {
         this.#fetcher = fetcher;
-        this.#mediaURL = mediaURL;
         this.room = room;
         void this.#load();
     }
@@ -42,7 +39,7 @@ export default class ServerController {
             this.select(server.id, server.name);
         }
 
-        this.settings = new ServerSettingsController(this, this.#fetcher, this.#mediaURL);
+        this.settings = new ServerSettingsController(this, this.#fetcher);
         this.settings.load()
     }
 
@@ -129,7 +126,7 @@ export default class ServerController {
         const id = data.id;
         const name = data.displayName;
         const status = data.status;
-        const profilePicture = `${this.#mediaURL}/profiles/${id}`;
+        const profilePicture = MediaServer.profiles(id);
 
         const DIV = document.createElement('div');
         DIV.id = id;

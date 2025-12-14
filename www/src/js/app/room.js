@@ -17,13 +17,12 @@ export default class Room {
      * @param {UserController} user
      * @param {string} voiceUrl
      * @param {string} token
-     * @param {string} mediaUrl
      * @param {string} streamUrl
      */
-    constructor(fetcher, user, voiceUrl, token, mediaUrl, streamUrl) {
+    constructor(fetcher, user, voiceUrl, token, streamUrl) {
         this.#fetcher = fetcher;
         this.textController = new TextController(fetcher, user, this);
-        this.voiceController = new VoiceController(fetcher, user, this, token, voiceUrl, mediaUrl, streamUrl);
+        this.voiceController = new VoiceController(fetcher, user, this, token, voiceUrl, streamUrl);
     }
 
     /**

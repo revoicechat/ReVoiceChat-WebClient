@@ -1,4 +1,5 @@
 import {containsOnlyEmotes} from "../lib/emote.utils.js";
+import MediaServer from "../app/media/media.server.js";
 
 class MessageComponent extends HTMLElement {
     /** @type string */
@@ -168,7 +169,7 @@ class MessageComponent extends HTMLElement {
             if (this.emotes) {
                 const emote = Array.from(this.emotes).find(item => item.name === emoji);
                 if (emote) {
-                    return `<img class="emoji" src="${RVC.mediaUrl}/emote/${emote.id}" alt="${emoji}" title=":${emoji}:">`;
+                    return `<img class="emoji" src="${MediaServer.emote(emote.id)}" alt="${emoji}" title=":${emoji}:">`;
                 }
             }
             return `:${emoji}:`

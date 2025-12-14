@@ -11,6 +11,7 @@ import {Sse} from "./sse.js";
 import {getCookie, getQueryVariable} from "../lib/tools.js";
 import '../component/components.js';
 import {i18n} from "../lib/i18n.js";
+import MediaServer from "./media/media.server.js";
 
 export default class ReVoiceChat {
     /** @type {Router} */
@@ -32,8 +33,6 @@ export default class ReVoiceChat {
     /** @type {string} */
     coreUrl;
     /** @type {string} */
-    mediaUrl;
-    /** @type {string} */
     voiceUrl;
 
     constructor() {
@@ -48,7 +47,7 @@ export default class ReVoiceChat {
 
         // Store URL
         this.coreUrl = `${core.protocol}//${core.host}`;
-        this.mediaUrl = `${core.protocol}//${core.host}/media`;
+        MediaServer.init(core);
         this.voiceUrl = `${core.protocol}//${core.host}/api/voice`;
         this.streamUrl = `${core.protocol}//${core.host}/api/stream`;
 
@@ -62,10 +61,10 @@ export default class ReVoiceChat {
         }
 
         // Instantiate other classes
-        this.fetcher = new Fetcher(this.#token, this.coreUrl, this.mediaUrl);
-        this.user = new UserController(this.fetcher, this.mediaUrl);
-        this.room = new Room(this.fetcher, this.user, this.voiceUrl, this.#token, this.mediaUrl, this.streamUrl);
-        this.server = new ServerController(this.fetcher, this.mediaUrl, this.room);
+        this.fetcher = new Fetcher(this.coreUrl);
+        this.user = new UserController(this.fetcher);
+        this.room = new Room(this.fetcher, this.user, this.voiceUrl, this.#token, this.streamUrl);
+        this.server = new ServerController(this.fetcher, this.room);
         this.state = new State(this);
 
         // Add missing classes

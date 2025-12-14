@@ -2,6 +2,7 @@ import Alert from './utils/alert.js';
 import Swal from '../lib/sweetalert2.esm.all.min.js';
 import {sanitizeString, SwalCustomClass, timestampToText, humanFileSize} from "../lib/tools.js";
 import {I18n, i18n} from "../lib/i18n.js";
+import MediaServer from "./media/media.server.js";
 
 export default class TextController {
     static MODE_SEND = 0;
@@ -185,7 +186,7 @@ export default class TextController {
                 for (const media of result.medias) {
                     const formData = new FormData();
                     formData.append("file", attachments[media.name]);
-                    await this.#fetcher.fetchMedia(`/attachments/${media.id}`, 'POST', formData, false);
+                    await MediaServer.fetch(`/attachments/${media.id}`, 'POST', formData, false);
                 }
             }
 
@@ -260,7 +261,7 @@ export default class TextController {
 
     #addPicture(messageData, MESSAGE) {
         const picture = document.createElement('img');
-        picture.src = `${RVC.mediaUrl}/profiles/${messageData.user.id}`
+        picture.src = MediaServer.profiles(messageData.user.id);
         picture.alt = "PFP"
         picture.className = "icon ring-2"
         picture.name = `user-picture-${messageData.user.id}`
@@ -333,7 +334,7 @@ export default class TextController {
 
     async #getAttachmentMaxSize() {
         /** @type {MediaSettings} */
-        const response = await this.#fetcher.fetchMedia('/maxfilesize');
+        const response = await MediaServer.fetch('/maxfilesize');
         if (response) {
             this.#attachmentMaxSize = response.maxFileSize;
         }

@@ -1,11 +1,10 @@
 import UserSettingsController from "./user.settings.controller.js";
 import {eraseCookie, statusToDotClassName} from "../lib/tools.js";
+import MediaServer from "./media/media.server.js";
 
 export default class UserController {
     /** @type {Fetcher} */
     #fetcher;
-    /** @type {string} */
-    #mediaURL;
     /** @type {UserSettingsController} */
     settings;
     /** @type {string} */
@@ -13,15 +12,10 @@ export default class UserController {
     /** @type {string} */
     displayName;
 
-    /**
-     *
-     * @param {Fetcher} fetcher
-     * @param {string}  mediaURL
-     */
-    constructor(fetcher, mediaURL) {
+    /** @param {Fetcher} fetcher */
+    constructor(fetcher) {
         this.#fetcher = fetcher;
-        this.#mediaURL = mediaURL;
-        this.settings = new UserSettingsController(this, this.#fetcher, this.#mediaURL);
+        this.settings = new UserSettingsController(this, this.#fetcher);
     }
 
     async load() {
@@ -36,7 +30,7 @@ export default class UserController {
             document.getElementById("user-name").innerText = result.displayName;
             document.getElementById("user-status").innerText = result.status;
             document.getElementById("user-dot").className = `user-dot ${statusToDotClassName(result.status)}`;
-            document.getElementById("user-picture").src = `${this.#mediaURL}/profiles/${result.id}`;    
+            document.getElementById("user-picture").src = MediaServer.profiles(result.id);
         }
     }
 
@@ -44,7 +38,7 @@ export default class UserController {
     update(data) {
         const id = data.id;
         const name = data.displayName;
-        const picture = `${this.#mediaURL}/profiles/${id}?t=${Date.now()}`;
+        const picture = MediaServer.profiles(id);
 
         // Static elements for self
         if(this.id === id){
