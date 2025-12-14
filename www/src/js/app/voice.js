@@ -292,7 +292,13 @@ export default class VoiceCall {
          */
 
         // Init Mic capture
-        const micSource = this.#audioContext.createMediaStreamSource(await navigator.mediaDevices.getUserMedia({ audio: true }));
+        const micSource = this.#audioContext.createMediaStreamSource(await navigator.mediaDevices.getUserMedia({
+            audio: {
+                echoCancellation: false,
+                noiseSuppression: false,
+                autoGainControl: false
+            }
+        }));
 
         // Create Filters around voice frequency
         const filterHigh = this.#audioContext.createBiquadFilter();
