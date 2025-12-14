@@ -288,18 +288,33 @@ export default class VoiceCall {
 
         /**
          * Audio routing 
-         * microphone -> gainNode -> gateNode -> compressorNode (optional) -> collector -> buffer -> encoder -> send
+         * microphone -> filter (LP + HP) -> gain -> gate -> compressor (optional) -> collector -> buffer -> encoder -> send
          */
 
         // Init Mic capture
         const micSource = this.#audioContext.createMediaStreamSource(await navigator.mediaDevices.getUserMedia({ audio: true }));
 
+        // Create Filters around voice frequency
+        const filterHigh = this.#audioContext.createBiquadFilter();
+        filterHigh.type = 'highpass';
+        filterHigh.frequency.value = 80;
+        filterHigh.Q.value = 0.7;
+
+        const filterLow = this.#audioContext.createBiquadFilter();
+        filterLow.type = 'lowpass';
+        filterLow.frequency.value = 5000;
+        filterLow.Q.value = 0.7;
+
+        // Connect microphone to filter
+        micSource.connect(filterHigh);
+        filterHigh.connect(filterLow);
+
         // Create Gain node
         this.#gainNode = this.#audioContext.createGain();
         this.#gainNode.gain.setValueAtTime(this.#settings.self.volume, this.#audioContext.currentTime);
 
-        // Connect microphone to gain
-        micSource.connect(this.#gainNode);
+        // Connect filter to gain
+        filterLow.connect(this.#gainNode);
 
         // Create Gate
         this.#gateNode = new AudioWorkletNode(this.#audioContext, "NoiseGate", {
