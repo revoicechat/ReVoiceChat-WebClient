@@ -6,11 +6,11 @@ import UserController from './user.controller.js';
 import Room from './room.js';
 import ServerController from './server.controller.js';
 import MobileController from "./utils/mobile.js";
-import {reloadEmojis} from './emoji.js';
-import {Sse} from "./core/sse.js";
-import {getCookie, getQueryVariable} from "../lib/tools.js";
+import { reloadEmojis } from './emoji.js';
+import { Sse } from "./core/sse.js";
+import { getCookie, getQueryVariable } from "../lib/tools.js";
 import '../component/components.js';
-import {i18n} from "../lib/i18n.js";
+import { i18n } from "../lib/i18n.js";
 import MediaServer from "./media/media.server.js";
 
 export default class ReVoiceChat {
@@ -55,9 +55,11 @@ export default class ReVoiceChat {
         this.sseHandlers = new SSEHandlers(this);
 
         // Save state before page unload
-        addEventListener("beforeunload", () => {
+        window.addEventListener("beforeunload", (event) => {
             this.state.save();
             this.#sse.closeSSE();
+            event.preventDefault();
+            return false;
         })
 
         // Load more when document is fully loaded

@@ -23,7 +23,7 @@ export default class StreamController {
     attachEvents() {
         document.getElementById("stream-webcam").onclick = () => this.#toggleStream("webcam");
         document.getElementById("stream-display").onclick = () => this.#toggleStream("display");
-        addEventListener("beforeunload", () => { this.stopAll() })
+        window.addEventListener("beforeunload", async () => { await this.stopAll() })
     }
 
     #toggleStream(type) {
