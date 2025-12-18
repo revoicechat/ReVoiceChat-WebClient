@@ -18,8 +18,7 @@ export default class TextController {
     /** @type {string|null} */
     #editId;
     #attachmentMaxSize = 0;
-    #page = 1;
-    #totalPages = 1;
+    #cachedRooms = {};
 
     /**
      * @param {UserController} user
@@ -39,9 +38,21 @@ export default class TextController {
 
         document.getElementById("attachment-button-add").addEventListener('click', () => this.#addAttachment());
         document.getElementById("attachment-button-remove").addEventListener('click', () => this.#removeAttachment());
+        //document.getElementById('text-cached-rooms').addEventListener("scroll", () => { this.#loadMore(this.#cachedRooms[this.#room.id]) });
+    }
 
-        const textContent = document.getElementById("text-content")
-        textContent.addEventListener("scroll", (event) => { this.#loadMore(textContent) });
+    #getTextContentElement(roomId) {
+        if (!this.#cachedRooms[roomId]) {
+            const textContent = document.createElement("div");
+            textContent.className = "room-content scrollbar";
+            document.getElementById('text-cached-rooms').appendChild(textContent);
+
+            let obj = {};
+            obj[roomId] = {page: 0, total: 0, content: textContent, loaded: false};
+            Object.assign(this.#cachedRooms, obj);
+        }
+
+        return this.#cachedRooms[roomId]
     }
 
     async #eventHandler(event) {
@@ -61,48 +72,59 @@ export default class TextController {
     }
 
     async #loadMore(element) {
-        if (element.scrollTop === 0 && this.#page !== this.#totalPages) {
-            let lastScrollHeight = element.scrollHeight;
+        if (element.content.scrollTop === 0 && element.page !== element.total && element.loaded) {
+            const cachedRooms = document.getElementById('text-cached-rooms');
+            let lastScrollHeight = cachedRooms.scrollHeight;
 
             /** @type {PageResult<MessageRepresentation>} */
-            const result = await CoreServer.fetch(`/room/${this.#room.id}/message?page=${this.#page}`, 'GET');
+            const result = await CoreServer.fetch(`/room/${this.#room.id}/message?page=${element.page}`, 'GET');
             if (result !== null) {
-                this.#page = Math.min(result.pageNumber + 1, result.totalPages);
-
-                const ROOM = document.getElementById("text-content");
+                element.page = Math.min(result.pageNumber + 1, result.totalPages);
 
                 const invertedSortedResult = [...result.content].sort((a, b) => {
                     return new Date(a.createdDate) + new Date(b.createdDate);
                 });
 
                 for (const message of invertedSortedResult) {
-                    ROOM.prepend(this.#create(message));
+                    element.content.prepend(this.#create(message));
                 }
 
-                element.scrollTop = element.scrollHeight - lastScrollHeight;
+                cachedRooms.scrollTop = cachedRooms.scrollHeight - lastScrollHeight;
             }
         }
     }
 
-    async getLatestFrom(roomId) {
-        /** @type {PageResult<MessageRepresentation>} */
-        const result = await CoreServer.fetch(`/room/${roomId}/message`, 'GET');
-
-        if (result !== null) {
-            const ROOM = document.getElementById("text-content");
-
-            const sortedResult = [...result.content].sort((a, b) => {
-                return new Date(a.createdDate) - new Date(b.createdDate);
-            });
-
-            ROOM.innerHTML = "";
-            for (const message of sortedResult) {
-                ROOM.appendChild(this.#create(message));
-            }
-
-            ROOM.scrollTop = ROOM.scrollHeight;
-            this.#totalPages = result.totalPages;
+    async load(roomId) {
+        for (const [, room] of Object.entries(this.#cachedRooms)) {
+            room.content.classList.add('hidden');
         }
+
+        if (!this.#cachedRooms[roomId]) {
+            /** @type {PageResult<MessageRepresentation>} */
+            const result = await CoreServer.fetch(`/room/${roomId}/message`, 'GET');
+
+            if (result !== null) {
+                const textContent = (this.#getTextContentElement(roomId)).content;
+
+                const sortedResult = [...result.content].sort((a, b) => {
+                    return new Date(a.createdDate) - new Date(b.createdDate);
+                });
+
+                textContent.innerHTML = "";
+                for (const message of sortedResult) {
+                    textContent.appendChild(this.#create(message));
+                }
+
+                this.#cachedRooms[roomId].total = result.totalPages;
+            }
+        }
+
+        this.#cachedRooms[roomId].content.classList.remove('hidden');
+
+        const cachedRooms = document.getElementById('text-cached-rooms');
+        cachedRooms.scrollTop = cachedRooms.scrollHeight;
+
+        this.#cachedRooms[roomId].loaded = true;
     }
 
     /** @param {MessageNotification} data */
@@ -111,15 +133,11 @@ export default class TextController {
             Alert.play('messageNew');
         }
 
-        if (data.message.roomId !== this.#room.id) {
-            return;
-        }
-
         const message = data.message;
-        const room = document.getElementById("text-content");
+        const room = this.#getTextContentElement(data.message.roomId);
         switch (data.action) {
             case "ADD":
-                room.appendChild(this.#create(message));
+                room.content.appendChild(this.#create(message));
                 break;
             case "MODIFY":
                 document.getElementById(message.id).replaceWith(this.#createContent(message));

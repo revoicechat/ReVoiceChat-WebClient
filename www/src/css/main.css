@@ -476,6 +476,12 @@ svg {
     overflow-y: auto;
 }
 
+.room-cache {
+    flex: 1 1 0%;
+    padding-top: 0.5rem;
+    overflow-y: auto;
+}
+
 .room-content {
     flex: 1 1 0%;
     padding-top: 0.5rem;

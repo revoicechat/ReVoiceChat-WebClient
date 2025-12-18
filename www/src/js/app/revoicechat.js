@@ -106,7 +106,7 @@ export default class ReVoiceChat {
         console.error(`An error occurred while attempting to connect to "/api/sse".\nRetry in 10 seconds`);
         setTimeout(() => {
             this.#sse.openSSE();
-            void this.room.textController.getLatestFrom(this.room.id);
+            void this.room.textController.load(this.room.id);
         }, 10000);
     }
 
