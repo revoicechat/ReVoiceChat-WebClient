@@ -38,17 +38,17 @@ export default class TextController {
 
         document.getElementById("attachment-button-add").addEventListener('click', () => this.#addAttachment());
         document.getElementById("attachment-button-remove").addEventListener('click', () => this.#removeAttachment());
-        //document.getElementById('text-cached-rooms').addEventListener("scroll", () => { this.#loadMore(this.#cachedRooms[this.#room.id]) });
+        document.getElementById('cache-container').addEventListener("scroll", () => { this.#scroll(this.#cachedRooms[this.#room.id]) });
     }
 
     #getTextContentElement(roomId) {
         if (!this.#cachedRooms[roomId]) {
             const textContent = document.createElement("div");
             textContent.className = "room-content scrollbar";
-            document.getElementById('text-cached-rooms').appendChild(textContent);
+            document.getElementById('cache-container').appendChild(textContent);
 
             let obj = {};
-            obj[roomId] = {page: 0, total: 0, content: textContent, loaded: false};
+            obj[roomId] = { page: 0, total: 0, content: textContent, loaded: false, scrollTop: null };
             Object.assign(this.#cachedRooms, obj);
         }
 
@@ -71,9 +71,14 @@ export default class TextController {
         }
     }
 
+    #scroll(element) {
+        if (!element) return;
+        element.scrollTop = document.getElementById('cache-container').scrollTop;
+    }
+
     async #loadMore(element) {
         if (element.content.scrollTop === 0 && element.page !== element.total && element.loaded) {
-            const cachedRooms = document.getElementById('text-cached-rooms');
+            const cachedRooms = document.getElementById('cache-container');
             let lastScrollHeight = cachedRooms.scrollHeight;
 
             /** @type {PageResult<MessageRepresentation>} */
@@ -99,32 +104,36 @@ export default class TextController {
             room.content.classList.add('hidden');
         }
 
+        // Room not loaded in cache yet
         if (!this.#cachedRooms[roomId]) {
             /** @type {PageResult<MessageRepresentation>} */
             const result = await CoreServer.fetch(`/room/${roomId}/message`, 'GET');
 
             if (result !== null) {
-                const textContent = (this.#getTextContentElement(roomId)).content;
+                const element = this.#getTextContentElement(roomId);
 
                 const sortedResult = [...result.content].sort((a, b) => {
                     return new Date(a.createdDate) - new Date(b.createdDate);
                 });
 
-                textContent.innerHTML = "";
+                element.content.innerHTML = "";
                 for (const message of sortedResult) {
-                    textContent.appendChild(this.#create(message));
+                    element.content.appendChild(this.#create(message));
                 }
 
-                this.#cachedRooms[roomId].total = result.totalPages;
+                element.total = result.totalPages;
             }
         }
 
-        this.#cachedRooms[roomId].content.classList.remove('hidden');
+        const room = this.#cachedRooms[roomId];
+        const container = document.getElementById('cache-container');
 
-        const cachedRooms = document.getElementById('text-cached-rooms');
-        cachedRooms.scrollTop = cachedRooms.scrollHeight;
+        if (room.scrollTop == null) {
+            room.scrollTop = container.scrollHeight;
+        }
 
-        this.#cachedRooms[roomId].loaded = true;
+        room.content.classList.remove('hidden');
+        container.scrollTop = room.scrollTop;
     }
 
     /** @param {MessageNotification} data */
