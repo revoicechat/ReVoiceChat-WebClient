@@ -184,6 +184,7 @@ export default class Room {
         document.getElementById("text-input").placeholder = `Send a message in ${this.name}`;
         document.getElementById("text-input").focus();
 
+        // Keep voice controls if voiceCall is active
         if(!this.voiceController.isCallActive()){
             document.getElementById("voice-control-panel").classList.add('hidden');
         }

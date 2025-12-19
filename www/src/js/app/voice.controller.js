@@ -101,6 +101,11 @@ export default class VoiceController {
         // Update context menu
         this.#contextMenu.setVoiceCall(null);
 
+        // Remove controls if current room is not voice
+        if(this.#room.type !== "VOICE"){
+            document.getElementById("voice-control-panel").classList.add('hidden');
+        }
+
         // Audio alert
         if (playAlert) {
             Alert.play('voiceDisconnected');
