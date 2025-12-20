@@ -23,7 +23,7 @@ export default class Codec {
         bitrateMode: "variable",
         opus: {
             application: "audio",
-            complexity: 9,
+            complexity: 10,
             signal: "music",
             usedtx: true,
             frameDuration: 20_000, //20ms
@@ -39,13 +39,14 @@ export default class Codec {
         bitrateMode: "variable",
         opus: {
             application: "audio",
-            complexity: 9,
+            complexity: 10,
             signal: "music",
             usedtx: true,
             frameDuration: 20_000, //20ms
             useinbanddec: true,
         }
     }
+
     static DEFAULT_STREAM_VIDEO = {
         codec: "vp8",
         framerate: 30,
