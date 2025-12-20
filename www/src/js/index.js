@@ -1,6 +1,6 @@
 import Swal from './lib/sweetalert2.esm.all.min.js';
 import { SpinnerOnButton } from './component/button.spinner.component.js';
-import { apiFetch, getCookie, getQueryVariable, setCookie, SwalCustomClass, tauriActive } from "./lib/tools.js";
+import { apiFetch, getCookie, getQueryVariable, setCookie, SwalCustomClass } from "./lib/tools.js";
 import './component/icon.component.js';
 import { i18n } from "./lib/i18n.js";
 
@@ -127,12 +127,10 @@ function lastHost() {
         document.getElementById("register-form").host.value = localStorage.getItem("lastHost");
         getHostSettings();
     }
-    else {
-        if (document.location.hostname !== "localhost") {
+    else if (document.location.hostname !== "localhost") {
             document.getElementById("login-form").host.value = document.location.origin;
             document.getElementById("register-form").host.value = document.location.origin;
             getHostSettings();
-        }
     }
 }
 
@@ -241,7 +239,7 @@ async function register(loginData, host) {
 
 function passwordValidator(element, udpateButton) {
     const button = document.getElementById('user-register-button');
-    if (passwordRegex && passwordRegex.test(element.value)) {
+    if (passwordRegex?.test(element.value)) {
         element.classList.remove('password-reject');
         element.classList.add('password-accept');
         if (udpateButton) {

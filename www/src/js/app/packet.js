@@ -93,17 +93,15 @@ export class LargePacketSender{
  * Use this with LargePacketSender
  */
 export class LargePacketReceiver{
-    #socket;
     #buffer = [];
     #received = 0;
-    
+
     /**
      * @param {WebSocket} socket WebSocket setup to received data send from LargePacketSender
      * @param {*} callback Function to call when all rawData as been received
      */
-    constructor(socket, callback){
-        this.#socket = socket;
-        this.#socket.onmessage = (message) => {this.#receive(message.data, callback)}
+    init(socket, callback) {
+        socket.onmessage = (message) => {this.#receive(message.data, callback)}
     }
 
     #receive(data, callback){

@@ -21,7 +21,7 @@ base01  #e1e1e2  Lighter Background (Used for status bars, line number and foldi
 base02  #c4c3c5  Selection Background
 base03  #a7a5a8  Comments, Invisibles, Line Highlighting
 base04  #89878b  Dark Foreground (Used for status bars)
-base05  #6c696e  Default Foreground, Caret, Delimiters, Operators
+base05  #514f52  Default Foreground, Caret, Delimiters, Operators
 base06  #4f4b51  Light Foreground (Not often used)
 base07  #322d34  Light Background (Not often used)
 base08  #d8137f  Variables, XML Tags, Markup Link Text, Markup Lists, Diff Deleted
@@ -45,14 +45,14 @@ code.hljs {
 }
 
 .hljs {
-    color: #6c696e;
+    color: #514f52;
     background: #ffffff;
 }
 
 .hljs::selection,
 .hljs ::selection {
     background-color: #c4c3c5;
-    color: #6c696e;
+    color: #514f52;
 }
 
 
@@ -70,11 +70,11 @@ code.hljs {
     color: #89878b;
 }
 
-/* base05 - #6c696e -  Default Foreground, Caret, Delimiters, Operators */
+/* base05 - #514f52 -  Default Foreground, Caret, Delimiters, Operators */
 .hljs-subst,
 .hljs-punctuation,
 .hljs-operator {
-    color: #6c696e;
+    color: #514f52;
 }
 
 .hljs-operator {

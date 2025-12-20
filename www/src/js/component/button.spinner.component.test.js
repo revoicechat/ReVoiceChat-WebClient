@@ -18,7 +18,7 @@ describe('SpinnerOnButton', () => {
 
   afterEach(() => {
     // Cleanup DOM
-    document.body.removeChild(container);
+    container.remove();
     vi.clearAllTimers();
   });
 

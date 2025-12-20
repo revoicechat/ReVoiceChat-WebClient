@@ -371,7 +371,8 @@ export class Viewer {
                 (header, data) => { this.#decodeVideo(header, data) }
             );
 
-            new LargePacketReceiver(this.#socket, (rawData) => { this.#demultiplexer.process(rawData) });
+            const receiver = new LargePacketReceiver();
+            receiver.init(this.#socket, (rawData) => { this.#demultiplexer.process(rawData) });
 
             // Video player
             this.#canvas = document.createElement("canvas");

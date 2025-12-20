@@ -1,6 +1,5 @@
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
 import {I18n} from "./i18n.js";
-import MediaServer from "../app/media/media.server.js";
 
 describe('I18n', () => {
   let i18n;
@@ -89,10 +88,7 @@ describe('I18n', () => {
     it('should handle values with equals signs', () => {
       const content = 'url=https://example.com?param=value';
       const result = i18n.parseProperties(content);
-
-      expect(function () {
-          return MediaServer.#instance.url
-      }).toBe('https://example.com?param=value');
+      expect(result.url).toBe('https://example.com?param=value');
     });
   });
 
@@ -135,19 +131,19 @@ describe('I18n', () => {
 
   describe('loadTranslations', () => {
     beforeEach(() => {
-      global.fetch = vi.fn();
+      globalThis.fetch = vi.fn();
     });
 
     it('should load translations for specified language', async () => {
       const mockContent = 'hello=Bonjour\nbye=Au revoir';
-      global.fetch.mockResolvedValueOnce({
+      globalThis.fetch.mockResolvedValueOnce({
         ok: true,
         text: async () => mockContent
       });
 
       const result = await i18n.loadTranslations('fr');
 
-      expect(global.fetch).toHaveBeenCalledWith('translations/i18n_fr.properties');
+      expect(globalThis.fetch).toHaveBeenCalledWith('translations/i18n_fr.properties');
       expect(result).toEqual({
         hello: 'Bonjour',
         bye: 'Au revoir'
@@ -156,7 +152,7 @@ describe('I18n', () => {
     });
 
     it('should throw error when response is not ok', async () => {
-      global.fetch.mockResolvedValueOnce({
+      globalThis.fetch.mockResolvedValueOnce({
         ok: false,
         status: 404
       });
@@ -169,7 +165,7 @@ describe('I18n', () => {
       const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
       const mockEnglishContent = 'hello=Hello\nbye=Goodbye';
 
-      global.fetch
+      globalThis.fetch
           .mockResolvedValueOnce({
             ok: false,
             status: 404
@@ -192,19 +188,19 @@ describe('I18n', () => {
     });
 
     it('should throw error if English fallback also fails', async () => {
-      global.fetch.mockRejectedValue(new Error('Network error'));
+      globalThis.fetch.mockRejectedValue(new Error('Network error'));
 
       await expect(i18n.loadTranslations('en')).rejects.toThrow('Network error');
       expect(i18n.translationsLoaded).toBe(true);
     });
 
     it('should set translationsLoaded to true even on error', async () => {
-      global.fetch.mockRejectedValue(new Error('Network error'));
+      globalThis.fetch.mockRejectedValue(new Error('Network error'));
 
       try {
         await i18n.loadTranslations('en');
       } catch (e) {
-        // Expected
+        console.log(`${e} Expected`);
       }
 
       expect(i18n.translationsLoaded).toBe(true);
@@ -532,12 +528,12 @@ describe('I18n', () => {
 
   describe('translate', () => {
     beforeEach(() => {
-      global.fetch = vi.fn();
+      globalThis.fetch = vi.fn();
     });
 
     it('should load translations and translate page', async () => {
       const mockContent = 'hello=Bonjour';
-      global.fetch.mockResolvedValueOnce({
+      globalThis.fetch.mockResolvedValueOnce({
         ok: true,
         text: async () => mockContent
       });
@@ -554,7 +550,7 @@ describe('I18n', () => {
 
     it('should log success message', async () => {
       const consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
-      global.fetch.mockResolvedValueOnce({
+      globalThis.fetch.mockResolvedValueOnce({
         ok: true,
         text: async () => 'hello=Hello'
       });
@@ -567,7 +563,7 @@ describe('I18n', () => {
 
     it('should log error on failure', async () => {
       const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-      global.fetch.mockRejectedValueOnce(new Error('Network error'));
+      globalThis.fetch.mockRejectedValueOnce(new Error('Network error'));
 
       await i18n.translate('en');
 

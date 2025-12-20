@@ -92,11 +92,11 @@ class VoiceContextMenu extends ContextMenu {
 
         // Initial volume
         volumeInput.value = voiceSettings.volume;
-        volumeInput.title = parseInt(voiceSettings.volume * 100) + "%";
+        volumeInput.title = Number.parseInt(voiceSettings.volume * 100) + "%";
         volumeLabel.dataset.i18nValue = volumeInput.title;
 
         volumeInput.oninput = () => {
-            volumeInput.title = parseInt(volumeInput.value * 100) + "%";
+            volumeInput.title = Number.parseInt(volumeInput.value * 100) + "%";
             volumeLabel.innerText = `Volume ${volumeInput.title}`;
             voiceSettings.volume = volumeInput.value;
             if (this.#voiceCall) {
@@ -188,12 +188,12 @@ class StreamContextMenu extends ContextMenu {
         // Initial volume
         if (stream) {
             volumeInput.value = stream.getVolume();
-            volumeInput.title = parseInt(volumeInput.value * 100) + "%";;
+            volumeInput.title = Number.parseInt(volumeInput.value * 100) + "%";;
             volumeLabel.dataset.i18nValue = volumeInput.title;
         }
 
         volumeInput.oninput = () => {
-            volumeInput.title = parseInt(volumeInput.value * 100) + "%";
+            volumeInput.title = Number.parseInt(volumeInput.value * 100) + "%";
             volumeLabel.innerText = `Volume ${volumeInput.title}`;
             if (this.#stream) {
                 this.#stream.setVolume(volumeInput.value);

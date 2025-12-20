@@ -402,10 +402,6 @@ svg {
     width: -webkit-fill-available;
 }
 
-.message-container {
-    display: flex;
-}
-
 /* ROOMS (list) */
 .rooms {
     overflow-y: auto;
@@ -537,6 +533,7 @@ svg {
 /* MESSAGE */
 
 .message-container {
+    display: flex;
     padding-bottom: 0.5rem;
 }
 

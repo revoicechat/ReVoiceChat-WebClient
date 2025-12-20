@@ -1,6 +1,5 @@
 import {afterEach, beforeEach, describe, expect, test} from 'vitest';
 import {getAllDeclaredDataThemes} from "./theme.component.js";
-import './theme.component.js';
 
 describe('theme.component', () => {
   describe('getAllDeclaredDataThemes', () => {
@@ -12,8 +11,8 @@ describe('theme.component', () => {
     });
 
     afterEach(() => {
-      if (styleElement && styleElement.parentNode) {
-        styleElement.parentNode.removeChild(styleElement);
+      if (styleElement?.parentNode) {
+        styleElement.remove();
       }
     });
 
@@ -148,7 +147,7 @@ describe('theme.component', () => {
       expect(divs.length).toBe(1);
       const div = divs.item(0);
       const theme = div.querySelector("div[data-theme]")
-      expect(theme.getAttribute("data-theme")).toBe("test");
+      expect(theme.dataset.theme).toBe("test");
     });
   });
 });
