@@ -67,11 +67,7 @@ export class Streamer {
         this.#token = token;
     }
 
-    async start(streamName, type, videoCodec) {
-        if (!streamName) {
-            throw new Error('streamName is null or undefined');
-        }
-
+    async start(type, videoCodec) {
         if (!type) {
             throw new Error('type is null or undefined');
         }
@@ -114,7 +110,7 @@ export class Streamer {
         await this.#player.play();
 
         // Create WebSocket
-        this.#socket = new WebSocket(`${this.#streamUrl}/${this.#user.id}/${streamName}`, ["Bearer." + this.#token]);
+        this.#socket = new WebSocket(`${this.#streamUrl}/${this.#user.id}/${type}`, ["Bearer." + this.#token]);
         this.#socket.binaryType = "arraybuffer";
         this.#socket.onclose = async () => { await this.stop(); };
         this.#socket.onerror = async (e) => { await this.stop(); console.error('Streamer : WebSocket error:', e) };

@@ -34,7 +34,7 @@ export default class StreamController {
             if (this.#webcamEnabled) {
                 this.#stopStream("webcam");
             } else {
-                this.#startStream("webcam");
+                this.#startWebcam();
             }
             return;
         }
@@ -43,50 +43,32 @@ export default class StreamController {
             if (this.#displayEnabled) {
                 this.#stopStream("display");
             } else {
-                this.#startStream("display");
+                this.#startDisplay();
             }
         }
     }
 
-    async #startStream(type) {
+    async #startDisplay() {
         try {
             const div = document.createElement('div');
-            this.#streamer[type] = {
+            this.#streamer["display"] = {
                 stream: new Streamer(CoreServer.streamUrl(), this.#user, ReVoiceChat.getToken()),
                 div: div
             }
 
-            if (type === "webcam") {
-                const player = await this.#streamer[type].stream.start(type, type, await Codec.webcamConfig());
-
-                div.className = "player";
-                div.appendChild(player);
-                div.onclick = () => {
-                    this.focus(div)
-                }
-                div.oncontextmenu = (event) => {
-                    event.preventDefault();
-                }
-
-                document.getElementById('stream-container').appendChild(div);
-                this.#webcamEnabled = true;
-                document.getElementById("stream-webcam").classList.add("green");
-            }
-
-            if (type === "display") {
-                let resolution = 'HD';
-                let framerate = '30';
-                let codec = 'AUTO';
-                Swal.fire({
-                    title: i18n.translateOne("stream.modal.title"),
-                    animation: false,
-                    customClass: SwalCustomClass,
-                    showCancelButton: true,
-                    focusConfirm: false,
-                    confirmButtonText: i18n.translateOne("stream.modal.confirm"),
-                    cancelButtonText: i18n.translateOne("stream.modal.cancel"),
-                    allowOutsideClick: false,
-                    html: `
+            let resolution = 'HD';
+            let framerate = '30';
+            let codec = 'AUTO';
+            Swal.fire({
+                title: i18n.translateOne("stream.modal.title"),
+                animation: false,
+                customClass: SwalCustomClass,
+                showCancelButton: true,
+                focusConfirm: false,
+                confirmButtonText: i18n.translateOne("stream.modal.confirm"),
+                cancelButtonText: i18n.translateOne("stream.modal.cancel"),
+                allowOutsideClick: false,
+                html: `
                         <form class='popup' id='popup-stream'>
                             <label data-i18n="stream.modal.resolution">Resolution</label>
                             <select id='popup-resolution'>
@@ -110,32 +92,66 @@ export default class StreamController {
                                 <option value='AV1'>AV1</option>
                             </select>
                         </form>`,
-                    didOpen: () => {
-                        i18n.translatePage(document.getElementById("popup-stream"))
-                        document.getElementById('popup-resolution').oninput = () => { resolution = document.getElementById('popup-resolution').value };
-                        document.getElementById('popup-framerate').oninput = () => { framerate = document.getElementById('popup-framerate').value };
-                        document.getElementById('popup-codec').oninput = () => { codec = document.getElementById('popup-framerate').value };
-                    }
-                }).then(async (result) => {
-                    if (result.value) {
-                        const player = await this.#streamer[type].stream.start(type, type, await Codec.streamConfig(resolution, framerate, codec));
+                didOpen: () => {
+                    i18n.translatePage(document.getElementById("popup-stream"))
+                    document.getElementById('popup-resolution').oninput = () => { resolution = document.getElementById('popup-resolution').value };
+                    document.getElementById('popup-framerate').oninput = () => { framerate = document.getElementById('popup-framerate').value };
+                    document.getElementById('popup-codec').oninput = () => { codec = document.getElementById('popup-framerate').value };
+                }
+            }).then(async (result) => {
+                if (result.value) {
+                    const player = await this.#streamer["display"].stream.start("display", await Codec.streamConfig(resolution, framerate, codec));
 
-                        div.className = "player";
-                        div.appendChild(player);
-                        div.onclick = () => {
-                            this.focus(div)
-                        }
-                        div.oncontextmenu = (event) => {
-                            event.preventDefault();
-                        }
-                        document.getElementById('stream-container').appendChild(div);
-
-                        this.#displayEnabled = true;
-                        document.getElementById("stream-display").classList.add("green");
+                    div.className = "player";
+                    div.appendChild(player);
+                    div.onclick = () => {
+                        this.focus(div)
                     }
-                });
+                    div.oncontextmenu = (event) => {
+                        event.preventDefault();
+                    }
+                    document.getElementById('stream-container').appendChild(div);
+
+                    this.#displayEnabled = true;
+                    document.getElementById("stream-display").classList.add("green");
+                }
+            });
+        }
+        catch (error) {
+            console.error(error);
+            Swal.fire({
+                icon: 'error',
+                title: i18n.translateOne("stream.start.error"),
+                animation: false,
+                customClass: SwalCustomClass,
+                showCancelButton: false,
+                confirmButtonText: "OK",
+                allowOutsideClick: false,
+            });
+        }
+    }
+
+    async #startWebcam() {
+        try {
+            const div = document.createElement('div');
+            this.#streamer["webcam"] = {
+                stream: new Streamer(CoreServer.streamUrl(), this.#user, ReVoiceChat.getToken()),
+                div: div
             }
-        } catch (error) {
+            const player = await this.#streamer["webcam"].stream.start("webcam", await Codec.webcamConfig());
+            div.className = "player";
+            div.appendChild(player);
+            div.onclick = () => {
+                this.focus(div)
+            }
+            div.oncontextmenu = (event) => {
+                event.preventDefault();
+            }
+            document.getElementById('stream-container').appendChild(div);
+            this.#webcamEnabled = true;
+            document.getElementById("stream-webcam").classList.add("green");
+        }
+        catch (error) {
             console.error(error);
             Swal.fire({
                 icon: 'error',
