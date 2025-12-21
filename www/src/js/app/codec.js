@@ -47,43 +47,36 @@ export default class Codec {
         }
     }
 
-    // 1080p30 VP9
-    static STREAM_VIDEO_FHD_VP9 = {
-        codec: "vp09.00.10.08",
-        framerate: 30,
-        width: 1280,
-        height: 720,
-        bitrate: 3_000_000,
-        latencyMode: "realtime",
-    }
-
-    // 1080p30 AV1
-    static STREAM_VIDEO_FHD_AV1 = {
-        codec: "av01.0.04M.08",
-        framerate: 30,
-        width: 1920,
-        height: 1080,
-        bitrate: 3_000_000,
-        latencyMode: "realtime",
+    static VIDEO_CODEC = {
+        VP8: "vp8",
+        VP9: "vp09.00.10.08",
+        AV1: "av01.0.04M.08"
     }
 
     static async webcamConfig() {
-        const isSupported = (await VideoEncoder.isConfigSupported(Codec.STREAM_VIDEO_FHD_AV1)).supported;
-        if (isSupported) {
-            return Codec.STREAM_VIDEO_FHD_AV1;
+        const config = {
+            codec: Codec.VIDEO_CODEC.AV1,
+            framerate: 30,
+            width: 1920,
+            height: 1080,
+            bitrate: 3_000_000,
+            latencyMode: "realtime",
         }
-        else {
-            return Codec.STREAM_VIDEO_FHD_VP9;
+
+        // First fallback
+        if (!(await VideoEncoder.isConfigSupported(config)).supported) {
+            config.codec = Codec.VIDEO_CODEC.VP9;
         }
+
+        // Second fallback
+        if (!(await VideoEncoder.isConfigSupported(config)).supported) {
+            config.codec = Codec.VIDEO_CODEC.VP8;
+        }
+
+        return config;
     }
 
     static async streamConfig(inputResolution, inputFps, inputCodec) {
-        const codec = {
-            VP8: "vp8",
-            VP9: "vp09.00.10.08",
-            AV1: "av01.0.04M.08"
-        }
-
         const resolution = {
             HD: {
                 width: 1280,
@@ -122,18 +115,20 @@ export default class Codec {
         config.framerate = inputFps;
 
         if (inputCodec === "AUTO") {
-            config.codec = codec.AV1;
-            if (!(await VideoEncoder.isConfigSupported(config)).supported) {
-                config.codec = codec.VP9;
-            }
+            config.codec = Codec.VIDEO_CODEC.AV1;
         }
         else {
-            config.codec = codec[inputCodec];
+            config.codec = Codec.VIDEO_CODEC[inputCodec];
         }
 
-        // Last fallback
+        // First fallback
         if (!(await VideoEncoder.isConfigSupported(config)).supported) {
-            config.codec = codec.VP8;
+            config.codec = Codec.VIDEO_CODEC.VP9;
+        }
+
+        // Second fallback
+        if (!(await VideoEncoder.isConfigSupported(config)).supported) {
+            config.codec = Codec.VIDEO_CODEC.VP8;
         }
 
         return config;

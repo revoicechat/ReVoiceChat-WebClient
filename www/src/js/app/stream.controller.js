@@ -80,16 +80,16 @@ export default class StreamController {
 
                             <label data-i18n="stream.modal.framerate">Framerate</label>
                             <select id='popup-framerate'>
-                                <option value='5'>5fps</option>
-                                <option value='30' selected>30fps</option>
-                                <option value='60'>60fps</option>
+                                <option value='10'>10</option>
+                                <option value='30' selected>30 (default)</option>
+                                <option value='60'>60</option>
                             </select>
 
                             <label data-i18n="stream.modal.codec">Codec</label>
                             <select id='popup-codec'>
                                 <option value='AUTO' selected>Auto</option>
-                                <option value='VP9'>VP9</option>
-                                <option value='AV1'>AV1</option>
+                                <option value='VP9'>${i18n.translateOne("stream.modal.vp9")}</option>
+                                <option value='AV1'>${i18n.translateOne("stream.modal.av1")}</option>
                             </select>
                         </form>`,
                 didOpen: () => {
