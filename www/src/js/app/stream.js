@@ -48,6 +48,10 @@ export class Streamer {
     #videoEncoder;
     #videoEncoderInterval;
     #keyframeCounter = 0;
+    #lastFrame = {
+        height: 0,
+        width: 0
+    }
 
     constructor(streamUrl, user, token) {
         if (!streamUrl) {
@@ -72,7 +76,7 @@ export class Streamer {
             throw new Error('type is null or undefined');
         }
 
-        if(!videoCodec){
+        if (!videoCodec) {
             throw new Error('videoCodec is null or undefined');
         }
 
@@ -256,12 +260,25 @@ export class Streamer {
             return;
         }
 
+        if (this.#lastFrame.height === frame.codedHeight || this.#lastFrame.width === frame.codedWidth) {
+            // Captured frame width and height didn't change since last frame
+            return;
+        }
+
+        console.debug(`Frame resolution: ${frame.codedWidth}x${frame.codedHeight}`);
+        console.debug(`Codec resolution: ${this.#videoCodec.width}x${this.#videoCodec.height}`);
+
+        this.#lastFrame.width = frame.codedWidth;
+        this.#lastFrame.height = frame.codedHeight;
+
         // Frame H & W are smaller than Max Codec H & W
-        if (frame.codedHeight < this.#videoCodec.height && frame.codedWidth < this.#videoCodec.width) {
+        if (frame.codedHeight <= this.#videoCodec.height && frame.codedWidth <= this.#videoCodec.width) {
+            console.debug('Exact')
             await this.#setEncoderResolution(Number.parseInt(frame.codedHeight), Number.parseInt(frame.codedWidth));
             return;
         }
 
+        console.debug('Ratio')
         const ratio = Math.min((this.#videoCodec.height / frame.codedHeight), (this.#videoCodec.width / frame.codedWidth));
         const height = Number.parseInt(frame.codedHeight * ratio);
         const width = Number.parseInt(frame.codedWidth * ratio);
@@ -269,8 +286,11 @@ export class Streamer {
     }
 
     async #setEncoderResolution(height, width) {
-        this.#videoCodec.height = height;
-        this.#videoCodec.width = width;
+        console.debug(`Streaming resolution set to : ${width}x${height}`);
+
+        const newConfig = structuredClone(this.#videoCodec);
+        newConfig.height = height;
+        newConfig.width = width;
 
         if (this.#videoMetadata && this.#videoMetadata.decoderMetadata) {
             this.#videoMetadata.decoderMetadata.codedHeight = height;
@@ -278,7 +298,7 @@ export class Streamer {
         }
 
         if (this.#videoEncoder) {
-            await this.#videoEncoder.configure(this.#videoCodec);
+            await this.#videoEncoder.configure(newConfig);
         }
     }
 
@@ -410,7 +430,7 @@ export class Viewer {
                     this.#context.drawImage(frame, 0, 0, this.#canvas.width, this.#canvas.height);
                     frame.close();
                 },
-                error: (error) => { throw new Error(`VideoDecoder error:\n${error.name}`) }
+                error: (error) => { this.leave(); throw new Error(`VideoDecoder error:\n${error.name}`); }
             });
 
             return this.#canvas;
