@@ -337,7 +337,6 @@ export class Viewer {
     #audioPlayhead = 0;
 
     // Video decoder
-    #videoCodec = structuredClone(Codec.STREAM_VIDEO_DEFAULT);
     #videoDecoder;
     #videoDecoderKeyFrame = false;
 
@@ -358,10 +357,9 @@ export class Viewer {
     async join(userId, streamName) {
         if (userId && streamName) {
             const audioSupported = await AudioDecoder.isConfigSupported(this.#audioCodec);
-            const videoSupported = await VideoDecoder.isConfigSupported(this.#videoCodec);
 
-            if (!audioSupported || !videoSupported) {
-                console.error("Audio or Video codec not supported");
+            if (!audioSupported) {
+                console.error("Audio codec not supported");
                 return null;
             }
 
@@ -407,7 +405,7 @@ export class Viewer {
                     this.#context.drawImage(frame, 0, 0, this.#canvas.width, this.#canvas.height);
                     frame.close();
                 },
-                error: (error) => { throw new Error(`VideoDecoder error:\n${error.name}\nCurrent codec :${this.#videoCodec.codec}`) }
+                error: (error) => { throw new Error(`VideoDecoder error:\n${error.name}`) }
             });
 
             return this.#canvas;
