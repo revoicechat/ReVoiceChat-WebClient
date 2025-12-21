@@ -243,7 +243,7 @@ export class Streamer {
 
     #isKeyframe() {
         this.#keyframeCounter++;
-        if (this.#keyframeCounter > this.#videoCodec.framerate) {
+        if (this.#keyframeCounter >= this.#videoCodec.framerate) {
             this.#keyframeCounter = 0;
             return true;
         }
@@ -258,13 +258,13 @@ export class Streamer {
 
         // Frame H & W are smaller than Max Codec H & W
         if (frame.codedHeight < this.#videoCodec.height && frame.codedWidth < this.#videoCodec.width) {
-            await this.#setEncoderResolution(frame.codedHeight, frame.codedWidth);
+            await this.#setEncoderResolution(Number.parseInt(frame.codedHeight), Number.parseInt(frame.codedWidth));
             return;
         }
 
         const ratio = Math.min((this.#videoCodec.height / frame.codedHeight), (this.#videoCodec.width / frame.codedWidth));
-        const height = frame.codedHeight * ratio;
-        const width = frame.codedWidth * ratio;
+        const height = Number.parseInt(frame.codedHeight * ratio);
+        const width = Number.parseInt(frame.codedWidth * ratio);
         await this.#setEncoderResolution(height, width);
     }
 
