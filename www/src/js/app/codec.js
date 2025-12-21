@@ -67,18 +67,19 @@ export default class Codec {
         latencyMode: "realtime",
     }
 
-    static async webcamConfig(){
+    static async webcamConfig() {
         const isSupported = (await VideoEncoder.isConfigSupported(Codec.STREAM_VIDEO_FHD_AV1)).supported;
-        if(isSupported){
+        if (isSupported) {
             return Codec.STREAM_VIDEO_FHD_AV1;
         }
-        else{
+        else {
             return Codec.STREAM_VIDEO_FHD_VP9;
         }
     }
 
     static async streamConfig(inputResolution, inputFps, inputCodec) {
         const codec = {
+            VP8: "vp8",
             VP9: "vp09.00.10.08",
             AV1: "av01.0.04M.08"
         }
@@ -122,13 +123,17 @@ export default class Codec {
 
         if (inputCodec === "AUTO") {
             config.codec = codec.AV1;
-            const isSupported = (await VideoEncoder.isConfigSupported(config)).supported;
-            if(!isSupported){
+            if (!(await VideoEncoder.isConfigSupported(config)).supported) {
                 config.codec = codec.VP9;
             }
         }
-        else{
+        else {
             config.codec = codec[inputCodec];
+        }
+
+        // Last fallback
+        if (!(await VideoEncoder.isConfigSupported(config)).supported) {
+            config.codec = codec.VP8;
         }
 
         return config;
