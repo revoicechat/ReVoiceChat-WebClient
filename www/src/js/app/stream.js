@@ -34,7 +34,7 @@ export class Streamer {
     #player;
 
     // Audio Encoder
-    #audioCodec = structuredClone(Codec.DEFAULT_STREAM_AUDIO);
+    #audioCodec = structuredClone(Codec.STREAM_AUDIO);
     #audioBuffer = [];
     #audioBufferMaxLength = Number.parseInt(this.#audioCodec.sampleRate * this.#audioCodec.numberOfChannels * (this.#audioCodec.opus.frameDuration / 1_000_000)); // 2ch x 48000Hz × 0.020 sec = 1920 samples
     #audioCollector;
@@ -43,7 +43,7 @@ export class Streamer {
     #audioTimestamp = 0;
 
     // Video Encoder
-    #videoCodec = structuredClone(Codec.DEFAULT_STREAM_VIDEO);
+    #videoCodec = structuredClone(Codec.STREAM_VIDEO_DEFAULT);
     #videoMetadata;
     #videoEncoder;
     #videoEncoderInterval;
@@ -329,7 +329,7 @@ export class Viewer {
     }
 
     // Audio decoder
-    #audioCodec = structuredClone(Codec.DEFAULT_STREAM_AUDIO);
+    #audioCodec = structuredClone(Codec.STREAM_AUDIO);
     #audioContext;
     #audioDecoder;
     #audioGain;
@@ -337,7 +337,7 @@ export class Viewer {
     #audioPlayhead = 0;
 
     // Video decoder
-    #videoCodec = structuredClone(Codec.DEFAULT_STREAM_VIDEO);
+    #videoCodec = structuredClone(Codec.STREAM_VIDEO_DEFAULT);
     #videoDecoder;
     #videoDecoderKeyFrame = false;
 
