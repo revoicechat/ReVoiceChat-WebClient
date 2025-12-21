@@ -16,8 +16,8 @@ export default class Alert {
     }
 
     static attachEvents(){
-        document.getElementById("audio-output-try-voicechat").addEventListener('click', () => Alert.#playTest('voiceChat'));
-        document.getElementById("audio-output-try-notification").addEventListener('click', () => Alert.#playTest('notification'));
+        document.getElementById("audio-output-try-voicechat").addEventListener('click', () => Alert.#playVoiceChat());
+        document.getElementById("audio-output-try-notification").addEventListener('click', () => Alert.#playNotification());
     }
 
     /** @type {string} type */
@@ -31,22 +31,15 @@ export default class Alert {
         void audio.play();
     }
 
-    /** @type {string} type */
-    static #playTest(type) {
-        if (!this.#testSounds[type]) {
-            console.error('Notification type is null or undefined');
-        }
+    static #playVoiceChat() {
+        let audio = new Audio(this.#testSounds['voiceChat']);
+        audio.volume = RVC.userSettings().getVoiceVolume();
+        void audio.play();
+    }
 
-        let audio = new Audio(this.#testSounds[type]);
-
-        switch(type){
-            case 'notification':
-                audio.volume = RVC.userSettings().getNotificationVolume();
-                break;
-            case 'voiceChat':
-                audio.volume = RVC.userSettings().getVoiceVolume();
-                break;
-        }
+    static #playNotification() {
+        let audio = new Audio(this.#testSounds['notification']);
+        audio.volume = RVC.userSettings().getNotificationVolume();
         void audio.play();
     }
 }
