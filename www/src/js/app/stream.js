@@ -265,20 +265,15 @@ export class Streamer {
             return;
         }
 
-        console.debug(`Frame resolution: ${frame.codedWidth}x${frame.codedHeight}`);
-        console.debug(`Codec resolution: ${this.#videoCodec.width}x${this.#videoCodec.height}`);
-
         this.#lastFrame.width = frame.codedWidth;
         this.#lastFrame.height = frame.codedHeight;
 
         // Frame H & W are smaller than Max Codec H & W
         if (frame.codedHeight <= this.#videoCodec.height && frame.codedWidth <= this.#videoCodec.width) {
-            console.debug('Exact')
             await this.#setEncoderResolution(Number.parseInt(frame.codedHeight), Number.parseInt(frame.codedWidth));
             return;
         }
 
-        console.debug('Ratio')
         const ratio = Math.min((this.#videoCodec.height / frame.codedHeight), (this.#videoCodec.width / frame.codedWidth));
         const height = Number.parseInt(frame.codedHeight * ratio);
         const width = Number.parseInt(frame.codedWidth * ratio);
@@ -286,8 +281,6 @@ export class Streamer {
     }
 
     async #setEncoderResolution(height, width) {
-        console.debug(`Streaming resolution set to : ${width}x${height}`);
-
         const newConfig = structuredClone(this.#videoCodec);
         newConfig.height = height;
         newConfig.width = width;
