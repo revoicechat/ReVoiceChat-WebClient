@@ -2,17 +2,15 @@
 export default class Modal {
     static #instance = new Modal();
 
-    async static toggle(options) {
+    /**
+     * @param {*} options
+     * @returns {Promise<unknown>}
+     */
+    static async toggle(options) {
         await Modal.#instance.#fire(options);
     }
 
     constructor() {
-        this.dialog = null;
-        this.#createModalStructure();
-    }
-
-    #createModalStructure() {
-        // Create native dialog HTML structure
         const dialogHTML = `
             <dialog id="custom-modal" class="custom-dialog">
                 <div class="dialog-content">
@@ -36,131 +34,39 @@ export default class Modal {
 
     #addStyles() {
         if (document.getElementById('dialog-styles')) return;
-
-        const styles = `
-            <style id="dialog-styles">
-                .custom-dialog {
-                    border: none;
-                    border-radius: 8px;
-                    padding: 0;
-                    max-width: 500px;
-                    width: 90%;
-                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-                    background: var(--background-color, #1e1e1e);
-                }
-
-                .custom-dialog::backdrop {
-                    background: rgba(0, 0, 0, 0.5);
-                }
-
-                .dialog-content {
-                    padding: 2rem;
-                    text-align: center;
-                }
-
-                .dialog-icon {
-                    width: 60px;
-                    height: 60px;
-                    margin: 0 auto 1rem;
-                    border-radius: 50%;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    font-size: 2rem;
-                }
-
-                .dialog-icon.error {
-                    background: #f44336;
-                    color: white;
-                }
-
-                .dialog-icon.error::before {
-                    content: '✕';
-                }
-
-                .dialog-icon.success {
-                    background: #4caf50;
-                    color: white;
-                }
-
-                .dialog-icon.success::before {
-                    content: '✓';
-                }
-
-                .dialog-title {
-                    margin: 0 0 1rem;
-                    font-size: 1.5rem;
-                    color: var(--pri-text-color, #ffffff);
-                }
-
-                .dialog-text {
-                    margin: 0 0 1.5rem;
-                    color: var(--pri-text-color, #cccccc);
-                }
-
-                .dialog-buttons {
-                    display: flex;
-                    gap: 1rem;
-                    justify-content: center;
-                }
-
-                .dialog-confirm,
-                .dialog-cancel {
-                    padding: 0.75rem 2rem;
-                    border: none;
-                    border-radius: 4px;
-                    cursor: pointer;
-                    font-size: 1rem;
-                    transition: background 0.3s;
-                }
-
-                .dialog-confirm {
-                    background: var(--pri-button-bg-color);
-                    color: white;
-                }
-
-                .dialog-confirm:hover {
-                    background: var(--pri-button-hover-color);
-                }
-
-                .dialog-cancel {
-                    background: #757575;
-                    color: white;
-                }
-
-                .dialog-cancel:hover {
-                    background: #616161;
-                }
-            </style>
-        `;
-
-        document.head.insertAdjacentHTML('beforeend', styles);
+        document.head.insertAdjacentHTML(
+            'beforeend',
+            `<link id="dialog-styles" href="src/js/component/modal.component.css" rel="stylesheet" />`
+        );
     }
 
-    #fire(options) {
+    /**
+     * @param {*} opt
+     * @returns {Promise<unknown>}
+     */
+    #fire(opt) {
         return new Promise((resolve) => {
-            const { icon, title, text, html, showCancelButton, confirmButtonText, allowOutsideClick = true } = options;
-
+            const options = ModalOptions.of(opt);
             // Set icon
             const iconEl = this.dialog.querySelector('.dialog-icon');
             iconEl.className = 'dialog-icon';
-            if (icon) {
+            if (options.icon) {
                 iconEl.style.display = 'block';
-                iconEl.classList.add(icon);
+                iconEl.classList.add(options.icon);
             } else {
                 iconEl.style.display = 'none';
             }
 
             // Set title
-            this.dialog.querySelector('.dialog-title').textContent = title || '';
+            this.dialog.querySelector('.dialog-title').textContent = options.title || '';
 
             // Set text
             const textEl = this.dialog.querySelector('.dialog-text');
-            if (text) {
-                textEl.textContent = text;
+            if (options.text) {
+                textEl.textContent = options.text;
                 textEl.style.display = 'block';
-            } else if (html) {
-                textEl.innerHTML = html;
+            } else if (options.html) {
+                textEl.innerHTML = options.html;
                 textEl.style.display = 'block';
             } else {
                 textEl.textContent = '';
@@ -171,8 +77,8 @@ export default class Modal {
             const confirmBtn = this.dialog.querySelector('.dialog-confirm');
             const cancelBtn = this.dialog.querySelector('.dialog-cancel');
 
-            confirmBtn.textContent = confirmButtonText || 'OK';
-            cancelBtn.style.display = showCancelButton ? 'inline-block' : 'none';
+            confirmBtn.textContent = options.confirmButtonText || 'OK';
+            cancelBtn.style.display = options.showCancelButton ? 'inline-block' : 'none';
 
             // Handle dialog close
             const handleClose = (e) => {
@@ -188,7 +94,7 @@ export default class Modal {
 
             // Handle click outside
             const handleClick = (e) => {
-                if (allowOutsideClick && e.target === this.dialog) {
+                if (options.allowOutsideClick && e.target === this.dialog) {
                     const rect = this.dialog.getBoundingClientRect();
                     if (
                         e.clientX < rect.left ||
@@ -207,5 +113,38 @@ export default class Modal {
             // Show modal using native showModal()
             this.dialog.showModal();
         });
+    }
+}
+
+class ModalOptions {
+    /** @type string */
+    icon;
+    /** @type string */
+    title;
+    /** @type string */
+    text;
+    /** @type string */
+    html;
+    /** @type boolean */
+    showCancelButton;
+    /** @type string */
+    confirmButtonText;
+    /** @type boolean */
+    allowOutsideClick = true
+
+    /**
+     * @param {*} options
+     * @returns {ModalOptions}
+     */
+    static of(options) {
+        const modalOptions = new ModalOptions();
+        modalOptions.icon              = options.icon
+        modalOptions.title             = options.title
+        modalOptions.text              = options.text
+        modalOptions.html              = options.html
+        modalOptions.showCancelButton  = options.showCancelButton
+        modalOptions.confirmButtonText = options.confirmButtonText
+        modalOptions.allowOutsideClick = options.allowOutsideClick ?? true
+        return modalOptions
     }
 }
