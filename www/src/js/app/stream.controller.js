@@ -1,10 +1,9 @@
-import { Streamer, Viewer } from "./stream.js";
-import { i18n } from "../lib/i18n.js";
-import { SwalCustomClass } from "../lib/tools.js";
-import Swal from '../lib/sweetalert2.esm.all.min.js';
+import {Streamer, Viewer} from "./stream.js";
+import {i18n} from "../lib/i18n.js";
 import CoreServer from "./core/core.server.js";
 import ReVoiceChat from "./revoicechat.js";
 import Codec from "./codec.js";
+import Modal from "../component/modal.component.js";
 
 export default class StreamController {
     #streamer = {};
@@ -59,15 +58,12 @@ export default class StreamController {
             let resolution = 'HD';
             let framerate = '30';
             let codec = 'AUTO';
-            Swal.fire({
+            Modal.toggle({
                 title: i18n.translateOne("stream.modal.title"),
-                animation: false,
-                customClass: SwalCustomClass,
                 showCancelButton: true,
                 focusConfirm: false,
                 confirmButtonText: i18n.translateOne("stream.modal.confirm"),
                 cancelButtonText: i18n.translateOne("stream.modal.cancel"),
-                allowOutsideClick: false,
                 html: `
                         <form class='popup' id='popup-stream'>
                             <label data-i18n="stream.modal.resolution">Resolution</label>
@@ -99,7 +95,7 @@ export default class StreamController {
                     document.getElementById('popup-codec').oninput = () => { codec = document.getElementById('popup-codec').value };
                 }
             }).then(async (result) => {
-                if (result.value) {
+                if (result.isConfirmed) {
                     const player = await this.#streamer["display"].stream.start("display", await Codec.streamConfig(resolution, framerate, codec));
 
                     div.className = "player";
@@ -119,15 +115,7 @@ export default class StreamController {
         }
         catch (error) {
             console.error(error);
-            Swal.fire({
-                icon: 'error',
-                title: i18n.translateOne("stream.start.error"),
-                animation: false,
-                customClass: SwalCustomClass,
-                showCancelButton: false,
-                confirmButtonText: "OK",
-                allowOutsideClick: false,
-            });
+            await Modal.toggleError(i18n.translateOne("stream.start.error"));
         }
     }
 
@@ -153,15 +141,7 @@ export default class StreamController {
         }
         catch (error) {
             console.error(error);
-            Swal.fire({
-                icon: 'error',
-                title: i18n.translateOne("stream.start.error"),
-                animation: false,
-                customClass: SwalCustomClass,
-                showCancelButton: false,
-                confirmButtonText: "OK",
-                allowOutsideClick: false,
-            });
+            await Modal.toggleError(i18n.translateOne("stream.start.error"));
         }
     }
 
@@ -185,15 +165,7 @@ export default class StreamController {
             }
         } catch (error) {
             console.error(error);
-            Swal.fire({
-                icon: 'error',
-                title: i18n.translateOne("stream.start.error"),
-                animation: false,
-                customClass: SwalCustomClass,
-                showCancelButton: false,
-                confirmButtonText: "OK",
-                allowOutsideClick: false,
-            });
+            await Modal.toggleError(i18n.translateOne("stream.start.error"));
         }
     }
 

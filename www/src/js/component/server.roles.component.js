@@ -1,7 +1,7 @@
-import Swal from '../lib/sweetalert2.esm.all.min.js';
 import { i18n } from "../lib/i18n.js";
 import MediaServer from "../app/media/media.server.js";
 import CoreServer from "../app/core/core.server.js";
+import Modal from "./modal.component.js";
 
 class ServerRolesWebComponent extends HTMLElement {
 
@@ -291,21 +291,11 @@ class ServerRolesWebComponent extends HTMLElement {
     }
 
     async #newRole() {
-        Swal.fire({
+        Modal.toggle({
             title: 'Create New Role',
-            animation: false,
-            customClass: {
-                title: "swalTitle",
-                popup: "swalPopup",
-                cancelButton: "swalCancel",
-                confirmButton: "swalConfirm",
-                input: "assigned-user-checkbox"
-
-            },
             showCancelButton: true,
             focusConfirm: false,
             confirmButtonText: "Add",
-            allowOutsideClick: false,
             html: `
             <form id="new-role-popup" class='popup'>
                 <div class="server-structure-form-group">
@@ -325,15 +315,14 @@ class ServerRolesWebComponent extends HTMLElement {
                 i18n.translatePage(document.getElementById("new-role-popup"))
             },
             preConfirm: () => {
-                const popup = Swal.getPopup();
-                const name = popup.querySelector('#roleName').value;
-                const color = popup.querySelector('#roleColor').value;
-                const priority = popup.querySelector('#rolePriority').value;
+                const name = document.getElementById('roleName').value;
+                const color = document.getElementById('roleColor').value;
+                const priority = document.getElementById('rolePriority').value;
                 return { name: name, color: color, priority: Number.parseInt(priority) };
             }
         }).then(async (result) => {
             if (result.isConfirmed) {
-                const newRole = await this.createRoleAPI(result.value);
+                const newRole = await this.createRoleAPI(result.data);
                 await this.fetchRoles()
                 this.renderRoles();
                 this.selectRole(newRole.id);
@@ -342,24 +331,14 @@ class ServerRolesWebComponent extends HTMLElement {
     }
 
     async #assignedUser(role) {
-        Swal.fire({
+        Modal.toggle({
             title: 'Members',
-            animation: false,
-            customClass: {
-                title: "swalTitle",
-                popup: "swalPopup",
-                cancelButton: "swalCancel",
-                confirmButton: "swalConfirm",
-                input: "assigned-user-checkbox"
-
-            },
             showCancelButton: true,
             focusConfirm: false,
             confirmButtonText: "Save",
-            allowOutsideClick: false,
             preConfirm: () => {
                 // Get form values
-                let users = Array.from(Swal.getPopup().querySelectorAll('.assigned-user-item'));
+                let users = Array.from(document.querySelectorAll('.assigned-user-item'));
                 users = users.filter(elt => elt.querySelector("input:checked"))
                 users = users.map(item => item.dataset.userId)
                 return users;
@@ -396,7 +375,7 @@ class ServerRolesWebComponent extends HTMLElement {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 const roleId = role.id
-                await this.#updateRoleOfMember(roleId, result.value, 'PUT');
+                await this.#updateRoleOfMember(roleId, result.data, 'PUT');
             }
         });
     }

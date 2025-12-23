@@ -5,10 +5,13 @@
  *   html: string,
  *   showCancelButton: boolean,
  *   confirmButtonText: string,
+ *   confirmButtonClass: string,
  *   allowOutsideClick: boolean?
  *   didOpen: () => void
+ *   preConfirm: () => *
  * }} ModalOpt
  */
+import {i18n} from "../lib/i18n.js";
 
 class ModalOptions {
   /** @type {"error"|"success"|null} */
@@ -23,7 +26,15 @@ class ModalOptions {
   showCancelButton;
   /** @type string */
   confirmButtonText;
-  didOpen = () => {}
+  /** @type string */
+  confirmButtonClass;
+  /** @type {() => void} } */
+  didOpen = () => {
+  }
+  /** @type {() => *} } */
+  preConfirm = () => {
+    return {}
+  }
 
   /**
    * @param {ModalOpt} options
@@ -37,7 +48,12 @@ class ModalOptions {
     modalOptions.html = options.html
     modalOptions.showCancelButton = options.showCancelButton
     modalOptions.confirmButtonText = options.confirmButtonText
-    modalOptions.didOpen = options.didOpen ?? (() => {})
+    modalOptions.confirmButtonClass = options.confirmButtonClass
+    modalOptions.didOpen = options.didOpen ?? (() => {
+    })
+    modalOptions.preConfirm = options.preConfirm ?? (() => {
+      return {}
+    })
     return modalOptions
   }
 }
@@ -47,8 +63,26 @@ export default class Modal {
   static #instance = new Modal();
 
   /**
+   * @param {string} title
+   * @param {string} text
+   * @returns {Promise<{isConfirmed: boolean, data: *, isDismissed: boolean}>}
+   */
+  static async toggleError(title, text = "") {
+    return await Modal.toggle({
+      icon: 'error',
+      title: title,
+      text: text,
+      showCancelButton: false,
+    });
+  }
+
+  /**
    * @param {*} options
-   * @returns {Promise<unknown>}
+   * @returns {Promise<{
+   *   isConfirmed: boolean,
+   *   data: *,
+   *   isDismissed: boolean
+   * }>}
    */
   static async toggle(options) {
     return Modal.#instance.#fire(options);
@@ -86,7 +120,11 @@ export default class Modal {
 
   /**
    * @param {ModalOpt} opt
-   * @returns {Promise<unknown>}
+   * @returns {Promise<{
+   *   isConfirmed: boolean,
+   *   data: *,
+   *   isDismissed: boolean
+   * }>}
    */
   #fire(opt) {
     return new Promise((resolve) => {
@@ -131,6 +169,11 @@ export default class Modal {
       const cancelBtn = this.dialog.querySelector('.dialog-cancel');
 
       confirmBtn.textContent = options.confirmButtonText || 'OK';
+      if (options.confirmButtonClass) {
+        confirmBtn.classList.add(options.confirmButtonClass)
+      } else {
+        confirmBtn.class = "dialog-confirm"
+      }
       cancelBtn.style.display = options.showCancelButton ? 'inline-block' : 'none';
 
       // Handle dialog close
@@ -139,7 +182,7 @@ export default class Modal {
         this.dialog.removeEventListener('close', handleClose);
 
         if (returnValue === 'confirm') {
-          resolve({isConfirmed: true});
+          resolve({isConfirmed: true, data: options.preConfirm()});
         } else {
           resolve({isConfirmed: false, isDismissed: true});
         }

@@ -425,37 +425,6 @@ textarea.config-item:hover {
     background-color: var(--sec-hover-color);
 }
 
-/* SweetAlert2 */
-.swalPopup {
-    background-color: var(--pri-bg-color);
-    border: 1px solid var(--pri-bd-color);
-}
-
-.swal-input {
-    color: var(--pri-text-color);
-    background-color: var(--sec-bg-color);
-}
-
-.swalTitle {
-    color: var(--pri-text-color);
-}
-
-.swalConfirm {
-    background-color: var(--pri-button-bg-color);
-}
-
-.swalConfirm:hover {
-    background-color: var(--pri-button-hover-color);
-}
-
-.swalCancel {
-    background-color: var(--ter-button-bg-color);
-}
-
-.swalCancel:hover {
-    background-color: var(--ter-button-hover-color);
-}
-
 /* Server room structure */
 .server-structure-panel {
     background-color: var(--pri-bg-color);

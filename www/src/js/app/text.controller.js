@@ -1,9 +1,9 @@
 import Alert from './utils/alert.js';
-import Swal from '../lib/sweetalert2.esm.all.min.js';
-import { sanitizeString, SwalCustomClass, timestampToText, humanFileSize } from "../lib/tools.js";
-import { i18n } from "../lib/i18n.js";
+import {humanFileSize, sanitizeString, timestampToText} from "../lib/tools.js";
+import {i18n} from "../lib/i18n.js";
 import MediaServer from "./media/media.server.js";
 import CoreServer from "./core/core.server.js";
+import Modal from "../component/modal.component.js";
 
 export default class TextController {
     static MODE_SEND = 0;
@@ -218,8 +218,6 @@ export default class TextController {
     }
 
     async send() {
-        let result = null;
-
         const attachments_input = document.getElementById("text-attachment");
         let textInput = sanitizeString(document.getElementById('text-input').value);
 
@@ -241,16 +239,10 @@ export default class TextController {
                     attachments[element.name] = element;
                 }
                 else {
-                    await Swal.fire({
+                    await Modal.toggle({
                         icon: "error",
                         title: i18n.translateOne("attachement.error.size.title"),
                         html: i18n.translateOne("attachement.error.size.body", [element.name, humanFileSize(this.#attachmentMaxSize), humanFileSize(element.size)]),
-                        animation: true,
-                        customClass: {
-                            title: "swalTitle",
-                            popup: "swalPopup",
-                            confirmButton: "swalConfirm",
-                        },
                         showCancelButton: false,
                         focusConfirm: false,
                         confirmButtonText: "OK",
@@ -260,30 +252,9 @@ export default class TextController {
             }
         }
 
-        switch (this.mode) {
-            case TextController.MODE_SEND:
-                result = await CoreServer.fetch(`/room/${this.#room.id}/message`, 'PUT', data);
-                break;
-
-            case TextController.MODE_EDIT:
-                result = await CoreServer.fetch(`/message/${this.#editId}`, 'PATCH', data);
-                break;
-
-            default:
-                console.error('Invalid mode');
-                break;
-        }
-
+        let result = await this.#sendMessage(data);
         if (result) {
-
-            // Send attachments
-            if (this.mode === TextController.MODE_SEND) {
-                for (const media of result.medias) {
-                    const formData = new FormData();
-                    formData.append("file", attachments[media.name]);
-                    await MediaServer.fetch(`/attachments/${media.id}`, 'POST', formData, false);
-                }
-            }
+            await this.#sendAttachements(result, attachments);
 
             // Clean file input
             this.#removeAttachment();
@@ -299,16 +270,45 @@ export default class TextController {
             return;
         }
 
-        Swal.fire({
+        await Modal.toggle({
             icon: 'error',
             title: i18n.translateOne("attachement.error.title"),
             text: i18n.translateOne("attachement.error.body"),
-            animation: false,
-            customClass: SwalCustomClass,
             showCancelButton: false,
             confirmButtonText: "OK",
-            allowOutsideClick: false,
         });
+    }
+
+    /**
+     * @param data
+     * @returns {Promise<MessageRepresentation|null>}
+     */
+    async #sendMessage(data) {
+        let result = null;
+        switch (this.mode) {
+            case TextController.MODE_SEND:
+                result = await CoreServer.fetch(`/room/${this.#room.id}/message`, 'PUT', data);
+                break;
+
+            case TextController.MODE_EDIT:
+                result = await CoreServer.fetch(`/message/${this.#editId}`, 'PATCH', data);
+                break;
+
+            default:
+                console.error('Invalid mode');
+                break;
+        }
+        return result;
+    }
+
+    async #sendAttachements(result, attachments) {
+        if (this.mode === TextController.MODE_SEND) {
+            for (const media of result.medias) {
+                const formData = new FormData();
+                formData.append("file", attachments[media.name]);
+                await MediaServer.fetch(`/attachments/${media.id}`, 'POST', formData, false);
+            }
+        }
     }
 
     oninput(input) {

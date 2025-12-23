@@ -1,5 +1,4 @@
-import Swal from '../lib/sweetalert2.esm.all.min.js';
-import { SwalCustomClass, copyToClipboard } from "../lib/tools.js";
+import {copyToClipboard} from "../lib/tools.js";
 import CoreServer from "./core/core.server.js";
 import Modal from "../component/modal.component.js";
 
@@ -56,9 +55,8 @@ export class ServerSettingsInvitationController {
             void this.#invitationLoad();
             await Modal.toggle({
                 title: `New invitation`,
-                html: `<input class='swal-input' type='text' value='${result.id}' readonly>`,
+                html: `<input class='modal-input' type='text' value='${result.id}' readonly>`,
                 animation: false,
-                customClass: SwalCustomClass,
                 showCancelButton: false,
                 confirmButtonText: "OK",
                 allowOutsideClick: false,
@@ -93,21 +91,14 @@ export class ServerSettingsInvitationController {
 
     /** @param {InvitationRepresentation} data */
     #invitationDelete(data) {
-        Swal.fire({
+        Modal.toggle({
             title: `Delete invitation '${data.id}'`,
-            animation: false,
-            customClass: {
-                title: "swalTitle",
-                popup: "swalPopup",
-                cancelButton: "swalConfirm",
-                confirmButton: "swalCancel", // Swapped on purpose !
-            },
             showCancelButton: true,
             focusCancel: true,
             confirmButtonText: "Delete",
-            allowOutsideClick: false,
+            confirmButtonClass: "danger",
         }).then(async (result) => {
-            if (result.value) {
+            if (result.isConfirmed) {
                 await CoreServer.fetch(`/invitation/${data.id}`, 'DELETE');
                 void this.#invitationLoad();
             }

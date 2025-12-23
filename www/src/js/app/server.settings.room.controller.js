@@ -1,8 +1,7 @@
-import Swal from '../lib/sweetalert2.esm.all.min.js';
-import { SpinnerOnButton } from "../component/button.spinner.component.js";
-import { SwalCustomClass } from "../lib/tools.js";
-import { i18n } from "../lib/i18n.js";
+import {SpinnerOnButton} from "../component/button.spinner.component.js";
+import {i18n} from "../lib/i18n.js";
 import CoreServer from "./core/core.server.js";
+import Modal from "../component/modal.component.js";
 
 export class ServerSettingsRoomController {
 
@@ -79,14 +78,11 @@ export class ServerSettingsRoomController {
         this.#popupData.name = 'New room';
         this.#popupData.type = 'TEXT';
 
-        Swal.fire({
+        Modal.toggle({
             title: i18n.translateOne("server.structure.room.add"),
-            animation: false,
-            customClass: SwalCustomClass,
             showCancelButton: true,
             focusConfirm: false,
             confirmButtonText: "Add",
-            allowOutsideClick: false,
             html: `
             <form id="popup-new-room" class='popup'>
                 <label data-i18n="server.structure.room.name">Room name</label>
@@ -105,7 +101,7 @@ export class ServerSettingsRoomController {
                 i18n.translatePage(document.getElementById("popup-new-room"))
             }
         }).then(async (result) => {
-            if (result.value) {
+            if (result.isConfirmed) {
                 await CoreServer.fetch(`/server/${this.serverSettings.server.id}/room`, 'PUT', this.#popupData);
                 await this.roomLoad();
             }
@@ -120,14 +116,11 @@ export class ServerSettingsRoomController {
         const data = this.#roomsData[item.id];
         this.#popupData.name = data.name;
 
-        Swal.fire({
+        Modal.toggle({
             title: i18n.translateOne("server.structure.room.edit", [data.name]),
-            animation: false,
-            customClass: SwalCustomClass,
             showCancelButton: true,
             focusConfirm: false,
             confirmButtonText: "Edit",
-            allowOutsideClick: false,
             html: `
             <form id="popup-new-room" class='popup'>
                 <label data-i18n="server.structure.room.name">Room name</label>
@@ -138,7 +131,7 @@ export class ServerSettingsRoomController {
                 i18n.translatePage(document.getElementById("popup-new-room"))
             }
         }).then(async (result) => {
-            if (result.value) {
+            if (result.isConfirmed) {
                 await CoreServer.fetch(`/room/${data.id}`, 'PATCH', this.#popupData);
                 await this.roomLoad();
             }
@@ -151,21 +144,14 @@ export class ServerSettingsRoomController {
      */
     async #roomDelete(item) {
         const data = this.#roomsData[item.id];
-        Swal.fire({
+        Modal.toggle({
             title: i18n.translateOne("server.structure.room.delete.title", [data.name]),
-            animation: false,
-            customClass: {
-                title: "swalTitle",
-                popup: "swalPopup",
-                cancelButton: "swalConfirm",
-                confirmButton: "swalCancel", // Swapped on purpose !
-            },
             showCancelButton: true,
             focusCancel: true,
             confirmButtonText: i18n.translateOne("server.structure.room.delete"),
-            allowOutsideClick: false,
+            confirmButtonClass: "danger",
         }).then(async (result) => {
-            if (result.value) {
+            if (result.isConfirmed) {
                 await CoreServer.fetch(`/room/${data.id}`, 'DELETE');
                 await this.roomLoad();
             }
@@ -194,14 +180,11 @@ export class ServerSettingsRoomController {
     #categoryEdit(item) {
         this.#popupData.name = item.name;
 
-        Swal.fire({
+        Modal.toggle({
             title: i18n.translateOne("server.structure.category.edit", [item.name]),
-            animation: false,
-            customClass: SwalCustomClass,
             showCancelButton: true,
             focusConfirm: false,
             confirmButtonText: "Edit",
-            allowOutsideClick: false,
             html: `
             <form id="popup-new-category" class='popup'>
                 <label data-i18n="server.structure.category.name">Category name</label>
@@ -212,7 +195,7 @@ export class ServerSettingsRoomController {
                 i18n.translatePage(document.getElementById("popup-new-category"))
             }
         }).then(async (result) => {
-            if (result.value) {
+            if (result.isConfirmed) {
                 item.name = this.#popupData.name;
                 this.#render();
             }
@@ -224,21 +207,15 @@ export class ServerSettingsRoomController {
      * @param {ServerItem[]} parentItems
      */
     #categoryDelete(item, parentItems) {
-        Swal.fire({
+        Modal.toggle({
             title: i18n.translateOne("server.structure.category.delete", [item.name]),
-            animation: false,
-            customClass: {
-                title: "swalTitle",
-                popup: "swalPopup",
-                cancelButton: "swalConfirm",
-                confirmButton: "swalCancel", // Swapped on purpose !
-            },
             showCancelButton: true,
             focusCancel: true,
             confirmButtonText: i18n.translateOne("server.structure.category.delete.confirm"),
+            confirmButtonClass: "danger",
             allowOutsideClick: false,
         }).then(async (result) => {
-            if (result.value) {
+            if (result.isConfirmed) {
                 const index = parentItems.indexOf(item);
                 if (index > -1) {
                     parentItems.splice(index, 1);
@@ -259,16 +236,7 @@ export class ServerSettingsRoomController {
         }
         catch (error) {
             spinner.error();
-            Swal.fire({
-                icon: 'error',
-                title: `Updating structure failed`,
-                text: error,
-                animation: false,
-                customClass: SwalCustomClass,
-                showCancelButton: false,
-                confirmButtonText: "OK",
-                allowOutsideClick: false,
-            });
+            await Modal.toggleError("Updating structure failed");
         }
     }
 

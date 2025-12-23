@@ -974,18 +974,6 @@ textarea.config-item {
     animation-direction: alternate;
 }
 
-.swal-input {
-    margin-top: 0.5rem;
-    outline: 2px solid transparent;
-    outline-offset: 2px;
-    border-width: 1px;
-    border-radius: 10px;
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
-    padding-left: 0.75rem;
-    width: 100%;
-}
-
 /* D&G settings */
 .server-structure-container {
     max-width: 1200px;

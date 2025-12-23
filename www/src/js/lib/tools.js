@@ -18,14 +18,6 @@ function initTools() {
         tauriFetch = globalThis.fetch;
     }
 }
-
-const SwalCustomClass = {
-    title: "swalTitle",
-    popup: "swalPopup",
-    cancelButton: "swalCancel",
-    confirmButton: "swalConfirm",
-}
-
 /**
  * @param {string} str
  * @return {string}
@@ -237,7 +229,6 @@ async function apiFetch(url, options = {}) {
 export {
     initTools,
     tauriActive,
-    SwalCustomClass,
     sanitizeString,
     timestampToText,
     getQueryVariable,

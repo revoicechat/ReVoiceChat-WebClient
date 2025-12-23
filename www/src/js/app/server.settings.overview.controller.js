@@ -1,8 +1,7 @@
-import Swal from '../lib/sweetalert2.esm.all.min.js';
-import { SpinnerOnButton } from "../component/button.spinner.component.js";
-import { SwalCustomClass } from "../lib/tools.js";
-import { i18n } from "../lib/i18n.js";
+import {SpinnerOnButton} from "../component/button.spinner.component.js";
+import {i18n} from "../lib/i18n.js";
 import CoreServer from "./core/core.server.js";
+import Modal from "../component/modal.component.js";
 
 export class ServerSettingsOverviewController {
 
@@ -60,14 +59,11 @@ export class ServerSettingsOverviewController {
 
         if (!serverName) {
             spinner.error();
-            Swal.fire({
+            Modal.toggle({
                 icon: 'error',
                 title: i18n.translateOne("server.settings.name.error"),
-                animation: false,
-                customClass: SwalCustomClass,
                 showCancelButton: false,
                 confirmButtonText: "OK",
-                allowOutsideClick: false,
             });
             return;
         }

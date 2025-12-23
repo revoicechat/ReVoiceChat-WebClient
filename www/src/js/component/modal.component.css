@@ -77,3 +77,25 @@
 .dialog-cancel:hover {
     background: #616161;
 }
+
+.dialog-confirm.danger {
+    background-color: var(--ter-button-bg-color) !important;
+}
+
+.dialog-confirm.danger:hover {
+    background-color: var(--ter-button-hover-color) !important;
+}
+
+.modal-input {
+    color: var(--pri-text-color);
+    background-color: var(--sec-bg-color);
+    margin-top: 0.5rem;
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+    border-width: 1px;
+    border-radius: 10px;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    padding-left: 0.75rem;
+    width: 100%;
+}

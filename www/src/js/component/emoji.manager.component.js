@@ -1,7 +1,7 @@
-import Swal from '../lib/sweetalert2.esm.all.min.js';
 import {i18n} from "../lib/i18n.js";
 import MediaServer from "../app/media/media.server.js";
 import CoreServer from "../app/core/core.server.js";
+import Modal from "./modal.component.js";
 
 class EmojiManager extends HTMLElement {
     constructor() {
@@ -170,21 +170,14 @@ class EmojiManager extends HTMLElement {
     }
 
     async deleteEmoji(id) {
-        Swal.fire({
+        Modal.toggle({
             title: i18n.translateOne("emote.delete.popup", [id]),
-            animation: false,
-            customClass: {
-                title: "swalTitle",
-                popup: "swalPopup",
-                cancelButton: "swalConfirm",
-                confirmButton: "swalCancel", // Swapped on purpose !
-            },
             showCancelButton: true,
             focusCancel: true,
             confirmButtonText: "Delete",
-            allowOutsideClick: false,
+            confirmButtonClass: "danger",
         }).then(async (result) => {
-            if (result.value) {
+            if (result.isConfirmed) {
                 try {
                     await CoreServer.fetch(`/emote/${id}`, 'DELETE');
 
@@ -211,20 +204,11 @@ class EmojiManager extends HTMLElement {
     openEditModal(id) {
         const emoji = this.emojis.find(e => e.id === id);
         if (!emoji) return;
-        Swal.fire({
+        Modal.toggle({
             title: 'Edit emoji',
-            animation: false,
-            customClass: {
-                title: "swalTitle",
-                popup: "swalPopup",
-                cancelButton: "swalCancel",
-                confirmButton: "swalConfirm",
-                input: "assigned-user-checkbox"
-            },
             showCancelButton: true,
             focusConfirm: false,
             confirmButtonText: i18n.translateOne("emote.new.button"),
-            allowOutsideClick: false,
             html: `
                 <form id="editForm">
                     <div id="update-emote-popup" class="form-row-with-preview">
@@ -247,15 +231,14 @@ class EmojiManager extends HTMLElement {
                     </div>
                 </form>`,
             didOpen: () => {
-                const popup = Swal.getPopup()
                 this.currentEditId = id;
-                popup.querySelector('#editName').value = emoji.name;
-                popup.querySelector('#editKeywords').value = emoji.keywords.join(', ');
-                popup.querySelector('#editNameError').textContent = '';
-                const editEmojiFile = popup.querySelector('#editEmojiFile')
+                document.querySelector('#editName').value = emoji.name;
+                document.querySelector('#editKeywords').value = emoji.keywords.join(', ');
+                document.querySelector('#editNameError').textContent = '';
+                const editEmojiFile = document.querySelector('#editEmojiFile')
                 editEmojiFile.value = '';
 
-                const editPreview = popup.querySelector('#editPreview');
+                const editPreview = document.querySelector('#editPreview');
                 editPreview.innerHTML = `<img src="${MediaServer.emote(id)}" alt="${emoji.name}">`;
                 editPreview.style.display = 'flex';
 
@@ -265,17 +248,16 @@ class EmojiManager extends HTMLElement {
                 i18n.translatePage(document.getElementById("update-emote-popup"))
             },
             preConfirm: () => {
-                const popup = Swal.getPopup();
-                const name = popup.querySelector('#editName').value;
-                const keywords = popup.querySelector('#editKeywords').value.split(",");
-                const files = popup.querySelector('#editEmojiFile').value;
+                const name = document.querySelector('#editName').value;
+                const keywords = document.querySelector('#editKeywords').value.split(",");
+                const files = document.querySelector('#editEmojiFile').value;
                 const nameError = i18n.translateOne(this.validateName(name));
                 if (nameError) {
-                    popup.querySelector('#editNameError').textContent = nameError;
+                    document.querySelector('#editNameError').textContent = nameError;
                     return;
                 }
                 if (this.emojis.some(e => e.name === name.trim() && e.id !== this.currentEditId)) {
-                    popup.querySelector('#editNameError').textContent = i18n.translateOne("emote.new.error.duplicate");
+                    document.querySelector('#editNameError').textContent = i18n.translateOne("emote.new.error.duplicate");
                     return;
                 }
 
@@ -283,7 +265,7 @@ class EmojiManager extends HTMLElement {
             }
         }).then(async (result) => {
             if (result.isConfirmed) {
-                this.saveEdit(result.value);
+                this.saveEdit(result.data);
             }
         });
     }
