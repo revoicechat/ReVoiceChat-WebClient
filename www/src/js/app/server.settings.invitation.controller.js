@@ -1,6 +1,7 @@
 import Swal from '../lib/sweetalert2.esm.all.min.js';
 import { SwalCustomClass, copyToClipboard } from "../lib/tools.js";
 import CoreServer from "./core/core.server.js";
+import Modal from "../component/modal.component.js";
 
 export class ServerSettingsInvitationController {
     /**
@@ -53,7 +54,7 @@ export class ServerSettingsInvitationController {
         
         if (result.status === "CREATED") {
             void this.#invitationLoad();
-            Swal.fire({
+            await Modal.toggle({
                 title: `New invitation`,
                 html: `<input class='swal-input' type='text' value='${result.id}' readonly>`,
                 animation: false,

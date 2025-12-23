@@ -1,8 +1,8 @@
-import Swal from './lib/sweetalert2.esm.all.min.js';
 import { SpinnerOnButton } from './component/button.spinner.component.js';
-import {apiFetch, getCookie, getQueryVariable, initTools, setCookie, SwalCustomClass} from "./lib/tools.js";
+import {apiFetch, getCookie, getQueryVariable, initTools, setCookie} from "./lib/tools.js";
 import './component/icon.component.js';
 import { i18n } from "./lib/i18n.js";
+import Modal from "./component/modal.component.js";
 
 let passwordRegex = null;
 
@@ -58,12 +58,10 @@ function userLogin() {
         login(LOGIN, inputHost.origin);
     }
     catch (e) {
-        Swal.fire({
+        Modal.toggle({
             icon: 'error',
             title: i18n.translateOne("login.error"),
-            error: e,
-            animation: false,
-            customClass: SwalCustomClass,
+            text: e.message,
             showCancelButton: false,
             confirmButtonText: "OK",
             allowOutsideClick: false,
@@ -105,19 +103,11 @@ async function login(loginData, host) {
         console.error(error.cause);
         console.error(error.stack);
         spinner.error()
-        Swal.fire({
+        Modal.toggle({
             icon: "error",
             title: i18n.translateOne("login.error.host", host),
-            error: error,
-            focusConfirm: false,
+            text: error.message,
             allowOutsideClick: false,
-            animation: false,
-            customClass: {
-                title: "swalTitle",
-                popup: "swalPopup",
-                cancelButton: "swalCancel",
-                confirmButton: "swalConfirm",
-            },
         })
     }
 }
@@ -129,9 +119,9 @@ function lastHost() {
         getHostSettings();
     }
     else if (document.location.hostname !== "localhost") {
-            document.getElementById("login-form").host.value = document.location.origin;
-            document.getElementById("register-form").host.value = document.location.origin;
-            getHostSettings();
+        document.getElementById("login-form").host.value = document.location.origin;
+        document.getElementById("register-form").host.value = document.location.origin;
+        getHostSettings();
     }
 }
 
@@ -149,11 +139,9 @@ function userRegister() {
     const FORM = document.getElementById("register-form");
 
     if (!FORM.username.value) {
-        Swal.fire({
+        Modal.toggle({
             icon: 'error',
             title: i18n.translateOne('login.register.username.error'),
-            animation: false,
-            customClass: SwalCustomClass,
             showCancelButton: false,
             confirmButtonText: "OK",
             allowOutsideClick: false,
@@ -162,11 +150,9 @@ function userRegister() {
     }
 
     if (FORM.password.value !== FORM.passwordConfirm.value) {
-        Swal.fire({
+        Modal.toggle({
             icon: 'error',
             title: i18n.translateOne('login.register.password.match.error'),
-            animation: false,
-            customClass: SwalCustomClass,
             showCancelButton: false,
             confirmButtonText: "OK",
             allowOutsideClick: false,
@@ -187,12 +173,10 @@ function userRegister() {
         register(REGISTER, inputHost.origin);
     }
     catch (e) {
-        Swal.fire({
+        Modal.toggle({
             icon: 'error',
             title: i18n.translateOne('login.register.error'),
-            text: e,
-            animation: false,
-            customClass: SwalCustomClass,
+            text: e.message,
             showCancelButton: false,
             confirmButtonText: "OK",
             allowOutsideClick: false,
@@ -216,24 +200,20 @@ async function register(loginData, host) {
             throw new Error("Not OK");
         }
 
-        Swal.fire({
+        Modal.toggle({
             icon: "success",
             title: i18n.translateOne('login.register.success', host),
-            focusConfirm: false,
             allowOutsideClick: false,
-            animation: false,
         }).then(() => {
             document.location.reload();
         })
     }
     catch (error) {
-        Swal.fire({
+        Modal.toggle({
             icon: "error",
             title: i18n.translateOne('login.register.host.error', host),
-            text: error,
-            focusConfirm: false,
+            text: error.message,
             allowOutsideClick: false,
-            animation: false,
         })
     }
 }
