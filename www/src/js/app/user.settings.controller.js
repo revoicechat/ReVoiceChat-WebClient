@@ -291,7 +291,7 @@ export default class UserSettingsController {
             elt.remove();
         }
         this.#fakeMessage(holder, "Hello world 🦜");
-        this.#fakeMessage(holder, "This is message will be displayed");
+        this.#fakeMessage(holder, "This is how message will be displayed");
         this.#fakeMessage(holder, "🦜");
     }
 
