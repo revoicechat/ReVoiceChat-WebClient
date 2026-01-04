@@ -70,7 +70,7 @@ export default class ReVoiceChat {
     async #load() {
         this.state.load();
         await this.server.load();
-        this.#sse.openSSE();
+        await this.#sse.openSSE();
         await this.user.load();
         await this.user.settings.load();
         this.room.textController.attachEvents();

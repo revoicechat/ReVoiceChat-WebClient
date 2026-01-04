@@ -392,8 +392,8 @@ svg {
 
 .message-container .icon {
     border-radius: 9999px;
-    width: 3rem;
-    height: 3rem;
+    width: 2.5rem;
+    height: 2.5rem;
     margin-top: 0.5rem;
     margin-left: 0.5rem;
 }
@@ -571,7 +571,7 @@ svg {
 
 .message-owner {
     display: block;
-    padding: 0.5rem 1rem;
+    padding: 0 0.8rem;
     font-weight: 600;
     user-select: text;
     text-overflow: ellipsis;
