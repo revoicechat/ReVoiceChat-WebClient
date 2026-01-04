@@ -391,6 +391,7 @@ export default class TextController {
     /** @param {string} id */
     #answer(id) {
         this.#repliedMessageId = id;
+        document.getElementById("text-input").focus()
     }
 
     async #edit(id) {
