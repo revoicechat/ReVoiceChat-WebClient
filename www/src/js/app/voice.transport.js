@@ -1,5 +1,6 @@
 /**
- * Format :
+ * Voice Transport
+ * Structure :
  * [  4 bytes ] Timestamp (uint32)
  * [  1 byte  ] User type
  * [  1 byte  ] User gate
@@ -14,6 +15,7 @@ export class EncodedVoice {
     data;
 
     constructor(timestamp, userId, gateState, type, audioData){
+        const headerSize = 4 + 1 + 1 + 36 + 4;
         const payload = new Uint8Array(audioData.byteLength);
         audioData.copyTo(payload);
     
@@ -26,15 +28,13 @@ export class EncodedVoice {
         offset += 4;
 
         // User type
-        view.setUint8(offset, type);
-        offset += 1;
+        view.setUint8(offset++, type);
 
         // User gate
-        view.setUint8(offset, gateState);
-        offset += 1;
+        view.setUint8(offset++, gateState);
 
         // User ID
-        new Uint8Array(buffer, offset, 36).set(new TextEncoder().encode(userId))
+        new Uint8Array(buffer, offset, headerSize).set(new TextEncoder().encode(userId))
         offset += 36;
 
         // Payload
@@ -65,12 +65,10 @@ export class DecodedVoice {
         offset += 4;
 
         // User type
-        this.user.type = view.getUint8(offset);
-        offset += 1;
+        this.user.type = view.getUint8(offset++);
 
         // User gate
-        this.user.gateState = view.getUint8(offset);
-        offset += 1;
+        this.user.gateState = view.getUint8(offset++);
 
         // User ID
         this.user.id = new TextDecoder().decode(
