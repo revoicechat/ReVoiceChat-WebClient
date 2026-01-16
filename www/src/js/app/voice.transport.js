@@ -17,10 +17,10 @@ export class EncodedVoice {
     constructor(timestamp, userId, gateState, type, audioData){
         const headerSize = 4 + 1 + 1 + 36 + 4;
         const payload = new Uint8Array(audioData.byteLength);
-        audioData.copyTo(payload);
-    
-        const buffer = new ArrayBuffer(46 + payload.length);
+        const buffer = new ArrayBuffer(headerSize + payload.length);
         const view = new DataView(buffer);
+
+        audioData.copyTo(payload);
         let offset = 0;
 
         // Timestamp
