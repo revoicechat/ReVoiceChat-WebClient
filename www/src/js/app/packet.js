@@ -44,6 +44,12 @@ export class DecodedPacket {
  * by sclicing and sending those slices one at a time.
  * Overhead is minimal (only 16 Bytes).
  * Data size can be up to 4GB (limit of header using Uint32 to represent the size of data)
+ * Format : 
+ * [ 4 bytes ] Payload byte length
+ * [ 4 bytes ] index of payload
+ * [ 4 bytes ] total of payload
+ * [ 4 bytes ] unused / reserved
+ * [ X bytes ] Payload 
  * @constructor Take a WebSocket as parameter
  */
 export class LargePacketSender{
