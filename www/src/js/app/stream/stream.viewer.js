@@ -1,6 +1,6 @@
-import { LargePacketReceiver } from "./packet.js";
+import { LargePacketReceiver } from "../packet.js";
 import { Demultiplexer } from "./stream.multiplexing.js";
-import Codec from "./codec.js";
+import Codec from "../utils/codec.js";
 
 export default class Viewer {
     #socket;

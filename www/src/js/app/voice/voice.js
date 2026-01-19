@@ -1,4 +1,4 @@
-import Codec from "./codec.js";
+import Codec from "../utils/codec.js";
 import Listener from "./voice.listener.js";
 import { EncodedVoice, DecodedVoice } from "./voice.transport.js";
 
@@ -285,7 +285,7 @@ export default class VoiceCall {
 
         // Init AudioContext
         this.#audioContext = new AudioContext({ sampleRate: this.#codec.sampleRate });
-        await this.#audioContext.audioWorklet.addModule('src/js/app/audio.processors.js');
+        await this.#audioContext.audioWorklet.addModule('src/js/app/utils/audio.processors.js');
 
         /**
          * Audio routing 

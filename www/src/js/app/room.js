@@ -1,5 +1,5 @@
 import TextController from './text.controller.js';
-import VoiceController  from './voice.controller.js';
+import VoiceController  from './voice/voice.controller.js';
 import CoreServer from "./core/core.server.js";
 
 export default class Room {

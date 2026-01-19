@@ -1,6 +1,6 @@
-import { LargePacketSender } from "./packet.js";
+import { LargePacketSender } from "../packet.js";
 import { Multiplexer } from "./stream.multiplexing.js";
-import Codec from "./codec.js";
+import Codec from "../utils/codec.js";
 
 export default class Streamer {
     static CLOSE = 0;
@@ -173,7 +173,7 @@ export default class Streamer {
             this.#audioContext.channelInterpretation = "discrete";
             this.#audioContext.channelCount = 2;
 
-            await this.#audioContext.audioWorklet.addModule('src/js/app/audio.processors.js');
+            await this.#audioContext.audioWorklet.addModule('src/js/app/utils/audio.processors.js');
 
             const audioStream = this.#audioContext.createMediaStreamSource(this.#player.srcObject);
 

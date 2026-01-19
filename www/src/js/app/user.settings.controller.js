@@ -1,4 +1,4 @@
-import VoiceCall from "./voice.js";
+import VoiceCall from "./voice/voice.js";
 import {LanguageController} from "./language.controller.js";
 import {SpinnerOnButton} from "../component/button.spinner.component.js";
 import {getAllDeclaredDataThemes} from "../component/theme.component.js";

@@ -1,10 +1,10 @@
 import Streamer from "./stream.streamer.js";
 import Viewer from "./stream.viewer.js";
-import {i18n} from "../lib/i18n.js";
-import CoreServer from "./core/core.server.js";
-import ReVoiceChat from "./revoicechat.js";
-import Codec from "./codec.js";
-import Modal from "../component/modal.component.js";
+import {i18n} from "../../lib/i18n.js";
+import CoreServer from "../core/core.server.js";
+import ReVoiceChat from "../revoicechat.js";
+import Codec from "../utils/codec.js";
+import Modal from "../../component/modal.component.js";
 
 export default class StreamController {
     #streamer = {};

@@ -1,10 +1,10 @@
-import Alert from "./utils/alert.js";
+import Alert from "../utils/alert.js";
 import VoiceCall from "./voice.js";
-import StreamController from './stream.controller.js';
-import MediaServer from "./media/media.server.js";
-import CoreServer from "./core/core.server.js";
-import ReVoiceChat from "./revoicechat.js";
-import Modal from "../component/modal.component.js";
+import StreamController from '../stream/stream.controller.js';
+import MediaServer from "../media/media.server.js";
+import CoreServer from "../core/core.server.js";
+import ReVoiceChat from "../revoicechat.js";
+import Modal from "../../component/modal.component.js";
 
 export default class VoiceController {
     /** @type {VoiceCall|null} */
