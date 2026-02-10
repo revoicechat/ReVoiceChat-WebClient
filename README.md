@@ -7,6 +7,8 @@
 
 Proof of concept RevoiceChat Webclient
 
+![screenshot](screenshot.png)
+
 ### [How to install as a WebClient](INSTALL.md)
 
 ### [How to build as desktop application](BUILD.md)
