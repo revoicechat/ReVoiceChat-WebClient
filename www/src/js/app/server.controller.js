@@ -46,7 +46,6 @@ export default class ServerController {
         }
 
         this.settings = new ServerSettingsController(this);
-        this.settings.load()
     }
 
     async #createInstanceElement(instance) {

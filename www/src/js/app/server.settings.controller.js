@@ -24,6 +24,7 @@ export default class ServerSettingsController {
         this.emote = new ServerSettingsEmoteController(this)
         this.invitation = new ServerSettingsInvitationController(this)
         this.role = new ServerSettingsRoleController(this)
+        document.getElementById('server-setting-open').addEventListener('click', () => this.load());
     }
 
     load() {
