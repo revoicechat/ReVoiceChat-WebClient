@@ -1414,6 +1414,14 @@ input[type=file]::file-selector-button {
     display: block;
 }
 
+summary {
+    color: var(--pri-placeholder-color);
+}
+
+summary::marker {
+    font-size: 1rem;
+}
+
 #setting-message-exemple {
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
 }
