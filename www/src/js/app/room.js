@@ -42,7 +42,7 @@ export default class Room {
             roomList.innerHTML = "";
             await this.#create(roomList, rooms, structResult.items);
 
-            if (this.id) {
+            if (rooms[this.id]) {
                 this.#select(this.id, this.name, this.type);
             }
             else {
