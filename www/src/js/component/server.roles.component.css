@@ -37,6 +37,13 @@
     padding-bottom: 0.5rem;
 }
 
+.risk-big-category-header {
+    font-weight: 900;
+    font-size: larger;
+    padding-bottom: 0.5rem;
+    padding-top: 1rem;
+}
+
 .risk-container {
     display: grid;
     gap: 0.75rem;

@@ -59,7 +59,8 @@ class ServerRolesWebComponent extends HTMLElement {
     }
 
     async fetchRisks() {
-        this.availableRisks = await CoreServer.fetch('/risk');
+        this.availableServerRisks = await CoreServer.fetch('/risk/server');
+        this.availableRoomRisks = await CoreServer.fetch('/risk/room');
     }
 
     async createRoleAPI(roleData) {
@@ -151,35 +152,10 @@ class ServerRolesWebComponent extends HTMLElement {
             </div>
 
             <div class="config-section" id="auth-section">
-                ${this.availableRisks.map(category => `
-                    <div class="risk-category">
-                        <div class="risk-category-header">${category.title}</div>
-                        <div class="risk-container">
-                            ${category.risks.map(risk => `
-                                <div class="risk-item">
-                                    <div class="risk-name">${risk.title}</div>
-                                    <div class="risk-toggle">
-                                        <button class="toggle-btn ${this.#findRisk(role, risk)?.mode === 'ENABLE' ? 'background-green' : ''}" 
-                                                data-role-id="${role.id}" data-risk="${risk.type}" data-status="ENABLE"
-                                                data-i18n="server.roles.risk.enable">
-                                            Enabled
-                                        </button>
-                                        <button class="toggle-btn ${this.#findRisk(role, risk)?.mode === 'DISABLE' ? 'background-red' : ''}" 
-                                                data-role-id="${role.id}" data-risk="${risk.type}" data-status="DISABLE"
-                                                data-i18n="server.roles.risk.disabled">
-                                            Disabled
-                                        </button>
-                                        <button class="toggle-btn ${(this.#findRisk(role, risk)?.mode === 'DEFAULT' || !this.#findRisk(role, risk)) ? 'background-gray' : ''}" 
-                                                data-role-id="${role.id}" data-risk="${risk.type}" data-status="DEFAULT"
-                                                data-i18n="server.roles.risk.default">
-                                            Default
-                                        </button>
-                                    </div>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                `).join('')}
+                <div class="risk-big-category-header">Risk specific for server</div>
+                ${this.availableServerRisks.map(category => this.#renderRisk(category, role)).join('')}
+                <div class="risk-big-category-header">Risk specific for room</div>
+                ${this.availableRoomRisks.map(category => this.#renderRisk(category, role)).join('')}
             </div>
 
             <div class="config-section hidden" id="members-section">
@@ -227,6 +203,36 @@ class ServerRolesWebComponent extends HTMLElement {
             const member = users[memberId]
             memberList.appendChild(this.#memberItemList(member, role.id));
         }
+    }
+
+    #renderRisk(category, role) {
+        return `<div class="risk-category">
+                    <div class="risk-category-header">${category.title}</div>
+                    <div class="risk-container">
+                        ${category.risks.map(risk => `
+                            <div class="risk-item">
+                                <div class="risk-name">${risk.title}</div>
+                                <div class="risk-toggle">
+                                    <button class="toggle-btn ${this.#findRisk(role, risk)?.mode === 'ENABLE' ? 'background-green' : ''}" 
+                                            data-role-id="${role.id}" data-risk="${risk.type}" data-status="ENABLE"
+                                            data-i18n="server.roles.risk.enable">
+                                        Enabled
+                                    </button>
+                                    <button class="toggle-btn ${this.#findRisk(role, risk)?.mode === 'DISABLE' ? 'background-red' : ''}" 
+                                            data-role-id="${role.id}" data-risk="${risk.type}" data-status="DISABLE"
+                                            data-i18n="server.roles.risk.disabled">
+                                        Disabled
+                                    </button>
+                                    <button class="toggle-btn ${(this.#findRisk(role, risk)?.mode === 'DEFAULT' || !this.#findRisk(role, risk)) ? 'background-gray' : ''}" 
+                                            data-role-id="${role.id}" data-risk="${risk.type}" data-status="DEFAULT"
+                                            data-i18n="server.roles.risk.default">
+                                        Default
+                                    </button>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>`;
     }
 
     #memberItemList(data, roleId) {
