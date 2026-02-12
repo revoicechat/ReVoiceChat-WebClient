@@ -76,6 +76,12 @@ export default class VoiceController {
             console.error(error);
             await this.#voiceError(error);
         }
+
+        // Prompt user before reloading
+        window.addEventListener("beforeunload", (event) => {
+            event.preventDefault();
+            return false;
+        })
     }
 
     /**
@@ -102,7 +108,7 @@ export default class VoiceController {
         this.#contextMenu.setVoiceCall(null);
 
         // Remove controls if current room is not voice
-        if(this.#room.type !== "VOICE"){
+        if (this.#room.type !== "VOICE") {
             document.getElementById("voice-control-panel").classList.add('hidden');
         }
 

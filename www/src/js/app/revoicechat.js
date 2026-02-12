@@ -56,11 +56,9 @@ export default class ReVoiceChat {
         this.sseHandlers = new SSEHandlers(this);
 
         // Save state before page unload
-        window.addEventListener("beforeunload", (event) => {
+        window.addEventListener("beforeunload", () => {
             this.state.save();
             this.#sse.closeSSE();
-            event.preventDefault();
-            return false;
         })
 
         // Load more when document is fully loaded
