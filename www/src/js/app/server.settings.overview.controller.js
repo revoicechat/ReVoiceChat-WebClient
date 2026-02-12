@@ -19,9 +19,11 @@ export class ServerSettingsOverviewController {
         document.getElementById('server-setting-overview-name').innerText = this.serverSettings.server.name;
         document.getElementById('server-setting-overview-name-input').value = this.serverSettings.server.name;
 
+        const settingServerPicture = document.getElementById("setting-server-picture");
+        settingServerPicture.src = MediaServer.profiles(this.serverSettings.server.id);
+        settingServerPicture.dataset.id = this.serverSettings.server.id;
         const settingServerPictureNewPath = document.getElementById("overview-server-picture");
         const settingServerPictureNewFile = document.getElementById("overview-server-picture-new");
-        const settingServerPicture = document.getElementById("setting-server-picture");
         settingServerPictureNewFile.onchange = () => {
             const file = settingServerPictureNewFile.files[0];
             if (file) {
