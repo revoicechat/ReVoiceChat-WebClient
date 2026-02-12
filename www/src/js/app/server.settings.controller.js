@@ -5,6 +5,7 @@ import { ServerSettingsInvitationController } from "./server.settings.invitation
 import { ServerSettingsRoleController } from "./server.settings.role.controller.js";
 import { ServerSettingsMemberController } from "./server.settings.member.controller.js";
 import CoreServer from "./core/core.server.js";
+import Router from "./router.js";
 
 export default class ServerSettingsController {
     /** @type {ServerController} */
@@ -25,6 +26,9 @@ export default class ServerSettingsController {
         this.invitation = new ServerSettingsInvitationController(this)
         this.role = new ServerSettingsRoleController(this)
         document.getElementById('server-setting-open').addEventListener('click', () => this.load());
+        if (Router.getState() === Router.SERVER_SETTINGS) {
+            this.load()
+        }
     }
 
     load() {
