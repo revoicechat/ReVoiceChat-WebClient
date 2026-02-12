@@ -198,6 +198,14 @@
                     <h1 data-i18n="server.overview">Overview</h1>
                     <p><span data-i18n="server.id">Server ID</span> : <span id="server-setting-overview-uuid" class="selectable">[SERVER UUID]</span></p>
 
+                    <input type="file" id="overview-server-picture-new" accept="image/webp,image/png,image/jpg,image/jpeg,image/gif" style="display:none;">
+                    <input type="hidden" id="overview-server-picture" name="imagePath">
+                    <img id="setting-server-picture" src="src/img/default-avatar.webp" alt="Preview PFP" class="icon large-icon ring-2">
+                    <br />
+                    <div class="config-buttons">
+                        <button class="button" id="server-overview-select-picture" data-i18n="server.picture.upload">Upload a server picture</button>
+                    </div>
+
                     <h2 data-i18n="server.name">Server name</h2>
                     <p><span id="server-setting-overview-name" class="selectable">[SERVER NAME]</span></p>
                     <input type="text" id="server-setting-overview-name-input" value="[SERVER NAME]" class="hidden">
