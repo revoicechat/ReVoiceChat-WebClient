@@ -88,7 +88,7 @@ class ServerRolesWebComponent extends HTMLElement {
                         </div>
                         <div class="sidebar-room-container" id="rolesList"></div>
                     </div>
-                    <div class="room">
+                    <div class="risk-room">
                         <div class="room-container">
                             <div class="room-content" id="roleDetails">
                                 <div class="empty-state">
@@ -133,6 +133,7 @@ class ServerRolesWebComponent extends HTMLElement {
         i18n.translatePage(rolesList)
     }
 
+    /** @param {string} roleId */
     selectRole(roleId) {
         this.selectedRoleId = roleId;
         this.renderRoles();
@@ -204,6 +205,7 @@ class ServerRolesWebComponent extends HTMLElement {
             const member = users[memberId]
             memberList.appendChild(this.#memberItemList(member, role.id));
         }
+        i18n.translatePage(roleDetails);
     }
 
     #renderServerCategory(role) {
@@ -241,7 +243,7 @@ class ServerRolesWebComponent extends HTMLElement {
                                     <button class="toggle-btn ${(this.#findRisk(role, risk)?.mode === 'DEFAULT' || !this.#findRisk(role, risk)) ? 'background-gray' : ''}" 
                                             data-role-id="${role.id}" data-risk="${risk.type}" data-status="DEFAULT"
                                             data-i18n="server.roles.risk.default">
-                                        Default
+                                        Inherited
                                     </button>
                                 </div>
                             </div>
@@ -297,7 +299,7 @@ class ServerRolesWebComponent extends HTMLElement {
     }
 
     #findRisk(role, risk) {
-        return role.risks.find(item => item.type === risk.type);
+        return role.risks.find(item => item.type === risk.type && item.entity === this.#entity);
     }
 
     async toggleRisk(roleId, riskName, status) {

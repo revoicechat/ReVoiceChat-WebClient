@@ -8,7 +8,6 @@
     flex-direction: column;
     width: 15rem;
     height: -webkit-fill-available;
-    background-color: var(--sec-bg-color);
 }
 
 .config-item {
@@ -26,6 +25,7 @@
 .room-container {
     padding-left: 2rem;
     width: 35rem;
+    background-color: #00000000;
 }
 
 .risk-category {

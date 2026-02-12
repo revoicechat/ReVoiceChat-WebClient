@@ -472,6 +472,13 @@ svg {
     padding: 0.2rem;
 }
 
+.risk-room {
+    display: flex;
+    flex: 1 1 0%;
+    flex-direction: column;
+    user-select: auto;
+}
+
 /* ROOM (Content) */
 .room {
     display: flex;

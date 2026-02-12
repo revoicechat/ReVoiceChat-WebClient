@@ -5,6 +5,8 @@ import Modal from "../component/modal.component.js";
 
 export class ServerSettingsRoomController {
 
+    #modalRisks = new Modal("custom-modal-risks");
+
     #popupData = {
         name: null,
         type: null
@@ -146,11 +148,12 @@ export class ServerSettingsRoomController {
         const data = this.#roomsData[id];
         this.#popupData.name = data.name;
 
-        Modal.toggle({
+        this.#modalRisks.fire({
             title: i18n.translateOne("server.structure.room.edit", [data.name]),
-            showCancelButton: true,
+            showCancelButton: false,
             focusConfirm: false,
-            confirmButtonText: i18n.translateOne("modal.edit"),
+            confirmButtonText: "X",
+            confirmButtonClass: "danger",
             html: `<revoice-server-roles server-id="${this.serverSettings.server.id}" entity="${id}"></revoice-server-roles>`
         }).then(async () => {/* do nothing */});
     }

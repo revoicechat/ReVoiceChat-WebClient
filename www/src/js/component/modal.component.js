@@ -85,12 +85,12 @@ export default class Modal {
    * }>}
    */
   static async toggle(options) {
-    return Modal.#instance.#fire(options);
+    return Modal.#instance.fire(options);
   }
 
-  constructor() {
+  constructor(id="custom-modal") {
     const dialogHTML = `
-            <dialog id="custom-modal" class="custom-dialog">
+            <dialog id="${id}" class="custom-dialog">
                 <div class="dialog-content">
                     <div class="dialog-icon"></div>
                     <h2 class="dialog-title"></h2>
@@ -104,7 +104,7 @@ export default class Modal {
         `;
 
     document.body.insertAdjacentHTML('beforeend', dialogHTML);
-    this.dialog = document.getElementById('custom-modal');
+    this.dialog = document.getElementById(id);
 
     // Add styles
     this.#addStyles();
@@ -119,14 +119,14 @@ export default class Modal {
   }
 
   /**
-   * @param {ModalOpt} opt
+   * @param {*} opt
    * @returns {Promise<{
    *   isConfirmed: boolean,
    *   data: *,
    *   isDismissed: boolean
    * }>}
    */
-  #fire(opt) {
+  fire(opt) {
     return new Promise((resolve) => {
       const options = ModalOptions.of(opt);
       // Set icon
