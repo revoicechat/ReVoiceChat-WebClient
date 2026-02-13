@@ -362,7 +362,12 @@ svg {
     padding: 0.5rem;
 }
 
-.instances .element img{
+.instances .element {
+    margin: 0.1rem;
+    padding: 0.4rem;
+}
+
+.instances .element img {
     width: 2rem;
     height: 2rem;
 }

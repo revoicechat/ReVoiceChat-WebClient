@@ -163,7 +163,7 @@ body {
 }
 
 /* Fixed colors */
-.green{
+.green {
     color: #22c55e !important;
 }
 
@@ -195,7 +195,7 @@ body {
     background-color: #71717a !important;
 }
 
-.background-darkred:hover{
+.background-darkred:hover {
     background-color: #9e0505 !important;
 }
 
@@ -205,7 +205,7 @@ body {
 }
 
 /* Sidebars */
-.sidebar.instances-list ,
+.sidebar.instances-list,
 .sidebar.server {
     border-color: var(--pri-bd-color);
     background-color: var(--pri-bg-color);
@@ -336,13 +336,13 @@ body {
 }
 
 .voice-profile .gate.active .icon {
-    transition: all 0.25s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
+    transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     border-color: #22c55e;
     border-width: 3px;
 }
 
 .voice-profile .gate.active .user .name {
-    transition: all 0.25s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
+    transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     color: var(--pri-text-color);
 }
 
@@ -422,16 +422,16 @@ form.popup label {
 
 .theme-select-button {
     padding: 0;
-    background-color: var(--sec-button-bg-color)!important;
-    color: var(--sec-button-text-color)!important;
+    background-color: var(--sec-button-bg-color) !important;
+    color: var(--sec-button-text-color) !important;
 }
 
 .theme-select-button:hover {
-    background-color: var(--sec-button-hover-color)!important;
+    background-color: var(--sec-button-hover-color) !important;
 }
 
 .theme-select-button[disabled] {
-    background-color: var(--sec-button-hover-color)!important;
+    background-color: var(--sec-button-hover-color) !important;
 }
 
 textarea.config-item:hover {
