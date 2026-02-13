@@ -161,7 +161,7 @@ class ServerRolesWebComponent extends HTMLElement {
             </div>
 
             <div class="config-section hidden" id="members-section">
-                <button id="role-member-add" data-i18n="server.roles.risk.default">Add</button>
+                <button id="role-member-add" data-i18n="server.roles.add.members">Add user</button>
                 <br/>
                 <div id="role-member-list" class="config-members-list"></div>
             </div >`;
@@ -355,7 +355,7 @@ class ServerRolesWebComponent extends HTMLElement {
 
     async #assignedUser(role) {
         Modal.toggle({
-            title: 'Members',
+            title: i18n.translateOne("server.roles.add.members"),
             showCancelButton: true,
             focusConfirm: false,
             confirmButtonText: i18n.translateOne("modal.save"),
@@ -369,7 +369,6 @@ class ServerRolesWebComponent extends HTMLElement {
             html: `
             <link href="src/js/component/server.roles.component.popup.css" rel="stylesheet" />
             <form id="add-members-popup" class='popup'>
-                <h2 data-i18n="server.roles.add.members">Add members :</h2>
                 <input type="text" placeholder="Search..." id="add-members-search">
                 <div id="add-members-list" class="members-list">
                     ${this.availableUsers.filter(user => !role.members.includes(user.id)).map(user => this.#memberItem(role, user)).join('')}
