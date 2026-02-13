@@ -40,6 +40,7 @@ class DotComponent extends HTMLElement {
             }
 
             .dot {
+                border-style: solid;
                 border-width: 2px;
                 border-color: rgb(31 41 55);
                 border-radius: 9999px;

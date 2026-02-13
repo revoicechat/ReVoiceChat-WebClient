@@ -800,17 +800,6 @@ svg {
     line-height: 1rem;
 }
 
-.user-dot {
-    position: absolute;
-    right: -0.25rem;
-    bottom: -0.25rem;
-    border-width: 2px;
-    border-color: rgb(31 41 55);
-    border-radius: 9999px;
-    width: 1rem;
-    height: 1rem;
-}
-
 .user-profile {
     display: flex;
     cursor: pointer;
