@@ -182,10 +182,11 @@ export default class VoiceController {
         });
 
         const voiceContent = document.getElementById(`voice-users-${roomId}`);
-        voiceContent.innerHTML = "";
-
-        for (const connectedUser of sortedByDisplayName) {
-            voiceContent.appendChild(this.#createUserElement(connectedUser.user));
+        if (voiceContent) {
+            voiceContent.innerHTML = "";
+            for (const connectedUser of sortedByDisplayName) {
+                voiceContent.appendChild(this.#createUserElement(connectedUser.user));
+            }
         }
 
         // Room is currently active
