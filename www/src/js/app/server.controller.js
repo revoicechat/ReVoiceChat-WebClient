@@ -41,6 +41,7 @@ export default class ServerController {
             }
         }
         instancesList.appendChild(this.#currentJoinInstanceElement());
+        instancesList.appendChild(this.#createDiscorverInstanceElement());
 
         // Select default server
         if (this.id) {
@@ -88,6 +89,20 @@ export default class ServerController {
         return BUTTON;
     }
 
+    #createDiscorverInstanceElement() {
+        const BUTTON = document.createElement('button');
+
+        BUTTON.className = "element";
+        BUTTON.title = i18n.translateOne("server.discover.title");
+        BUTTON.onclick = () => this.#discover();
+
+        const IMG = document.createElement('revoice-icon-telescope');
+        IMG.className = "icon";
+        BUTTON.appendChild(IMG);
+
+        return BUTTON;
+    }
+
     #join() {
         Modal.toggle({
             title: i18n.translateOne("server.join.title"),
@@ -109,7 +124,42 @@ export default class ServerController {
             }
         }).then(async (result) => {
             if (result.isConfirmed) {
-                await CoreServer.fetch(`/server/join/${this.#popupData}`, 'PUT');
+                await CoreServer.fetch(`/server/join/${this.#popupData}`, 'POST');
+            }
+        });
+    }
+
+    #discover() {
+        Modal.toggle({
+            title: i18n.translateOne("server.discover.title"),
+            focusConfirm: false,
+            confirmButtonText: i18n.translateOne("server.join.confirm"),
+            showCancelButton: true,
+            cancelButtonText: i18n.translateOne("server.join.cancel"),
+            width: "30rem",
+            html: `
+            <form class='popup'>
+                <div>
+                    <select id='modal-serverId'>
+                        <option value=null selected disabled> - Select a server - </option>
+                    </select>
+                </div>
+            </form>`,
+            didOpen: async () => {
+                const select = document.getElementById('modal-serverId');
+                select.oninput = () => { this.#popupData = select.value };
+
+                const publicServers = await CoreServer.fetch('/server/discover');
+                for(const instance of publicServers){
+                    const option = document.createElement('option');
+                    option.value = instance.id;
+                    option.innerHTML = instance.name;
+                    select.appendChild(option);
+                }
+            }
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                await CoreServer.fetch(`/server/${this.#popupData}/join/`, 'POST');
             }
         });
     }
