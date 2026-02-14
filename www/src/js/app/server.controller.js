@@ -37,6 +37,7 @@ export default class ServerController {
 
         // Create instances list
         const instancesList = document.getElementById('instances');
+        instancesList.innerHTML = "";
         for (const instance of result) {
             const element = await this.#instanceElement(instance);
             if (element) {
@@ -81,7 +82,7 @@ export default class ServerController {
         BUTTON.onclick = () => this.select(instance.id, instance.name);
 
         const IMG = document.createElement('img');
-        IMG.src = MediaServer.profiles(instance.id);
+        IMG.src = MediaServer.serverProfiles(instance.id);
         IMG.className = "icon";
         IMG.dataset.id = instance.id;
         BUTTON.appendChild(IMG);
@@ -225,7 +226,10 @@ export default class ServerController {
                     Modal.toggleError(i18n.translateOne("server.create.error.name"));
                     return;
                 }
-                await CoreServer.fetch(`/server/`, 'PUT', this.#popupData);
+                const result = await CoreServer.fetch(`/server/`, 'PUT', this.#popupData);
+                if(result){
+                    this.load();
+                }
             }
         });
     }
