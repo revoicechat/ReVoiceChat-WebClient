@@ -1,4 +1,4 @@
-import {apiFetch} from "../lib/tools.js";
+import { apiFetch } from "../lib/tools.js";
 import MediaServer from "../app/media/media.server.js";
 import CoreServer from "../app/core/core.server.js";
 
@@ -28,8 +28,8 @@ class EmojiPicker {
           <div class="emoji-picker-header">
             <div class="emoji-picker-categories">
               ${Object.keys(this.categories)
-                      .sort((a, b) => a.localeCompare(b))
-                      .map(key => `
+                .sort((a, b) => a.localeCompare(b))
+                .map(key => `
                 <button class="emoji-category-btn ${key === this.currentCategory ? 'active' : ''}"
                         data-category="${key}">
                   ${this.categories[key].icon}
@@ -120,19 +120,21 @@ async function initCustomGeneral(picker) {
 }
 
 async function initCustomServer(picker) {
-    /** @type {EmoteRepresentation[]} */
-    const emojis = await CoreServer.fetch(`/emote/server/${RVC.server.id}`);
-    initCustomEmojiCategory(picker, '02. custom_server',
-        '🏠',
-        Array.from(emojis).map(emoji => {
-            return {
-                link: emoji.id,
-                content: emoji.name,
-                description: emoji.name,
-                names: emoji.keywords
-            }
-        })
-    )
+    if (RVC.server.id) {
+        /** @type {EmoteRepresentation[]} */
+        const emojis = await CoreServer.fetch(`/emote/server/${RVC.server.id}`);
+        initCustomEmojiCategory(picker, '02. custom_server',
+            '🏠',
+            Array.from(emojis).map(emoji => {
+                return {
+                    link: emoji.id,
+                    content: emoji.name,
+                    description: emoji.name,
+                    names: emoji.keywords
+                }
+            })
+        )
+    }
 }
 
 async function initCustomUser(picker) {
@@ -171,4 +173,4 @@ function initCustomEmojiCategory(picker, name, icon, emojis) {
     picker.addCustomEmojiCategory(name, emojiCategory)
 }
 
-export {EmojiPicker, initCustomGeneral, initCustomServer, initCustomUser}
+export { EmojiPicker, initCustomGeneral, initCustomServer, initCustomUser }

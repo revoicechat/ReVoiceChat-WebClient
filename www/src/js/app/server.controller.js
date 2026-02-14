@@ -56,7 +56,9 @@ export default class ServerController {
             this.select(this.id, this.name);
         } else {
             const server = result[0]
-            this.select(server.id, server.name);
+            if (server) {
+                this.select(server.id, server.name);
+            }
         }
 
         this.settings = new ServerSettingsController(this);
@@ -227,7 +229,7 @@ export default class ServerController {
                     return;
                 }
                 const result = await CoreServer.fetch(`/server/`, 'PUT', this.#popupData);
-                if(result){
+                if (result) {
                     await this.load();
                 }
             }
@@ -245,7 +247,7 @@ export default class ServerController {
             width: "30rem",
         }).then(async (result) => {
             if (result.isConfirmed) {
-                if(await CoreServer.fetch(`/server/${this.id}`, 'DELETE')){
+                if (await CoreServer.fetch(`/server/${this.id}`, 'DELETE')) {
                     this.id = null;
                     await this.load();
                     this.router.routeTo('app');
