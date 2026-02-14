@@ -2,6 +2,8 @@ import ServerSettingsController from "./server.settings.controller.js";
 import { statusToColor } from "../lib/tools.js";
 import MediaServer from "./media/media.server.js";
 import CoreServer from "./core/core.server.js";
+import { i18n } from "../lib/i18n.js";
+import Modal from "../component/modal.component.js";
 
 export default class ServerController {
     /** @type {Room} */
@@ -12,6 +14,8 @@ export default class ServerController {
     name;
     /** @type {ServerSettingsController} */
     settings;
+
+    #popupData = null;
 
     /**
      * @param {Room} room
@@ -36,6 +40,7 @@ export default class ServerController {
                 instancesList.appendChild(element);
             }
         }
+        instancesList.appendChild(this.#currentJoinInstanceElement());
 
         // Select default server
         if (this.id) {
@@ -69,6 +74,46 @@ export default class ServerController {
         return BUTTON;
     }
 
+    #currentJoinInstanceElement() {
+        const BUTTON = document.createElement('button');
+
+        BUTTON.className = "element";
+        BUTTON.title = i18n.translateOne("server.join.title");
+        BUTTON.onclick = () => this.#join();
+
+        const IMG = document.createElement('revoice-icon-circle-plus');
+        IMG.className = "icon";
+        BUTTON.appendChild(IMG);
+
+        return BUTTON;
+    }
+
+    #join() {
+        Modal.toggle({
+            title: i18n.translateOne("server.join.title"),
+            focusConfirm: false,
+            confirmButtonText: i18n.translateOne("server.join.confirm"),
+            showCancelButton: true,
+            cancelButtonText: i18n.translateOne("server.join.cancel"),
+            width: "10rem",
+            html: `
+            <form class='popup'>
+                <div>
+                    <label for="invitation" data-i18n="login.host">${i18n.translateOne("server.join.invitation")}</label>
+                    <br/>
+                    <input type="text" name="host" id="invitation">
+                </div>
+            </form>`,
+            didOpen: () => {
+                document.getElementById('invitation').oninput = () => { this.#popupData = document.getElementById('invitation').value };
+            }
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                await CoreServer.fetch(`/server/join/${this.#popupData}`, 'PUT');
+            }
+        });
+    }
+
     select(id, name) {
         if (!id || !name) {
             console.error("Server id or name is null or undefined");
@@ -76,7 +121,7 @@ export default class ServerController {
         }
 
         const currentInstance = document.getElementById(this.id);
-        if (currentInstance){
+        if (currentInstance) {
             currentInstance.classList.remove('active');
         }
 

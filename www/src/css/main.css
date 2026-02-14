@@ -363,11 +363,18 @@ svg {
 }
 
 .instances .element {
+    display: flex;
     margin: 0.1rem;
     padding: 0.4rem;
 }
 
+.instances .element revoice-icon-circle-plus {
+    display: flex;
+    margin: 0.25rem;
+}
+
 .instances .element img {
+    display: flex;
     width: 2rem;
     height: 2rem;
 }
