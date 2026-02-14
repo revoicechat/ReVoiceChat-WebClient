@@ -273,7 +273,7 @@ export default class ServerController {
         this.id = id;
         this.name = name;
         document.getElementById("server-name").innerText = name;
-        document.getElementById("server-picture").src = MediaServer.profiles(id);
+        document.getElementById("server-picture").src = MediaServer.serverProfiles(id);
     }
 
     /** @param {ServerUpdateNotification} data */
