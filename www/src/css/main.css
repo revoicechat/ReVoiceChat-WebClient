@@ -301,11 +301,12 @@ button {
     text-align: center;
 }
 
-.main {
+.main, .public, .private {
     display: flex;
     position: relative;
     z-index: 10;
     height: 100vh;
+    width: 100%;
 }
 
 form.popup {
@@ -380,11 +381,13 @@ svg {
 }
 
 /* SIDEBAR SERVER */
+.sidebar.friends,
 .sidebar.server {
     border-right-width: 1px;
     width: 19rem;
 }
 
+.sidebar.friends .header h2,
 .sidebar.server .header h2 {
     font-weight: 600;
     margin-left: 0.75rem;

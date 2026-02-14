@@ -205,6 +205,7 @@ body {
 }
 
 /* Sidebars */
+.sidebar.friends,
 .sidebar.instances-list,
 .sidebar.server {
     border-color: var(--pri-bd-color);

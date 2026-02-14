@@ -4,6 +4,7 @@ import MediaServer from "./media/media.server.js";
 import CoreServer from "./core/core.server.js";
 import { i18n } from "../lib/i18n.js";
 import Modal from "../component/modal.component.js";
+import Router from "./router.js";
 
 export default class ServerController {
     /** @type {Room} */
@@ -20,8 +21,9 @@ export default class ServerController {
     /**
      * @param {Room} room
      */
-    constructor(room) {
+    constructor(room, router) {
         this.room = room;
+        this.router = router;
     }
 
     async load() {
@@ -180,6 +182,7 @@ export default class ServerController {
         this.#updateServerName(id, name);
         this.#usersLoad();
         this.room.load(id);
+        this.router.routeTo(Router.APP);
     }
 
     #updateServerName(id, name) {

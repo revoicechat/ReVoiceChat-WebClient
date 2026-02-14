@@ -45,7 +45,7 @@ export default class ReVoiceChat {
         // Instantiate other classes
         this.user = new UserController();
         this.room = new Room(this.user);
-        this.server = new ServerController(this.room);
+        this.server = new ServerController(this.room, this.router);
         this.state = new State(this);
 
         // Add missing classes

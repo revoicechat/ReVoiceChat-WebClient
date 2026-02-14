@@ -20,128 +20,185 @@
         <!-- Sidebar instances and hosts-->
         <div class="sidebar instances-list">
             <div class="header">
-                <button id="messages-open">
-                    <img src="src/img/favicon.png" alt="Server icone" />
+                <button id="private-open">
+                    <img src="src/img/favicon.png" alt="DM" data-i18n-title="private.title" />
                 </button>
             </div>
 
             <div class="instances scrollbar" id="instances"></div>
         </div>
 
-        <!-- Sidebar server -->
-        <div class="sidebar server">
-            <!-- Server info -->
-            <div class="header">
-                <img id="server-picture" src="src/img/favicon.png" alt="Server picture" />
-                <h2 id="server-name">[SERVER-NAME]</h2>
-                <div class="pull-right">
-                    <button id="server-setting-open"><revoice-icon-cog-6></revoice-icon-cog-6></button>
+        <!-- Private Container -->
+        <div class="private hidden" id="route-private">
+            <!-- Sidebar Friends-->
+            <div class="sidebar friends" id="friends-sidebar">
+                <div class="header">
+                    <revoice-icon-users></revoice-icon-users>
+                    <h2 data-i18n="private.friends.title">Friends</h2>
+                </div>
+
+                <!-- User List -->
+                <div class="content scrollbar" id="friends">
+                    <!-- JS -->
                 </div>
             </div>
 
-            <!-- Room List -->
-            <div class="rooms scrollbar" id="rooms"></div>
-
-            <!-- Voice control -->
-            <div class="voice-control hidden" id="voice-control-panel">
-                <div class="element">
-                    <button id="stream-webcam" title="Enable your camera" data-i18n-title="voice.camera.enable">
-                        <revoice-icon-camera></revoice-icon-camera>
-                    </button>
-                </div>
-                <div class="element">
-                    <button id="stream-display" title="Share your screen" data-i18n-title="voice.screen.share">
-                        <revoice-icon-display></revoice-icon-display>
-                    </button>
-                </div>
-                <div class="element">
-                    <button id="voice-self-mute" title="Mute" data-i18n-title="voice.mute">
-                        <revoice-icon-microphone></revoice-icon-microphone>
-                    </button>
-                </div>
-                <div class="element">
-                    <button id="voice-self-deaf" title="Deaf" data-i18n-title="voice.deaf">
-                        <revoice-icon-speaker></revoice-icon-speaker>
-                    </button>
-                </div>
-                <div class="element">
-                    <button id="voice-join-action" class="connect join">[JOIN]</button>
-                </div>
-            </div>
-
-            <!-- Status -->
-            <div id="status-container" class="status-container">
-                <div class="status-bloc-1">
-                    <div class="relative">
-                        <img id="user-picture" src="src/img/default-avatar.webp" alt="PFP" class="icon ring-2" />
-                        <revoice-dot id="user-dot" type="status" color="gray"></revoice-dot>
+            <!-- Private messages -->
+            <div class="room">
+                <!-- Room Header -->
+                <div class="room-header">
+                    <button class="mobile-btn" id="privateToggleSidebar"><revoice-icon-menu-burger></revoice-icon-menu-burger></button>
+                    <div style="display: flex; column-gap: 0.5rem">
+                        <span id="private-room-icon"></span>
+                        <h3 class="room-name" id="private-room-name">[ROOM-NAME]</h3>
                     </div>
-                    <div class="user">
-                        <h2 class="name" id="user-name">[USERNAME]</h2>
-                        <p class="status" id="user-status">[USER STATUS]</p>
-                    </div>
+                    <button class="mobile-btn" id="privateToggleUsers"><revoice-icon-users></revoice-icon-users></button>
                 </div>
-                <div class="pull-right">
-                    <button id="user-setting-open"><revoice-icon-cog-6></revoice-icon-cog-6></button>
-                </div>
-            </div>
-        </div>
-        <!-- Room Container -->
-        <div class="room">
 
-            <!-- Room Header -->
-            <div class="room-header">
-                <button class="mobile-btn" id="toggleSidebar"><revoice-icon-menu-burger></revoice-icon-menu-burger></button>
-                <div style="display: flex; column-gap: 0.5rem">
-                    <span id="room-icon"></span>
-                    <h3 class="room-name" id="room-name">[ROOM-NAME]</h3>
-                </div>
-                <button class="mobile-btn" id="toggleUsers"><revoice-icon-users></revoice-icon-users></button>
-            </div>
-
-            <!-- Text Container -->
-            <div class="room-container" id="text-container">
-                <div class="room-cache scrollbar" id="cache-container"></div>
-
-                <!-- Chat Control -->
-                <div class="room-control-container">
-                    <div class="emoji-picker" id="emoji-picker"></div>
-                    <div class="text-control">
-                        <div class="text-control-reply hidden" id="text-reply-message" data-message-id="">
-                        </div>
-                        <!-- NO VERTICAL SPACE NEEDED HERE -->
-                        <div class="text-control-file hidden" id="text-attachment-div">
-                            <input type="file" id="text-attachment" multiple>
-                            <button class="emoji-btn" id="attachment-button-remove"><revoice-icon-trash></revoice-icon-trash></button>
-                        </div>
-                        <div class="text-control-text">
-                            <textarea rows="1" id="text-input"></textarea>
-                            <button class="emoji-btn" id="attachment-button-add"><revoice-icon-paper-clip></revoice-icon-paper-clip></button>
-                            <button class="emoji-btn" id="emoji-picker-button"><revoice-icon-emoji></revoice-icon-emoji></button>
+                <!-- Text Container -->
+                <div class="room-container" id="private-text-container">
+                    <!-- Chat Control -->
+                    <div class="room-control-container">
+                        <div class="emoji-picker" id="private-emoji-picker"></div>
+                        <div class="text-control">
+                            <div class="text-control-reply hidden" id="private-text-reply-message" data-message-id="">
+                            </div>
+                            <!-- NO VERTICAL SPACE NEEDED HERE -->
+                            <div class="text-control-file hidden" id="private-text-attachment-div">
+                                <input type="file" id="private-text-attachment" multiple>
+                                <button class="emoji-btn" id="private-attachment-button-remove"><revoice-icon-trash></revoice-icon-trash></button>
+                            </div>
+                            <div class="text-control-text">
+                                <textarea rows="1" id="private-text-input"></textarea>
+                                <button class="emoji-btn" id="private-attachment-button-add"><revoice-icon-paper-clip></revoice-icon-paper-clip></button>
+                                <button class="emoji-btn" id="private-emoji-picker-button"><revoice-icon-emoji></revoice-icon-emoji></button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-
-            <!-- Voice Container -->
-            <div class="room-container hidden" id="voice-container">
-                <div class="stream" id="stream-container"></div>
-            </div>
-
         </div>
-        <!-- Sidebar users-->
-        <div class="sidebar users" id="sidebar-users">
-            <div class="header">
-                <revoice-icon-users></revoice-icon-users>
-                <h2 data-i18n="users.title">Users</h2>
-            </div>
 
-            <!-- User List -->
-            <div class="content scrollbar" id="user-list">
-                <!-- JS -->
+        <!-- Public Container -->
+        <div class="public hidden" id="route-public">
+            <!-- Sidebar server -->
+            <div class="sidebar server">
+                <!-- Server info -->
+                <div class="header">
+                    <img id="server-picture" src="src/img/favicon.png" alt="Server picture" />
+                    <h2 id="server-name">[SERVER-NAME]</h2>
+                    <div class="pull-right">
+                        <button id="server-setting-open"><revoice-icon-cog-6></revoice-icon-cog-6></button>
+                    </div>
+                </div>
+
+                <!-- Room List -->
+                <div class="rooms scrollbar" id="rooms"></div>
+
+                <!-- Voice control -->
+                <div class="voice-control hidden" id="voice-control-panel">
+                    <div class="element">
+                        <button id="stream-webcam" title="Enable your camera" data-i18n-title="voice.camera.enable">
+                            <revoice-icon-camera></revoice-icon-camera>
+                        </button>
+                    </div>
+                    <div class="element">
+                        <button id="stream-display" title="Share your screen" data-i18n-title="voice.screen.share">
+                            <revoice-icon-display></revoice-icon-display>
+                        </button>
+                    </div>
+                    <div class="element">
+                        <button id="voice-self-mute" title="Mute" data-i18n-title="voice.mute">
+                            <revoice-icon-microphone></revoice-icon-microphone>
+                        </button>
+                    </div>
+                    <div class="element">
+                        <button id="voice-self-deaf" title="Deaf" data-i18n-title="voice.deaf">
+                            <revoice-icon-speaker></revoice-icon-speaker>
+                        </button>
+                    </div>
+                    <div class="element">
+                        <button id="voice-join-action" class="connect join">[JOIN]</button>
+                    </div>
+                </div>
+
+                <!-- Status -->
+                <div id="status-container" class="status-container">
+                    <div class="status-bloc-1">
+                        <div class="relative">
+                            <img id="user-picture" src="src/img/default-avatar.webp" alt="PFP" class="icon ring-2" />
+                            <revoice-dot id="user-dot" type="status" color="gray"></revoice-dot>
+                        </div>
+                        <div class="user">
+                            <h2 class="name" id="user-name">[USERNAME]</h2>
+                            <p class="status" id="user-status">[USER STATUS]</p>
+                        </div>
+                    </div>
+                    <div class="pull-right">
+                        <button id="user-setting-open"><revoice-icon-cog-6></revoice-icon-cog-6></button>
+                    </div>
+                </div>
+            </div>
+            <!-- Room Container -->
+            <div class="room">
+
+                <!-- Room Header -->
+                <div class="room-header">
+                    <button class="mobile-btn" id="toggleSidebar"><revoice-icon-menu-burger></revoice-icon-menu-burger></button>
+                    <div style="display: flex; column-gap: 0.5rem">
+                        <span id="room-icon"></span>
+                        <h3 class="room-name" id="room-name">[ROOM-NAME]</h3>
+                    </div>
+                    <button class="mobile-btn" id="toggleUsers"><revoice-icon-users></revoice-icon-users></button>
+                </div>
+
+                <!-- Text Container -->
+                <div class="room-container" id="text-container">
+                    <div class="room-cache scrollbar" id="cache-container"></div>
+
+                    <!-- Chat Control -->
+                    <div class="room-control-container">
+                        <div class="emoji-picker" id="emoji-picker"></div>
+                        <div class="text-control">
+                            <div class="text-control-reply hidden" id="text-reply-message" data-message-id="">
+                            </div>
+                            <!-- NO VERTICAL SPACE NEEDED HERE -->
+                            <div class="text-control-file hidden" id="text-attachment-div">
+                                <input type="file" id="text-attachment" multiple>
+                                <button class="emoji-btn" id="attachment-button-remove"><revoice-icon-trash></revoice-icon-trash></button>
+                            </div>
+                            <div class="text-control-text">
+                                <textarea rows="1" id="text-input"></textarea>
+                                <button class="emoji-btn" id="attachment-button-add"><revoice-icon-paper-clip></revoice-icon-paper-clip></button>
+                                <button class="emoji-btn" id="emoji-picker-button"><revoice-icon-emoji></revoice-icon-emoji></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Voice Container -->
+                <div class="room-container hidden" id="voice-container">
+                    <div class="stream" id="stream-container"></div>
+                </div>
+
+            </div>
+            <!-- Sidebar users-->
+            <div class="sidebar users" id="sidebar-users">
+                <div class="header">
+                    <revoice-icon-users></revoice-icon-users>
+                    <h2 data-i18n="users.title">Users</h2>
+                </div>
+
+                <!-- User List -->
+                <div class="content scrollbar" id="user-list">
+                    <!-- JS -->
+                </div>
             </div>
         </div>
+
         <div class="overlay" id="overlay"></div>
+        <voice-context-menu id="voice-context-menu"></voice-context-menu>
+        <stream-context-menu id="stream-context-menu"></stream-context-menu>
     </div>
 
     <!-- Config Containter -->
@@ -436,9 +493,6 @@
             </div>
         </div>
     </div>
-
-    <voice-context-menu id="voice-context-menu"></voice-context-menu>
-    <stream-context-menu id="stream-context-menu"></stream-context-menu>
 
     <!-- Libraries -->
     <script src="src/js/lib/marked.min.js"></script>
