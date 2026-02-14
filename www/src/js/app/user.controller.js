@@ -10,6 +10,8 @@ export default class UserController {
     id;
     /** @type {string} */
     displayName;
+    /** @type {string} */
+    #type;
 
     constructor() {
         this.settings = new UserSettingsController(this);
@@ -22,7 +24,8 @@ export default class UserController {
         if (result !== null) {
             this.id = result.id;
             this.displayName = result.displayName;
-
+            this.#type = result.type;
+            
             document.getElementById("status-container").classList.add(result.id);
             document.getElementById("user-name").innerText = result.displayName;
             document.getElementById("user-status").innerText = result.status;
@@ -55,6 +58,10 @@ export default class UserController {
         for (const name of document.getElementsByName(`user-name-${id}`)) {
             name.innerText = data.displayName;
         }
+    }
+
+    isAdmin(){
+        return (this.#type == "ADMIN");
     }
 
     /** @param {UserStatusUpdate} data */

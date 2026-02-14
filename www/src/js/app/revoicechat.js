@@ -45,7 +45,7 @@ export default class ReVoiceChat {
         // Instantiate other classes
         this.user = new UserController();
         this.room = new Room(this.user);
-        this.server = new ServerController(this.room, this.router);
+        this.server = new ServerController(this.room, this.router, this.user);
         this.state = new State(this);
 
         // Add missing classes
@@ -67,10 +67,10 @@ export default class ReVoiceChat {
 
     async #load() {
         this.state.load();
-        await this.server.load();
-        await this.#sse.openSSE();
         await this.user.load();
         await this.user.settings.load();
+        await this.server.load();
+        await this.#sse.openSSE();
         this.room.textController.attachEvents();
         this.room.voiceController.attachEvents();
         MobileController.load();

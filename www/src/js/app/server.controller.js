@@ -21,9 +21,10 @@ export default class ServerController {
     /**
      * @param {Room} room
      */
-    constructor(room, router) {
+    constructor(room, router, user) {
         this.room = room;
         this.router = router;
+        this.user = user;
     }
 
     async load() {
@@ -44,6 +45,12 @@ export default class ServerController {
         }
         instancesList.appendChild(this.#currentJoinInstanceElement());
         instancesList.appendChild(this.#createDiscorverInstanceElement());
+
+        console.log(this.user)
+        console.log(this.user.isAdmin())
+        if (this.user.isAdmin()) {
+            instancesList.appendChild(this.#createCreateInstanceElement());
+        }
 
         // Select default server
         if (this.id) {
@@ -105,6 +112,20 @@ export default class ServerController {
         return BUTTON;
     }
 
+    #createCreateInstanceElement() {
+        const BUTTON = document.createElement('button');
+
+        BUTTON.className = "element";
+        BUTTON.title = i18n.translateOne("server.create.title");
+        BUTTON.onclick = () => this.#create();
+
+        const IMG = document.createElement('revoice-icon-square-plus');
+        IMG.className = "icon";
+        BUTTON.appendChild(IMG);
+
+        return BUTTON;
+    }
+
     #join() {
         Modal.toggle({
             title: i18n.translateOne("server.join.title"),
@@ -152,7 +173,7 @@ export default class ServerController {
                 select.oninput = () => { this.#popupData = select.value };
 
                 const publicServers = await CoreServer.fetch('/server/discover');
-                for(const instance of publicServers){
+                for (const instance of publicServers) {
                     const option = document.createElement('option');
                     option.value = instance.id;
                     option.innerHTML = instance.name;
@@ -162,6 +183,40 @@ export default class ServerController {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 await CoreServer.fetch(`/server/${this.#popupData}/join/`, 'POST');
+            }
+        });
+    }
+
+    #create() {
+        Modal.toggle({
+            title: i18n.translateOne("server.create.title"),
+            focusConfirm: false,
+            confirmButtonText: i18n.translateOne("server.create.confirm"),
+            showCancelButton: true,
+            cancelButtonText: i18n.translateOne("server.create.cancel"),
+            width: "30rem",
+            html: `
+            <form class='popup'>
+                <div>
+                    <label for="modal-server-name" data-i18n="server.create.name">${i18n.translateOne("server.create.name")}</label>
+                    <br/>
+                    <input type="text" id="modal-server-name">
+                    <br/>
+                    <label for="modal-server-type" data-i18n="server.create.name">${i18n.translateOne("server.create.type")}</label>
+                    <select id='modal-server-type'>
+                        <option value="PRIVATE">Private</option>
+                        <option value="PUBLIC">Public</option>
+                    </select>
+                </div>
+            </form>`,
+            didOpen: async () => {
+                this.#popupData = { name: null, serverType: "PRIVATE" };
+                document.getElementById('modal-server-name').oninput = () => { this.#popupData.name = document.getElementById('modal-server-name').value };
+                document.getElementById('modal-server-type').oninput = () => { this.#popupData.serverType = document.getElementById('modal-server-type').value };
+            }
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                await CoreServer.fetch(`/server/`, 'PUT', this.#popupData);
             }
         });
     }
