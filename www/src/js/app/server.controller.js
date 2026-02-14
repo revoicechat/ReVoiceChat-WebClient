@@ -216,14 +216,18 @@ export default class ServerController {
             }
         }).then(async (result) => {
             if (result.isConfirmed) {
+                if(!this.#popupData.name){
+                    Modal.toggleError(i18n.translateOne("server.create.error.name"));
+                    return;
+                }
                 await CoreServer.fetch(`/server/`, 'PUT', this.#popupData);
             }
         });
     }
 
     select(id, name) {
-        if (!id || !name) {
-            console.error("Server id or name is null or undefined");
+        if (!id) {
+            console.error("Server id is null or undefined");
             return;
         }
 
