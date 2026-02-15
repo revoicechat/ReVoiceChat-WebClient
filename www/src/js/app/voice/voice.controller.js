@@ -129,7 +129,7 @@ export default class VoiceController {
 
         const userData = data.user;
         const voiceContent = document.getElementById(`voice-users-${data.roomId}`);
-        voiceContent.appendChild(this.#createUserElement(userData));
+        voiceContent.appendChild(this.#createUserElement({ user: userData, streams: [] }));
 
         // NOT our room
         if (data.roomId !== this.#room.id) { return; }
@@ -186,7 +186,7 @@ export default class VoiceController {
         if (voiceContent) {
             voiceContent.innerHTML = "";
             for (const connectedUser of sortedByDisplayName) {
-                voiceContent.appendChild(this.#createUserElement(connectedUser.user));
+                voiceContent.appendChild(this.#createUserElement(connectedUser));
             }
         }
 
@@ -218,9 +218,22 @@ export default class VoiceController {
     }
 
     // Create DOM Element / HTML for a given user
-    #createUserElement(userData) {
-        const userId = userData.id;
+    #createUserElement(connectedUser) {
+        const userId = connectedUser.user.id;
+        const userName = connectedUser.user.displayName
         const profilePicture = MediaServer.profiles(userId);
+
+        let webcamEnable = false;
+        let displayEnable = false;
+
+        for (const stream of connectedUser.streams) {
+            if (stream.streamName === "webcam") {
+                webcamEnable = true;
+            }
+            if (stream.streamName === "display") {
+                displayEnable = true;
+            }
+        }
 
         // Extension
         const extension = document.createElement('div');
@@ -230,26 +243,23 @@ export default class VoiceController {
         // Extension : Webcam
         const extensionWebcam = document.createElement('revoice-icon-camera');
         extensionWebcam.id = `voice-user-extension-webcam-${userId}`;
-        extensionWebcam.className = "hidden";
         extensionWebcam.dataset.i18nTitle = "voice.extention.webcam";
+        extensionWebcam.className = webcamEnable ? "green" : "hidden";
         extension.appendChild(extensionWebcam);
 
         // Extension : Display
         const extensionDisplay = document.createElement('revoice-icon-display');
         extensionDisplay.id = `voice-user-extension-display-${userId}`;
-        extensionDisplay.className = "hidden";
-        extensionWebcam.dataset.i18nTitle = "voice.extention.display"
+        extensionDisplay.dataset.i18nTitle = "voice.extention.display"
+        extensionDisplay.className = displayEnable ? "green" : "hidden";
         extension.appendChild(extensionDisplay);
 
         // Extension : Mute
         const extensionMute = document.createElement('revoice-icon-speaker-x');
         extensionMute.id = `voice-user-extension-mute-${userId}`;
-        extensionMute.className = "hidden";
-        extensionWebcam.dataset.i18nTitle = "voice.extention.mute"
+        extensionMute.dataset.i18nTitle = "voice.extention.mute"
+        extensionMute.className = this.#user.settings.voice.users[userId]?.muted ? "red" : "hidden";
         extension.appendChild(extensionMute);
-        if (this.#user.settings.voice.users[userId]?.muted) {
-            extensionMute.className = "red";
-        }
 
         const DIV = document.createElement('div');
         DIV.id = `voice-${userId}`;
@@ -260,7 +270,7 @@ export default class VoiceController {
                     <img src='${profilePicture}' alt='PFP' class='icon' data-id="${userId}" name='user-picture-${userId}'/>
                 </div>
                 <div class='user'>
-                    <div class='name' name='user-name-${userId}'>${userData.displayName}</div>
+                    <div class='name' name='user-name-${userId}'>${userName}</div>
                 </div>
             </div>
         `;
@@ -314,7 +324,7 @@ export default class VoiceController {
             if (this.#user.settings.voice.users[userId]?.muted) {
                 document.getElementById(`voice-user-extension-mute-${userId}`).classList = "red";
             }
-            else{
+            else {
                 document.getElementById(`voice-user-extension-mute-${userId}`).classList = "hidden";
             }
         }
