@@ -65,8 +65,8 @@ export class DecodedVoice {
 
         // User info
         const userInfo = view.getUint8(offset++);
-        this.user.type = (userInfo & 1) == 1;
-        this.user.gateState = (userInfo & 2) == 2;
+        this.user.type = userInfo & 1;
+        this.user.gateState = userInfo & 2;
 
         // User ID
         this.user.id = new TextDecoder().decode(
