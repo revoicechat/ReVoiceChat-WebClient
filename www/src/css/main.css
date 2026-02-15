@@ -475,6 +475,7 @@ svg {
 
 .rooms .title.name {
     margin-left: 0.5rem;
+    max-width: 13rem;
 }
 
 .voice-profile .extension,
