@@ -71,8 +71,7 @@ export default class Listener {
         const gateState = decodedVoice.user.gateState;
         const data = decodedVoice.data;
 
-
-        // If user sending packet is muted OR we are deaf, we stop
+        // If user sending packet is locally muted OR we are deaf, we stop
         if (this.#muted || selfDeaf) {
             this.#setUserGlow(this.#id, false);
             return;

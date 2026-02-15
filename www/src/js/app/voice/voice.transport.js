@@ -2,7 +2,7 @@
  * Voice Transport
  * Structure :
  * [  4 bytes ] Timestamp (uint32)
- * [  1 byte  ] User info ([1]Type; [2]Gate)
+ * [  1 byte  ] User info ([1]Type; [2]Gate; [3]Mute)
  * [ 36 bytes ] User ID
  * [  4 bytes ] Payload length (uint32)
  * [  X bytes ] Payload (voice)
@@ -13,7 +13,7 @@ export class EncodedVoice {
     
     data;
 
-    constructor(timestamp, userId, userGateState, userType, audioData){
+    constructor(timestamp, userId, userGateState, userType, audioData, userSelfMute){
         const headerSize = 4 + 1 + 36 + 4;
         const buffer = new ArrayBuffer(headerSize + audioData.byteLength);
         const view = new DataView(buffer);
@@ -27,6 +27,7 @@ export class EncodedVoice {
         let userInfo = 0;
         userInfo += userType ? 1 : 0;
         userInfo += userGateState ? 2 : 0;
+        userInfo += userSelfMute ? 4 : 0
         view.setUint8(offset++, userInfo);
 
         // User ID
@@ -50,7 +51,8 @@ export class DecodedVoice {
     user = {
         id: null,
         gateState: null,
-        type: null
+        type: null,
+        selfMute: false,
     }
     data = null;
 
@@ -67,6 +69,7 @@ export class DecodedVoice {
         const userInfo = view.getUint8(offset++);
         this.user.type = userInfo & 1;
         this.user.gateState = userInfo & 2;
+        this.user.selfMute = userInfo & 4;
 
         // User ID
         this.user.id = new TextDecoder().decode(

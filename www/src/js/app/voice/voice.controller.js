@@ -254,7 +254,14 @@ export default class VoiceController {
         extensionDisplay.className = displayEnable ? "green" : "hidden";
         extension.appendChild(extensionDisplay);
 
-        // Extension : Mute
+        // Extension : Self Mute
+        const extensionSelfMute = document.createElement('revoice-icon-microphone');
+        extensionSelfMute.id = `voice-user-extension-self-mute-${userId}`;
+        extensionSelfMute.dataset.i18nTitle = "voice.extention.mute"
+        extensionSelfMute.className = "hidden";
+        extension.appendChild(extensionSelfMute);
+
+        // Extension : Local Mute
         const extensionMute = document.createElement('revoice-icon-speaker-x');
         extensionMute.id = `voice-user-extension-mute-${userId}`;
         extensionMute.dataset.i18nTitle = "voice.extention.mute"

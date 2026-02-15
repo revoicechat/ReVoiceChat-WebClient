@@ -270,7 +270,7 @@ export default class VoiceCall {
         this.#encoder = new AudioEncoder({
             output: (chunk) => {
                 if (this.#socket.readyState === WebSocket.OPEN) {
-                    this.#socket.send(new EncodedVoice(Number.parseInt(this.#audioTimestamp / 1000), this.#user.id, this.#gateState, EncodedVoice.user, chunk).data);
+                    this.#socket.send(new EncodedVoice(Number.parseInt(this.#audioTimestamp / 1000), this.#user.id, this.#gateState, EncodedVoice.user, chunk, false).data);
                 }
             },
             error: (error) => { throw new Error(`Encoder setup failed:\n${error.name}\nCurrent codec :${this.#codec.codec}`) },
