@@ -542,9 +542,6 @@ export default class TextController {
      * @return {HTMLElement|null}
      */
     #createContextMenu(messageData) {
-        if (messageData.user.id != this.#user.id) {
-            return null;
-        }
 
         const DIV = document.createElement('div');
         DIV.className = "message-context-menu";
@@ -553,20 +550,22 @@ export default class TextController {
         ANSWER.className = "icon";
         ANSWER.innerHTML = "<revoice-icon-answer></revoice-icon-answer>";
         ANSWER.onclick = () => this.#reply(messageData);
-
-        const EDIT = document.createElement('div');
-        EDIT.className = "icon";
-        EDIT.innerHTML = "<revoice-icon-pencil></revoice-icon-pencil>";
-        EDIT.onclick = () => this.#edit(messageData.id);
-
-        const DELETE = document.createElement('div');
-        DELETE.className = "icon";
-        DELETE.innerHTML = "<revoice-icon-trash></revoice-icon-trash>";
-        DELETE.onclick = () => this.#delete(messageData.id);
-
         DIV.appendChild(ANSWER);
-        DIV.appendChild(EDIT);
-        DIV.appendChild(DELETE);
+
+        if (messageData.user.id === this.#user.id) {
+            const EDIT = document.createElement('div');
+            EDIT.className = "icon";
+            EDIT.innerHTML = "<revoice-icon-pencil></revoice-icon-pencil>";
+            EDIT.onclick = () => this.#edit(messageData.id);
+
+            const DELETE = document.createElement('div');
+            DELETE.className = "icon";
+            DELETE.innerHTML = "<revoice-icon-trash></revoice-icon-trash>";
+            DELETE.onclick = () => this.#delete(messageData.id);
+
+            DIV.appendChild(EDIT);
+            DIV.appendChild(DELETE);
+        }
 
         return DIV
     }
