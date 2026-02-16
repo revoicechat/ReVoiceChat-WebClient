@@ -4,6 +4,7 @@ import {i18n} from "../lib/i18n.js";
 import MediaServer from "./media/media.server.js";
 import CoreServer from "./core/core.server.js";
 import Modal from "../component/modal.component.js";
+import {emojiPicker} from "./emoji.js";
 
 export default class TextController {
     static MODE_SEND = 0;
@@ -508,6 +509,9 @@ export default class TextController {
             <script type="application/json" slot="emotes">
                 ${JSON.stringify(messageData.emotes)}
             </script>
+            <script type="application/json" slot="reactions">
+                ${JSON.stringify(messageData.reactions)}
+            </script>
         `;
         return CONTENT;
     }
@@ -551,6 +555,19 @@ export default class TextController {
         ANSWER.innerHTML = "<revoice-icon-answer></revoice-icon-answer>";
         ANSWER.onclick = () => this.#reply(messageData);
         DIV.appendChild(ANSWER);
+
+        const REACTIONS = document.createElement('div');
+        REACTIONS.className = "icon";
+        REACTIONS.innerHTML = "<revoice-icon-emoji></revoice-icon-emoji>";
+        REACTIONS.addEventListener('click', (e) => {
+            e.stopPropagation();
+            emojiPicker.onEmojiSelect = (emoji) => {
+                void CoreServer.fetch(`/message/${messageData.id}/reaction/${emoji}`, 'POST');
+                emojiPicker.hide();
+            };
+            emojiPicker.show(e.clientX, e.clientY);
+        });
+        DIV.appendChild(REACTIONS);
 
         if (messageData.user.id === this.#user.id) {
             const EDIT = document.createElement('div');

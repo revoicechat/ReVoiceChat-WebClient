@@ -436,6 +436,10 @@ svg {
     margin-left: 0.5rem;
 }
 
+.message-container .message-context-menu .icon {
+    margin: 0;
+}
+
 .message-container-message {
     width: -webkit-fill-available;
 }
@@ -593,9 +597,11 @@ svg {
 
 .message-context-menu {
     visibility: hidden;
-    margin-right: 0;
+    margin-right: 1rem;
     margin-left: auto;
-    padding-right: 1rem;
+    padding: 0.1rem;
+    border: var(--pri-bd-color) 1px solid;
+    border-radius: 0.6rem;
 }
 
 .message-context-menu:hover,
@@ -606,7 +612,7 @@ svg {
 .message-context-menu .icon {
     display: inline;
     cursor: pointer;
-    padding: 0.5rem;
+    padding: 0.2rem 0.5rem;
     border-radius: 10px;
 }
 

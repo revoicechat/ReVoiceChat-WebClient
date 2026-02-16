@@ -134,3 +134,31 @@ svg {
     max-height: 24px;
     height: 24px;
 }
+
+.message-reactions {
+    display: flex;
+    column-gap: 0.5rem;
+}
+
+.message-reaction {
+    display: flex;
+    column-gap: 0.5rem;
+    border-radius: 0.4rem;
+    border: var(--pri-bd-color) 1px solid;
+    padding: 0.1rem 0.3rem;
+}
+
+.message-reaction:hover {
+    cursor: pointer;
+    background-color: var(--pri-bg-color);
+}
+
+.message-reaction.self {
+    background-color: var(--pri-bg-color);
+    border-color: var(--pri-button-bg-color);
+    color: var(--pri-button-bg-color);
+}
+
+.message-reaction.self:hover {
+    background-color: var(--pri-button-hover-color);
+}

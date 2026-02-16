@@ -1,4 +1,4 @@
-import { apiFetch } from "../lib/tools.js";
+import {apiFetch} from "../lib/tools.js";
 import MediaServer from "../app/media/media.server.js";
 import CoreServer from "../app/core/core.server.js";
 
@@ -99,6 +99,26 @@ class EmojiPicker {
         searchInput.addEventListener('input', (e) => {
             this.renderEmojis(e.target.value);
         });
+    }
+
+    show(x = 0, y = 0) {
+        const pickerContainer = document.getElementById('emoji-picker');
+        pickerContainer.classList.toggle('show');
+        const w = pickerContainer.offsetWidth;
+        const h = pickerContainer.offsetHeight;
+        const vw = innerWidth;
+        const vh = innerHeight;
+        const left = Math.min(x, vw - w);
+        const top = Math.min(y - 10, vh - h);
+        console.log(left, top)
+        pickerContainer.style.left = (left - 100) + "px";
+        pickerContainer.style.top = (top - 50) + "px";
+    }
+
+    hide() {
+        const pickerContainer = document.getElementById('emoji-picker');
+        this.onEmojiSelect = null;
+        pickerContainer.classList.remove('show');
     }
 }
 

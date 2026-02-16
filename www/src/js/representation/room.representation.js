@@ -40,6 +40,15 @@ export class MessageRepresentation {
   medias
   /** @type {EmoteRepresentation[]} */
   emotes
+  /** @type {MessageReaction[]} */
+  reactions
+}
+
+class MessageReaction {
+  /** @type {string} */
+  emoji;
+  /** @type {string[]} */
+  users;
 }
 
 class MessageAnsweredRepresentation {
