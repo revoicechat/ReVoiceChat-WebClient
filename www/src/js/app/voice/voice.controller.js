@@ -168,7 +168,7 @@ export default class VoiceController {
     }
 
     // Show users in a room
-    async showJoinedUsers(roomId) {
+    async showJoinedUsers(roomId, voiceContent) {
         const result = await CoreServer.fetch(`/room/${roomId}/user`, 'GET');
 
         if (result.connectedUser === null) {
@@ -182,19 +182,11 @@ export default class VoiceController {
             return a.user.displayName.localeCompare(b.user.displayName);
         });
 
-        const voiceContent = document.getElementById(`voice-users-${roomId}`);
-        if (voiceContent) {
-            voiceContent.innerHTML = "";
-            for (const connectedUser of sortedByDisplayName) {
-                voiceContent.appendChild(this.#createUserElement(connectedUser));
-            }
+        voiceContent.innerHTML = "";
+        for (const connectedUser of sortedByDisplayName) {
+            voiceContent.appendChild(this.#createUserElement(connectedUser));
         }
-        else{
-            console.warn(`RoomElement ${roomId} doesn't exist yet ?`);
-            setTimeout(async () => await this.showJoinedUsers(roomId), 1000);
-            return;
-        }
-
+        
         // Room is currently active
         if (this.#activeRoom === roomId) {
             this.#updateJoinedUsers();

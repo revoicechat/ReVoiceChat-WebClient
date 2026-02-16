@@ -162,7 +162,7 @@ export default class Room {
             users.className = "users";
             root.appendChild(users);
 
-            void this.voiceController.showJoinedUsers(room.id);
+            void this.voiceController.showJoinedUsers(room.id, users);
         } else if (room.type === "TEXT") {
             DIV.ondblclick = async () => { await this.textController.load(room.id, true); }
             extension.innerHTML = `<revoice-dot id="room-extension-dot-${room.id}"
