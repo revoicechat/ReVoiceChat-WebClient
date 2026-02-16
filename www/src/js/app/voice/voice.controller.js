@@ -189,6 +189,11 @@ export default class VoiceController {
                 voiceContent.appendChild(this.#createUserElement(connectedUser));
             }
         }
+        else{
+            console.warn(`RoomElement ${roomId} doesn't exist yet ?`);
+            setTimeout(async () => await this.showJoinedUsers(roomId), 1000);
+            return;
+        }
 
         // Room is currently active
         if (this.#activeRoom === roomId) {
