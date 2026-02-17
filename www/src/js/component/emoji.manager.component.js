@@ -254,16 +254,19 @@ class EmojiManager extends HTMLElement {
                 const name = document.querySelector('#editName').value;
                 const keywords = document.querySelector('#editKeywords').value.split(",");
                 const files = document.querySelector('#editEmojiFile').value;
-                const nameError = i18n.translateOne(this.validateName(name));
-                if (nameError) {
-                    document.querySelector('#editNameError').textContent = nameError;
-                    return;
-                }
-                if (this.emojis.some(e => e.name === name.trim() && e.id !== this.currentEditId)) {
-                    document.querySelector('#editNameError').textContent = i18n.translateOne("emote.new.error.duplicate");
-                    return;
-                }
 
+                const validate = this.validateName(name);
+                if (validate) {
+                    const nameError = i18n.translateOne(validate);
+                    if (nameError) {
+                        document.querySelector('#editNameError').textContent = nameError;
+                        return;
+                    }
+                    if (this.emojis.some(e => e.name === name.trim() && e.id !== this.currentEditId)) {
+                        document.querySelector('#editNameError').textContent = i18n.translateOne("emote.new.error.duplicate");
+                        return;
+                    }
+                }
                 return { name: name, keywords: keywords, file: files[0] };
             }
         }).then(async (result) => {
