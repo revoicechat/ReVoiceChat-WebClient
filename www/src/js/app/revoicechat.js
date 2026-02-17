@@ -115,8 +115,9 @@ export default class ReVoiceChat {
 
     /** @param {import('./types.js').ProfilPictureUpdate} data */
     updateAllPicture(data) {
+        const time = Date.now();
         for (const picture of document.querySelectorAll(`img[data-id="${data.id}"]`)) {
-            picture.src = MediaServer.profiles(data.id);
+            picture.src = MediaServer.profiles(data.id, time);
         }
     }
 }

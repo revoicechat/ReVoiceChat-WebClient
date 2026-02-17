@@ -24,7 +24,7 @@ export default class MediaServer {
      * @param {number} t
      * @return {string}
      */
-    static profiles(id, t = Date.now()) {
+    static profiles(id, t = "") {
         return `${MediaServer.#instance.url}/profiles/${id}?t=${t}`
     }
 
@@ -33,7 +33,7 @@ export default class MediaServer {
      * @param {number} t
      * @return {string}
      */
-    static serverProfiles(id, t = Date.now()) {
+    static serverProfiles(id, t = "") {
         return `${MediaServer.#instance.url}/profiles/server/${id}?t=${t}`
     }
 
@@ -42,7 +42,7 @@ export default class MediaServer {
      * @param {number} t
      * @return {string}
      */
-    static emote(id, t = Date.now()) {
+    static emote(id, t = "") {
         return `${MediaServer.#instance.url}/emote/${id}?t=${t}`
     }
 
@@ -51,7 +51,7 @@ export default class MediaServer {
      * @param {number} t
      * @return {string}
      */
-    static attachments(id, t = Date.now()) {
+    static attachments(id, t = "") {
         return `${MediaServer.#instance.url}/attachments/${id}?t=${t}`
     }
 
