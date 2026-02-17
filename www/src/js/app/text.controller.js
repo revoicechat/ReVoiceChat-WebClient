@@ -562,7 +562,7 @@ export default class TextController {
         REACTIONS.addEventListener('click', (e) => {
             e.stopPropagation();
             emojiPicker.onEmojiSelect = (emoji) => {
-                void CoreServer.fetch(`/message/${messageData.id}/reaction/${emoji}`, 'POST');
+                void CoreServer.fetch(`/message/${messageData.id}/reaction/${emoji.dataset.id}`, 'POST');
                 emojiPicker.hide();
             };
             emojiPicker.show(e.clientX, e.clientY);

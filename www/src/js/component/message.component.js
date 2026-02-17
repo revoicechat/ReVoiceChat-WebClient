@@ -1,6 +1,7 @@
 import {containsOnlyEmotes} from "../lib/emote.utils.js";
 import MediaServer from "../app/media/media.server.js";
 import CoreServer from "../app/core/core.server.js";
+import {isUUID} from "../lib/string.utils.js";
 
 class MessageComponent extends HTMLElement {
     /** @type string */
@@ -157,7 +158,7 @@ class MessageComponent extends HTMLElement {
             if (this.markdown) {
                 if (containsOnlyEmotes(this.markdown, this.#emotesNames())) {
                     contentDiv.innerHTML = this.#injectEmojis(this.#removeTags(this.markdown))
-                    contentDiv.style.fontSize = "2rem"
+                    contentDiv.classList.add('only-emoji')
                 } else {
                     contentDiv.innerHTML += this.#injectEmojis(marked.parse(this.#removeTags(this.markdown)));
                 }
@@ -250,7 +251,8 @@ class MessageComponent extends HTMLElement {
             if (number <= 0) {
                 element.remove()
             } else {
-                element.innerHTML = `<span>${emoji}</span><span>${number}</span>`
+                element.appendChild(isUUID(emoji) ? this.#emoji(emoji) : this.#span(emoji))
+                element.appendChild(this.#span(number))
             }
 
         }
@@ -266,6 +268,22 @@ class MessageComponent extends HTMLElement {
             REACTIONS.appendChild(emoji)
         }
         contentDiv.appendChild(REACTIONS)
+    }
+
+    /** @param {string} data */
+    #span(data) {
+        const span = document.createElement("span")
+        span.innerText = data
+        return span;
+    }
+
+    /** @param {string} emoji */
+    #emoji(emoji) {
+        const img = document.createElement("img")
+        img.src = MediaServer.emote(emoji)
+        img.className = 'emoji'
+        img.alt = emoji
+        return img;
     }
 }
 

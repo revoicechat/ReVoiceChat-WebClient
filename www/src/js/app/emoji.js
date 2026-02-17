@@ -36,10 +36,11 @@ function handlePickerForMessage(emoji) {
     const cursorPos = messageInput.selectionStart;
     const textBefore = messageInput.value.substring(0, cursorPos);
     const textAfter = messageInput.value.substring(cursorPos);
+    const emojiText = emoji.dataset.emoji
 
-    messageInput.value = textBefore + emoji + textAfter;
+    messageInput.value = textBefore + emojiText + textAfter;
     messageInput.focus();
-    messageInput.selectionStart = messageInput.selectionEnd = cursorPos + emoji.length;
+    messageInput.selectionStart = messageInput.selectionEnd = cursorPos + emojiText.length;
 }
 
 
