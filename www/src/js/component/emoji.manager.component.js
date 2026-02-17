@@ -253,7 +253,7 @@ class EmojiManager extends HTMLElement {
             preConfirm: () => {
                 const name = document.querySelector('#editName').value;
                 const keywords = document.querySelector('#editKeywords').value.split(",");
-                const files = document.querySelector('#editEmojiFile').value;
+                const fileInput = document.querySelector('#editEmojiFile');
 
                 const validate = this.validateName(name);
                 if (validate) {
@@ -267,7 +267,7 @@ class EmojiManager extends HTMLElement {
                         return;
                     }
                 }
-                return { name: name, keywords: keywords, file: files[0] };
+                return { name: name, keywords: keywords, file: fileInput.files[0] };
             }
         }).then(async (result) => {
             if (result.isConfirmed) {
@@ -295,29 +295,10 @@ class EmojiManager extends HTMLElement {
                         keywords: keywords
                     });
 
-                    // Temporary: Update locally until API is integrated
-                    emoji.name = result.name.trim();
-                    emoji.keywords = keywords;
-
                     if (result.file) {
                         const formData = new FormData();
                         formData.append('file', result.file);
                         await MediaServer.fetch(`/emote/${this.currentEditId}`, "POST", formData);
-
-                        // Temporary: Store image locally until API is integrated
-                        const reader = new FileReader();
-                        reader.onload = (e) => {
-                            // Dispatch custom event
-                            this.dispatchEvent(new CustomEvent('emoji-updated', {
-                                detail: { emoji, oldName },
-                                bubbles: true,
-                                composed: true
-                            }));
-
-                            this.closeModal();
-                            this.updateEmojiList();
-                        };
-                        reader.readAsDataURL(result.file);
                     } else {
                         // Dispatch custom event
                         this.dispatchEvent(new CustomEvent('emoji-updated', {
