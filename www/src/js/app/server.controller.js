@@ -283,6 +283,7 @@ export default class ServerController {
         this.name = name;
         document.getElementById("server-name").innerText = name;
         document.getElementById("server-picture").src = MediaServer.serverProfiles(id);
+        document.title = `ReVoiceChat - ${name}`;
     }
 
     /** @param {ServerUpdateNotification} data */
