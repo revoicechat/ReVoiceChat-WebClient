@@ -1,10 +1,10 @@
 import Alert from './utils/alert.js';
-import {humanFileSize, sanitizeString, timestampToText} from "../lib/tools.js";
-import {i18n} from "../lib/i18n.js";
+import { humanFileSize, sanitizeString, timestampToText } from "../lib/tools.js";
+import { i18n } from "../lib/i18n.js";
 import MediaServer from "./media/media.server.js";
 import CoreServer from "./core/core.server.js";
 import Modal from "../component/modal.component.js";
-import {emojiPicker} from "./emoji.js";
+import { emojiPicker } from "./emoji.js";
 
 export default class TextController {
     static MODE_SEND = 0;
@@ -47,7 +47,7 @@ export default class TextController {
                 }
             }
         });
-        this.#observer.observe(element, {attributes: true, attributeFilter: ['data-message-id']});
+        this.#observer.observe(element, { attributes: true, attributeFilter: ['data-message-id'] });
     }
 
     /** @param {HTMLElement} element */
@@ -86,7 +86,13 @@ export default class TextController {
 
         document.getElementById("attachment-button-add").addEventListener('click', () => this.#addAttachment());
         document.getElementById("attachment-button-remove").addEventListener('click', () => this.#removeAttachment());
-        document.getElementById('cache-container').addEventListener("scroll", () => { this.#scroll(this.#cachedRooms[this.#room.id]) });
+
+        const cacheContainer = document.getElementById('cache-container');
+        cacheContainer.addEventListener("scroll", () => {
+            const element = this.#cachedRooms[this.#room.id];
+            element.scrollTop = cacheContainer.scrollTop;
+            this.#loadMore(element, cacheContainer);
+        });
     }
 
     #getTextContentElement(roomId) {
@@ -96,7 +102,7 @@ export default class TextController {
             document.getElementById('cache-container').appendChild(textContent);
 
             let obj = {};
-            obj[roomId] = { page: 0, total: 0, content: textContent, loaded: false, scrollTop: null };
+            obj[roomId] = { content: textContent, scrollTop: null, firstMessageId: null };
             Object.assign(this.#cachedRooms, obj);
         }
 
@@ -119,36 +125,8 @@ export default class TextController {
         }
     }
 
-    #scroll(element) {
-        if (!element) return;
-        element.scrollTop = document.getElementById('cache-container').scrollTop;
-    }
-
-    #isScrollAtBottom(element){
+    #isScrollAtBottom(element) {
         return Math.abs(element.scrollHeight - element.scrollTop - element.clientHeight) < 1;
-    }
-
-    async #loadMore(element) {
-        if (element.content.scrollTop === 0 && element.page !== element.total && element.loaded) {
-            const cachedRooms = document.getElementById('cache-container');
-            let lastScrollHeight = cachedRooms.scrollHeight;
-
-            /** @type {PageResult<MessageRepresentation>} */
-            const result = await CoreServer.fetch(`/room/${this.#room.id}/message?page=${element.page}`, 'GET');
-            if (result !== null) {
-                element.page = Math.min(result.pageNumber + 1, result.totalPages);
-
-                const invertedSortedResult = [...result.content].sort((a, b) => {
-                    return new Date(a.createdDate) + new Date(b.createdDate);
-                });
-
-                for (const message of invertedSortedResult) {
-                    element.content.prepend(this.create(message));
-                }
-
-                cachedRooms.scrollTop = cachedRooms.scrollHeight - lastScrollHeight;
-            }
-        }
     }
 
     clearCache() {
@@ -177,6 +155,9 @@ export default class TextController {
 
                 element.content.innerHTML = "";
                 for (const message of sortedResult) {
+                    if (!element.firstMessageId) {
+                        element.firstMessageId = message.id;
+                    }
                     element.content.appendChild(this.create(message));
                 }
 
@@ -193,6 +174,27 @@ export default class TextController {
 
         room.content.classList.remove('hidden');
         container.scrollTop = room.scrollTop;
+    }
+
+    async #loadMore(element, cacheContainer) {
+        if (element && element.scrollTop === 0) {
+            let lastScrollHeight = cacheContainer.scrollHeight;
+
+            /** @type {PageResult<MessageRepresentation>} */
+            const result = await CoreServer.fetch(`/room/${this.#room.id}/message?lastMessage=${element.firstMessageId}`, 'GET');
+            if (result !== null) {
+                const invertedSortedResult = [...result.content].sort((a, b) => {
+                    return new Date(a.createdDate) + new Date(b.createdDate);
+                });
+
+                for (const message of invertedSortedResult) {
+                    element.content.prepend(this.create(message));
+                    element.firstMessageId = message.id;
+                }
+
+                cacheContainer.scrollTop = cacheContainer.scrollHeight - lastScrollHeight;
+            }
+        }
     }
 
     /** @param {MessageNotification} data */
@@ -217,7 +219,7 @@ export default class TextController {
                 }
 
                 // Scroll auto
-                if(isAtBottom && container.scrollTop < container.scrollHeight){
+                if (isAtBottom && container.scrollTop < container.scrollHeight) {
                     container.scrollTop = container.scrollHeight;
                 }
                 break;
@@ -438,8 +440,8 @@ export default class TextController {
 
         // Truncate text if too long
         messagePreview.textContent = answeredTo.text.length > 50
-          ? answeredTo.text.substring(0, 50) + '...'
-          : answeredTo.text;
+            ? answeredTo.text.substring(0, 50) + '...'
+            : answeredTo.text;
 
         if (answeredTo.hasMedias) {
             const mediaIndicator = document.createElement('span');
@@ -464,7 +466,7 @@ export default class TextController {
             }
         };
 
-        const answerHolder= document.createElement("div");
+        const answerHolder = document.createElement("div");
         answerHolder.appendChild(answerDiv)
         answerHolder.style.display = "flex";
         answerHolder.style.alignContent = "certer";
