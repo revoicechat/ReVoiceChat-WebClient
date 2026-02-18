@@ -159,7 +159,7 @@ svg {
     font-size: 1rem;
 }
 
-.message-reaction img {
+.message-reaction img, .only-emoji  .message-reaction .emoji {
     width: 1.2rem;
     height: 1.2rem;
 }
