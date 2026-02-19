@@ -13,8 +13,25 @@ export default class UserController {
     /** @type {string} */
     #type;
 
+    #cachedElements = {
+        statusContainer: null,
+        userName: null,
+        userStatus: null,
+        userDot: null,
+        userPicture: null,
+        settingsUserName: null,
+        settingsUserPicture: null
+    }
+
     constructor() {
         this.settings = new UserSettingsController(this);
+        this.#cachedElements.statusContainer = document.getElementById("status-container");
+        this.#cachedElements.userName = document.getElementById("user-name");
+        this.#cachedElements.userStatus = document.getElementById("user-status");
+        this.#cachedElements.userDot = document.getElementById("user-dot");
+        this.#cachedElements.userPicture = document.getElementById("user-picture");
+        this.#cachedElements.settingsUserName = document.getElementById('settings-user-name');
+        this.#cachedElements.settingsUserPicture = document.getElementById('setting-user-picture');
     }
 
     async load() {
@@ -26,12 +43,12 @@ export default class UserController {
             this.displayName = result.displayName;
             this.#type = result.type;
             
-            document.getElementById("status-container").classList.add(result.id);
-            document.getElementById("user-name").innerText = result.displayName;
-            document.getElementById("user-status").innerText = result.status;
-            document.getElementById('user-dot').setAttribute('color', statusToColor(result.status));
-            document.getElementById("user-picture").src = MediaServer.profiles(result.id);
-            document.getElementById("user-picture").dataset.id = result.id;
+            this.#cachedElements.statusContainer.classList.add(result.id);
+            this.#cachedElements.userName.innerText = result.displayName;
+            this.#cachedElements.userStatus.innerText = result.status;
+            this.#cachedElements.userDot.setAttribute('color', statusToColor(result.status));
+            this.#cachedElements.userPicture.src = MediaServer.profiles(result.id);
+            this.#cachedElements.userPicture.dataset.id = result.id;
         }
 
         await this.settings.load();
@@ -46,11 +63,11 @@ export default class UserController {
         // Static elements for self
         if(this.id === id){
             // Main page
-            document.getElementById('user-name').innerText = name;
-            document.getElementById('user-picture').src = picture;
+            this.#cachedElements.userName.innerText = name;
+            this.#cachedElements.userPicture.src = picture;
             // User settings
-            document.getElementById('overview-displayname').value = name;
-            document.getElementById('setting-user-picture').src = picture;
+            this.#cachedElements.settingsUserName.value = name;
+            this.#cachedElements.settingsUserPicture.src = picture;
         }
          
         // Dynamic elements
@@ -75,7 +92,7 @@ export default class UserController {
 
         // Static elements for self
         if(this.id === id){
-            document.getElementById('user-dot').setAttribute('color', color);
+            this.#cachedElements.userDot.setAttribute('color', color);
         }
 
         // Dynamic elements
