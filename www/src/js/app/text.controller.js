@@ -25,11 +25,13 @@ export default class TextController {
     /** @type {MutationObserver|null} */
     #observer = null;
 
-    #cacheContainerElement = null;
-    #textReplyMessageElement = null;
-    #textInputElement = null;
-    #textAttachmentElement = null;
-    #textAttachmentDivElement = null;
+    #cachedElements = {
+        cacheContainer: null,
+        textReplyMessage: null,
+        textInput: null,
+        textAttachment: null,
+        textAttachmentDiv: null
+    }
 
     /**
      * @param {UserController} user
@@ -38,11 +40,11 @@ export default class TextController {
     constructor(user, room) {
         this.#user = user;
         this.#room = room;
-        this.#cacheContainerElement = document.getElementById('cache-container');
-        this.#textReplyMessageElement = document.getElementById("text-reply-message");
-        this.#textInputElement = document.getElementById("text-input");
-        this.#textAttachmentElement = document.getElementById("text-attachment");
-        this.#textAttachmentDivElement = document.getElementById("text-attachment-div");
+        this.#cachedElements.cacheContainer = document.getElementById("cache-container");
+        this.#cachedElements.textReplyMessage = document.getElementById("text-reply-message");
+        this.#cachedElements.textInput = document.getElementById("text-input");
+        this.#cachedElements.textAttachment = document.getElementById("text-attachment");
+        this.#cachedElements.textAttachmentDiv = document.getElementById("text-attachment-div");
         this.#observeReply();
     }
 
@@ -52,11 +54,11 @@ export default class TextController {
         this.#observer = new MutationObserver((mutations) => {
             for (const mutation of mutations) {
                 if (mutation.type === 'attributes' && mutation.attributeName === 'data-message-id') {
-                    this.#showRepliedMessage(this.#textReplyMessageElement);
+                    this.#showRepliedMessage(this.#cachedElements.textReplyMessage);
                 }
             }
         });
-        this.#observer.observe(this.#textReplyMessageElement, { attributes: true, attributeFilter: ['data-message-id'] });
+        this.#observer.observe(this.#cachedElements.textReplyMessage, { attributes: true, attributeFilter: ['data-message-id'] });
     }
 
     /** @param {HTMLElement} element */
@@ -83,21 +85,21 @@ export default class TextController {
 
     #removeRepliedMessage() {
         this.#repliedMessage = null;
-        this.#textReplyMessageElement.dataset.messageId = "";
+        this.#cachedElements.textReplyMessage.dataset.messageId = "";
     }
 
     attachEvents() {
-        this.#textInputElement.addEventListener('keydown', async (event) => await this.#eventHandler(event));
-        this.#textInputElement.addEventListener('oninput', () => this.oninput(this.#textInputElement));
-        this.#textInputElement.addEventListener('paste', (event) => this.#pasteHandler(event));
+        this.#cachedElements.textInput.addEventListener('keydown', async (event) => await this.#eventHandler(event));
+        this.#cachedElements.textInput.addEventListener('oninput', () => this.oninput(this.#cachedElements.textInput));
+        this.#cachedElements.textInput.addEventListener('paste', (event) => this.#pasteHandler(event));
 
         document.getElementById("attachment-button-add").addEventListener('click', () => this.#addAttachment());
         document.getElementById("attachment-button-remove").addEventListener('click', () => this.#removeAttachment());
 
-        this.#cacheContainerElement.addEventListener("scroll", () => {
+        this.#cachedElements.cacheContainer.addEventListener("scroll", () => {
             const element = this.#cachedRooms[this.#room.id];
             if (element) {
-                element.scrollTop = this.#cacheContainerElement.scrollTop;
+                element.scrollTop = this.#cachedElements.cacheContainer.scrollTop;
             }
             this.#loadMore(element);
         });
@@ -107,7 +109,7 @@ export default class TextController {
         if (!this.#cachedRooms[roomId]) {
             const textContent = document.createElement("div");
             textContent.className = "room-content scrollbar";
-            this.#cacheContainerElement.appendChild(textContent);
+            this.#cachedElements.cacheContainer.appendChild(textContent);
 
             let obj = {};
             obj[roomId] = { content: textContent, scrollTop: null, firstMessageId: null };
@@ -128,7 +130,7 @@ export default class TextController {
         }
 
         if (event.key === 'Escape') {
-            this.#textInputElement.value = "";
+            this.#cachedElements.textInput.value = "";
             this.mode = TextController.MODE_SEND;
         }
     }
@@ -176,16 +178,16 @@ export default class TextController {
         const room = this.#cachedRooms[roomId];
 
         if (room.scrollTop == null) {
-            room.scrollTop = this.#cacheContainerElement.scrollHeight;
+            room.scrollTop = this.#cachedElements.cacheContainer.scrollHeight;
         }
 
         room.content.classList.remove('hidden');
-        this.#cacheContainerElement.scrollTop = room.scrollTop;
+        this.#cachedElements.cacheContainer.scrollTop = room.scrollTop;
     }
 
     async #loadMore(element) {
         if (element && element.scrollTop === 0) {
-            let lastScrollHeight = this.#cacheContainerElement.scrollHeight;
+            let lastScrollHeight = this.#cachedElements.cacheContainer.scrollHeight;
 
             /** @type {PageResult<MessageRepresentation>} */
             const result = await CoreServer.fetch(`/room/${this.#room.id}/message?lastMessage=${element.firstMessageId}`, 'GET');
@@ -199,7 +201,7 @@ export default class TextController {
                     element.firstMessageId = message.id;
                 }
 
-                this.#cacheContainerElement.scrollTop = this.#cacheContainerElement.scrollHeight - lastScrollHeight;
+                this.#cachedElements.cacheContainer.scrollTop = this.#cachedElements.cacheContainer.scrollHeight - lastScrollHeight;
             }
         }
     }
@@ -214,7 +216,7 @@ export default class TextController {
         const room = this.#getTextContentElement(data.message.roomId);
         switch (data.action) {
             case "ADD":
-                const isAtBottom = this.#isScrollAtBottom(this.#cacheContainerElement);
+                const isAtBottom = this.#isScrollAtBottom(this.#cachedElements.cacheContainer);
 
                 // Add message
                 room.content.appendChild(this.create(message));
@@ -225,8 +227,8 @@ export default class TextController {
                 }
 
                 // Scroll auto
-                if (isAtBottom && this.#cacheContainerElement.scrollTop < this.#cacheContainerElement.scrollHeight) {
-                    this.#cacheContainerElement.scrollTop = this.#cacheContainerElement.scrollHeight;
+                if (isAtBottom && this.#cachedElements.cacheContainer.scrollTop < this.#cachedElements.cacheContainer.scrollHeight) {
+                    this.#cachedElements.cacheContainer.scrollTop = this.#cachedElements.cacheContainer.scrollHeight;
                 }
                 break;
             case "MODIFY":
@@ -245,15 +247,15 @@ export default class TextController {
     }
 
     #addAttachment() {
-        this.#textAttachmentElement.click();
-        this.#textAttachmentDivElement.classList.remove('hidden');
-        this.#textInputElement.focus()
+        this.#cachedElements.textAttachment.click();
+        this.#cachedElements.textAttachmentDiv.classList.remove('hidden');
+        this.#cachedElements.textInput.focus()
     }
 
     #removeAttachment() {
-        this.#textAttachmentElement.value = "";
-        this.#textAttachmentDivElement.classList.add('hidden');
-        this.#textInputElement.focus()
+        this.#cachedElements.textAttachment.value = "";
+        this.#cachedElements.textAttachmentDiv.classList.add('hidden');
+        this.#cachedElements.textInput.focus()
     }
 
     #pasteHandler(event) {
@@ -263,7 +265,7 @@ export default class TextController {
         const dataTransfer = new DataTransfer();
 
         // Keep existing files
-        for (const existingFile of this.#textAttachmentElement.files) {
+        for (const existingFile of this.#cachedElements.textAttachment.files) {
             dataTransfer.items.add(existingFile);
         }
 
@@ -287,19 +289,19 @@ export default class TextController {
             }
         }
 
-        this.#textAttachmentElement.files = dataTransfer.files;
+        this.#cachedElements.textAttachment.files = dataTransfer.files;
 
         // Prevent default paste if files were detected
         if (hasFile) {
-            this.#textAttachmentDivElement.classList.remove('hidden');
+            this.#cachedElements.textAttachmentDiv.classList.remove('hidden');
             event.preventDefault();
         }
     }
 
     async send() {
-        let textInput = sanitizeString(this.#textInputElement.value);
+        let textInput = sanitizeString(this.#cachedElements.textInput.value);
 
-        if ((textInput == "" || textInput == null) && !this.#textAttachmentElement) {
+        if ((textInput == "" || textInput == null) && !this.#cachedElements.textAttachment) {
             return;
         }
 
@@ -311,8 +313,8 @@ export default class TextController {
 
         // Attachments
         const attachments = [];
-        if (this.#textAttachmentElement && this.mode === TextController.MODE_SEND) {
-            for (const element of this.#textAttachmentElement.files) {
+        if (this.#cachedElements.textAttachment && this.mode === TextController.MODE_SEND) {
+            for (const element of this.#cachedElements.textAttachment.files) {
                 if (element.size < this.#attachmentMaxSize) {
                     data.medias.push({ name: element.name });
                     attachments[element.name] = element;
@@ -339,8 +341,8 @@ export default class TextController {
             this.#removeRepliedMessage();
 
             // Clean text input
-            this.#textInputElement.value = "";
-            this.#textInputElement.style.height = "auto";
+            this.#cachedElements.textInput.value = "";
+            this.#cachedElements.textInput.style.height = "auto";
 
             // Default mode
             this.mode = TextController.MODE_SEND;
@@ -537,8 +539,8 @@ export default class TextController {
     /** @param {MessageRepresentation} repliedMessage */
     #reply(repliedMessage) {
         this.#repliedMessage = repliedMessage;
-        this.#textReplyMessageElement.dataset.messageId = repliedMessage.id;
-        this.#textInputElement.focus();
+        this.#cachedElements.textReplyMessage.dataset.messageId = repliedMessage.id;
+        this.#cachedElements.textInput.focus();
     }
 
     async #edit(id) {
@@ -547,10 +549,10 @@ export default class TextController {
         if (result) {
             this.mode = TextController.MODE_EDIT;
             this.#editId = id;
-            this.#textInputElement.value = result.text;
-            this.#textInputElement.style.height = "auto";
-            this.#textInputElement.style.height = this.#textInputElement.scrollHeight + "px";
-            this.#textInputElement.focus();
+            this.#cachedElements.textInput.value = result.text;
+            this.#cachedElements.textInput.style.height = "auto";
+            this.#cachedElements.textInput.style.height = this.#cachedElements.textInput.scrollHeight + "px";
+            this.#cachedElements.textInput.focus();
         }
     }
 
