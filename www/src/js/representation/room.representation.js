@@ -11,6 +11,15 @@ class RoomRepresentation {
   type
   /** @type {string} */
   serverId
+  /** @type {UnreadMessage} */
+  unreadMessages
+}
+
+class UnreadMessage {
+  /** @type {boolean} */
+  hasUnreadMessage
+  /** @type {number} */
+  mentions
 }
 
 /**
@@ -30,6 +39,8 @@ export class MessageRepresentation {
   text
   /** @type {string} */
   roomId
+  /** @type {string} */
+  serverId
   /** @type {MessageAnsweredRepresentation} */
   answeredTo
   /** @type {UserNotificationRepresentation} */

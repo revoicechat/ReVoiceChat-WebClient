@@ -170,10 +170,13 @@ export default class Room {
             void this.voiceController.showJoinedUsers(room.id, users);
         } else if (room.type === "TEXT") {
             DIV.ondblclick = async () => { await this.textController.load(room.id, true); }
-            extension.innerHTML = `<revoice-notification-dot id="room-extension-dot-${room.id}"
-                                                class="hidden"
-                                                style="margin: auto;">
-                                   </revoice-notification-dot>`;
+            const notification = document.createElement('revoice-notification-dot')
+            notification.id = `room-extension-dot-${room.id}`
+            notification.style.margin = 'auto'
+            if (!room.unreadMessages.hasUnreadMessage) {
+                notification.className = 'hidden'
+            }
+            extension.appendChild(notification);
         }
 
         return root;
@@ -217,7 +220,6 @@ export default class Room {
         document.getElementById("text-container").classList.remove('hidden');
         document.getElementById("text-input").placeholder = `Send a message in ${this.name}`;
         document.getElementById("text-input").focus();
-        document.getElementById(`room-extension-dot-${this.id}`).classList.add('hidden');
 
         // Keep voice controls if voiceCall is active
         if (!this.voiceController.isCallActive()) {

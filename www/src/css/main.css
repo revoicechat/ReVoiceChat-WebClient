@@ -398,6 +398,18 @@ svg {
     height: 2.5rem;
 }
 
+.server-block {
+    position: relative;
+    display: inline-block;
+}
+
+.server-notification {
+    position: absolute;
+    left: -5px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
 /* SIDEBAR USER */
 .sidebar.users {
     border-left-width: 1px;

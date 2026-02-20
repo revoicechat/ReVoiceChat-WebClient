@@ -76,20 +76,30 @@ export default class ServerController {
             return;
         }
 
-        const BUTTON = document.createElement('button');
+        const DIV = document.createElement('div');
+        DIV.classList.add('server-block');
 
+        const BUTTON = document.createElement('button');
         BUTTON.id = instance.id;
         BUTTON.className = "element";
         BUTTON.title = instance.name;
         BUTTON.onclick = () => this.select(instance.id, instance.name);
+
+        const notification = document.createElement('revoice-notification-dot')
+        notification.id = `server-notification-dot-${instance.id}`
+        notification.classList.add('server-notification')
+        if (!instance.unreadMessages.hasUnreadMessage) {
+            notification.classList.add('hidden')
+        }
+        DIV.appendChild(notification);
 
         const IMG = document.createElement('img');
         IMG.src = MediaServer.serverProfiles(instance.id);
         IMG.className = "icon";
         IMG.dataset.id = instance.id;
         BUTTON.appendChild(IMG);
-
-        return BUTTON;
+        DIV.appendChild(BUTTON)
+        return DIV;
     }
 
     #joinInstanceElement() {
