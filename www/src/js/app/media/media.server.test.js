@@ -15,17 +15,22 @@ describe('MediaServer', () => {
     });
 
     test('profiles', () => {
-        const url = MediaServer.profiles('test', 15);
+        const url = MediaServer.profiles('test', '15');
         expect(url).toBe("https://revoicechat.fr/media/profiles/test?t=15");
     });
 
+    test('serverProfiles', () => {
+        const url = MediaServer.serverProfiles('test', '15');
+        expect(url).toBe("https://revoicechat.fr/media/profiles/server/test?t=15");
+    });
+
     test('attachments', () => {
-        const url = MediaServer.attachments('test', 15);
+        const url = MediaServer.attachments('test', '15');
         expect(url).toBe("https://revoicechat.fr/media/attachments/test?t=15");
     });
 
     test('emote', () => {
-        const url = MediaServer.emote('test', 15);
+        const url = MediaServer.emote('test', '15');
         expect(url).toBe("https://revoicechat.fr/media/emote/test?t=15");
     });
 

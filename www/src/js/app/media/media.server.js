@@ -21,37 +21,37 @@ export default class MediaServer {
 
     /**
      * @param {string} id
-     * @param {number} t
+     * @param {string} t
      * @return {string}
      */
-    static profiles(id, t = "") {
+    static profiles(id, t = '') {
         return `${MediaServer.#instance.url}/profiles/${id}?t=${t}`
     }
 
     /**
      * @param {string} id
-     * @param {number} t
+     * @param {string} t
      * @return {string}
      */
-    static serverProfiles(id, t = "") {
+    static serverProfiles(id, t = '') {
         return `${MediaServer.#instance.url}/profiles/server/${id}?t=${t}`
     }
 
     /**
      * @param {string} id
-     * @param {number} t
+     * @param {string} t
      * @return {string}
      */
-    static emote(id, t = "") {
+    static emote(id, t = '') {
         return `${MediaServer.#instance.url}/emote/${id}?t=${t}`
     }
 
     /**
      * @param {string} id
-     * @param {number} t
+     * @param {string} t
      * @return {string}
      */
-    static attachments(id, t = "") {
+    static attachments(id, t = '') {
         return `${MediaServer.#instance.url}/attachments/${id}?t=${t}`
     }
 

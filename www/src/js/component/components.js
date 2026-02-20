@@ -1,9 +1,10 @@
-import './dot.component.js';
 import './icon.component.js';
+import './context.menu.component.js';
 import './emoji.component.js';
 import './emoji.manager.component.js';
 import './message.attachement.component.js';
 import './message.component.js';
+import './notification.dot.component.js';
 import './theme.component.js';
 import './server.roles.component.js';
-import './context.menu.component.js';
+import './status.dot.component.js';

@@ -1,14 +1,13 @@
 import {beforeEach, afterEach, describe, expect, test} from 'vitest';
 
-// Import du fichier qui enregistre les custom elements
-import './dot.component.js';
+// Import custom elements
+import './status.dot.component.js';
 
 describe('DotComponent', () => {
     let icon;
     let shadowRoot;
     beforeEach(async () => {
-        icon = document.createElement('revoice-dot');
-        icon.setAttribute('type', 'status');
+        icon = document.createElement('revoice-status-dot');
         document.body.appendChild(icon);
         await new Promise(resolve => setTimeout(resolve, 0));
         shadowRoot = icon.shadowRoot;
@@ -18,7 +17,7 @@ describe('DotComponent', () => {
     });
 
     test('should render an element', () => {
-        const data = document.querySelector('revoice-dot');
+        const data = document.querySelector('revoice-status-dot');
         expect(data).not.toBeNull();
     });
 
@@ -39,14 +38,14 @@ describe('DotComponent', () => {
     test('change color', () => {
         let styles = shadowRoot.querySelector('.background-red');
         expect(styles).toBeNull();
-        const data = document.querySelector('revoice-dot');
+        const data = document.querySelector('revoice-status-dot');
         data.setAttribute('color', 'red');
         styles = shadowRoot.querySelector('.background-red');
         expect(styles).not.toBeNull();
     });
 
     test('change to same color', () => {
-        const data = document.querySelector('revoice-dot');
+        const data = document.querySelector('revoice-status-dot');
         data.setAttribute('color', 'red');
         let styles = shadowRoot.querySelector('.background-red');
         expect(styles).not.toBeNull();
@@ -56,26 +55,11 @@ describe('DotComponent', () => {
     });
 
     test('change to unknown color', () => {
-        const data = document.querySelector('revoice-dot');
+        const data = document.querySelector('revoice-status-dot');
         data.setAttribute('color', 'not a color');
         let styles = shadowRoot.querySelector('.background-red');
         expect(styles).toBeNull();
         styles = shadowRoot.querySelector('.background-gray');
         expect(styles).not.toBeNull();
-    });
-
-    test('type', () => {
-        const styles = shadowRoot.querySelector('.status');
-        expect(styles).not.toBeNull();
-    });
-
-    test('type', async () => {
-        const icon = document.createElement('revoice-dot');
-        icon.setAttribute('type', 'statuss');
-        document.body.appendChild(icon);
-        await new Promise(resolve => setTimeout(resolve, 0));
-        const shadowRoot = icon.shadowRoot;
-        const styles = shadowRoot.querySelector('.status');
-        expect(styles).toBeNull();
     });
 });

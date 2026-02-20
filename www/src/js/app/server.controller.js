@@ -360,7 +360,7 @@ export default class ServerController {
         DIV.innerHTML = `
             <div class="relative">
                 <img src="${profilePicture}" alt="PFP" class="icon ring-2" data-id="${id}" name="user-picture-${id}" />
-                <revoice-dot name="dot-${id}" type="status" color="${statusToColor(status)}"></revoice-dot>
+                <revoice-status-dot name="dot-${id}" color="${statusToColor(status)}"></revoice-status-dot>
             </div>
             <div class="user">
                 <h2 class="name" name="user-name-${id}">${name}</h2>

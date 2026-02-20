@@ -170,11 +170,10 @@ export default class Room {
             void this.voiceController.showJoinedUsers(room.id, users);
         } else if (room.type === "TEXT") {
             DIV.ondblclick = async () => { await this.textController.load(room.id, true); }
-            extension.innerHTML = `<revoice-dot id="room-extension-dot-${room.id}"
-                                                type="notification"
+            extension.innerHTML = `<revoice-notification-dot id="room-extension-dot-${room.id}"
                                                 class="hidden"
                                                 style="margin: auto;">
-                                   </revoice-dot>`;
+                                   </revoice-notification-dot>`;
         }
 
         return root;
