@@ -45,8 +45,13 @@ export default class VoiceController {
 
     // <user> call this to join a call in a room
     async join(roomId) {
-        if (this.#activeRoom && this.#activeRoom !== roomId) {
-            await this.leave(this.#activeRoom);
+        if (this.#activeRoom) {
+            if(this.#activeRoom !== roomId){
+                await this.leave(this.#activeRoom);
+            }
+            else{
+                return;
+            } 
         }
 
         this.#activeRoom = roomId;
