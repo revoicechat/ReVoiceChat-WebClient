@@ -160,3 +160,5 @@ class SSEHandlers {
 }
 
 globalThis.RVC = new ReVoiceChat();
+
+document.addEventListener('contextmenu', (e) => e.preventDefault());
