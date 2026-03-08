@@ -171,6 +171,7 @@ class MessageComponent extends HTMLElement {
             console.error('Markdown parsing error:', error);
             contentDiv.innerHTML = `<p style="color: #ff6b6b;">Error parsing markdown: ${error.message}</p>`;
         }
+        this.#renderOpenGraph(contentDiv)
         this.#renderReactions(contentDiv)
         renderEmojis(this.shadowRoot);
     }
@@ -241,6 +242,23 @@ class MessageComponent extends HTMLElement {
     /** @return {string[]} */
     #emotesNames() {
         return Array.from(this.emotes).map(item => item.name)
+    }
+
+    #renderOpenGraph(contentDiv) {
+        if (this.getAttribute("url-preview") === "false") {
+            return
+        }
+        const openGraphCard = document.createElement("div")
+        contentDiv.appendChild(openGraphCard)
+        const id = this.getAttribute("id")
+        CoreServer.fetch(`/message/${id}/open-graph`)
+                .then(res => {
+                    if (res) {
+                        const card = document.createElement("revoice-opengraph-card")
+                        card.ogdata = res
+                        openGraphCard.appendChild(card)
+                    }
+                })
     }
 
     #renderReactions(contentDiv) {

@@ -54,6 +54,9 @@ export default class CoreServer {
                 if (contentType?.includes("application/json")) {
                     return await response.json();
                 }
+                if (response.status === 204) {
+                    return null
+                }
             }
 
             return response.ok;

@@ -53,6 +53,8 @@ export class MessageRepresentation {
   emotes
   /** @type {MessageReaction[]} */
   reactions
+  /** @type {boolean} */
+  messageUrlPreview
 }
 
 class MessageReaction {

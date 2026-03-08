@@ -548,6 +548,7 @@ export default class TextController {
     #createContent(messageData) {
         const CONTENT = document.createElement('revoice-message');
         CONTENT.id = messageData.id;
+        CONTENT.setAttribute("url-preview", messageData.messageUrlPreview.toString())
         CONTENT.innerHTML = `
             <script type="application/json" slot="medias">
                 ${JSON.stringify(messageData.medias)}
