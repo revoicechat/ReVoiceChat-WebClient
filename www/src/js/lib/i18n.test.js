@@ -141,6 +141,10 @@ describe('I18n', () => {
       });
       globalThis.fetch.mockResolvedValueOnce({
         ok: true,
+        text: async () => 'hello=Hello\nbye=Goodbye\nmessage=this is a message'
+      });
+      globalThis.fetch.mockResolvedValueOnce({
+        ok: true,
         text: async () => 'hello=Bonjour\nbye=Au revoir'
       });
 
@@ -149,7 +153,8 @@ describe('I18n', () => {
       expect(globalThis.fetch).toHaveBeenCalledWith('translations/data_fr.properties');
       expect(result).toEqual({
         hello: 'Bonjour',
-        bye: 'Au revoir'
+        bye: 'Au revoir',
+        message: 'this is a message'
       });
       expect(i18n.translationsLoaded).toBe(true);
     });
@@ -158,6 +163,10 @@ describe('I18n', () => {
       globalThis.fetch.mockResolvedValueOnce({
         ok: true,
         text: async () => 'data'
+      });
+      globalThis.fetch.mockResolvedValueOnce({
+        ok: true,
+        text: async () => 'hello=Hello\nbye=Goodbye'
       });
       globalThis.fetch.mockResolvedValueOnce({
         ok: false,
@@ -174,6 +183,10 @@ describe('I18n', () => {
       globalThis.fetch.mockResolvedValueOnce({
         ok: true,
         text: async () => 'data'
+      });
+      globalThis.fetch.mockResolvedValueOnce({
+        ok: true,
+        text: async () => 'hello=Hello\nbye=Goodbye'
       });
       globalThis.fetch
           .mockResolvedValueOnce({
@@ -553,6 +566,10 @@ describe('I18n', () => {
       globalThis.fetch.mockResolvedValueOnce({
         ok: true,
         text: async () => 'data'
+      });
+      globalThis.fetch.mockResolvedValueOnce({
+        ok: true,
+        text: async () => 'hello=Hello'
       });
       globalThis.fetch.mockResolvedValueOnce({
         ok: true,
