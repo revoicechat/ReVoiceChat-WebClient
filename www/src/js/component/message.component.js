@@ -1,4 +1,4 @@
-import {containsOnlyEmotes} from "../lib/emote.utils.js";
+import {containsOnlyEmotes, countEmotes} from "../lib/emote.utils.js";
 import MediaServer from "../app/media/media.server.js";
 import CoreServer from "../app/core/core.server.js";
 import {isUUID} from "../lib/string.utils.js";
@@ -162,7 +162,11 @@ class MessageComponent extends HTMLElement {
             if (this.markdown) {
                 if (containsOnlyEmotes(this.markdown, this.#emotesNames())) {
                     contentDiv.innerHTML = this.#injectEmojis(this.#removeTags(this.markdown))
-                    contentDiv.classList.add('only-emoji')
+                    if (countEmotes(this.markdown, this.#emotesNames()) === 1) {
+                        contentDiv.classList.add('stickers-emoji')
+                    } else {
+                        contentDiv.classList.add('only-emoji')
+                    }
                 } else {
                     contentDiv.innerHTML += this.#injectEmojis(marked.parse(this.#removeTags(this.markdown)));
                 }

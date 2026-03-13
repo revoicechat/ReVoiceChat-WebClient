@@ -106,6 +106,16 @@
     padding-right: 0.3rem;
 }
 
+.stickers-emoji {
+    font-size: 5rem;
+}
+
+.stickers-emoji .emoji {
+    width: 5rem;
+    height: 5rem;
+    padding-right: 0.3rem;
+}
+
 .emoji {
     width: 1rem;
     height: 1rem;
