@@ -170,6 +170,7 @@ export default class Modal {
                 textEl.style.display = 'block';
             } else if (options.html) {
                 textEl.style.display = 'block';
+                textEl.innerHTML = "";
                 if (typeof options.html === 'string') {
                     textEl.innerHTML = options.html;
                 } else {

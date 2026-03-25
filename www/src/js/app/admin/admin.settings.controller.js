@@ -1,6 +1,7 @@
-import { AdminSettingsEmoteController } from "./admin.settings.emote.controller.js";
+import {AdminSettingsEmoteController} from "./admin.settings.emote.controller.js";
 import AdminSettingsInvitationController from "./admin.settings.invitation.controller.js";
 import AdminSettingsMembersController from "./admin.settings.members.controller.js";
+import AdminSettingsModerationController from "./admin.settings.moderation.controller.js";
 import AdminSettingsOverviewController from "./admin.settings.overview.controller.js";
 import AdminSettingsServersController from "./admin.settings.servers.controller.js";
 
@@ -13,6 +14,7 @@ export default class AdminSettingsController {
         this.servers = new AdminSettingsServersController();
         this.invitation = new AdminSettingsInvitationController();
         this.members = new AdminSettingsMembersController(user);
+        this.moderation = new AdminSettingsModerationController();
         this.emote = new AdminSettingsEmoteController();
     }
 
@@ -20,8 +22,9 @@ export default class AdminSettingsController {
         this.#eventHandler();
         await this.overview.load();
         await this.servers.load();
-        await this.invitation.load();
-        await this.members.load();
+        this.invitation.load();
+        this.members.load();
+        this.moderation.load();
         this.select('overview');
     }
 

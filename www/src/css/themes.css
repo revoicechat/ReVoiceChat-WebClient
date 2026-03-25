@@ -39,6 +39,11 @@
     /* hljs */
     --hljs-theme: 'src/css/highlightjs/dark.css';
     --hljs-background: #1c1b1b;
+
+    --active-ban-color: #a22121;
+    --text-timeouts-color: #fb883c;
+    --voice-timeouts-color: #71717a;
+    --total-moderation-color: var(--pri-button-bg-color, #5E8C61);
 }
 
 *[data-theme="darker"] {

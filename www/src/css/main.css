@@ -1556,6 +1556,18 @@ summary::marker {
     align-items: stretch;
 }
 
+.mp-modal-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.mp-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
 .mp-input, .mp-select, .mp-textarea {
     background: var(--ter-bg-color, #202024);
     border: 1px solid var(--pri-bd-color, #43434d);
@@ -1585,6 +1597,11 @@ summary::marker {
     gap: 0.4rem;
 }
 
+.mp-type-btn svg {
+    width: 0.85rem;
+    height: 0.85rem;
+}
+
 .mp-type-btn {
     flex: 1;
     padding: 0.45rem 0.25rem;
@@ -1599,3 +1616,15 @@ summary::marker {
     align-items: center;
     column-gap: 1rem;
 }
+
+.mp-active-ban {border-left-color: var(--active-ban-color);}
+.mp-active-ban .mp-stat-value {color: var(--active-ban-color);}
+
+.mp-text-timeouts {border-left-color: var(--text-timeouts-color);}
+.mp-text-timeouts .mp-stat-value {color: var(--text-timeouts-color);}
+
+.mp-voice-timeouts {border-left-color: var(--voice-timeouts-color);}
+.mp-voice-timeouts .mp-stat-value {color: var(--voice-timeouts-color);}
+
+.mp-total-moderation {border-left-color: var(--total-moderation-color);}
+.mp-total-moderation .mp-stat-value {color: var(--total-moderation-color);}

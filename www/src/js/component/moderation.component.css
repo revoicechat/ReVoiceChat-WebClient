@@ -55,10 +55,23 @@ svg {
     flex: 1;
     min-width: 80px;
     background: var(--ter-bg-color, #202024);
-    border: 1px solid var(--pri-bd-color, #43434d);
     border-radius: 0.25rem;
     padding: 0.75rem 1rem;
+    border-left-width: 3px;
+    border-left-style: solid;
 }
+
+.mp-active-ban {border-left-color: var(--active-ban-color);}
+.mp-active-ban .mp-stat-value {color: var(--active-ban-color);}
+
+.mp-text-timeouts {border-left-color: var(--text-timeouts-color);}
+.mp-text-timeouts .mp-stat-value {color: var(--text-timeouts-color);}
+
+.mp-voice-timeouts {border-left-color: var(--voice-timeouts-color);}
+.mp-voice-timeouts .mp-stat-value {color: var(--voice-timeouts-color);}
+
+.mp-total-moderation {border-left-color: var(--total-moderation-color);}
+.mp-total-moderation .mp-stat-value {color: var(--total-moderation-color);}
 
 .mp-stat-value {
     font-size: 1.5rem;
@@ -152,9 +165,9 @@ svg {
 }
 
 .mp-filter.active {
-    background: var(--pri-button-bg-color, #5E8C61);
+    background: var(--pri-button-bg-color);
     color: white;
-    border-color: var(--pri-button-bg-color, #5E8C61);
+    border-color: var(--pri-button-bg-color);
 }
 
 .mp-btn {
@@ -177,7 +190,7 @@ svg {
 }
 
 .mp-btn-primary {
-    background: var(--pri-button-bg-color, #5E8C61);
+    background: var(--pri-button-bg-color);
     color: white;
 }
 
@@ -205,12 +218,12 @@ svg {
 }
 
 .mp-btn-success {
-    background: #22c55e;
+    background: var(--pri-button-bg-color);
     color: white;
 }
 
 .mp-btn-success:hover:not(:disabled) {
-    background: #1b8b44;
+    background: var(--pri-button-hover-color);
 }
 
 .mp-btn-sm {
@@ -353,7 +366,7 @@ svg {
 
 .mp-avatar {
     border-radius: 9999px;
-    background: var(--pri-button-bg-color, #5E8C61);
+    background: var(--pri-button-bg-color);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -363,14 +376,21 @@ svg {
 }
 
 .mp-badge {
-    display: inline-block;
+    display: flex;
+    align-items: center;
+    column-gap: 0.3rem;
     padding: 2px 8px;
     border-radius: 0.25rem;
-    font-size: 0.68rem;
+    font-size: 0.55rem;
     font-weight: 700;
     letter-spacing: 0.05em;
     text-transform: uppercase;
     color: white;
+}
+
+.mp-badge svg {
+    width: 0.85rem;
+    height: 0.85rem;
 }
 
 .mp-overlay {
@@ -387,81 +407,6 @@ svg {
     display: none;
 }
 
-.mp-modal {
-    background: var(--sec-bg-color, #1a1a1e);
-    border: 1px solid var(--pri-bd-color, #43434d);
-    border-radius: 0.25rem;
-    padding: 1.5rem;
-    width: 460px;
-    max-width: 95vw;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
-}
-
-.mp-modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1.25rem;
-}
-
-.mp-modal-title {
-    font-weight: 800;
-    font-size: 1rem;
-}
-
-.mp-modal-body {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-}
-
-.mp-modal-footer {
-    display: flex;
-    gap: 0.5rem;
-    justify-content: flex-end;
-    margin-top: 1rem;
-}
-
-.mp-field {
-    display: flex;
-    flex-direction: column;
-    gap: 0.3rem;
-}
-
-.mp-label {
-    font-weight: 800;
-    font-size: 0.875rem;
-}
-
-.mp-label-hint {
-    font-weight: 400;
-    color: var(--pri-placeholder-color, #9ca3af);
-}
-
-.mp-input, .mp-select, .mp-textarea {
-    background: var(--ter-bg-color, #202024);
-    border: 1px solid var(--pri-bd-color, #43434d);
-    border-radius: 0.25rem;
-    color: var(--pri-text-color, #fff);
-    padding: 0.5rem 0.75rem;
-    font-family: inherit;
-    font-size: 0.875rem;
-    width: 100%;
-}
-
-.mp-input:focus, .mp-select:focus, .mp-textarea:focus {
-    outline: none;
-    border-color: var(--pri-button-bg-color, #5E8C61);
-}
-
-.mp-input::placeholder, .mp-textarea::placeholder {
-    color: var(--pri-placeholder-color, #9ca3af);
-}
-
-.mp-textarea {
-    resize: vertical;
-}
-
 .mp-type-btns {
     display: flex;
     gap: 0.4rem;
@@ -474,6 +419,7 @@ svg {
     font-weight: 700;
     border-radius: 0.25rem;
     cursor: pointer;
+    text-wrap: nowrap;
     font-family: inherit;
     transition: all 0.15s;
     display: flex;

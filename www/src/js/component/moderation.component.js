@@ -1,38 +1,51 @@
 import MediaServer from "../app/media/media.server.js";
 import CoreServer from "../app/core/core.server.js";
 import Modal from "./modal.component.js";
+import {i18n} from "../lib/i18n.js";
 
 const SANCTION_TYPES = {
-    BAN: {label: "Ban", icon: "revoice-icon-moderation-hammer", color: "#a22121"},
-    TEXT_TIME_OUT: {label: "Text Timeout", icon: "revoice-icon-pencil", color: "#fb883c"},
-    VOICE_TIME_OUT: {label: "Voice Timeout", icon: "revoice-icon-speaker-x", color: "#71717a"},
+    BAN: {label: "moderation.ban", icon: "moderation-hammer", color: "var(--active-ban-color)"},
+    TEXT_TIME_OUT: {label: "moderation.text.timeout", icon: "pencil", color: "var(--text-timeouts-color)"},
+    VOICE_TIME_OUT: {label: "moderation.voice.timeout", icon: "speaker-x", color: "var(--voice-timeouts-color)"},
 };
 
 const REQUEST_STATUSES = {
-    CREATED: {label: "Pending", color: "#fb883c"},
-    ACCEPTED: {label: "Accepted", color: "#22c55e"},
-    REJECTED: {label: "Rejected", color: "#a22121"},
+    CREATED: {label: "moderation.request.pending", color: "var(--text-timeouts-color)"},
+    ACCEPTED: {label: "moderation.request.accepted", color: "var(--total-moderation-color)"},
+    REJECTED: {label: "moderation.request.rejected", color: "var(--active-ban-color)"},
 };
 
 function fmtDate(dt) {
-    if (!dt) return "Permanent";
-    return new Date(dt).toLocaleString("en-GB", {
-        day: "2-digit", month: "short", year: "numeric",
-        hour: "2-digit", minute: "2-digit",
-    });
+    return dt
+            ? new Date(dt).toLocaleString("en-GB", {
+                day: "2-digit", month: "short", year: "numeric",
+                hour: "2-digit", minute: "2-digit",
+            })
+            : i18n.translateOne("moderation.ban.permanent");
 }
 
+function parseHtml(html) {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, "text/html");
+    return doc.body.firstElementChild;
+}
+
+
 class ModerationPanel extends HTMLElement {
-    #shadow
+    /** @type {string|null} */
     #serverId
+    /** @type SanctionRepresentation[] */
     #sanctions
+    /** @type SanctionRevocationRequestRepresentation[] */
     #requests
+    /** @type {Object} */
     #userCache
+    /** @type {string} */
     #tab
+    /** @type {string} */
     #filter
     #search
     #loading
-    #formData
     #expandedIds
 
     static get observedAttributes() {
@@ -41,7 +54,7 @@ class ModerationPanel extends HTMLElement {
 
     constructor() {
         super();
-        this.#shadow = this.attachShadow({mode: "open"});
+        this.shadow = this.attachShadow({mode: "open"});
         this.#serverId = null;
         this.#sanctions = [];
         this.#requests = [];
@@ -50,11 +63,8 @@ class ModerationPanel extends HTMLElement {
         this.#filter = "ALL";
         this.#search = "";
         this.#loading = false;
-        this.#formData = {};
         this.#expandedIds = new Set();
     }
-
-    // ── Lifecycle ──────────────────────────────────────────────────────────────
 
     connectedCallback() {
         this.#render();
@@ -63,7 +73,7 @@ class ModerationPanel extends HTMLElement {
         }
     }
 
-    attributeChangedCallback(name, _old, value) {
+    attributeChangedCallback(name, old, value) {
         if (name === "server-id") {
             this.#serverId = value || null;
             this.#sanctions = [];
@@ -76,20 +86,14 @@ class ModerationPanel extends HTMLElement {
         }
     }
 
-    // ── Data ───────────────────────────────────────────────────────────────────
-
     async #load() {
         this.#loading = true;
         this.#render();
         try {
-            const [sanctions, requests] = [
-                    [],
-                    []
-            ]
-            // const [sanctions, requests] = await Promise.all([
-            //     await CoreServer.fetch('', 'GET'), // TODO: GET /api/servers/{serverId}/sanctions
-            //     await CoreServer.fetch('', 'GET'), // TODO: GET /api/servers/{serverId}/sanctions/revocation-requests
-            // ]);
+            const [sanctions, requests] = await Promise.all([
+                await CoreServer.fetch(`${this.#apiRoute}`),
+                await CoreServer.fetch(`${this.#apiRoute}/revocation-requests`) ?? [],
+            ]);
             this.#sanctions = sanctions;
             this.#requests = requests;
             await this.#resolveUsers();
@@ -99,27 +103,28 @@ class ModerationPanel extends HTMLElement {
             this.#loading = false;
             this.#render();
         }
+        i18n.translatePage(this.shadow)
     }
 
     async #resolveUsers() {
         const ids = new Set();
         for (const s of this.#sanctions) {
-            ids.add(s.targetedUser);
-            ids.add(s.issuedBy);
-            if (s.revokedBy) ids.add(s.revokedBy);
+            ids.add(s.targetedUser.id);
+            ids.add(s.issuedBy.id);
+            if (s.revokedBy) ids.add(s.revokedBy.id);
         }
         const missing = [...ids].filter(id => id && !this.#userCache[id]);
         await Promise.allSettled(missing.map(async id => {
             try {
-                this.#userCache[id] = await CoreServer.fetch('') // TODO: GET /api/users/{userId}
+                this.#userCache[id] = await CoreServer.fetch(`/user/${id}`)
             } catch {
                 this.#userCache[id] = {name: id.slice(0, 8) + "…"};
             }
         }));
     }
 
-    #userName(id) {
-        return this.#userCache[id]?.name ?? (id ? id.slice(0, 8) + "…" : "Unknown");
+    #userName(user) {
+        return this.#userCache[user.id]?.displayName ?? (user.displayName ? user.displayName.slice(0, 8) + "…" : "Unknown");
     }
 
     get #filtered() {
@@ -155,25 +160,16 @@ class ModerationPanel extends HTMLElement {
 
     async #issueSanction(payload) {
         try {
-            const s = await CoreServer.fetch('', 'POST', payload) // TODO: POST /api/servers/{serverId}/sanctions
+            const s = await CoreServer.fetch(`${this.#apiRoute}`, 'POST', payload)
             this.#sanctions.push(s);
         } catch (e) {
             console.error("[moderation-panel] issue error", e);
         }
     }
 
-    async #updateSanction(sanctionId, payload) {
-        try {
-            const s = await CoreServer.fetch('', 'PATCH', payload) // TODO: PATCH /api/sanctions/{sanctionId};
-            this.#sanctions = this.#sanctions.map(x => x.id === s.id ? s : x);
-        } catch (e) {
-            console.error("[moderation-panel] update error", e);
-        }
-    }
-
     async #revokeSanction(sanctionId) {
         try {
-            const s = await CoreServer.fetch('', 'DELETE') // TODO: POST /api/sanctions/{sanctionId}/revoke
+            const s = await CoreServer.fetch(`${this.#apiRoute}/${sanctionId}`, 'DELETE')
             this.#sanctions = this.#sanctions.map(x => x.id === s.id ? s : x);
         } catch (e) {
             console.error("[moderation-panel] revoke error", e);
@@ -182,7 +178,7 @@ class ModerationPanel extends HTMLElement {
 
     async #reviewRequest(requestId, status) {
         try {
-            const r = await CoreServer.fetch('', 'POST', status) // TODO: POST /api/sanctions/revocation-requests/{requestId}/review
+            const r = await CoreServer.fetch(`/api/sanctions/revocation-requests/${requestId}/review`, 'POST', status)
             this.#requests = this.#requests.map(x => x.id === r.id ? r : x);
             if (status === "ACCEPTED") {
                 const req = this.#requests.find(x => x.id === requestId);
@@ -193,62 +189,41 @@ class ModerationPanel extends HTMLElement {
         }
     }
 
-    // ── DOM builders ───────────────────────────────────────────────────────────
-
-    #buildAvatar(userId, size) {
-        const img = document.createElement("img");
-        img.className = "mp-avatar";
-        img.style.width = size + "px";
-        img.style.height = size + "px";
-        img.style.fontSize = Math.round(size * 0.33) + "px";
-        img.alt = "PFP";
-        img.src = MediaServer.profiles(userId);
-        return img;
+    #buildAvatar(user, size) {
+        return parseHtml(`
+                         <img class="mp-avatar"
+                              style="width:${size}px; height:${size}px; font-size: ${Math.round(size * 0.33)}px"
+                              alt="PFP"
+                              src="${MediaServer.profiles(user.id)}"/>`)
     }
 
     #buildBadge(icon, label, color) {
-        const div = document.createElement("div");
-        div.className = "mp-badge";
-        div.style.background = color;
-        div.innerHTML = `<${icon}></${icon}><span data-i18n="${label}">${label}</span>`;
-        return div;
+        return parseHtml(`<div class="mp-badge" style="background:${color}">
+                              <revoice-icon-${icon}></revoice-icon-${icon}><span data-i18n="${label}">${label}</span>
+                          </div>`)
     }
 
     #buildStats() {
         const active = this.#sanctions.filter(s => s.active);
-        const rows = [
-            {label: "Active Bans", value: active.filter(s => s.type === "BAN").length, color: "#a22121"},
-            {label: "Text Timeouts", value: active.filter(s => s.type === "TEXT_TIME_OUT").length, color: "#fb883c"},
-            {label: "Voice Timeouts", value: active.filter(s => s.type === "VOICE_TIME_OUT").length, color: "#71717a"},
-            {label: "Total", value: this.#sanctions.length, color: "var(--pri-button-bg-color, #5E8C61)"},
-        ];
-
-        const container = document.createElement("div");
-        container.className = "mp-stats";
-
-        for (const row of rows) {
-            const stat = document.createElement("div");
-            stat.className = "mp-stat";
-            stat.style.borderLeft = "3px solid " + row.color;
-
-            const val = document.createElement("div");
-            val.className = "mp-stat-value";
-            val.style.color = row.color;
-            val.textContent = String(row.value);
-
-            const lbl = document.createElement("div");
-            lbl.className = "mp-stat-label";
-            lbl.textContent = row.label;
-            lbl.dataset.i18n = row.label;
-
-            stat.appendChild(val);
-            stat.appendChild(lbl);
-            container.appendChild(stat);
-        }
-
-        const doc = document.createElement("div")
-        doc.appendChild(container)
-        return doc.innerHTML;
+        const activeBans = active.filter(s => s.type === "BAN").length
+        const textTimeouts = active.filter(s => s.type === "TEXT_TIME_OUT").length
+        const voiceTimeouts = active.filter(s => s.type === "VOICE_TIME_OUT").length
+        const total = this.#sanctions.length
+        return parseHtml(`
+                <div class="mp-stats">
+                    <div class="mp-stat mp-active-ban">
+                        <div class="mp-stat-value">${activeBans}</div><div class="mp-stat-label" data-i18n="moderation.active.ban">Active Bans</div>
+                    </div>
+                    <div class="mp-stat mp-text-timeouts">
+                        <div class="mp-stat-value">${textTimeouts}</div><div class="mp-stat-label" data-i18n="moderation.text.timeout">Text Timeouts</div>
+                    </div>
+                    <div class="mp-stat mp-voice-timeouts">
+                        <div class="mp-stat-value">${voiceTimeouts}</div><div class="mp-stat-label" data-i18n="moderation.voice.timeout">Voice Timeouts</div>
+                    </div>
+                    <div class="mp-stat mp-total-moderation">
+                        <div class="mp-stat-value">${total}</div><div class="mp-stat-label" data-i18n="moderation.ban.total">Total</div>
+                    </div>
+                </div>`)
     }
 
     #buildTabs() {
@@ -257,8 +232,8 @@ class ModerationPanel extends HTMLElement {
 
         const pending = this.#pendingCount;
         const tabDefs = [
-            {key: "sanctions", label: "Sanctions"},
-            {key: "requests", label: "Revocation Requests" + (pending ? ` (${pending})` : "")},
+            {key: "sanctions", label: "moderation.tab.sanctions"},
+            {key: "requests", label: "moderation.tab.revocation.requests" + (pending ? ` (${pending})` : "")},
         ];
 
         for (const def of tabDefs) {
@@ -272,10 +247,7 @@ class ModerationPanel extends HTMLElement {
             });
             container.appendChild(btn);
         }
-
-        const doc = document.createElement("div")
-        doc.appendChild(container)
-        return doc.innerHTML;
+        return container;
     }
 
     #buildToolbar() {
@@ -294,12 +266,12 @@ class ModerationPanel extends HTMLElement {
         container.appendChild(search);
 
         const filterDefs = [
-            {key: "ALL", icon: '', label: "All"},
-            {key: "ACTIVE", icon: '', label: "Active"},
-            {key: "BAN", icon: '<revoice-icon-moderation-hammer></revoice-icon-moderation-hammer>', label: "Bans"},
-            {key: "TEXT_TIME_OUT", icon: '<revoice-icon-pencil></revoice-icon-pencil>', label: "Text"},
-            {key: "VOICE_TIME_OUT", icon: '<revoice-icon-speaker-x></revoice-icon-speaker-x>', label: "Voice"},
-            {key: "INACTIVE", icon: '', label: "Inactive"},
+            {key: "ALL", icon: '', label: "moderation.filter.all"},
+            {key: "ACTIVE", icon: '', label: "moderation.filter.active"},
+            {key: "BAN", icon: 'moderation-hammer', label: "moderation.filter.bans"},
+            {key: "TEXT_TIME_OUT", icon: 'pencil', label: "moderation.filter.text"},
+            {key: "VOICE_TIME_OUT", icon: 'speaker-x', label: "moderation.filter.voice"},
+            {key: "INACTIVE", icon: '', label: "moderation.filter.inactive"},
         ];
 
         const filtersWrap = document.createElement("div");
@@ -308,7 +280,7 @@ class ModerationPanel extends HTMLElement {
         for (const def of filterDefs) {
             const btn = document.createElement("button");
             btn.className = "mp-filter" + (this.#filter === def.key ? " active" : "");
-            btn.innerHTML = `${def.icon} <span data-i18n="${def.label}">${def.label}</span>`;
+            btn.innerHTML = `<revoice-icon-${def.icon}></revoice-icon-${def.icon}> <span data-i18n="${def.label}">${def.label}</span>`;
             btn.dataset.key = def.key;
             btn.addEventListener("click", () => {
                 this.#filter = def.key;
@@ -318,9 +290,7 @@ class ModerationPanel extends HTMLElement {
         }
 
         container.appendChild(filtersWrap);
-        const doc = document.createElement("div")
-        doc.appendChild(container)
-        return doc.innerHTML;
+        return container;
     }
 
     #buildSanctionRow(sanction) {
@@ -352,8 +322,8 @@ class ModerationPanel extends HTMLElement {
         nameLine.appendChild(username);
         nameLine.appendChild(this.#buildBadge(tc.icon, tc.label, tc.color));
         if (sanction.revokedAt) nameLine.appendChild(this.#buildBadge('span', "Revoked", "#22c55e"));
-        if (!sanction.active && !sanction.revokedAt) nameLine.appendChild(this.#buildBadge('span', "Expired", "#71717a"));
-        if (request?.status === "CREATED") nameLine.appendChild(this.#buildBadge('span', "⏳ Appeal", "#fb883c"));
+        if (!sanction.active && !sanction.revokedAt) nameLine.appendChild(this.#buildBadge('span', "moderation.satus.expired", "#71717a"));
+        if (request?.status === "CREATED") nameLine.appendChild(this.#buildBadge('span', "moderation.satus.appeal", "#fb883c"));
         meta.appendChild(nameLine);
 
         const sub = document.createElement("div");
@@ -373,17 +343,10 @@ class ModerationPanel extends HTMLElement {
         actions.className = "mp-row-actions";
 
         if (sanction.active) {
-            const editBtn = document.createElement("button");
-            editBtn.className = "mp-btn mp-btn-ghost mp-btn-sm";
-            editBtn.title = "Edit";
-            editBtn.textContent = "✏️";
-            editBtn.addEventListener("click", () => this.#openEditModal(sanction));
-            actions.appendChild(editBtn);
-
             const revokeBtn = document.createElement("button");
             revokeBtn.className = "mp-btn mp-btn-danger mp-btn-sm";
             revokeBtn.title = "Revoke";
-            revokeBtn.textContent = "🚫";
+            revokeBtn.innerHTML = "<revoice-icon-trash></revoice-icon-trash>";
             revokeBtn.addEventListener("click", () => this.#openRevokeModal(sanction));
             actions.appendChild(revokeBtn);
         }
@@ -407,6 +370,7 @@ class ModerationPanel extends HTMLElement {
         if (expanded) {
             const sectionLabel = document.createElement("div");
             sectionLabel.className = "mp-section-label";
+            sectionLabel.dataset.i18n = "moderation.sanction.reason"
             sectionLabel.textContent = "Reason";
             expandSection.appendChild(sectionLabel);
 
@@ -418,7 +382,19 @@ class ModerationPanel extends HTMLElement {
             if (sanction.revokedAt) {
                 const revokedP = document.createElement("p");
                 revokedP.className = "mp-revoked-info";
-                revokedP.textContent = "Revoked by " + this.#userName(sanction.revokedBy) + " on " + fmtDate(sanction.revokedAt);
+
+                const revokedBy = document.createElement("span");
+                revokedBy.dataset.i18n = "moderation.revoked.by"
+                revokedBy.dataset.i18nValue = this.#userName(sanction.revokedBy)
+                revokedBy.textContent = "Revoked by " + this.#userName(sanction.revokedBy)
+
+                const revokedOn = document.createElement("span");
+                revokedOn.dataset.i18n = "moderation.revoked.on"
+                revokedOn.dataset.i18nValue = fmtDate(sanction.revokedAt)
+                revokedOn.textContent = " on " + fmtDate(sanction.revokedAt)
+
+                revokedP.appendChild(revokedBy);
+                revokedP.appendChild(revokedOn);
                 expandSection.appendChild(revokedP);
             }
 
@@ -444,6 +420,7 @@ class ModerationPanel extends HTMLElement {
 
         const lbl = document.createElement("span");
         lbl.className = "mp-appeal-label";
+        lbl.dataset.i18n = "moderation.revocation.appeal"
         lbl.textContent = "Revocation Appeal";
         header.appendChild(lbl);
         header.appendChild(this.#buildBadge('span', sc.label, sc.color));
@@ -456,6 +433,8 @@ class ModerationPanel extends HTMLElement {
 
         const date = document.createElement("div");
         date.className = "mp-appeal-date";
+        date.dataset.i18n = "moderation.revocation.request.at"
+        date.dataset.i18nValue = fmtDate(request.requestAt)
         date.textContent = "Requested " + fmtDate(request.requestAt);
         block.appendChild(date);
 
@@ -465,6 +444,7 @@ class ModerationPanel extends HTMLElement {
 
             const approveBtn = document.createElement("button");
             approveBtn.className = "mp-btn mp-btn-success mp-btn-sm";
+            approveBtn.dataset.i18n = "moderation.revocation.approuve"
             approveBtn.textContent = "✓ Approve";
             approveBtn.addEventListener("click", async () => {
                 approveBtn.disabled = true;
@@ -474,6 +454,7 @@ class ModerationPanel extends HTMLElement {
 
             const rejectBtn = document.createElement("button");
             rejectBtn.className = "mp-btn mp-btn-danger mp-btn-sm";
+            rejectBtn.dataset.i18n = "moderation.revocation.reject"
             rejectBtn.textContent = "✕ Reject";
             rejectBtn.addEventListener("click", async () => {
                 rejectBtn.disabled = true;
@@ -586,10 +567,12 @@ class ModerationPanel extends HTMLElement {
 
                 const title = document.createElement("div");
                 title.className = "mp-empty-title";
+                title.dataset.i18n = "moderation.no.sanctions.found"
                 title.textContent = "No sanctions found";
 
                 const sub = document.createElement("div");
                 sub.className = "mp-empty-sub";
+                sub.dataset.i18n = "moderation.filters.adjusting"
                 sub.textContent = "Try adjusting your filters";
 
                 empty.appendChild(title);
@@ -607,15 +590,11 @@ class ModerationPanel extends HTMLElement {
             const empty = document.createElement("div");
             empty.className = "mp-empty";
 
-            const icon = document.createElement("div");
-            icon.className = "mp-empty-icon";
-            icon.textContent = "📭";
-
             const title = document.createElement("div");
             title.className = "mp-empty-title";
+            title.dataset.i18n = "moderation.no.revocation.requests"
             title.textContent = "No revocation requests";
 
-            empty.appendChild(icon);
             empty.appendChild(title);
             wrap.appendChild(empty);
         } else {
@@ -626,44 +605,22 @@ class ModerationPanel extends HTMLElement {
             }
             wrap.appendChild(list);
         }
-
-        const doc = document.createElement("div")
-        doc.appendChild(wrap)
-        return doc.innerHTML;
+        return wrap;
     }
 
     // ── Modal ──────────────────────────────────────────────────────────────────
 
     #openNewModal() {
-        this.#formData = {targetedUser: "", type: "BAN", expiresAt: "", reason: ""};
+        const formData = {targetedUser: "", type: "BAN", expiresAt: "", reason: ""}
         Modal.toggle({
             title: 'Issue New Sanction',
             showCancelButton: true,
-            html: this.#buildSanctionForm()
+            html: this.#buildSanctionForm(formData)
         }).then(async (result) => {
             if (result.isConfirmed) {
-                const payload = {...this.#formData, expiresAt: this.#formData.expiresAt || null};
+                const payload = {...formData, expiresAt: formData.expiresAt || null};
+                console.log(payload)
                 await this.#issueSanction(payload);
-                this.#render();
-            }
-        })
-    }
-
-    #openEditModal(sanction) {
-        this.#formData = {
-            targetedUser: sanction.targetedUser,
-            type: sanction.type,
-            expiresAt: sanction.expiresAt ? new Date(sanction.expiresAt).toISOString().slice(0, 16) : "",
-            reason: sanction.reason ?? "",
-        };
-        Modal.toggle({
-            title: 'Edit Sanction',
-            showCancelButton: true,
-            html: this.#buildSanctionForm()
-        }).then(async (result) => {
-            if (result.isConfirmed) {
-                const payload = {...this.#formData, expiresAt: this.#formData.expiresAt || null};
-                await this.#updateSanction(sanction.id, payload);
                 this.#render();
             }
         })
@@ -682,8 +639,7 @@ class ModerationPanel extends HTMLElement {
         })
     }
 
-    #buildSanctionForm() {
-        const f = this.#formData;
+    #buildSanctionForm(formData) {
         const body = document.createElement("div");
         body.className = "mp-modal-body";
 
@@ -696,15 +652,23 @@ class ModerationPanel extends HTMLElement {
         targetLabel.textContent = "Target User";
         targetField.appendChild(targetLabel);
 
-        const targetInput = document.createElement("input");
-        targetInput.className = "mp-input";
-        targetInput.type = "text";
-        targetInput.placeholder = "User UUID";
-        targetInput.value = f.targetedUser;
-        targetInput.addEventListener("input", e => {
-            f.targetedUser = e.target.value.trim();
+        const targetUser = document.createElement("select");
+        targetUser.className = "mp-input";
+        targetUser.placeholder = "User UUID";
+        targetUser.value = formData.targetedUser;
+        targetUser.addEventListener("change", e => {
+            formData.targetedUser = e.target.value.trim();
         });
-        targetField.appendChild(targetInput);
+        targetField.appendChild(targetUser);
+        this.fetchApiUser().then(users => {
+            users.forEach(user => {
+                const userOption = document.createElement("option");
+                userOption.value = user.id;
+                userOption.textContent = user.displayName;
+                targetUser.appendChild(userOption);
+            })
+        })
+
         body.appendChild(targetField);
 
         // ── Sanction type field
@@ -727,7 +691,7 @@ class ModerationPanel extends HTMLElement {
                 const key = typeKeys[i];
                 const btn = typeButtonEls[i];
                 const tc = SANCTION_TYPES[key];
-                const active = f.type === key;
+                const active = formData.type === key;
                 btn.style.background = active ? tc.color : "var(--ter-bg-color, #202024)";
                 btn.style.color = active ? "white" : "var(--pri-placeholder-color, #9ca3af)";
                 btn.style.border = "1px solid " + (active ? tc.color : "var(--pri-bd-color, #43434d)");
@@ -739,9 +703,12 @@ class ModerationPanel extends HTMLElement {
             const btn = document.createElement("button");
             btn.className = "mp-type-btn";
             btn.type = "button";
-            btn.innerHTML = `<${tc.icon}></${tc.icon}><span>${tc.label}</span>`;
+            btn.innerHTML = `
+                <revoice-icon-${tc.icon}></revoice-icon-${tc.icon}>
+                <span data-i18n="${tc.label}" style="text-wrap: nowrap">${tc.label}</span>
+            `;
             btn.addEventListener("click", () => {
-                f.type = key;
+                formData.type = key;
                 applyTypeStyles();
             });
             typeButtonEls.push(btn);
@@ -768,10 +735,10 @@ class ModerationPanel extends HTMLElement {
         const expiresInput = document.createElement("input");
         expiresInput.className = "mp-input";
         expiresInput.type = "datetime-local";
-        expiresInput.value = f.expiresAt;
+        expiresInput.value = formData.expiresAt;
         expiresInput.style.colorScheme = "dark";
         expiresInput.addEventListener("input", e => {
-            f.expiresAt = e.target.value;
+            formData.expiresAt = e.target.value;
         });
         expiresField.appendChild(expiresInput);
         body.appendChild(expiresField);
@@ -789,20 +756,18 @@ class ModerationPanel extends HTMLElement {
         reasonInput.className = "mp-textarea";
         reasonInput.rows = 3;
         reasonInput.placeholder = "Describe why this sanction is being issued…";
-        reasonInput.value = f.reason;
+        reasonInput.value = formData.reason;
         reasonInput.addEventListener("input", e => {
-            f.reason = e.target.value;
+            formData.reason = e.target.value;
         });
         reasonField.appendChild(reasonInput);
         body.appendChild(reasonField);
-
+        i18n.translatePage(body)
         return body;
     }
 
-    // ── Partial re-render (list only) ──────────────────────────────────────────
-
     #rerenderList() {
-        const existing = this.#shadow.querySelector(".mp-list-container");
+        const existing = this.shadow.querySelector(".mp-list-container");
         if (!existing) {
             this.#render();
             return;
@@ -810,27 +775,24 @@ class ModerationPanel extends HTMLElement {
         existing.replaceWith(this.#buildListContainer());
 
         // re-sync filter buttons
-        this.#shadow.querySelectorAll(".mp-filter").forEach(btn => {
+        this.shadow.querySelectorAll(".mp-filter").forEach(btn => {
             btn.classList.toggle("active", btn.dataset.key === this.#filter);
         });
     }
 
-    // ── Full render ────────────────────────────────────────────────────────────
-
     #render() {
-        this.#shadow.innerHTML = "";
+        this.shadow.innerHTML = "";
 
         const link = document.createElement("link");
         link.href = "src/js/component/moderation.component.css";
         link.rel = "stylesheet";
-        this.#shadow.appendChild(link);
+        this.shadow.appendChild(link);
 
         const root = document.createElement("div");
         root.className = "mp-root";
 
-        // ── Loading
         if (this.#loading) {
-            this.#shadow.innerHTML = `
+            this.shadow.innerHTML = `
                 <link href="src/js/component/moderation.component.css" rel="stylesheet">
                 <div class="mp-root">
                     <div class="mp-loading">
@@ -839,10 +801,10 @@ class ModerationPanel extends HTMLElement {
                     </div>
                 </div>`
         } else {
-            this.#shadow.innerHTML = `
+            this.shadow.innerHTML = `
                 <link href="src/js/component/moderation.component.css" rel="stylesheet">
                 <div class="mp-root">
-                    <div class="mp-inner">
+                    <div class="mp-inner" id="mp-inner">
                         <div class="mp-header">
                             <div>
                                 <h1 data-i18n="moderation.title">Moderation</h1>
@@ -852,14 +814,31 @@ class ModerationPanel extends HTMLElement {
                                 <revoice-icon-circle-plus></revoice-icon-circle-plus><span data-i18n="moderation.issue.new">Issue Sanction</span>
                             </button>
                         </div>
-                        ${this.#buildStats()}
-                        ${this.#buildTabs()}
-                        ${this.#tab === "sanctions" ? this.#buildToolbar() : ''}
-                        ${this.#buildListContainer()}
                     </div>
                 </div>`
-            this.#shadow.getElementById('issue-new-sanction').addEventListener('click', () => this.#openNewModal())
+            const mpInner = this.shadow.getElementById('mp-inner');
+            mpInner.appendChild(this.#buildStats())
+            mpInner.appendChild(this.#buildTabs())
+            if (this.#tab === "sanctions") {
+                mpInner.appendChild(this.#buildToolbar())
+            }
+            mpInner.appendChild(this.#buildListContainer())
+            this.shadow.getElementById('issue-new-sanction').addEventListener('click', () => this.#openNewModal())
         }
+        i18n.translatePage(this.shadow)
+    }
+
+    get #apiRoute() {
+        return this.#serverId === "APP"
+                ? '/sanctions'
+                : `/servers/${this.#serverId}/sanctions`;
+    }
+
+    /** @return {Promise<UserRepresentation[]>} */
+    async fetchApiUser() {
+        return this.#serverId === "APP"
+                ? CoreServer.fetch(`/user`)
+                : CoreServer.fetch(`/server/${this.#serverId}/user`);
     }
 }
 

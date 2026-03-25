@@ -4,9 +4,6 @@ import { copyToClipboard } from "../../lib/tools.js";
 import { i18n } from "../../lib/i18n.js";
 
 export default class AdminSettingsInvitationController {
-    constructor() {
-
-    }
 
     load() {
         this.#invitationLoad().then(() => this.#invitationEventHandler())
