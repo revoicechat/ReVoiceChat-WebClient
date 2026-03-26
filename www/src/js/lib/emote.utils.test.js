@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { containsOnlyEmotes } from "./emote.utils.js";
+import { containsOnlyEmotes, countEmotes } from "./emote.utils.js";
 
 describe('containsOnlyEmotes', () => {
     const acceptedWords = ['test', 'smile', 'heart', 'fire', "123"];
@@ -47,4 +47,52 @@ describe('containsOnlyEmotes', () => {
   test('custom emote only numbers', () => {
     expect(containsOnlyEmotes(':123:', acceptedWords)).toBe(true);
   });
+})
+
+describe('countEmotes', () => {
+    const acceptedWords = ['test', 'smile', 'heart', 'fire', "123"];
+
+    test('only UTF-8 emojis', () => {
+        expect(countEmotes('😁✅🥜', acceptedWords)).toBe(3);
+    });
+
+    test('no custom emote', () => {
+        expect(countEmotes(':test: :smile:', [])).toBe(0);
+    });
+
+    test('only custom emote', () => {
+        expect(countEmotes(':test: :smile:', acceptedWords)).toBe(2);
+    });
+
+    test('UTF-8 emojis and custom emote', () => {
+        expect(countEmotes('😁 :test: ✅', acceptedWords)).toBe(3);
+    });
+
+    test('whitespace is trimmed', () => {
+        expect(countEmotes('   😁   ', acceptedWords)).toBe(1);
+    });
+
+    test('empty', () => {
+        expect(countEmotes('', acceptedWords)).toBe(0);
+    });
+
+    test('sentence with emoji', () => {
+        expect(countEmotes('Hello 😁', acceptedWords)).toBe(1);
+    });
+
+    test('sentence with custom emote', () => {
+        expect(countEmotes(':test: hello', acceptedWords)).toBe(1);
+    });
+
+    test('invalid custom emote', () => {
+        expect(countEmotes(':invalid:', acceptedWords)).toBe(0);
+    });
+
+    test('only numbers', () => {
+        expect(countEmotes('123', acceptedWords)).toBe(0);
+    });
+
+    test('custom emote only numbers', () => {
+        expect(countEmotes(':123:', acceptedWords)).toBe(1);
+    });
 })

@@ -12,21 +12,22 @@ export class ServerSettingsMemberController {
 
     load() {
         CoreServer.fetch(`/server/${this.serverSettings.server.id}/user`, 'GET')
-            .then(result => {
-                if (result) {
-                    const sortedByDisplayName = [.../** @type {UserRepresentation[]} */(result)].sort((a, b) => {
-                        return a.displayName.localeCompare(b.displayName);
-                    });
+                .then(result => {
+                    if (result) {
+                        const sortedByDisplayName = [.../** @type {UserRepresentation[]} */(result)].sort((a, b) => {
+                            return a.displayName.localeCompare(b.displayName);
+                        });
 
-                    if (sortedByDisplayName !== null) {
-                        const userList = document.getElementById("server-setting-members");
-                        userList.innerHTML = "";
-                        for (const user of sortedByDisplayName) {
-                            userList.appendChild(this.#memberItem(user));
+                        if (sortedByDisplayName !== null) {
+                            const userList = document.getElementById("server-setting-members");
+                            userList.innerHTML = "";
+                            for (const user of sortedByDisplayName) {
+                                userList.appendChild(this.#memberItem(user));
+                            }
                         }
                     }
-                }
-            });
+                });
+        document.getElementById("server-moderation-panel").setAttribute("server-id", this.serverSettings.server.id);
     }
 
     /**
@@ -45,7 +46,7 @@ export class ServerSettingsMemberController {
                 <img src="${profilePicture}" alt="PFP" class="icon ring-2" data-id="${data.id}" />
             </div>
             <div class="user">
-                <div class="name" id="user-name">${data.displayName}<div>
+                <div class="name" title="${data.displayName}" id="user-name">${data.displayName}<div>
             </div>
         `;
 

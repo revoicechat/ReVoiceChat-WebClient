@@ -142,7 +142,7 @@ class I18n {
 
     /**
      * Setup observer for dynamic value changes
-     * @param {HTMLElement} element - Element to observe
+     * @param {HTMLElement|ShadowRoot} element - Element to observe
      */
     observeElement(element) {
         // If already observing, disconnect first
@@ -168,7 +168,7 @@ class I18n {
 
     /**
      * Translate all elements with the data-i18n attribute
-     * @param {Document|HTMLElement} doc
+     * @param {Document|HTMLElement|ShadowRoot} doc
      */
     translatePage(doc = document) {
         if (!this.translationsLoaded) {
@@ -215,7 +215,7 @@ class I18n {
     /**
      * Translate all elements with the data-i18n attribute
      * @param {string} selector
-     * @param {Document|HTMLElement} root
+     * @param {Document|HTMLElement|ShadowRoot} root
      */
     #querySelectorAllDeep(selector, root) {
         const results = [];

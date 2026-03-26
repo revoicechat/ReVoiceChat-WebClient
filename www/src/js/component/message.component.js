@@ -1,8 +1,11 @@
-import {containsOnlyEmotes} from "../lib/emote.utils.js";
+import {containsOnlyEmotes, countEmotes} from "../lib/emote.utils.js";
 import MediaServer from "../app/media/media.server.js";
 import CoreServer from "../app/core/core.server.js";
 import {isUUID} from "../lib/string.utils.js";
 import {renderEmojis} from "./emoji.component.js";
+import Modal from "./modal.component.js";
+import {i18n} from "../lib/i18n.js";
+import {statusToColor} from "../lib/tools.js";
 
 class MessageComponent extends HTMLElement {
     /** @type string */
@@ -159,7 +162,11 @@ class MessageComponent extends HTMLElement {
             if (this.markdown) {
                 if (containsOnlyEmotes(this.markdown, this.#emotesNames())) {
                     contentDiv.innerHTML = this.#injectEmojis(this.#removeTags(this.markdown))
-                    contentDiv.classList.add('only-emoji')
+                    if (countEmotes(this.markdown, this.#emotesNames()) === 1) {
+                        contentDiv.classList.add('stickers-emoji')
+                    } else {
+                        contentDiv.classList.add('only-emoji')
+                    }
                 } else {
                     contentDiv.innerHTML += this.#injectEmojis(marked.parse(this.#removeTags(this.markdown)));
                 }
@@ -285,9 +292,42 @@ class MessageComponent extends HTMLElement {
                 void CoreServer.fetch(`/message/${this.id}/reaction/${reaction.emoji}`, 'POST');
                 printReaction(emoji, reaction.emoji, reaction.users.length + (self ? -1 : 1))
             }
+            emoji.addEventListener('contextmenu', async (e) => {
+                e.preventDefault();
+                console.log('Right clicked!');
+                const users = await CoreServer.fetch(`/server/${RVC.server.id}/user`, 'GET');
+                await Modal.toggle({
+                    html: `
+                        <div class='popup'>
+                            ${reaction.users
+                                      .map(u => users.find(usr => usr.id === u))
+                                      .map(u => this.#createUser(u))
+                                      .join("")}
+                        </div>`,
+                    didOpen: () => {
+                        const titre = document.querySelector('.dialog-title');
+                        titre.appendChild(isUUID(reaction.emoji) ? this.#emoji(reaction.emoji) : this.#span(reaction.emoji))
+                    }
+                })
+            });
             REACTIONS.appendChild(emoji)
         }
         contentDiv.appendChild(REACTIONS)
+    }
+
+    #createUser(user) {
+        return `<div class="${user.id} user-profile">
+                    <div class="relative">
+                        <img src="${MediaServer.profiles(user.id)}" alt="PFP"
+                             style="border-radius: 9999px;width: 2rem; height: 2rem; aspect-ratio: auto;"
+                             class="icon ring-2"
+                             data-id="${user.id}"
+                             name="user-picture-${user.id}" />
+                    </div>
+                    <div class="user">
+                        <h2 class="name" title="${user.displayName}" name="user-name-${user.id}">${user.displayName}</h2>
+                    </div>
+                </div>`;
     }
 
     /** @param {string} data */

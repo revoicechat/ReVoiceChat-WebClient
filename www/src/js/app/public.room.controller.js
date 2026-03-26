@@ -281,7 +281,7 @@ export default class PublicRoom {
                 <revoice-status-dot name="dot-${id}" color="${statusToColor(status)}"></revoice-status-dot>
             </div>
             <div class="user">
-                <h2 class="name" name="user-name-${id}" style="color:${color}">${name}</h2>
+                <h2 class="name" name="user-name-${id}" title="${name}" style="color:${color}">${name}</h2>
             </div>
         `;
 
