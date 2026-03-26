@@ -92,7 +92,7 @@ class ModerationPanel extends HTMLElement {
         try {
             const [sanctions, requests] = await Promise.all([
                 await CoreServer.fetch(`${this.#apiRoute}`),
-                await CoreServer.fetch(`${this.#apiRoute}/revocation-requests`) ?? [],
+                await CoreServer.fetch(`${this.#apiRoute}/revocation-requests`),
             ]);
             this.#sanctions = sanctions;
             this.#requests = requests;
@@ -621,7 +621,7 @@ class ModerationPanel extends HTMLElement {
                 const payload = {...formData, expiresAt: formData.expiresAt || null};
                 console.log(payload)
                 await this.#issueSanction(payload);
-                this.#render();
+                void this.#load();
             }
         })
     }
@@ -634,7 +634,7 @@ class ModerationPanel extends HTMLElement {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 await this.#revokeSanction(sanction.id);
-                this.#render();
+                void this.#load();
             }
         })
     }
